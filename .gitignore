@@ -1,4 +1,21 @@
+# Logs
+pids
+logs
+results
+npm-debug.log
+
+# Numerous always-ignore extensions
 lib-cov
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+*.sass-cache
 *.seed
 *.log
 *.csv
@@ -7,9 +24,23 @@ lib-cov
 *.pid
 *.gz
 
-pids
-logs
-results
+# OS or Editor folders
+.DS_Store
+.cache
+.project
+.settings
+.tmproj
+nbproject
+Thumbs.db
 
-npm-debug.log
-node_modules
+# NPM packages folder.
+node_modules/
+
+# Brunch folder for temporary files.
+tmp/
+
+# Brunch output folder.
+public/
+
+# Bower stuff.
+bower_components/
