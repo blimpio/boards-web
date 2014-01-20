@@ -1,8 +1,22 @@
 exports.config =
   files:
     javascripts:
-      joinTo: 'app.js'
+      order: after: ['vendor/js/zeppelin.js']
+      joinTo: 'js/app.js'
     stylesheets:
-      joinTo: 'app.css'
+      joinTo: 'css/app.css'
     templates:
-      joinTo: 'app.js'
+      joinTo: 'js/app.js'
+
+  plugins:
+    jshint:
+      pattern: /^app\/.*\.js$/
+      options:
+        curly: true
+        bitwise: true
+      globals:
+        _: true
+        jQuery: true
+        Zeppelin: true
+        Backbone: true
+      warnOnly: true

@@ -1,7 +1,19 @@
 {
-  "name": "your-app",
+  "name": "blimp-web",
   "version": "0.0.1",
-  "main": "public/app.js",
-  "dependencies": {},
-  "overrides": {}
+  "main": "public/js/app.js",
+  "dependencies": {
+    "lodash": "~2",
+    "jquery": "~2",
+    "backbone": "~1.1.0"
+  },
+  "overrides": {
+    "backbone": {
+      "main": "backbone.js",
+      "dependencies": {
+        "lodash": "*",
+        "jquery": "*"
+      }
+    }
+  }
 }

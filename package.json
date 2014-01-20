@@ -1,21 +1,24 @@
 {
-  "name": "your-app",
-  "description": "Description",
-  "author": "Your Name",
+  "name": "blimp-web",
+  "description": "Blimp Front-End for the web client.",
+  "author": "Elving Rodriguez",
   "version": "0.0.1",
   "repository": {
-    "type": "git",
-    "url": ""
+    "url": "git@github.com:GetBlimp/blimp-web.git",
+    "type": "git"
   },
   "scripts": {
-    "start": "brunch watch --server",
-    "test": "brunch test"
+    "test": "brunch test",
+    "start": "brunch watch --server"
   },
   "dependencies": {
     "javascript-brunch": ">= 1.0 < 1.8",
     "css-brunch": ">= 1.0 < 1.8",
     "uglify-js-brunch": ">= 1.0 < 1.8",
     "clean-css-brunch": ">= 1.0 < 1.8",
-    "auto-reload-brunch": ">= 1.0 < 1.8"
+    "auto-reload-brunch": ">= 1.0 < 1.8",
+    "jshint-brunch": "~1.7.0",
+    "stylus-brunch": "~1.8.0",
+    "handlebars-brunch": "~1.7.6"
   }
 }
