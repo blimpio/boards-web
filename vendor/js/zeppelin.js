@@ -63,7 +63,7 @@
   // Used by handlebars.JavaScriptCompiler.prototype.nameLookup to get
   // properties from the template's context.
   Zeppelin.getHandlebarsAttribute = function (obj, key) {
-    var obj = obj.context ? obj.context() : obj;
+    obj = obj.context ? obj.context() : obj;
 
     if (/^[0-9]+$/.test(key)) {
       return obj[_.parseInt(key)];
