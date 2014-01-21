@@ -5,15 +5,24 @@
   "dependencies": {
     "lodash": "~2",
     "jquery": "~2",
-    "backbone": "~1.1.0"
+    "backbone": "~1",
+    "handlebars": "~1"
+  },
+  "devDependencies": {
+    "chai": "~1",
+    "mocha": "~1"
   },
   "overrides": {
     "backbone": {
       "main": "backbone.js",
       "dependencies": {
         "lodash": "*",
-        "jquery": "*"
+        "jquery": "*",
+        "handlebars": "*"
       }
+    },
+    "handlebars": {
+      "main": "handlebars.runtime.js"
     }
   }
 }
