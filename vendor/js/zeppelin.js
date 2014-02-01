@@ -29,7 +29,7 @@
   // Returns true if the element passed is a textfield.
   Zeppelin.isTextfield = function (element) {
     var $element = Zeppelin.$(element);
-    return $element.is('input, textarea') && $element.is(':radio, :checkbox');
+    return $element.is('input, textarea') && !$element.is(':radio, :checkbox');
   };
 
   // Returns true if the element passed is a form element.
@@ -42,22 +42,9 @@
     return obj instanceof jQuery;
   };
 
-  // Capitalizes the first letter of the passed string.
-  Zeppelin.capitalizeFirst = function (str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  // Returns an object with URL query parameters given a string.
-  Zeppelin.parseQueryString = function (str) {
-    str = str.trim().replace(/^\?/, '');
-
-    if (!str) return false;
-
-    _.reduce(str.trim().split('&'), function (obj, param) {
-      var parts = param.replace(/\+/g, ' ').split('=');
-      obj[parts[0]] = parts[1] ? decodeURIComponent(parts[1]) : null;
-      return obj;
-    });
+  // Checks if the method passed is a valid method for inserting the view into the `document`.
+  Zeppelin.isValidContainerMethod = function (method) {
+    return method && (method === 'html' || method === 'append' || method === 'prepend');
   };
 
   // Used by handlebars.JavaScriptCompiler.prototype.nameLookup to get
@@ -69,9 +56,9 @@
       return obj[_.parseInt(key)];
     } else {
       if (obj.moduleName === 'model') {
-        return obj.get(key) || _.result(obj, key);
+        return obj.get(key) || _.result(obj, key) || _.result(obj.options, key);
       } else {
-        return _.result(obj, key);
+        return _.result(obj, key) || _.result(obj.options, key);
       }
     }
   };
@@ -81,11 +68,14 @@
     return _.map(_.keys(hash), function (name) {
       var value = _.result(hash, name);
 
-      value = value.replace(/\{\{(.*?)\}\}/g, function (m, s) {
-        return Zeppelin.getHandlebarsAttribute(context, s);
-      });
+      if (value && _.isString(value)) {
+        value = value.replace(/\{\{(.*?)\}\}/g, function (m, s) {
+          return Zeppelin.getHandlebarsAttribute(context, s);
+        });
+      }
 
       if (value) return name + '="' + value + '"';
+
       return '';
     });
   };
@@ -97,53 +87,6 @@
       event.preventDefault();
       Zeppelin.Mediator.trigger('router:redirect', Zeppelin.$(this).attr('href'));
     }
-  });
-
-  // Extends Backbone.sync to handle multiple requests on a single model. If a model or collection
-  // fires two or more requests at a time only the last one will be fired.
-  var sync = Backbone.sync;
-
-  Backbone.sync = function (method, model, options) {
-    var lastXHR = model._lastXHR && model._lastXHR[method];
-
-    if ((lastXHR && lastXHR.readyState !== 4) && (options && options.safe !== false)) {
-      lastXHR.abort('stale');
-    }
-
-    if (!model._lastXHR) model._lastXHR = {};
-    model._lastXHR[method] = sync.apply(this, arguments);
-  };
-
-  // Initializes and inserts a subview into the template. In Zeppelin, Handlebars templates use
-  // views as it's main context. This makes it possible for Handlebars helpers to execute view
-  // methods. The `{{view}}` helper initializes a subview by looking for a view with the name of
-  // the fist parameter. Any other parameter will be passed to the subview as a property.
-  // E.g `{{view "Dropdown" model="User"}}` will initialize a subview who's model property is
-  // 'models/User'.
-  Handlebars.registerHelper('view', function (path, options) {
-    var model, instance, collection, containerMarkup;
-    var view = require(path);
-    var attributes = [];
-    var viewOptions = {};
-
-    if (options.hash.model) {
-      model = Zeppelin.Data[options.hash.model];
-      if (model) viewOptions.model = model;
-    }
-
-    if (options.hash.collection) {
-      collection = Zeppelin.Data[options.hash.collection];
-      if (collection) viewOptions.collection = collection;
-    }
-
-    instance = Zeppelin.View.prototype.initializeSubView.call(this, view, viewOptions);
-
-    delete options.hash.model;
-    delete options.hash.collection;
-
-    attributes = Zeppelin.parseHandlebarsHash(this, options.hash);
-    containerMarkup = '<div data-container-for=' + instance.cid + ' ' + attributes.join(' ') + '></div>';
-    return new Handlebars.SafeString(containerMarkup);
   });
 
   // Zeppelin.Mediator
@@ -158,13 +101,12 @@
   // Adds Application-wide pubSub via Zeppelin.Mediator
   Zeppelin.Events = {
     registerSubscriptions: function (events) {
-      var _this = this;
       events = events || this.subscriptions || {};
+      this.subscriptions = this.subscriptions || {};
 
       _.forOwn(events, function (callback, eventName) {
-        callback = _.isFunction(callback) ? callback : _this[callback];
-        _this.subscribe(eventName, callback);
-      });
+        this.subscribe(eventName, callback);
+      }.bind(this));
 
       return this;
     },
@@ -177,11 +119,17 @@
     },
 
     subscribe: function (eventName, callback) {
+      if (!this.subscriptions[eventName]) {
+        this.subscriptions[eventName] = callback;
+      }
+
+      callback = _.isFunction(callback) ? callback : this[callback];
       this.listenTo(Zeppelin.Mediator, eventName, callback);
       return this;
     },
 
     subscribeToOnce: function (eventName, callback) {
+      callback = _.isFunction(callback) ? callback : this[callback];
       this.listenToOnce(Zeppelin.Mediator, eventName, callback);
       return this;
     },
@@ -203,7 +151,17 @@
   // Generic validations.
   Zeppelin.Validations = {
     required: function (value) {
-      return value && !_.isEmpty(value) && Zeppelin.$.trim(value) !== '';
+      if (value || (_.isNumber(value) && value <= 0)) {
+        if (_.isPlainObject(value) || _.isArray(value)) {
+          return !_.isEmpty(value);
+        } else if (_.isString(value)) {
+          return Zeppelin.$.trim(value) !== '';
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
     },
 
     min: function (value, min) {
@@ -227,32 +185,59 @@
     length: function (value, length) {
       if (value && _.isNumber(value) && _.isNumber(length)) {
         return value === length;
-      } else if (value && _.isString(value) && _.isNumber(length)) {
+      } else if (value && (_.isString(value) || _.isArray(value)) && _.isNumber(length)) {
         return value.length === length;
+      } else if (value && _.isPlainObject(value) && _.isNumber(length)) {
+        return _.size(value) === length;
       } else {
         return false;
       }
     },
 
     minLength: function (value, min) {
-      return value && _.isNumber(min) && value.length >= min;
-    },
-
-    maxLength: function (value, max) {
-      return value && _.isNumber(max) && value.length <= max;
-    },
-
-    rangeLength: function (value, range) {
-      if (value && _.isArray(range)) {
-        var min = _.first(range);
-        var max = _.last(range);
-        return value.length >= min && value.length <= max;
+      if (value && _.isNumber(value) && _.isNumber(min)) {
+        return value >= min;
+      } else if (value && (_.isString(value) || _.isArray(value)) && _.isNumber(min)) {
+        return value.length >= min;
+      } else if (value && _.isPlainObject(value) && _.isNumber(min)) {
+        return _.size(value) >= min;
       } else {
         return false;
       }
     },
 
-    regexp: function (value, rexexp) {
+    maxLength: function (value, max) {
+      if (value && _.isNumber(value) && _.isNumber(max)) {
+        return value <= max;
+      } else if (value && (_.isString(value) || _.isArray(value)) && _.isNumber(max)) {
+        return value.length <= max;
+      } else if (value && _.isPlainObject(value) && _.isNumber(max)) {
+        return _.size(value) <= max;
+      } else {
+        return false;
+      }
+    },
+
+    rangeLength: function (value, range) {
+      var min, max;
+
+      if (_.isArray(range)) {
+        min = _.first(range);
+        max = _.last(range);
+      }
+
+      if (value && _.isNumber(value) && _.isArray(range)) {
+        return value >= min && value <= max;
+      } else if (value && (_.isString(value) || _.isArray(value)) && _.isArray(range)) {
+        return value.length >= min && value.length <= max;
+      } else if (value && _.isPlainObject(value) && _.isArray(range)) {
+        return _.size(value) >= min && _.size(value) <= max;
+      } else {
+        return false;
+      }
+    },
+
+    regexp: function (value, regexp) {
       return value && _.isRegExp(regexp) && regexp.test(value);
     },
 
@@ -265,7 +250,9 @@
     },
 
     oneOf: function (value, types) {
-      return value && _.isArray(types) && _.find(types, value);
+      return value && _.isArray(types) && _.find(types, function (type) {
+        return type === value;
+      }) != null;
     },
 
     isBoolean: function (value) {
@@ -273,7 +260,8 @@
     },
 
     isDate: function (value) {
-      return value && _.isDate(new Date(value));
+      var date = new Date(value);
+      return date && date.toString() !== 'Invalid Date' && _.isDate(date);
     },
 
     isArray: function (value) {
@@ -322,6 +310,10 @@
 
     isDateISO: function (value) {
       return value && /^(\d{4})\D?(0[1-9]|1[0-2])\D?([12]\d|0[1-9]|3[01])$/.test(value);
+    },
+
+    isDomainName: function (value) {
+      return value && /^(?!:\/\/)([a-zA-Z0-9]+\.)?[a-zA-Z0-9][a-zA-Z0-9-]+\.[a-zA-Z]{2,6}?$/.test(value);
     }
   };
 
@@ -386,6 +378,7 @@
     options = options || {};
     _.extend(this, options);
     this.cid = _.uniqueId(options.moduleName || 'module');
+    this.moduleName = options.moduleName || this.moduleName || 'module';
     this.initialize.apply(this, arguments);
   };
 
@@ -440,16 +433,14 @@
 
     // Initializes a controller based on the current `route` and executes it's specified `action`.
     dispatch: function (route, controller, action, data) {
-      var Controller;
-      var controllerName = Zeppelin.capitalizeFirst(controller);
+      var Controller = require('controllers/' + controller);
+      var isDifferentController = this.current && this.current.name !== Controller.prototype.name;
 
-      if (this.current && this.current.name !== controllerName) {
-        this.current.dispose();
+      if (!this.current || isDifferentController) {
+        if (isDifferentController) this.current.dispose();
+        this.current = new Controller();
+        this.current.insert('#application');
       }
-
-      Controller = require('controllers/' + controllerName);
-      this.current = new Controller();
-      this.current.insert('#application');
 
       if (action) this.current[action](data);
     }
@@ -462,12 +453,27 @@
   Zeppelin.Router = Backbone.Router.extend({
     constructor: function (options) {
       options = options || {};
-      if (options.routes) this.routes = options.routes;
+
       this.cid = _.uniqueId('router');
+      this.routes = options.routes || this.routes || {};
       this.moduleName = 'router';
       this.registerSubscriptions();
       this.registerRoutes();
       this.initialize.apply(this, arguments);
+    },
+
+    // A hash that maps urls to controller actions:
+    //
+    // Example:
+    //
+    //  {
+    //    'posts': 'posts',
+    //    'posts/:id': 'posts#showPost',
+    //    'posts/:id/edit': 'posts#editPost'
+    //  }
+    //
+    routes: {
+
     },
 
     subscriptions: {
@@ -477,12 +483,12 @@
     // Executes `Backbone.history.start` with the given options.
     start: function (options) {
       options = options || {};
-      if (!Backbone.history.started) Backbone.history.start(options);
+      if (!Backbone.History.started) Backbone.history.start(options);
     },
 
     // Executes `Backbone.history.stop`.
     stop: function () {
-      if (Backbone.history.started) Backbone.history.stop();
+      if (Backbone.History.started) Backbone.history.stop();
     },
 
     // Reloads the browser.
@@ -504,73 +510,72 @@
       return _.pick(window.location, urlAttributes);
     },
 
-    // Goes through the `this.routes` hash and binds them to `Backbone.history`
-    // using the `this.route` method. When a route is matched, the callback
-    // function will fire a `router:route` event that is listened by
-    // `Zeppelin.Dispatcher`. The dispatcher will initialize the controller
-    // for the current route.
-    //
-    // `this.routes` is a hash that maps urls to controller actions:
-    //
-    // Example:
-    //
-    //  {
-    //    'posts': 'posts',
-    //    'posts/:id': 'posts#showPost',
-    //    'posts/:id/edit': 'posts#editPost'
-    //  }
-    registerRoutes: function () {
-      if (!this.routes) return false;
+    // Binds the given action to `Backbone.history` using the `route` method. When a
+    // route is matched, the callback function will fire a `router:route` event that is listened by
+    // `Zeppelin.Dispatcher`. The dispatcher will initialize the controller for the current route.
+    registerRoute: function (route, action) {
+      if ((!route || !action) && this.routes[route] === action) {
+        return false;
+      }
 
-      var _this = this;
+      this.routes[route] = action;
 
-      _.forEach(_.keys(this.routes).reverse(), function (key) {
-        var routeSplit = _this.routes[key].split('#');
-        var controllerName = routeSplit[0];
-        var controllerAction = routeSplit[1];
+      this.route(route, action.split('#')[0], function () {
+        var data = arguments,
+            route = {},
+            urlData = {},
+            fragment = Backbone.history.getFragment(),
+            controllerName, controllerAction;
 
-        _this.route(key, controllerName, function () {
-          var data = arguments;
-          var route = {};
-          var dataObj = {};
-          var fragment = Backbone.history.getFragment();
+        _.forEach(this.routes, function (handler, url) {
+          var dataKeys, handlerSplit = handler.split('#');
 
-          _.forEach(_this.routes, function (handler, url) {
-            var dataKeys;
-            var handlerSplit = handler.split('#');
+          if (this._routeToRegExp(url).test(fragment)) {
+            route[url] = handler;
+            controllerName = handlerSplit[0];
+            controllerAction = handlerSplit[1];
 
-            if (_this._routeToRegExp(url).test(fragment)) {
-              route[url] = handler;
-              controllerName = handlerSplit[0];
-              controllerAction = handlerSplit[1];
+            // Prepare the data as an object. So instead of defining
+            // controller actions like:
+            //
+            //   showUser: function(name, age, gender) {
+            //       console.log(name, age, gender);
+            //   }
+            //
+            // you define them like:
+            //
+            //   showUser: function(data) {
+            //       console.log(data.name, data.age, data.gender);
+            //   }
+            dataKeys = _.map(url.match(/(\(\?)?:\w+/g), function (match) {
+              return match.replace(':', '');
+            });
 
-              // Prepare the data as an object. So instead of defining
-              // controller actions like:
-              //
-              //   showUser: function(name, age, gender) {
-              //       console.log(name, age, gender);
-              //   }
-              //
-              // you define them like:
-              //
-              //   showUser: function(data) {
-              //       console.log(data.name, data.age, data.gender);
-              //   }
-              dataKeys = _.map(url.match(/(\(\?)?:\w+/g), function (match) {
-                return match.replace(':', '');
-              });
+            _.forEach(data, function (argument, index) {
+              urlData[dataKeys[index]] = argument;
+            });
 
-              _.forEach(data, function (argument, index) {
-                dataObj[dataKeys[index]] = argument;
-              });
+            return false;
+          }
+        }.bind(this));
 
-              return false;
-            }
-          });
+        this.publish('router:route', route, controllerName, controllerAction, urlData);
+      }.bind(this));
 
-          _this.publish('router:route', route, controllerName, controllerAction, dataObj);
-        });
-      });
+      return this;
+    },
+
+    // Registers the given routes or all routes under `this.routes`.
+    registerRoutes: function (routes) {
+      routes = routes || this.routes;
+
+      if (_.size(routes)) {
+        _.forOwn(routes, function (action, route) {
+          this.registerRoute(route, action);
+        }.bind(this));
+      }
+
+      return this;
     }
   });
 
@@ -588,17 +593,17 @@
 
       // Use this namespace to store collections and models you want to persist through
       // different controllers.
-      Zeppelin.Data = {};
-      Zeppelin.Dispatcher = new Zeppelin.Dispatcher();
-      Zeppelin.Router = new Zeppelin.Router({
+      this.Data = {};
+      this.Dispatcher = new Zeppelin.Dispatcher();
+      this.Router = new Zeppelin.Router({
         routes: options.routes
       });
 
       Zeppelin.Module.prototype.constructor.apply(this, arguments);
     },
 
-    start: function () {
-      Zeppelin.Router.start();
+    start: function (options) {
+      this.Router.start(options || {});
     }
   });
 
@@ -677,13 +682,13 @@
       options.fromCache = options.fromCache || false;
       this.hasFetched = false;
       this.isFetching = true;
-      var $d = Zeppelin.$.Deffered();
+      var $d = Zeppelin.$.Deferred();
       var _this = this;
 
-      // If `cache` is true and the model is cached in `storage` get the attributes
-      // from `storage`. Fetching from `storage` will behave as an `async` method so
+      // If `options.fromCache` is true get the attributes from `storage`.
+      // Fetching from `storage` will behave as an `async` method so
       // doing something like `model.fetch().done(callback)` on a cached model will work.
-      if (options.fromCache && (this.cache && !this.storage.isEmpty())) {
+      if (options.fromCache) {
         this.trigger('request');
         options.parse = options.parse || false;
         _.extend(this.attributes, this.storage.getAll());
@@ -699,7 +704,7 @@
           _this.hasFetched = true;
           _this.isFetching = false;
           if (_this.cache) _this.storage.setAll(_this.attributes);
-          $d.resolved(_this.attributes);
+          $d.resolve(_this.attributes);
         });
 
         Backbone.Model.prototype.fetch.apply(this, arguments);
@@ -807,15 +812,28 @@
       var validAttributes = {};
 
       _.forOwn(_this.validations, function (validations, attribute) {
-        if (_.isFunction(validations)) {
-          errors = validations(attributes[attribute]);
-        } else {
-          var isRequired = _.find(_this.validations[attribute], function (validation) {
-            return _.indexOf(_.keys(validation), 'required') !== -1;
-          });
+        var validationFunctionResult;
+        var isRequired = _.find(_this.validations[attribute], function (validation) {
+          return _.indexOf(_.keys(validation), 'required') !== -1;
+        });
 
+        if (!isRequired && !attributes[attribute]) return false;
+
+        if (_.isFunction(validations)) {
+          validationFunctionResult = validations(attributes[attribute]);
+          isNotValid = validationFunctionResult != null ? true : false;
+
+          if (isNotValid) {
+            errors[attribute] = validationFunctionResult;
+          }
+
+          if (_.size(errors[attribute]) === 0) {
+            validAttributes[attribute] = attributes[attribute];
+            _this.trigger('valid', _this, validAttributes);
+            _this.trigger('valid:' + attribute, _this, attribute, attributes[attribute]);
+          }
+        } else {
           if (!_.isArray(validations)) validations = [validations];
-          if (!isRequired && !attributes[attribute]) return false;
 
           _.forEach(validations, function (validation) {
             _.forOwn(validation, function (value, key) {
@@ -842,6 +860,77 @@
       });
 
       if (_.size(errors)) return errors;
+    },
+
+    // Adds attribute validations to the model.
+    //
+    // Example:
+    //
+    // this.addValidation({
+    //   title: [{
+    //     required: true,
+    //     message: 'A title is required.'
+    //   },{
+    //     maxLength: 80,
+    //     message: 'The title must be less than 80 characters long.'
+    //   }]
+    // });
+    //
+    // this.addValidation('title', {
+    //   required: true,
+    //   message: 'A title is required.'
+    // });
+    addValidation: function (attribute, validation) {
+      var _this = this;
+      var validations = {};
+
+      if (arguments.length === 2 && _.isString(attribute)) {
+        validations[attribute] = validation;
+      } else if (arguments.length === 1 && _.isPlainObject(attribute)) {
+        validations = attribute;
+      } else {
+        return false;
+      }
+
+      _.forOwn(validations, function (value, key) {
+        _this.validations[key] = value;
+      });
+
+      return this;
+    },
+
+    // Returns true if the model has a validation for the given attribute. If no attribute is passed,
+    // it will return true if the model has at least one validation for any attribute.
+    hasValidation: function (attribute) {
+      if (attribute) {
+        return this.validations[attribute] != null;
+      } else {
+        return this.validations != null && _.size(this.validations);
+      }
+    },
+
+    // Update the model's cache.
+    updateCache: function (attributeName, value) {
+      if (arguments.length === 0) {
+        this.storage.setAll(this.attributes);
+      } else if (_.isPlainObject(attributeName)) {
+        this.storage.set(attributeName);
+      } else if (arguments.length === 2) {
+        this.storage.set(attributeName, value);
+      }
+
+      return this;
+    },
+
+    // Clear the model's cache.
+    clearCache: function (attributeName) {
+      if (arguments.length === 0) {
+        this.storage.clearAll();
+      } else {
+        this.storage.clear(attributeName);
+      }
+
+      return this;
     }
   });
 
@@ -907,13 +996,13 @@
       options.fromCache = options.fromCache || false;
       this.hasFetched = false;
       this.isFetching = true;
-      var $d = Zeppelin.$.Deffered();
+      var $d = Zeppelin.$.Deferred();
       var _this = this;
 
-      // If `cache` is true and the collection is cached in `storage` get the models
-      // from `storage`. Fetching from `storage` will behave as an `async` method so
+      // If `options.fromCache` is true get the models from `storage`.
+      // Fetching from `storage` will behave as an `async` method so
       // doing something like `collection.fetch().done(callback)` on a cached collection will work.
-      if (options.fromCache && (this.cache && !this.storage.isEmpty())) {
+      if (options.fromCache) {
         this.trigger('request');
         options.parse = options.parse || false;
         this[options.update ? 'update' : 'reset'](this.storage.getAll(), options);
@@ -949,16 +1038,17 @@
   // view extendability and memory management.
   // View options that are merged as properties.
   // Other options passed to the view are stored in `this.options`.
-  var viewOptions = ['el', 'id', 'name', 'model', 'events', 'render', 'tagName', 'context', 'elements', 'template', 'container', 'className', 'initialize', 'attributes', 'collection', 'keepElement', 'subscriptions', 'afterRendered', 'afterInserted', 'afterUnplugged', 'beforeRendered', 'beforeInserted', 'beforeDisposed', 'beforeUnplugged', 'containerMethod', 'afterInitialized', 'beforeInitialized', 'afterInsertingSubViews', 'beforeInsertingSubViews'];
+  var viewOptions = ['el', 'id', 'name', 'model', 'events', 'render', 'tagName', 'context', 'elements', 'template', 'container', 'className', 'initialize', 'attributes', 'collection', 'keepElement', 'subscriptions', 'afterRendered', 'afterInserted', 'afterUnplugged', 'beforeRendered', 'beforeInserted', 'beforeDisposed', 'beforeUnplugged', 'containerMethod', 'afterInitialized', 'beforeInitialized', 'afterInsertingChildren', 'beforeInsertingChildren'];
 
   Zeppelin.View = Backbone.View.extend({
     constructor: function (options) {
       options = options || {};
-      this.cid = _.uniqueId('view');
+
+      this.cid = _.uniqueId(this.moduleName || 'view');
       this.name = options.name || this.name || this.cid;
       this.state = 'idle';
-      this.subviews = {};
-      this.moduleName = 'view';
+      this.children = {};
+      this.moduleName = this.moduleName || 'view';
       this.isRendered = false;
       this.isInserted = false;
       this.firstRender = true;
@@ -998,6 +1088,8 @@
       this.cacheElements();
     },
 
+    elements: {},
+
     // Caches all elements where `elements` is a hash of:
     //
     // *{ 'elementName': 'elementSelector' }*
@@ -1020,7 +1112,7 @@
 
       if (_.size(elements)) {
         _.forOwn(elements, function (selector, name) {
-          this.cacheElement(name, selector);
+          _this.cacheElement(name, selector);
         });
 
         this.elementsCached = true;
@@ -1032,7 +1124,7 @@
     // Caches a single element to `this.$[elementName]`.
     cacheElement: function (name, selector) {
       if (name !== 'el') {
-        this['$' + name] = this.$el.find(selector);
+        this['$' + name] = this.find(selector);
         this.elements[name] = selector;
         return this['$' + name];
       }
@@ -1107,9 +1199,9 @@
       return this.model;
     },
 
-    // Checks if the method passed is a valid method for inserting the view into the `document`.
-    _isValidContainerMethod: function (method) {
-      return method && (method === 'html' || method === 'append' || method === 'prepend');
+    // Shortcut for `this.$el.find(selector)`.
+    find: function (selector) {
+      return this.$el.find(selector);
     },
 
     // Sets the `container` for the view. The `container` is the element where the `template` is
@@ -1132,24 +1224,27 @@
     //     view.setContainer 'div.content-inside'
     //     view.render() # Will change the contents of `div.content-inside` not `div.content`.
     setContainer: function (container) {
-      var $container = this.$el.find(container);
+      var $container = this.find(container);
       this.container = $container.length ? $container : this.$el;
-      if (!this._isValidContainerMethod(this.containerMethod)) this.containerMethod = 'html';
+      if (!Zeppelin.isValidContainerMethod(this.containerMethod)) this.containerMethod = 'html';
       return this.container;
     },
 
     // Renders the given `template` to the `container`. If no template is passed, then it
     // renders the view's `template`.
-    renderToContainer: function (template) {
-      this.container[this.containerMethod](this.renderTemplate(template || this.template));
+    renderToContainer: function (template, method) {
+      method = method || this.containerMethod;
+      template = template || this.template;
+      this.container[method](this.renderTemplate(template));
       return this;
     },
 
     // Renders the given `template` to the `container`. If no template is passed, then it
     // renders the view's `template`.
-    renderTemplate: function (template) {
+    renderTemplate: function (template, context) {
+      context = context || this;
       template = template || this.template;
-      return template(this);
+      return template(context);
     },
 
     // Empty function by default, override it with your own logic to run before the view is rendered.
@@ -1162,19 +1257,19 @@
 
     },
 
-    // Render the `View`, cache elements and insert `subviews`. Rendering the `View` will not
+    // Render the `View`, cache elements and insert `children`. Rendering the `View` will not
     // insert `@el` into the `document`. If the `View` was generated via the `{{view}}` helper or if
     // it wasn't given an `el` property when instantiating, it will not be inserted into the
     // `document` by default.
-    render: function (template) {
+    render: function () {
       this.state = 'rendered';
       this.beforeRendered();
-      this.renderToContainer(template || this.template);
+      if (this.template) this.renderToContainer(this.template);
       this.cacheElements();
       this.isRendered = true;
       this.firstRender = false;
       this.afterRendered();
-      if (this.isInserted) this.insertSubViews();
+      if (this.isInserted) this.insertChildren();
       return this;
     },
 
@@ -1190,18 +1285,18 @@
 
     // Inserts the `View` to the given element using `append`, `prepend` or `html` if a `method` is
     // passed (`html` is the default insert method). If the `View` isn't rendered it will be rendered
-    // before inserting it. After inserting the view all of it's `subviews` are inserted (this
-    // will cascade down to the last subview).
+    // before inserting it. After inserting the view all of it's `children` are inserted (this
+    // will cascade down to the last child).
     insert: function (target, method) {
       this.state = 'inserted';
       this.beforeInserted();
       var $target = Zeppelin.isJqueryObject(target) ? target : Zeppelin.$(target);
-      if (!this._isValidContainerMethod(method)) method = 'html';
+      if (!Zeppelin.isValidContainerMethod(method)) method = 'html';
       if (!this.isRendered) this.render();
       $target[method](this.el);
       this.isInserted = true;
       this.afterInserted();
-      this.insertSubViews();
+      this.insertChildren();
       return this;
     },
 
@@ -1219,8 +1314,10 @@
     // remove every event handler added via `delegateEvents` and `delegate` and any other event
     // handlers added to `elements` at any point in your view (e.g `this.$btn.on('click', this.onClick)`).
     // It will also remove any event handlers added via `on`, `once`, `listenTo`, `listenToOnce`,
-    // `subscribe` and `subscribeToOnce` as well as all event handlers of it's subviews.
+    // `subscribe` and `subscribeToOnce` as well as all event handlers of it's children.
     unplug: function () {
+      var _this = this;
+
       this.state = 'unplugged';
       this.beforeUnplugged();
       this.stopListening();
@@ -1228,11 +1325,11 @@
       this.undelegateEvents();
       this.$el.off();
 
-      _.forOwn(this.elements, function (element) {
-        element.off();
+      _.forOwn(this.elements, function (selector, name) {
+        _this['$' + name].off();
       });
 
-      this.unplugSubViews();
+      this.unplugChildren();
       this.afterUnplugged();
       return this;
     },
@@ -1242,7 +1339,7 @@
 
     },
 
-    // Disposes a view and all of it's subviews. It will unplug it and remove all properties from
+    // Disposes a view and all of it's children. It will unplug it and remove all properties from
     // the instance before freezing it. You can keep the element by adding the `keepElement`
     // flag, otherwise the element will be removed from the `document`. Once a view is disposed, the
     // instance becomes immutable and it's no longer in memory (assuming you are not
@@ -1252,7 +1349,7 @@
       this.state = 'disposed';
       this.beforeDisposed();
       this.unplug();
-      this.disposeSubViews();
+      this.disposeChildren();
       if (!this.keepElement) this.$el.remove();
 
       _.forEach(viewOptions, function (property) {
@@ -1262,110 +1359,110 @@
       Object.freeze(this);
     },
 
-    // Subviews
+    // Children
     // --------
     //
-    // The concept of subviews is simple; any view can contain another view. Subviews are a
+    // The concept of child views is simple; any view can contain another view. Child views are a
     // great way of splitting functionality for readability and reusability. The lifetime of a
-    // subview depends on it's parent so if a parent view is rendered, inserted, unplugged or
-    // disposed those changes will cascade down to every subview.
-    // Initializes a subview passing the given data (if any).
-    initializeSubView: function (View, data) {
-      if (!_.isFunction(View)) Zeppelin.error('The first argument must a function.', 'Zeppelin.View.initializeSubView');
-      var subview = new View(data || {});
-      subview.parent = this;
-      this.subviews[subview.cid] = subview;
-      return subview;
+    // child view depends on it's parent so if a parent view is rendered, inserted, unplugged or
+    // disposed those changes will cascade down to every child.
+    // Initializes a child passing the given data (if any).
+    initializeChild: function (View, data) {
+      if (!_.isFunction(View)) Zeppelin.error('The first argument must a function.', 'Zeppelin.View.initializeChild');
+      var child = new View(data || {});
+      child.parent = this;
+      this.children[child.cid] = child;
+      return child;
     },
 
-    // Inserts a subview into the given element.
-    insertSubView: function (subview, target, method) {
-      // When a subview is initialized via the `{{view}}` helper an element with a
-      // `[data-container-for]` attribute is created to know where to insert the subview.
+    // Inserts a child into the given element.
+    insertChild: function (child, target, method) {
+      // When a child is initialized via the `{{view}}` helper an element with a
+      // `[data-container-for]` attribute is created to know where to insert the child.
       // If `target` is undefined look for `[data-container-for]` by default.
       if (!target) {
-        target = this.$el.find('[data-container-for=' + subview.cid + ']');
+        target = this.find('[data-container-for=' + child.cid + ']');
         if (!target.length) {
           target = this.container;
           method = 'append';
         }
       }
 
-      subview.insert(target, method);
-      return subview;
+      child.insert(target, method);
+      return child;
     },
 
     // Empty function by default, override it with your own logic to run before the
-    // subviews are inserted into the `document`.
-    beforeInsertingSubViews: function () {
+    // children are inserted into the `document`.
+    beforeInsertingChildren: function () {
 
     },
 
     // Empty function by default, override it with your own logic to run after the
-    // subviews are inserted into the `document`.
-    afterInsertingSubViews: function () {
+    // children are inserted into the `document`.
+    afterInsertingChildren: function () {
 
     },
 
-    // Inserts every subview. This method is used by the `render` and `insert` methods to
-    // insert subviews initialized by the `{{view}}` template helper.
-    insertSubViews: function () {
+    // Inserts every child. This method is used by the `render` and `insert` methods to
+    // insert children initialized by the `{{view}}` template helper.
+    insertChildren: function () {
       var _this = this;
-      this.beforeInsertingSubViews();
-      this.forEachSubView(this.insertSubView);
-      this.afterInsertingSubViews();
+      this.beforeInsertingChildren();
+      this.forEachChild(this.insertChild);
+      this.afterInsertingChildren();
       return this;
     },
 
-    // Run a function for every subview. The callback function will have the subview as an
+    // Run a function for every child. The callback function will have the child as an
     // argument.
-    forEachSubView: function (callback) {
+    forEachChild: function (callback) {
       var _this = this;
 
       if (callback && _.isFunction(callback)) {
-        _.forOwn(this.subviews, function (subview) {
-          callback.call(_this, subview);
+        _.forOwn(this.children, function (child) {
+          callback.call(_this, child);
         });
       }
 
       return this;
     },
 
-    //Gets a subview given a cid.
-    getSubViewByCid: function (cid) {
-      return _.find(this.subviews, function (subview) {
-        return subview.cid === cid;
+    //Gets a child given a cid.
+    getChildByCid: function (cid) {
+      return _.find(this.children, function (child) {
+        return child.cid === cid;
       });
     },
 
-    //Gets a subview given a name.
-    getSubViewByName: function (name) {
-      return _.find(this.subviews, function (subview) {
-        return subview.name === name;
+    //Gets a child given a name.
+    getChildByName: function (name) {
+      return _.find(this.children, function (child) {
+        return child.name === name;
       });
     },
 
-    // Unplugs every subview (will cascade down to every subview).
-    unplugSubViews: function () {
-      this.forEachSubView(function (subview) {
-        subview.unplug();
+    // Unplugs every child (will cascade down to every child).
+    unplugChildren: function () {
+      this.forEachChild(function (child) {
+        child.unplug();
       });
 
       return this;
     },
 
-    // Disposes a subview. Use this method instead of subview.dispose() to remove it's reference
-    // from `subviews`.
-    disposeSubView: function (subview) {
-      var cid = subview.cid;
-      subview.dispose();
-      delete this.subviews[cid];
+    // Disposes a child. Use this method instead of child.dispose() to remove it's reference
+    // from `children`.
+    disposeChild: function (child) {
+      var cid = child.cid;
+      child.dispose();
+      delete this.children[cid];
     },
 
-    // Disposes every subview (will cascade down to every subview).
-    disposeSubViews: function () {
-      this.forEachSubView(this.disposeSubView);
-      this.subviews = {};
+    // Disposes every child (will cascade down to every child).
+    disposeChildren: function () {
+      this.forEachChild(this.disposeChild);
+      this.children = {};
     }
   });
 
@@ -1376,7 +1473,7 @@
   // -------------------
   //
   // Initializes views required to render a page. It also fetches and persists data required by it's
-  // subviews. It's the equivalent of an `AppView`:
+  // children. It's the equivalent of an `AppView`:
   // (e.g [https://gist.github.com/derickbailey/1182708#file-1-appview-js](),
   // [http://addyosmani.github.io/backbone-fundamentals/#application-view]()).
   // CollectionView options that are merged as properties.
@@ -1386,13 +1483,15 @@
   Zeppelin.Controller = Zeppelin.View.extend({
     constructor: function (options) {
       options = options || {};
-      Zeppelin.View.prototype.constructor.apply(this, arguments);
       this.configure(options, controllerOptions);
       this.cid = _.uniqueId('controller');
       this.data = {};
       this.title = this.title || this.name;
       this.moduleName = 'controller';
+
       this.setTitle();
+
+      Zeppelin.View.prototype.constructor.apply(this, arguments);
     },
 
     // Sets the title for the `document`. The title can be set by overriding `title` or
@@ -1405,17 +1504,16 @@
 
     // Redirects the browser to the given `route` or url.
     redirect: function (route) {
-      this.publish('zeppelin:router:redirect', route);
+      this.publish('router:redirect', route);
       return this;
     },
 
-    // Initializes models and collections and persists them in `Zeppelin.Data`.
+    // Initializes models and collections and persists them in `Application.Data`.
     persistData: function (source) {
       if (_.isFunction(source)) source = new source();
-      if (Zeppelin.Data[source.name]) return false;
-      Zeppelin.Data[source.name] = source;
-      this[source.name] = source;
-      return this;
+      if (Application.Data[source.name]) return Application.Data[source.name];
+      Application.Data[source.name] = source;
+      return source;
     }
   });
 
@@ -1431,11 +1529,12 @@
   Zeppelin.FormView = Zeppelin.View.extend({
     constructor: function (options) {
       options = options || {};
-      Zeppelin.View.prototype.constructor.apply(this, arguments);
       this.configure(options, formViewOptions);
       this.cid = _.uniqueId('formView');
       this.moduleName = 'formView';
       this.modelIsBinded = false;
+
+      Zeppelin.View.prototype.constructor.apply(this, arguments);
     },
 
     // If true, the `model.save` will be called when the form is successfully validated and submitted.
@@ -1475,7 +1574,7 @@
       var _this = this;
       if (element && Zeppelin.isJqueryObject(element)) element = element[0];
       this.form = element || this.form || this.el;
-      var $form = this.$el.find(this.form);
+      var $form = this.find(this.form);
       this.$form = $form.length ? $form : this.$el;
 
       this.$form.on('submit', function (event) {
@@ -1539,7 +1638,20 @@
 
     // Sets the value of a `$form` element based on the given attribute name.
     setAttribute: function (name, value) {
-      this.$form.find('[data-model-attribute=' + name + ']').val(value);
+      var $element = this.$form.find('[data-model-attribute=' + name + ']');
+
+      if ($element.is(':radio, :checkbox') && (value === undefined || _.isBoolean(value))) {
+        if (value === undefined) {
+          $element.prop('checked', function (index, value) {
+            return !value;
+          });
+        } else {
+          $element.prop('checked', value);
+        }
+      } else {
+        this.$form.find('[data-model-attribute=' + name + ']').val(value);
+      }
+
       return this;
     },
 
@@ -1567,12 +1679,18 @@
         var value;
         var $element = Zeppelin.$(element);
         var attribute = $element.data('modelAttribute');
+        var $selected;
 
         if (Zeppelin.isFormField($element)) {
           if ($element.is('select')) {
             value = Zeppelin.$.trim($element.find('option').filter(':selected').val());
           } else if ($element.is(':radio, :checkbox')) {
-            value = Zeppelin.$.trim($element.filter(':checked').val());
+            $selected = $element.filter(':checked');
+            value = Zeppelin.$.trim($selected.val());
+
+            if (!value) {
+              value = $selected.length ? true : false;
+            }
           } else {
             value = Zeppelin.$.trim($element.val());
           }
@@ -1618,6 +1736,7 @@
       this.$form.find('[data-model-attribute]').each(function (index, element) {
         var value;
         var $element = Zeppelin.$(element);
+        var $selected;
         var domEvent = Zeppelin.isTextfield($element) ? 'keyup' : 'change';
         var modelAttribute = $element.data('modelAttribute');
 
@@ -1629,7 +1748,12 @@
           if ($element.is('select')) {
             value = Zeppelin.$.trim($element.find('option').filter(':selected').val());
           } else if ($element.is(':radio, :checkbox')) {
-            value = Zeppelin.$.trim($element.filter(':checked').val());
+            $selected = $element.filter(':checked');
+            value = Zeppelin.$.trim($selected.val());
+
+            if (!value) {
+              value = $selected.length ? true : false;
+            }
           } else {
             value = $element.val();
           }
@@ -1700,13 +1824,14 @@
   Zeppelin.CollectionView = Zeppelin.View.extend({
     constructor: function (options) {
       options = options || {};
-      Zeppelin.View.prototype.constructor.apply(this, arguments);
       this.configure(options, formViewOptions);
       this.cid = _.uniqueId('collectionView');
       this.moduleName = 'collectionView';
 
       this.setItem();
       this.setCollection();
+
+      Zeppelin.View.prototype.constructor.apply(this, arguments);
     },
 
     // If `autoUpdate` is true, every time `collection` fires an `add` event the model
@@ -1734,7 +1859,7 @@
     setList: function (element) {
       if (element && Zeppelin.isJqueryObject(element)) element = element[0];
       this.list = element || this.list || this.el;
-      var $list = this.$el.find(this.list);
+      var $list = this.find(this.list);
       this.$list = $list.length ? $list : this.$el;
       return this.$list;
     },
@@ -1773,23 +1898,23 @@
 
     // Renders a single model to `$list`.
     renderItem: function (item) {
-      var subview;
+      var child;
       this.beforeItemRenders(item);
-      subview = this.initializeSubView(this.itemView, {
+      child = this.initializeChild(this.itemView, {
         model: item
       });
-      subview.render();
+      child.render();
 
       // The first time the collection is rendered, a `DocumentFragment` will be used
       // to minimize browser reflows.
       if (this.isRendered) {
-        subview.insert(this.$list, this.insertMethod);
+        child.insert(this.$list, this.insertMethod);
       } else {
-        this.fragment.appendChild(subview.el);
+        this.fragment.appendChild(child.el);
       }
 
       this.afterItemRenders(item);
-      return subview;
+      return child;
     },
 
     // Extends `Zeppelin.View.render` to render the collection when the view is rendered.
@@ -1874,7 +1999,7 @@
     setToggler: function (element) {
       if (element && Zeppelin.isJqueryObject(element)) element = element[0];
       this.toggler = element || this.toggler || this.el;
-      var $toggler = this.$el.find(this.toggler);
+      var $toggler = this.find(this.toggler);
       this.$toggler = $toggler.length ? $toggler : this.$el;
       return this.$toggler;
     },
@@ -1944,7 +2069,7 @@
       wait(10, function () {
         Zeppelin.$('body').on('click.' + _this.cid, function (event) {
           var $target = Zeppelin.$(event.target);
-          if (!$target.is(_this.$toggler) || !_this.$el.find($target).length) _this.close();
+          if (!$target.is(_this.$toggler) || !_this.find($target).length) _this.close();
         });
       });
 

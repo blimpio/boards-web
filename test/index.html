@@ -9,19 +9,45 @@
       <div id="application"></div>
     </div>
 
+    <!-- Application JS -->
+    <script src="../public/js/app.js"></script>
+
     <!-- Testing Dependencies -->
     <script src="../bower_components/mocha/mocha.js"></script>
     <script src="../bower_components/chai/chai.js"></script>
+    <script src="../bower_components/sinonjs/sinon.js"></script>
+    <script src="../bower_components/sinon-chai/lib/sinon-chai.js"></script>
+    <script src="../bower_components/chai-jquery/chai-jquery.js"></script>
+
     <script>
       mocha.ui('bdd');
       mocha.reporter('html');
       window.expect = chai.expect;
     </script>
 
-    <!-- Application JS -->
-    <script src="../public/js/app.js"></script>
+    <script>
+      // Disable sockjs to use HTTP for tests.
+      window.SockJS = undefined;
+      window.APPLICATION_HTTP_URL = '';
+      window.APPLICATION_CONNECTION = 'HTTP';
+      window.APPLICATION_WEBSOCKET_URL = '';
+    </script>
 
     <!-- Tests -->
+    <script src="application-test.js"></script>
+
+    <!-- Lib -->
+    <script src="lib/connection-test.js"></script>
+    <script src="lib/helpers-test.js"></script>
+
+    <!-- Controllers -->
+    <script src="controllers/signup-test.js"></script>
+
+    <!-- Views -->
+    <script src="views/signup-form-test.js"></script>
+
+    <!-- Models -->
+    <script src="models/user-test.js"></script>
 
     <script>
       if (window.mochaPhantomJS) {

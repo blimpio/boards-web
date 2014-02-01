@@ -1,0 +1,5 @@
+module.exports = Zeppelin.Collection.extend({
+  name: {{#camelize}}{{pluralName}}{{/camelize}},
+
+  model: require('models/{{name}}')
+});

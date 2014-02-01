@@ -1,0 +1,8 @@
+<input type="text" class="signup__invitation-field">
+{{#if hasInviteDomains}}
+  <select class="signup__invitation-domains">
+    {{#each signup_domains}}
+      <option value="@{{this}}">@{{this}}</option>
+    {{/each}}
+  </select>
+{{/if}}
