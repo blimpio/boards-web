@@ -5,7 +5,7 @@
   }],
 
   "dependencies": [{
-    "name": "view_test",
+    "name": "formView_test",
     "params": "{{name}}"
   }]
 }

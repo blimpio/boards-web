@@ -1,0 +1,14 @@
+{
+  "files": [{
+    "from": "view.js.hbs",
+    "to": "app/views/{{pluralName}}.js"
+  }],
+
+  "dependencies": [{
+    "name": "collectionView_test",
+    "params": "{{name}}"
+  }, {
+    "name": "collection",
+    "params": "{{name}}"
+  }]
+}

@@ -1,8 +1,8 @@
 {
   "files": [{
-      "from": "collection_test.coffee.hbs",
-      "to": "test/collections/{{pluralName}}_test.coffee"
-    }],
+    "from": "collection-test.js.hbs",
+    "to": "test/collections/{{pluralName}}-test.js"
+  }],
 
-    "dependencies": []
+  "dependencies": []
 }

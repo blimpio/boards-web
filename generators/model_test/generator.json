@@ -1,8 +1,8 @@
 {
-    "files": [{
-        "from": "model_test.coffee.hbs",
-        "to": "test/models/{{name}}_test.coffee"
-    }],
+  "files": [{
+    "from": "model-test.js.hbs",
+    "to": "test/models/{{name}}-test.js"
+  }],
 
-    "dependencies": []
+  "dependencies": []
 }

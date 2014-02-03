@@ -1,0 +1,11 @@
+describe('{{#camelize}}{{pluralName}}{{/camelize}}Collection', function() {
+  var {{#camelize}}{{pluralName}}{{/camelize}}Collection = require('collections/{{pluralName}}');
+
+  beforeEach(function() {
+    this.collection = new {{#camelize}}{{pluralName}}{{/camelize}}Collection();
+  });
+
+  it('should exist.', function() {
+    expect(this.collection).to.be.ok;
+  });
+});

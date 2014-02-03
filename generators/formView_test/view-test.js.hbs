@@ -1,0 +1,16 @@
+describe('{{#camelize}}{{name}}{{/camelize}}FormView', function() {
+  var {{#camelize}}{{name}}{{/camelize}}FormView = require('views/{{name}}');
+
+  beforeEach(function() {
+    this.view = new {{#camelize}}{{name}}{{/camelize}}FormView();
+  });
+
+
+  it('should exist.', function() {
+    expect(this.view).to.exist;
+  });
+
+  it('should have a form.', function() {
+    expect(this.view.form).to.exist;
+  });
+});

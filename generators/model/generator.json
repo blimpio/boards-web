@@ -1,11 +1,11 @@
 {
-    "files": [{
-        "from": "model.coffee.hbs",
-        "to": "app/models/{{name}}.coffee"
-    }],
+  "files": [{
+    "from": "model.js.hbs",
+    "to": "app/models/{{name}}.js"
+  }],
 
-    "dependencies": [{
-        "name": "model_test",
-        "params": "{{name}}"
-    }]
+  "dependencies": [{
+    "name": "model_test",
+    "params": "{{name}}"
+  }]
 }

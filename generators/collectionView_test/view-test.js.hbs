@@ -1,0 +1,16 @@
+describe('{{#camelize}}{{name}}{{/camelize}}CollectionView', function() {
+  var {{#camelize}}{{name}}{{/camelize}}CollectionView = require('views/{{name}}');
+
+  beforeEach(function() {
+    this.view = new {{#camelize}}{{name}}{{/camelize}}CollectionView();
+  });
+
+
+  it('should exist.', function() {
+    expect(this.view).to.exist;
+  });
+
+  it('should have a list.', function() {
+    expect(this.view.list).to.exist;
+  });
+});
