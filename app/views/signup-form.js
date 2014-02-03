@@ -9,6 +9,8 @@ module.exports = Zeppelin.FormView.extend({
     'click button[data-action=redirectToFourthStep]': 'redirectToFourthStep',
     'click button[data-action=validateFullName]': 'validateFullName',
     'click button[data-action=validateAccountName]': 'validateAccountName',
+    'change select.signup__invitation-domains': 'addOtherDomainInput',
+    'click button[data-action="removeInvitationRow"]': 'removeInvitationRow',
     'click button[data-action=validateSignupDomains]': 'validateSignupDomains',
     'click button[data-action=skipSignupDomains]': 'skipSignupDomains',
     'click button[data-action=addInvitationRow]': 'addInvitationRow',
@@ -119,6 +121,21 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
+  addOtherDomainInput: function(event) {
+    var $select = $(event.currentTarget);
+
+    if ($select.val() === 'other') {
+      $select
+        .after(this.renderTemplate(require('templates/signup-invitation-domain-input')))
+        .next()
+          .focus()
+          .end()
+        .remove();
+
+      return this;
+    }
+  },
+
   validateSignupDomains: function(event) {
     var domains = [],
         allowSignup = this.getAttribute('allow_signup'),
@@ -171,24 +188,21 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
+  removeInvitationRow: function(event) {
+    $(event.currentTarget).parent().remove()
+  },
+
   validateInvitations: function(event) {
     var $error = this.find('[data-model-attribute-error=invite_emails]'),
         invitations = [],
-        $invitations = this.find('input.signup__invitation-field'),
+        $invitations = this.find('div.signup__invitation-row'),
         invitationsError = false;
 
     $invitations.each(function(index, element) {
-      $select = $(element).next('select');
+      var invitation = $(element).find('input.signup__invitation-field').val();
 
-      var invitation = '';
-
-      if (element.value) {
-        invitation = element.value;
-
-        if ($select.length) {
-          invitation += $select.val();
-        }
-
+      if (invitation) {
+        invitation += '@' + $(element).find('[data-domain-source=true]').val();
         invitations.push(invitation);
       }
     });

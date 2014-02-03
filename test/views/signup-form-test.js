@@ -194,6 +194,30 @@ describe('SignupForm', function() {
     });
   });
 
+  describe('SignupForm.addOtherDomainInput', function() {
+    it('should add a domain input field.', function() {
+      var select;
+
+      this.form.model.set({
+        'email': 'name@example.com',
+        'signup_request_token': this.token,
+        'first_name': 'Elving',
+        'last_name': 'Rodriguez',
+        'full_name': 'Elving Rodriguez',
+        'account_name': 'Blimp',
+        'allow_signup': true,
+        'signup_domains': ['example.com', 'example.net'],
+        'signup_step': 7
+      });
+
+      select = this.form.find('select.signup__invitation-domains')[0];
+      select.value = 'other';
+
+      this.form.addOtherDomainInput({currentTarget: select});
+      expect(this.form.find('input.signup__invitation-domain-input')).to.exist;
+    });
+  });
+
   describe('SignupForm.addInvitationRow', function() {
     it('should add an invitation row.', function() {
       this.form.renderStep(7);
@@ -203,8 +227,22 @@ describe('SignupForm', function() {
     });
   });
 
+  describe('SignupForm.removeInvitationRow', function() {
+    it('should remove an invitation row.', function() {
+      this.form.renderStep(7);
+
+      expect(this.form.find('input.signup__invitation-field').length).to.equal(3);
+
+      this.form.removeInvitationRow({
+        currentTarget: this.form.find('button[data-action=removeInvitationRow]')[0]
+      });
+
+      expect(this.form.find('input.signup__invitation-field').length).to.equal(2);
+    });
+  });
+
   describe('SignupForm.validateInvitations', function() {
-    it('should validate the email invites entered on the form and render the next step if it\'s validated.', function() {
+    it('should validate the email invites entered on the form and render the next step if it\'s validated (with select).', function() {
       this.form.model.set({
         'email': 'name@example.com',
         'signup_request_token': this.token,
@@ -223,6 +261,34 @@ describe('SignupForm', function() {
       this.form.validateInvitations();
       expect(this.form.model.get('invite_emails')).to.include('elving@example.com');
       expect(this.form.model.get('invite_emails')).to.include('elving@example.net');
+    });
+
+    it('should validate the email invites entered on the form and render the next step if it\'s validated (with inputs).', function() {
+      var select;
+
+      this.form.model.set({
+        'email': 'name@example.com',
+        'signup_request_token': this.token,
+        'first_name': 'Elving',
+        'last_name': 'Rodriguez',
+        'full_name': 'Elving Rodriguez',
+        'account_name': 'Blimp',
+        'allow_signup': true,
+        'signup_domains': ['example.com', 'example.net'],
+        'signup_step': 7
+      });
+
+      select = this.form.find('select.signup__invitation-domains')[1];
+      select.value = 'other';
+
+      this.form.find('input.signup__invitation-field').eq(0).val('elving');
+      this.form.find('input.signup__invitation-field').eq(1).val('elving');
+      this.form.find('select.signup__invitation-domains').eq(0).find('option').eq(0).prop('selected', true);
+      this.form.addOtherDomainInput({currentTarget: select});
+      this.form.find('input.signup__invitation-domain-input').eq(0).val('somedomain.com');
+      this.form.validateInvitations();
+      expect(this.form.model.get('invite_emails')).to.include('elving@example.com');
+      expect(this.form.model.get('invite_emails')).to.include('elving@somedomain.com');
     });
   });
 

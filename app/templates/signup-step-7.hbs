@@ -1,10 +1,10 @@
 <div class="signup__step" data-step="7">
   <h2>Send Invitations.</h2>
   <div class="signup__invitations">
-    {{partial "templates/signup-invitation-row" this}} <br>
-    {{partial "templates/signup-invitation-row" this}} <br>
-    {{partial "templates/signup-invitation-row" this}} <br>
-  </div> <br> {{! .signup__invitations }}
+    {{partial "templates/signup-invitation-row" this}}
+    {{partial "templates/signup-invitation-row" this}}
+    {{partial "templates/signup-invitation-row" this}}
+  </div> {{! .signup__invitations }}
   <div data-model-attribute-error="invite_emails"></div>
   <button type="button" data-action="addInvitationRow">Add invitation</button> <br>
   <button type="button" data-action="validateInvitations">Next</button>

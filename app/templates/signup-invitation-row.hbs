@@ -1,8 +1,15 @@
-<input type="text" class="signup__invitation-field">
-{{#if hasInviteDomains}}
-  <select class="signup__invitation-domains">
-    {{#each signup_domains}}
-      <option value="@{{this}}">@{{this}}</option>
-    {{/each}}
-  </select>
-{{/if}}
+<div class="signup__invitation-row">
+  <input type="text" class="signup__invitation-field">
+  <span class="signup__invitation-at">@</span>
+  {{#if hasInviteDomains}}
+    <select class="signup__invitation-domains" data-domain-source="true">
+      {{#each signup_domains}}
+        <option value="{{this}}">{{this}}</option>
+      {{/each}}
+      <option value="other">Other Domain</option>
+    </select> {{! .signup__invitation-domains }}
+  {{else}}
+    {{partial "templates/signup-invitation-domain-input" this}}
+  {{/if}}
+  <button type="button" data-action="removeInvitationRow">remove</button>
+</div> {{! .signup__invitation-row }}
