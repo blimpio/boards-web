@@ -619,8 +619,9 @@
   var isDeepAttribute = /\./g;
 
   Zeppelin.Model = Backbone.Model.extend({
-    constructor: function (attributes, options) {
+    constructor: function (options) {
       options = options || {};
+
       this.cid = _.uniqueId('model');
       this.name = options.name || this.name || this.cid;
       this.moduleName = 'model';
@@ -635,7 +636,7 @@
       this.configure(options, modelOptions);
       this.registerSubscriptions();
       this.beforeInitialized();
-      Backbone.Model.prototype.constructor.apply(this, arguments);
+      Backbone.Model.prototype.constructor.call(this, options.attributes || void 0);
       if (this.autoFetch) this.fetch();
       this.afterInitialized();
     },
@@ -1633,7 +1634,13 @@
 
     // Gets the value of a `$form` element based on the given attribute name.
     getAttribute: function (name) {
-      return this.$form.find('[data-model-attribute=' + name + ']').val();
+      var $element = this.$form.find('[data-model-attribute=' + name + ']');
+
+      if ($element.is(':radio, :checkbox')) {
+        return $element.prop('checked');
+      }
+
+      return $element.val();
     },
 
     // Sets the value of a `$form` element based on the given attribute name.

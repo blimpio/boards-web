@@ -19,6 +19,8 @@ module.exports = Zeppelin.FormView.extend({
     'click button[data-action=validatePassword]': 'validatePassword'
   },
 
+  saveOnSubmit: false,
+
   initialize: function() {
     this.listenTo(this.model, 'change:signup_step', this.onSignupStepChange);
     this.renderStep();
