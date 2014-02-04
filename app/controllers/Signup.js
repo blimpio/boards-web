@@ -19,12 +19,14 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   continueWithToken: function(data) {
-    if (data && data.token) {
-      this.user.setEmailFromJWT(data.token).updateSignupStep(3);
-    } else if (this.user.isWaitingForEmailValidation()) {
-      this.user.updateSignupStep(2).trigger('change:signup_step');
-    } else {
-      this.user.updateSignupStep(1);
+    if (this.user.get('signup_step') < 3) {
+      if (data && data.token) {
+        this.user.setEmailFromJWT(data.token).updateSignupStep(3);
+      } else if (this.user.isWaitingForEmailValidation()) {
+        this.user.updateSignupStep(2).trigger('change:signup_step');
+      } else {
+        this.user.updateSignupStep(1);
+      }
     }
   }
 });
