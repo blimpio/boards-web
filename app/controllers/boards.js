@@ -10,7 +10,6 @@ module.exports = Zeppelin.Controller.extend({
     this.user.fetch({fromCache: true});
 
     if (!this.user.isLoggedIn()) {
-      console.log('lkwnflwk');
       this.redirect('login');
     }
   }
