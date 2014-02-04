@@ -8,6 +8,10 @@ module.exports = Zeppelin.Controller.extend({
   initialize: function() {
     this.user = this.persistData(require('models/user'));
     this.user.fetch({fromCache: true});
+
+    if (this.user.isLoggedIn()) {
+      this.redirect('boards');
+    }
   },
 
   afterInserted: function() {
