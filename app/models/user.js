@@ -70,5 +70,9 @@ module.exports = Zeppelin.Model.extend({
   signup: function(user) {
     user = user || this.toJSON();
     return Application.connection.post('/api/auth/signup/', user);
+  },
+
+  isLoggedIn: function() {
+    return this.has('token') && this.get('token') !== '';
   }
 });

@@ -116,4 +116,16 @@ describe('UserModel', function() {
       this.server.respond();
     });
   });
+
+  describe('UserModel.isLoggedIn', function() {
+    it('should return true when the user is logged in.', function() {
+      this.user.set({token: '123456789098765432'});
+      expect(this.user.isLoggedIn()).to.be.true;
+    });
+
+    it('should return false when the user is not logged in.', function() {
+      this.user.unset('token');
+      expect(this.user.isLoggedIn()).to.be.false;
+    });
+  });
 });
