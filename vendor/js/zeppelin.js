@@ -718,8 +718,8 @@
     // `this.attributes.name.last`.
     getDeepAttribute: function (attribute) {
       if (isDeepAttribute.test(attribute)) {
-        var first = this.get(attributes.split('.')[0]);
-        var rest = attributes.slice(1).join('.');
+        var first = this.get(attribute.split('.')[0]);
+        var rest = attribute.split('.').slice(1).join('.');
         var func = 'try{return first.' + rest + ';}catch(e){return undefined;}';
         if (first) return new Function('first', func)(first);
       }
@@ -1511,9 +1511,18 @@
 
     // Initializes models and collections and persists them in `Application.Data`.
     persistData: function (source) {
-      if (_.isFunction(source)) source = new source();
-      if (Application.Data[source.name]) return Application.Data[source.name];
-      Application.Data[source.name] = source;
+      var sourceName = source;
+
+      if (_.isFunction(source)) {
+        source = new source();
+        sourceName = source.name;
+      }
+
+      if (Application.Data[source.name]) {
+        return Application.Data[sourceName];
+      }
+
+      Application.Data[sourceName] = source;
       return source;
     }
   });
