@@ -278,7 +278,11 @@ module.exports = Zeppelin.FormView.extend({
 
     if (!this.model.validationError) {
       return this.model.signup().done(function(data) {
-        this.model.set(data).unset('signup_request_token').unset('password');
+        this.model
+          .set(data)
+          .unset('signup_request_token')
+          .unset('password')
+          .updateCache();
       }.bind(this)).fail(function(error) {
         this.find('[data-model-attribute-error=password]').show().text(error.password);
       }.bind(this));
