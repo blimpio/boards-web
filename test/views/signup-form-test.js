@@ -290,6 +290,26 @@ describe('SignupForm', function() {
       expect(this.form.model.get('invite_emails')).to.include('elving@example.com');
       expect(this.form.model.get('invite_emails')).to.include('elving@somedomain.com');
     });
+
+    it('should set an \'invite_emails\' attribute even if no invites were added in the form.', function() {
+      var select;
+
+      this.form.model.set({
+        'email': 'name@example.com',
+        'signup_request_token': this.token,
+        'first_name': 'Elving',
+        'last_name': 'Rodriguez',
+        'full_name': 'Elving Rodriguez',
+        'account_name': 'Blimp',
+        'allow_signup': true,
+        'signup_domains': ['example.com', 'example.net'],
+        'signup_step': 7
+      });
+
+      this.form.validateInvitations();
+      expect(this.form.model.has('invite_emails')).to.be.true;
+      expect(this.form.model.get('invite_emails')).to.eql([]);
+    });
   });
 
   describe('SignupForm.validateUsername', function() {

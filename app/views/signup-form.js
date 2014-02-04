@@ -227,6 +227,8 @@ module.exports = Zeppelin.FormView.extend({
     if (!invitationsError) {
       if (invitations) {
         this.model.set('invite_emails', invitations);
+      } else {
+        this.model.set('invite_emails', []);
       }
 
       this.model.updateSignupStep(8);
