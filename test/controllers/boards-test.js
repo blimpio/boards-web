@@ -7,11 +7,12 @@ describe('BoardsController', function() {
     this.redirectSpy = sinon.spy(BoardsController.prototype, 'redirect');
 
     this.controller = new BoardsController();
-    this.controller.insert('#application');
   });
 
   after(function() {
     BoardsController.prototype.redirect.restore();
+    this.controller.dispose();
+    delete this.controller;
   });
 
   it('should exist.', function() {

@@ -26,6 +26,12 @@ describe('UserModel', function() {
     this.server.restore();
   });
 
+  after(function() {
+    this.user.clear();
+    this.user.clearCache();
+    delete this.user;
+  });
+
   it('should exist.', function() {
     expect(this.user).to.exist;
   });
@@ -117,15 +123,48 @@ describe('UserModel', function() {
     });
   });
 
-  describe('UserModel.isLoggedIn', function() {
+  describe('UserModel.isSignedIn', function() {
     it('should return true when the user is logged in.', function() {
       this.user.set({token: '123456789098765432'});
-      expect(this.user.isLoggedIn()).to.be.true;
+      expect(this.user.isSignedIn()).to.be.true;
     });
 
     it('should return false when the user is not logged in.', function() {
       this.user.unset('token');
-      expect(this.user.isLoggedIn()).to.be.false;
+      expect(this.user.isSignedIn()).to.be.false;
+    });
+  });
+
+  describe('UserModel.signin', function() {
+    it('should return a promise.', function() {
+      var url = '/api/auth/signin/',
+          contentType = {"Content-Type":"application/json"};
+
+      this.server.respondWith('POST', url, [200, contentType, 'OK']);
+      expect(this.user.signin().promise).to.exist;
+      this.server.respond();
+    });
+  });
+
+  describe('UserModel.signout', function() {
+    it('should signout the user.', function() {
+      this.user.set({
+        email: 'email@example.com',
+        username: 'fulano',
+        token: '1234567890'
+      }).updateCache();
+
+      expect(this.user.has('email')).to.be.true;
+      expect(this.user.has('username')).to.be.true;
+      expect(this.user.has('token')).to.be.true;
+      expect(this.user.storage.get('token')).to.exist;
+
+      this.user.signout();
+
+      expect(this.user.has('email')).to.be.false;
+      expect(this.user.has('username')).to.be.false;
+      expect(this.user.has('token')).to.be.false;
+      expect(this.user.storage.get('token')).to.not.exist;
     });
   });
 });

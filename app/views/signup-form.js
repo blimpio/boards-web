@@ -22,6 +22,7 @@ module.exports = Zeppelin.FormView.extend({
   saveOnSubmit: false,
 
   initialize: function() {
+    this.model.validations = {};
     this.listenTo(this.model, 'change:signup_step', this.onSignupStepChange);
     this.renderStep();
   },
@@ -46,6 +47,16 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validateEmail: function(event) {
+    if (!this.model.hasValidation('email')) {
+      this.model.addValidation('email', [{
+        required: true,
+        message: 'An email is required to authenticate you.'
+      }, {
+        isEmail: true,
+        message: 'Provide a valid email.'
+      }]);
+    }
+
     this.model.setValidate('email', this.getAttribute('email'));
 
     if (!this.model.validationError) {

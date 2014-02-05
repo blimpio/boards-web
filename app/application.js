@@ -1,6 +1,8 @@
 var Application = new Zeppelin.Application({
   routes: {
     'signup(/)': 'signup',
+    'signin(/)': 'signin',
+    'signout(/)': 'signout',
     'signup?token:token(/)': 'signup#continueWithToken',
     'boards(/)': 'boards'
   },

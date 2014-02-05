@@ -41,6 +41,11 @@ describe('SignupForm', function() {
     this.server.restore();
   });
 
+  after(function() {
+    this.form.dispose();
+    delete this.form;
+  });
+
   it('should exist.', function() {
     expect(this.form).to.exist;
   });
@@ -380,5 +385,4 @@ describe('SignupForm', function() {
       this.server.respond();
     });
   });
-
 });

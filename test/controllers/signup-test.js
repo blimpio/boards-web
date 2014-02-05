@@ -8,11 +8,12 @@ describe('SignupController', function() {
     this.redirectSpy = sinon.spy(SignupController.prototype, 'redirect');
 
     this.controller = new SignupController();
-    this.controller.insert('#application');
   });
 
   after(function() {
     SignupController.prototype.redirect.restore();
+    this.controller.dispose();
+    delete this.controller;
   });
 
   it('should exist.', function() {

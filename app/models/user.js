@@ -7,16 +7,6 @@ module.exports = Zeppelin.Model.extend({
     signup_step: 1
   },
 
-  validations: {
-    email: [{
-      required: true,
-      message: 'An email is required to authenticate you.'
-    }, {
-      isEmail: true,
-      message: 'Provide a valid email.'
-    }]
-  },
-
   localAttributes: ['name', 'signup_step'],
 
   requestSignup: function() {
@@ -72,7 +62,17 @@ module.exports = Zeppelin.Model.extend({
     return Application.connection.post('/api/auth/signup/', user);
   },
 
-  isLoggedIn: function() {
+  signin: function(user) {
+    user = user || this.toJSON();
+    return Application.connection.post('/api/auth/signin/', user);
+  },
+
+  signout: function() {
+    this.clear();
+    this.clearCache();
+  },
+
+  isSignedIn: function() {
     return this.has('token') && this.get('token') !== '';
   }
 });

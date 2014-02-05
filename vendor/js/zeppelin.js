@@ -241,6 +241,10 @@
       return value && _.isRegExp(regexp) && regexp.test(value);
     },
 
+    isBlank: function (value) {
+      return value != null && value === '';
+    },
+
     isEqual: function (value, test) {
       return value && _.isEqual(value, test);
     },
@@ -301,7 +305,7 @@
     },
 
     isAlphanumeric: function (value) {
-      return value && /^\w+$/.test(value);
+      return value && _.isString(value) && /^\w+$/.test(value);
     },
 
     isPhone: function (value) {
@@ -439,7 +443,6 @@
       if (!this.current || isDifferentController) {
         if (isDifferentController) this.current.dispose();
         this.current = new Controller();
-        this.current.insert('#application');
       }
 
       if (action) this.current[action](data);
@@ -641,6 +644,8 @@
       this.afterInitialized();
     },
 
+    validations: {},
+
     // Empty function by default, override it with your own logic to run before the model is initialized.
     beforeInitialized: function () {
 
@@ -814,11 +819,16 @@
 
       _.forOwn(_this.validations, function (validations, attribute) {
         var validationFunctionResult;
+
         var isRequired = _.find(_this.validations[attribute], function (validation) {
           return _.indexOf(_.keys(validation), 'required') !== -1;
         });
 
-        if (!isRequired && !attributes[attribute]) return false;
+        var isBlank = _.find(_this.validations[attribute], function (validation) {
+          return _.indexOf(_.keys(validation), 'isBlank') !== -1;
+        });
+
+        if (!isRequired && !isBlank && attributes[attribute] != null) return false;
 
         if (_.isFunction(validations)) {
           validationFunctionResult = validations(attributes[attribute]);
@@ -1319,6 +1329,10 @@
     unplug: function () {
       var _this = this;
 
+      if (Object.isFrozen(this)) {
+        return false;
+      }
+
       this.state = 'unplugged';
       this.beforeUnplugged();
       this.stopListening();
@@ -1347,6 +1361,11 @@
     // referencing it in other views).
     dispose: function () {
       var _this = this;
+
+      if (Object.isFrozen(this)) {
+        return false;
+      }
+
       this.state = 'disposed';
       this.beforeDisposed();
       this.unplug();
@@ -1665,7 +1684,7 @@
           $element.prop('checked', value);
         }
       } else {
-        this.$form.find('[data-model-attribute=' + name + ']').val(value);
+        $element.val(value);
       }
 
       return this;
