@@ -7,7 +7,7 @@ module.exports = Zeppelin.Model.extend({
     signup_step: 1
   },
 
-  localAttributes: ['name', 'signup_step'],
+  localAttributes: ['signup_step', 'passwordReset'],
 
   requestSignup: function() {
     return Application.connection.post('/api/auth/signup_request/', {
@@ -16,10 +16,11 @@ module.exports = Zeppelin.Model.extend({
   },
 
   setEmailFromJWT: function(token) {
+    var tokenData;
+
     token = token || '';
     token = token.replace(/^=/, '');
-
-    var tokenData = _.decodeJWT(token);
+    tokenData = _.decodeJWT(token);
 
     if (tokenData.email) {
       this.set({
@@ -74,5 +75,45 @@ module.exports = Zeppelin.Model.extend({
 
   isSignedIn: function() {
     return this.has('token') && this.get('token') !== '';
+  },
+
+  forgotPassword: function(email) {
+    email = email || this.get('email');
+    return Application.connection.post('/api/auth/forgot_password/', {email: email});
+  },
+
+  setPasswordResetDataFromJWT: function(token) {
+    var tokenData;
+
+    token = token || '';
+    token = token.replace(/^=/, '');
+    tokenData = _.decodeJWT(token);
+
+    if (tokenData.type === 'PasswordReset') {
+      this.set({
+        passwordResetData: {
+          id: tokenData.id,
+          type: tokenData.type,
+          token: token,
+          version: tokenData.token_version
+        }
+      }).updateCache();
+    }
+
+    return this;
+  },
+
+  canResetPassword: function() {
+    var reset = this.get('passwordResetData');
+    return this.isSignedIn() || (reset && reset.token && reset.type === 'PasswordReset');
+  },
+
+  resetPassword: function(password) {
+    if (this.canResetPassword() && password) {
+      return Application.connection.post('/api/auth/reset_password/', {
+        token: this.get('passwordResetData').token,
+        password: password
+      });
+    }
   }
 });

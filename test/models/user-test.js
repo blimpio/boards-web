@@ -1,11 +1,12 @@
 describe('UserModel', function() {
-  var User = require('models/user');
+  var UserModel = require('models/user');
   var Connection = require('lib/connection');
 
   before(function() {
     this.token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAibmFtZUBleGFtcGxlLmNvbSJ9.PTbp7CGAJ3C4woorlCeWHRKqkcP7ZuiuWxn0FEiK9-0';
+    this.passToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogIjRlMjMwM2IyLWIwYmEtNDA2OS05NzM2LTBlMDkzZDNmZTQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.4JaqInkg-5p63cHQdJz1pfm7kfijinab9XK1h6jDk-Q';
 
-    this.user = new User();
+    this.user = new UserModel();
     this.Application = require('application');
 
     this.Application.connection = new Connection({
@@ -165,6 +166,59 @@ describe('UserModel', function() {
       expect(this.user.has('username')).to.be.false;
       expect(this.user.has('token')).to.be.false;
       expect(this.user.storage.get('token')).to.not.exist;
+    });
+  });
+
+  describe('UserModel.forgotPassword', function() {
+    it('should return a promise.', function() {
+      var url = '/api/auth/forgot_password/',
+          contentType = {"Content-Type":"application/json"};
+
+      this.server.respondWith('POST', url, [200, contentType, 'OK']);
+      expect(this.user.forgotPassword().promise).to.exist;
+      this.server.respond();
+    });
+  });
+
+  describe('UserModel.setPasswordResetDataFromJWT', function() {
+    it('should set password reset data decoded from a JWT.', function() {
+      this.user.setPasswordResetDataFromJWT(this.passToken);
+      expect(this.user.get('passwordResetData')).to.exist;
+      expect(this.user.get('passwordResetData').id).to.exist;
+      expect(this.user.get('passwordResetData').type).to.exist;
+      expect(this.user.get('passwordResetData').token).to.exist;
+      expect(this.user.get('passwordResetData').version).to.exist;
+    });
+  });
+
+  describe('UserModel.canResetPassword', function() {
+    it('should return false if the user is not logged in.', function() {
+      this.user.clear().clearCache();
+      expect(this.user.canResetPassword()).to.not.be.ok;
+    });
+
+    it('should return true if the user is logged in.', function() {
+      this.user.clear().clearCache();
+      this.user.set('token', this.token);
+      expect(this.user.canResetPassword()).to.be.true;
+    });
+
+    it('should return true if the user has password reset token.', function() {
+      this.user.clear().clearCache();
+      this.user.setPasswordResetDataFromJWT(this.passToken);
+      expect(this.user.canResetPassword()).to.be.true;
+    });
+  });
+
+  describe('UserModel.resetPassword', function() {
+    it('should return a promise.', function() {
+      var url = '/api/auth/forgot_password/',
+          contentType = {"Content-Type":"application/json"};
+
+      this.server.respondWith('POST', url, [200, contentType, 'OK']);
+      this.user.setPasswordResetDataFromJWT(this.passToken);
+      expect(this.user.resetPassword('password1').promise).to.exist;
+      this.server.respond();
     });
   });
 });

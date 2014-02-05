@@ -4,6 +4,9 @@ var Application = new Zeppelin.Application({
     'signin(/)': 'signin',
     'signout(/)': 'signout',
     'signup?token:token(/)': 'signup#continueWithToken',
+    'forgot_password(/)': 'forgot-password',
+    'reset_password(/)': 'reset-password#renderForm',
+    'reset_password?token:token(/)': 'reset-password#validateToken',
     'boards(/)': 'boards'
   },
 
