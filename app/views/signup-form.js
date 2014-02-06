@@ -202,7 +202,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   removeInvitationRow: function(event) {
-    $(event.currentTarget).parent().remove()
+    $(event.currentTarget).parent().remove();
   },
 
   validateInvitations: function(event) {
