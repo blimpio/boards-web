@@ -6,7 +6,7 @@ Blimp Boards Front-End for the web client.
 Dependencies
 ------------
 
-    $ npm install -g brunch gulp scaffolt
+    $ npm install -g brunch gulp scaffolt bower
 
 Install
 -------
