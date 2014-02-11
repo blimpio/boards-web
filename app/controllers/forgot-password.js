@@ -1,42 +1,22 @@
-module.exports = Zeppelin.Controller.extend({
+module.exports = Zeppelin.View.extend({
   name: 'ForgotPasswordController',
-
-  title: 'Blimp | Password Recovery',
 
   template: require('templates/forgot-password'),
 
-  events: {
-    'click button[data-action=sendPasswordRecoveryEmail]': 'sendPasswordRecoveryEmail'
-  },
-
-  elements: {
-    'email': 'input.forgot-password__email-field',
-    'error': 'div.forgot-password__email-error'
-  },
-
   initialize: function() {
-    this.user = this.persistData(require('models/user'));
-    this.user.fetch({fromCache: true});
+    document.title = 'Blimp | Password Recovery';
+
+    this.user = Boards.getUser();
+    this.user.fetchCache();
 
     if (this.user.isSignedIn()) {
-      this.redirect('boards');
+      this.publish('router:navigate', 'boards');
     } else {
-      this.insert('#application');
+      this.insert('#application').initForm();
     }
   },
 
-  sendPasswordRecoveryEmail: function() {
-    var email = this.$email.val();
-
-    if (Zeppelin.Validations.isEmail(email)) {
-      return this.user.forgotPassword(email).done(function(data) {
-        this.$error.text('');
-        this.user.set(data).updateCache();
-      }.bind(this)).fail(function(error) {
-        this.$error.text(error.email);
-      }.bind(this));
-    } else {
-      this.$error.text('Provide a valid email.');
-    }
+  initForm: function() {
+    return this.addChild(require('views/forgot-password-form'), {model: this.user}).render();
   }
 });

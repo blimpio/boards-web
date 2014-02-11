@@ -1,32 +1,28 @@
-module.exports = Zeppelin.Controller.extend({
+module.exports = Zeppelin.View.extend({
   name: 'SigninController',
-
-  title: 'Blimp | Signin',
 
   template: require('templates/signin'),
 
   subscriptions: {
     'user:signed:in': function() {
-      this.redirect('boards');
+      this.publish('router:navigate', 'boards');
     }
   },
 
   initialize: function() {
-    this.user = this.persistData(require('models/user'));
-    this.user.fetch({fromCache: true});
+    document.title = 'Blimp | Signin';
+
+    this.user = Boards.getUser();
+    this.user.fetchCache();
 
     if (this.user.isSignedIn()) {
-      this.redirect('boards');
+      this.publish('router:navigate', 'boards');
     } else {
-      this.insert('#application');
+      this.insert('#application').initForm();
     }
   },
 
-  afterInserted: function() {
-    var SigninFormView = require('views/signin-form');
-
-    this.signinForm = this.initializeChild(SigninFormView, {
-      model: this.user
-    });
-  },
+  initForm: function() {
+    return this.addChild(require('views/signin-form'), {model: this.user}).render();
+  }
 });

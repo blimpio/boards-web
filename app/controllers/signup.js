@@ -1,33 +1,35 @@
-module.exports = Zeppelin.Controller.extend({
+module.exports = Zeppelin.View.extend({
   name: 'SignupController',
-
-  title: 'Blimp | Signup',
 
   template: require('templates/signup'),
 
-  initialize: function() {
-    this.user = this.persistData(require('models/user'));
-    this.user.fetch({fromCache: true});
-
-    if (this.user.isSignedIn()) {
-      this.redirect('boards');
-    } else {
-      this.insert('#application');
+  subscriptions: {
+    'user:signed:in': function() {
+      this.publish('router:navigate', 'boards');
     }
   },
 
-  afterInserted: function() {
-    var SignupFormView = require('views/signup-form');
+  initialize: function() {
+    document.title = 'Blimp | Signup';
 
-    this.signupForm = this.initializeChild(SignupFormView, {
-      model: this.user
-    });
+    this.user = Boards.getUser();
+    this.user.fetchCache();
+
+    if (this.user.isSignedIn()) {
+      this.publish('router:navigate', 'boards');
+    } else {
+      this.insert('#application').initForm();
+    }
   },
 
-  continueWithToken: function(data) {
+  initForm: function() {
+    return this.addChild(require('views/signup-form'), {model: this.user}).render();
+  },
+
+  continueWithToken: function(token) {
     if (this.user.get('signup_step') < 3) {
-      if (data && data.token) {
-        this.user.setEmailFromJWT(data.token).updateSignupStep(3);
+      if (token) {
+        this.user.setEmailFromJWT(token).updateSignupStep(3);
       } else if (this.user.isWaitingForEmailValidation()) {
         this.user.updateSignupStep(2).trigger('change:signup_step');
       } else {

@@ -1,16 +1,16 @@
-module.exports = Zeppelin.Controller.extend({
+module.exports = Zeppelin.View.extend({
   name: 'BoardsController',
-
-  title: 'Blimp | Boards',
 
   template: require('templates/boards'),
 
   initialize: function() {
-    this.user = this.persistData(require('models/user'));
-    this.user.fetch({fromCache: true});
+    document.title = 'Blimp | Boards';
+
+    this.user = Boards.getUser();
+    this.user.fetchCache();
 
     if (!this.user.isSignedIn()) {
-      this.redirect('login');
+      this.publish('router:navigate', 'signin');
     } else {
       this.insert('#application');
     }

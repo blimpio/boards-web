@@ -5,51 +5,39 @@ module.exports = Zeppelin.FormView.extend({
 
   template: require('templates/signin-form'),
 
-  saveOnSubmit: false,
-
-  events: {
-    'click button[data-action=signin]': 'signin'
-  },
-
   initialize: function() {
     this.addValidations();
   },
 
   addValidations: function() {
-    this.model.validations = {};
+    this.model.addValidation('username', [{
+      isEmpty: false,
+      message: 'A username is required to authenticate you.'
+    }, {
+      isAlphanumeric: true,
+      message: 'Your username must be an alphanumeric value.'
+    }]);
 
-    if (!this.model.hasValidation('username')) {
-      this.model.addValidation('username', [{
-        required: true,
-        message: 'A username is required to authenticate you.'
-      }, {
-        isAlphanumeric: true,
-        message: 'Your username must be an alphanumeric value.'
-      }]);
-    }
-
-    if (!this.model.hasValidation('password')) {
-      this.model.addValidation('password', [{
-        required: true,
-        message: 'A password is required to authenticate you.'
-      }, {
-        minLength: 8,
-        message: 'Your password must have a minimun of 8 characters.'
-      }]);
-    }
+    this.model.addValidation('password', [{
+      isEmpty: false,
+      message: 'A password is required to authenticate you.'
+    }, {
+      isOfMinimumLength: 8,
+      message: 'Your password must have a minimun of 8 characters.'
+    }]);
   },
 
-  signin: function() {
-    var $errorElement = this.find('[data-model-attribute-error=password]');
+  onSubmit: function(event) {
+    event.preventDefault();
 
     this.setAttributes();
 
     if (!this.model.validationError) {
       return this.model.signin().done(function(data) {
-        this.model.clear().set(data).updateCache();
+        this.model.clear().set(data).saveCache();
         this.publish('user:signed:in');
       }.bind(this)).fail(function(error) {
-        $errorElement.show().text(error.non_field_errors);
+        this.getAttributeErrorElement('password').text(error.non_field_errors);
       }.bind(this));
     }
   }

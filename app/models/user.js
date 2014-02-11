@@ -1,8 +1,6 @@
 module.exports = Zeppelin.Model.extend({
   name: 'User',
 
-  cache: true,
-
   defaults: {
     signup_step: 1
   },
@@ -10,7 +8,7 @@ module.exports = Zeppelin.Model.extend({
   localAttributes: ['signup_step', 'passwordReset'],
 
   requestSignup: function() {
-    return Application.connection.post('/api/auth/signup_request/', {
+    return Boards.Connection.post('/api/auth/signup_request/', {
       email: this.get('email')
     });
   },
@@ -37,40 +35,41 @@ module.exports = Zeppelin.Model.extend({
   },
 
   updateSignupStep: function(step) {
-    this.set('signup_step', step).updateCache();
+    this.set('signup_step', step).saveCache();
     return this;
   },
 
   validateSignupEmailDomain: function(domains) {
-    return Application.connection.post('/api/auth/signup_domains/validate/', {
+    return Boards.Connection.post('/api/auth/signup_domains/validate/', {
       signup_domains: domains
     });
   },
 
   hasInviteDomains: function() {
     var domains = this.get('signup_domains');
-    return domains != null && domains.length > 0;
+    return domains && domains.length > 0;
   },
 
   validateUsername: function() {
-    return Application.connection.post('/api/auth/username/validate/', {
+    return Boards.Connection.post('/api/auth/username/validate/', {
       username: this.get('username')
     });
   },
 
   signup: function(user) {
     user = user || this.toJSON();
-    return Application.connection.post('/api/auth/signup/', user);
+    return Boards.Connection.post('/api/auth/signup/', user);
   },
 
   signin: function(user) {
     user = user || this.toJSON();
-    return Application.connection.post('/api/auth/signin/', user);
+    return Boards.Connection.post('/api/auth/signin/', user);
   },
 
   signout: function() {
     this.clear();
-    this.clearCache();
+    this.cache.clearAll();
+    return this;
   },
 
   isSignedIn: function() {
@@ -79,7 +78,7 @@ module.exports = Zeppelin.Model.extend({
 
   forgotPassword: function(email) {
     email = email || this.get('email');
-    return Application.connection.post('/api/auth/forgot_password/', {email: email});
+    return Boards.Connection.post('/api/auth/forgot_password/', {email: email});
   },
 
   setPasswordResetDataFromJWT: function(token) {
@@ -97,7 +96,7 @@ module.exports = Zeppelin.Model.extend({
           token: token,
           version: tokenData.token_version
         }
-      }).updateCache();
+      }).saveCache();
     }
 
     return this;
@@ -110,7 +109,7 @@ module.exports = Zeppelin.Model.extend({
 
   resetPassword: function(password) {
     if (this.canResetPassword() && password) {
-      return Application.connection.post('/api/auth/reset_password/', {
+      return Boards.Connection.post('/api/auth/reset_password/', {
         token: this.get('passwordResetData').token,
         password: password
       });
