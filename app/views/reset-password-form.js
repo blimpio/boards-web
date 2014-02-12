@@ -3,16 +3,14 @@ module.exports = Zeppelin.FormView.extend({
 
   el: 'form.reset-password__form',
 
-  events: {
-    'click button[data-action=resetPassword]': 'resetPassword'
-  },
-
   initialize: function() {
     this.setForm();
   },
 
-  resetPassword: function() {
+  onSubmit: function(event) {
     var password = this.getAttributeValue('password');
+
+    event.preventDefault()
 
     if (Z.Validations.isOfMinimumLength(password, 8)) {
       return this.model.resetPassword(password).done(function(data) {

@@ -51,8 +51,8 @@ describe('ResetPasswordForm', function() {
     });
   });
 
-  describe('sendPasswordRecoveryEmail', function() {
-    it('should send the password recovery email if a valid email.', function(done) {
+  describe('onSubmit', function() {
+    it('should reset the password if a valid password is provided.', function(done) {
       var url = '/api/auth/reset_password/',
           contentType = {"Content-Type":"application/json"};
 
@@ -62,7 +62,7 @@ describe('ResetPasswordForm', function() {
         request.respond(200, contentType, '{"token": "' + JWT_TEST_TOKEN + '"}');
       });
 
-      formView.resetPassword().done(function() {
+      formView.onSubmit({preventDefault: function(){}}).done(function() {
         expect(formView.model.get('token')).to.exist;
         done();
       }.bind(this));

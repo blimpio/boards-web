@@ -52,7 +52,7 @@ describe('ForgotPasswordForm', function() {
   });
 
   describe('onSubmit', function() {
-    it('should send the password recovery email if a valid email.', function(done) {
+    it('should send the password recovery email if a valid email is provided.', function(done) {
       var url = '/api/auth/forgot_password/',
           contentType = {"Content-Type":"application/json"};
 
