@@ -5,7 +5,6 @@ describe('SignupForm', function() {
       Connection = require('lib/connection');
 
   before(function() {
-    console.log(SignupForm.prototype);
     $('#application').append('<form class="signup"></form>');
 
     Boards.Connection = new Connection({
@@ -57,6 +56,31 @@ describe('SignupForm', function() {
     });
   });
 
+  describe('onSubmit', function() {
+    it('should try to validate the current step and render the next one.', function() {
+      formView.renderStep(7);
+
+      formView.model.set({
+        'email': 'name@example.com',
+        'signup_request_token': JWT_TEST_TOKEN,
+        'first_name': 'Elving',
+        'last_name': 'Rodriguez',
+        'full_name': 'Elving Rodriguez',
+        'account_name': 'Blimp',
+        'allow_signup': true,
+        'signup_domains': ['example.com', 'example.net'],
+        'signup_step': 7
+      });
+
+      formView.$('input.signup__invitation-field').eq(0).val('elving');
+      formView.$('input.signup__invitation-field').eq(1).val('elving');
+      formView.$('select.signup__invitation-domains').find('option').eq(1).prop('selected', true);
+      formView.onSubmit({preventDefault: function(){}});
+      expect(formView.model.get('signup_step')).to.equal(8);
+      expect(formView.$('[data-step=8]')).to.exist;
+    });
+  });
+
   describe('onSignupStepChange', function() {
     it('should invoke renderStep when the model triggers a change:signup_step event.', function() {
       renderStepSpy.reset();
@@ -87,7 +111,6 @@ describe('SignupForm', function() {
       formView.validateEmail().done(function() {
         expect(formView.model.get('email')).to.equal('name@example.com');
         expect(formView.model.get('signup_step')).to.equal(2);
-        console.log(formView.$el.html());
         expect(formView.$('[data-step=2]')).to.exist;
         done();
       }.bind(this));

@@ -27,6 +27,11 @@ module.exports = Zeppelin.FormView.extend({
     this.renderStep();
   },
 
+  onSubmit: function(event) {
+    event.preventDefault();
+    this[this.$('[data-next-step]').data('action')]();
+  },
+
   onSignupStepChange: function(model, step) {
     this.renderStep(step);
   },
@@ -43,6 +48,11 @@ module.exports = Zeppelin.FormView.extend({
     }
 
     this.render(require('templates/signup-steps/' + nextStep));
+
+    if (step === 7) {
+      this.$('input.signup__invitation-field').first().focus();
+    }
+
     return this;
   },
 
@@ -173,6 +183,7 @@ module.exports = Zeppelin.FormView.extend({
   addInvitationRow: function(event) {
     this.registerElement('invitations', 'div.signup__invitations');
     this.$invitations.append(require('templates/signup-steps/signup-invitation-row')());
+    this.$('input.signup__invitation-field').last().focus();
     return this;
   },
 
