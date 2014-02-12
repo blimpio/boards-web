@@ -51,7 +51,7 @@ describe('ForgotPasswordForm', function() {
     });
   });
 
-  describe('sendPasswordRecoveryEmail', function() {
+  describe('onSubmit', function() {
     it('should send the password recovery email if a valid email.', function(done) {
       var url = '/api/auth/forgot_password/',
           contentType = {"Content-Type":"application/json"};
@@ -62,7 +62,8 @@ describe('ForgotPasswordForm', function() {
         request.respond(200, contentType, '{"token": "' + JWT_TEST_TOKEN + '"}');
       });
 
-      formView.sendPasswordRecoveryEmail().done(function() {
+      formView.onSubmit({preventDefault: function(){}}).done(function() {
+        expect(formView.$('h3')).to.exist;
         expect(formView.model.get('token')).to.exist;
         done();
       }.bind(this));
