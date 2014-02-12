@@ -3,20 +3,19 @@ module.exports = Zeppelin.FormView.extend({
 
   el: 'form.forgot-password__form',
 
-  events: {
-    'click button[data-action=sendPasswordRecoveryEmail]': 'sendPasswordRecoveryEmail'
-  },
-
   initialize: function() {
     this.setForm();
   },
 
-  sendPasswordRecoveryEmail: function() {
+  onSubmit: function(event) {
     var email = this.getAttributeValue('email');
+
+    event.preventDefault();
 
     if (Z.Validations.isEmail(email)) {
       return this.model.forgotPassword(email).done(function(data) {
         this.model.set(data).saveCache();
+        this.render(require('templates/forgot-password-success'));
       }.bind(this)).fail(function(error) {
         this.getAttributeErrorElement('email').text(error.email);
       }.bind(this));
