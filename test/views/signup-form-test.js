@@ -1,171 +1,159 @@
 describe('SignupForm', function() {
-  var SignupForm = require('views/signup-form');
-  var Connection = require('lib/connection');
+  var formView, server, renderStepSpy,
+      User = Boards.getUser(),
+      SignupForm = require('views/signup-form'),
+      Connection = require('lib/connection');
 
   before(function() {
-    jQuery.ajaxSetup({
-      processData: false
-    });
+    console.log(SignupForm.prototype);
+    $('#application').append('<form class="signup"></form>');
 
-    this.token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAibmFtZUBleGFtcGxlLmNvbSJ9.PTbp7CGAJ3C4woorlCeWHRKqkcP7ZuiuWxn0FEiK9-0';
-
-    this.Application = require('application');
-
-    this.Application.connection = new Connection({
+    Boards.Connection = new Connection({
       type: 'HTTP',
       httpUrl: ''
     });
 
-    $('#application').append('<form class="signup"></form>');
+    User.set('signup_step', 1, {silent: true});
   });
 
   beforeEach(function() {
-    this.renderStepSpy = sinon.spy(SignupForm.prototype, 'renderStep');
-    this.onSignupStepChangeSpy = sinon.spy(SignupForm.prototype, 'onSignupStepChange');
+    renderStepSpy = sinon.spy(SignupForm.prototype, 'renderStep');
 
-    this.server = sinon.fakeServer.create();
-    this.server.autoRespond = false;
-    this.server.autoRespondAfter = 500;
+    server = sinon.fakeServer.create();
+    server.autoRespond = false;
+    server.autoRespondAfter = 500;
 
-    this.form = new SignupForm({
-      model: require('models/user')
+    formView = new SignupForm({
+      model: User
     });
 
-    this.form.render();
+    formView.listenTo(formView.model, 'change:signup_step', formView.onSignupStepChange);
+    formView.render();
   });
 
   afterEach(function() {
+    formView.stopListening(formView.model);
     SignupForm.prototype.renderStep.restore();
-    SignupForm.prototype.onSignupStepChange.restore();
-
-    this.server.restore();
+    server.restore();
   });
 
   after(function() {
-    this.form.dispose();
-    delete this.form;
+    formView.remove();
+    $('#application').empty();
   });
 
   it('should exist.', function() {
-    expect(this.form).to.exist;
-  });
-
-  it('should have a name.', function() {
-    expect(this.form.name).to.equal('SignupForm');
+    expect(formView).to.exist;
   });
 
   it('should have a model.', function() {
-    expect(this.form.model).to.exist;
-    expect(this.form.model.name).to.equal('User');
+    expect(formView.model).to.exist;
+    expect(formView.model.name).to.equal('User');
   });
 
-  describe('SignupForm.initialize', function() {
-    it('should invoke SignupForm.onSignupStepChange when the model triggers a change:signup_step event.', function() {
-      this.form.model.set('signup_step', 2);
-      expect(this.onSignupStepChangeSpy).to.have.been.calledOnce;
-    });
-
-    it('should invoke SignupForm.renderStep.', function() {
-      expect(this.renderStepSpy).to.have.been.calledOnce;
+  describe('initialize', function() {
+    it('should invoke renderStep.', function() {
+      expect(renderStepSpy).to.have.been.calledOnce;
     });
   });
 
-  describe('SignupForm.onSignupStepChange', function() {
-    it('should invoke SignupForm.renderStep when the model triggers a change:signup_step event.', function() {
-      this.renderStepSpy.reset();
-      this.form.onSignupStepChange(this.form.model, 1);
-      expect(this.renderStepSpy).to.have.been.calledOnce;
+  describe('onSignupStepChange', function() {
+    it('should invoke renderStep when the model triggers a change:signup_step event.', function() {
+      renderStepSpy.reset();
+      formView.onSignupStepChange(formView.model, 1);
+      expect(renderStepSpy).to.have.been.calledOnce;
     });
   });
 
-  describe('SignupForm.renderStep', function() {
+  describe('renderStep', function() {
     it('should render the given step.', function() {
-      this.form.renderStep(4);
-      expect(this.form.find('[data-step=4]')).to.exist;
+      formView.renderStep(4);
+      expect(formView.$('[data-step=4]')).to.exist;
     });
   });
 
-  describe('SignupForm.validateEmail', function() {
+  describe('validateEmail', function() {
     it('should validate the email entered on the form and render the next step if it\'s validated.', function(done) {
       var url = '/api/auth/signup_request/',
           contentType = {"Content-Type":"application/json"};
 
-      this.form.renderStep(1);
-      this.form.setAttribute('email', 'name@example.com');
+      formView.renderStep(1);
+      formView.getAttributeElement('email').val('name@example.com');
 
-      this.server.respondWith('POST', url, function(request) {
+      server.respondWith('POST', url, function(request) {
         request.respond(200, contentType, JSON.stringify(request.requestBody));
       });
 
-      this.form.validateEmail().done(function() {
-        expect(this.form.model.get('email')).to.equal('name@example.com');
-        expect(this.form.model.get('signup_step')).to.equal(2);
-        expect(this.form.find('[data-step=2]')).to.exist;
+      formView.validateEmail().done(function() {
+        expect(formView.model.get('email')).to.equal('name@example.com');
+        expect(formView.model.get('signup_step')).to.equal(2);
+        console.log(formView.$el.html());
+        expect(formView.$('[data-step=2]')).to.exist;
         done();
       }.bind(this));
 
-      this.server.respond();
+      server.respond();
     });
   });
 
-  describe('SignupForm.redirectToFirstStep', function() {
+  describe('redirectToFirstStep', function() {
     it('should redirect to the first step.', function() {
-      this.form.model.set('signup_step', 3);
-      this.form.redirectToFirstStep();
-      expect(this.form.model.get('signup_step')).to.equal(1);
+      formView.model.set('signup_step', 3);
+      formView.redirectToFirstStep();
+      expect(formView.model.get('signup_step')).to.equal(1);
     });
   });
 
-  describe('SignupForm.redirectToFourthStep', function() {
+  describe('redirectToFourthStep', function() {
     it('should redirect to the fourth step.', function() {
-      this.form.renderStep(1);
-      this.form.redirectToFourthStep();
-      expect(this.form.find('[data-step=4]')).to.exist;
-      expect(this.form.model.get('signup_step')).to.equal(4);
+      formView.renderStep(1);
+      formView.redirectToFourthStep();
+      expect(formView.$('[data-step=4]')).to.exist;
+      expect(formView.model.get('signup_step')).to.equal(4);
     });
   });
 
-  describe('SignupForm.validateFullName', function() {
+  describe('validateFullName', function() {
     it('should validate the name entered on the form and render the next step if it\'s validated.', function() {
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'signup_step': 4
       });
 
-      this.form.setAttribute('full_name', 'Elving Rodriguez');
-      this.form.validateFullName();
-      expect(this.form.find('[data-step=5]')).to.exist;
-      expect(this.form.model.get('full_name')).to.equal('Elving Rodriguez');
+      formView.getAttributeElement('full_name').val('Elving Rodriguez');
+      formView.validateFullName();
+      expect(formView.$('[data-step=5]')).to.exist;
+      expect(formView.model.get('full_name')).to.equal('Elving Rodriguez');
     });
   });
 
-  describe('SignupForm.validateAccountName', function() {
+  describe('validateAccountName', function() {
     it('should validate the account name entered on the form and render the next step if it\'s validated.', function() {
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
         'signup_step': 5
       });
 
-      this.form.setAttribute('account_name', 'Blimp');
-      this.form.validateAccountName();
-      expect(this.form.find('[data-step=6]')).to.exist;
-      expect(this.form.model.get('account_name')).to.equal('Blimp');
+      formView.getAttributeElement('account_name').val('Blimp');
+      formView.validateAccountName();
+      expect(formView.$('[data-step=6]')).to.exist;
+      expect(formView.model.get('account_name')).to.equal('Blimp');
     });
   });
 
-  describe('SignupForm.validateSignupDomains', function() {
+  describe('validateSignupDomains', function() {
     it('should validate the domains entered on the form and render the next step if it\'s validated.', function(done) {
       var url = '/api/auth/signup_domains/validate/',
           contentType = {"Content-Type":"application/json"};
 
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
@@ -173,39 +161,38 @@ describe('SignupForm', function() {
         'signup_step': 6
       });
 
-      this.server.respondWith('POST', url, function(request) {
+      server.respondWith('POST', url, function(request) {
         request.respond(200, contentType, JSON.stringify(request.requestBody));
       });
 
-      this.form.setAttribute('allow_signup', true);
-      this.form.setAttribute('signup_domains', 'example.com, example.net');
+      formView.getAttributeElement('allow_signup').prop('checked', true);
+      formView.getAttributeElement('signup_domains').val('example.com, example.net');
 
-      this.form.validateSignupDomains().done(function() {
-        expect(this.form.find('[data-step=7]')).to.exist;
-        expect(this.form.model.get('signup_domains')).to.eql(['example.com', 'example.net']);
+      formView.validateSignupDomains().done(function() {
+        expect(formView.$('[data-step=7]')).to.exist;
+        expect(formView.model.get('signup_domains')).to.eql(['example.com', 'example.net']);
         done();
       }.bind(this));
 
-      this.server.respond();
+      server.respond();
     });
   });
 
-  describe('SignupForm.skipSignupDomains', function() {
+  describe('skipSignupDomains', function() {
     it('should redirect to the seventh step.', function() {
-      this.form.renderStep(6);
-      this.form.skipSignupDomains();
-      expect(this.form.find('[data-step=7]')).to.exist;
-      expect(this.form.model.get('signup_step')).to.equal(7);
+      formView.renderStep(6);
+      formView.skipSignupDomains();
+      expect(formView.model.get('signup_step')).to.equal(7);
     });
   });
 
-  describe('SignupForm.addOtherDomainInput', function() {
+  describe('addOtherDomainInput', function() {
     it('should add a domain input field.', function() {
       var select;
 
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
@@ -215,42 +202,42 @@ describe('SignupForm', function() {
         'signup_step': 7
       });
 
-      select = this.form.find('select.signup__invitation-domains')[0];
+      select = formView.$('select.signup__invitation-domains')[0];
       select.value = 'other';
 
-      this.form.addOtherDomainInput({currentTarget: select});
-      expect(this.form.find('input.signup__invitation-domain-input')).to.exist;
+      formView.addOtherDomainInput({currentTarget: select});
+      expect(formView.$('input.signup__invitation-domain-input')).to.exist;
     });
   });
 
-  describe('SignupForm.addInvitationRow', function() {
+  describe('addInvitationRow', function() {
     it('should add an invitation row.', function() {
-      this.form.renderStep(7);
-      expect(this.form.find('input.signup__invitation-field').length).to.equal(3);
-      this.form.addInvitationRow();
-      expect(this.form.find('input.signup__invitation-field').length).to.equal(4);
+      formView.renderStep(7);
+      expect(formView.$('input.signup__invitation-field').length).to.equal(3);
+      formView.addInvitationRow();
+      expect(formView.$('input.signup__invitation-field').length).to.equal(4);
     });
   });
 
-  describe('SignupForm.removeInvitationRow', function() {
+  describe('removeInvitationRow', function() {
     it('should remove an invitation row.', function() {
-      this.form.renderStep(7);
+      formView.renderStep(7);
 
-      expect(this.form.find('input.signup__invitation-field').length).to.equal(3);
+      expect(formView.$('input.signup__invitation-field').length).to.equal(3);
 
-      this.form.removeInvitationRow({
-        currentTarget: this.form.find('button[data-action=removeInvitationRow]')[0]
+      formView.removeInvitationRow({
+        currentTarget: formView.$('button[data-action=removeInvitationRow]')[0]
       });
 
-      expect(this.form.find('input.signup__invitation-field').length).to.equal(2);
+      expect(formView.$('input.signup__invitation-field').length).to.equal(2);
     });
   });
 
-  describe('SignupForm.validateInvitations', function() {
+  describe('validateInvitations', function() {
     it('should validate the email invites entered on the form and render the next step if it\'s validated (with select).', function() {
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
@@ -260,20 +247,20 @@ describe('SignupForm', function() {
         'signup_step': 7
       });
 
-      this.form.find('input.signup__invitation-field').eq(0).val('elving');
-      this.form.find('input.signup__invitation-field').eq(1).val('elving');
-      this.form.find('select.signup__invitation-domains').find('option').eq(1).prop('selected', true);
-      this.form.validateInvitations();
-      expect(this.form.model.get('invite_emails')).to.include('elving@example.com');
-      expect(this.form.model.get('invite_emails')).to.include('elving@example.net');
+      formView.$('input.signup__invitation-field').eq(0).val('elving');
+      formView.$('input.signup__invitation-field').eq(1).val('elving');
+      formView.$('select.signup__invitation-domains').find('option').eq(1).prop('selected', true);
+      formView.validateInvitations();
+      expect(formView.model.get('invite_emails')).to.include('elving@example.com');
+      expect(formView.model.get('invite_emails')).to.include('elving@example.net');
     });
 
     it('should validate the email invites entered on the form and render the next step if it\'s validated (with inputs).', function() {
       var select;
 
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
@@ -283,25 +270,25 @@ describe('SignupForm', function() {
         'signup_step': 7
       });
 
-      select = this.form.find('select.signup__invitation-domains')[1];
+      select = formView.$('select.signup__invitation-domains')[1];
       select.value = 'other';
 
-      this.form.find('input.signup__invitation-field').eq(0).val('elving');
-      this.form.find('input.signup__invitation-field').eq(1).val('elving');
-      this.form.find('select.signup__invitation-domains').eq(0).find('option').eq(0).prop('selected', true);
-      this.form.addOtherDomainInput({currentTarget: select});
-      this.form.find('input.signup__invitation-domain-input').eq(0).val('somedomain.com');
-      this.form.validateInvitations();
-      expect(this.form.model.get('invite_emails')).to.include('elving@example.com');
-      expect(this.form.model.get('invite_emails')).to.include('elving@somedomain.com');
+      formView.$('input.signup__invitation-field').eq(0).val('elving');
+      formView.$('input.signup__invitation-field').eq(1).val('elving');
+      formView.$('select.signup__invitation-domains').eq(0).find('option').eq(0).prop('selected', true);
+      formView.addOtherDomainInput({currentTarget: select});
+      formView.$('input.signup__invitation-domain-input').eq(0).val('somedomain.com');
+      formView.validateInvitations();
+      expect(formView.model.get('invite_emails')).to.include('elving@example.com');
+      expect(formView.model.get('invite_emails')).to.include('elving@somedomain.com');
     });
 
     it('should set an \'invite_emails\' attribute even if no invites were added in the form.', function() {
       var select;
 
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
@@ -311,20 +298,20 @@ describe('SignupForm', function() {
         'signup_step': 7
       });
 
-      this.form.validateInvitations();
-      expect(this.form.model.has('invite_emails')).to.be.true;
-      expect(this.form.model.get('invite_emails')).to.eql([]);
+      formView.validateInvitations();
+      expect(formView.model.has('invite_emails')).to.be.true;
+      expect(formView.model.get('invite_emails')).to.eql([]);
     });
   });
 
-  describe('SignupForm.validateUsername', function() {
+  describe('validateUsername', function() {
     it('should validate the username entered on the form and render the next step if it\'s validated.', function(done) {
       var url = '/api/auth/username/validate/',
           contentType = {"Content-Type":"application/json"};
 
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
@@ -335,30 +322,30 @@ describe('SignupForm', function() {
         'signup_step': 8
       });
 
-      this.server.respondWith('POST', url, function(request) {
+      server.respondWith('POST', url, function(request) {
         request.respond(200, contentType, JSON.stringify(request.requestBody));
       });
 
-      this.form.setAttribute('username', 'elving');
+      formView.getAttributeElement('username').val('elving');
 
-      this.form.validateUsername().done(function() {
-        expect(this.form.find('[data-step=9]')).to.exist;
-        expect(this.form.model.get('username')).to.equal('elving');
+      formView.validateUsername().done(function() {
+        expect(formView.$('[data-step=9]')).to.exist;
+        expect(formView.model.get('username')).to.equal('elving');
         done();
       }.bind(this));
 
-      this.server.respond();
+      server.respond();
     });
   });
 
-  describe('SignupForm.validatePassword', function() {
+  describe('validatePassword', function() {
     it('should validate the password entered on the form and complete the signup process.', function(done) {
       var url = '/api/auth/signup/',
           contentType = {"Content-Type":"application/json"};
 
-      this.form.model.set({
+      formView.model.set({
         'email': 'name@example.com',
-        'signup_request_token': this.token,
+        'signup_request_token': JWT_TEST_TOKEN,
         'first_name': 'Elving',
         'last_name': 'Rodriguez',
         'full_name': 'Elving Rodriguez',
@@ -370,19 +357,19 @@ describe('SignupForm', function() {
         'signup_step': 9
       });
 
-      this.server.respondWith('POST', url, function(request) {
+      server.respondWith('POST', url, function(request) {
         request.respond(200, contentType, JSON.stringify(request.requestBody));
       });
 
-      this.form.setAttribute('password', 'elving1234');
+      formView.getAttributeElement('password').val('elving1234');
 
-      this.form.validatePassword().done(function() {
-        expect(this.form.model.has('password')).to.be.false;
-        expect(this.form.model.has('signup_request_token')).to.be.false;
+      formView.validatePassword().done(function() {
+        expect(formView.model.has('password')).to.be.false;
+        expect(formView.model.has('signup_request_token')).to.be.false;
         done();
       }.bind(this));
 
-      this.server.respond();
+      server.respond();
     });
   });
 });

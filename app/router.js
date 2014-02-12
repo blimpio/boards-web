@@ -1,9 +1,3 @@
-var SignupController = require('controllers/signup'),
-    SigninController = require('controllers/signin'),
-    ForgotPasswordController = require('controllers/forgot-password'),
-    ResetPasswordController = require('controllers/reset-password'),
-    BoardsController = require('controllers/boards');
-
 module.exports = Zeppelin.Router.extend({
   routes: {
     'signup(/)': 'signup',
@@ -34,34 +28,34 @@ module.exports = Zeppelin.Router.extend({
 
   signup: function() {
     this.removeLastController();
-    this.controller = new SignupController();
+    this.controller = _.createController('signup');
   },
 
   signupWithToken: function(token) {
     this.removeLastController();
-    this.controller = new SignupController();
+    this.controller = _.createController('signup');
     this.controller.continueWithToken(token);
   },
 
   signin: function() {
     this.removeLastController();
-    this.controller = new SigninController();
+    this.controller = _.createController('signin');
   },
 
   forgotPassword: function() {
     this.removeLastController();
-    this.controller = new ForgotPasswordController();
+    this.controller = _.createController('forgot-password');
   },
 
   resetPassword: function() {
     this.removeLastController();
-    this.controller = new ResetPasswordController();
+    this.controller = _.createController('reset-password');
     this.controller.renderForm();
   },
 
   resetPasswordWithToken: function(token) {
     this.removeLastController();
-    this.controller = new ResetPasswordController();
+    this.controller = _.createController('reset-password');
     this.controller.validateToken(token);
   },
 
@@ -72,6 +66,6 @@ module.exports = Zeppelin.Router.extend({
 
   boards: function() {
     this.removeLastController();
-    this.controller = new BoardsController();
+    this.controller = _.createController('boards');
   }
 });

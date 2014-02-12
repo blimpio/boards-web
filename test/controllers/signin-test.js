@@ -1,52 +1,54 @@
 describe('SigninController', function() {
-  var SigninController = require('controllers/signin');
+  var controller, publishSpy,
+      SigninController = require('controllers/signin');
 
-  before(function() {
-    localStorage.setItem('User', '{"token": "1234567890"}');
-
-    this.redirectSpy = sinon.spy(SigninController.prototype, 'redirect');
-
-    this.controller = new SigninController();
+  beforeEach(function() {
+    localStorage.setItem('User', '{"token": "'+ JWT_TEST_TOKEN +'"}');
+    publishSpy = sinon.spy(SigninController.prototype, 'publish');
+    controller = new SigninController();
   });
 
   after(function() {
-    SigninController.prototype.redirect.restore();
-    this.controller.dispose();
-    delete this.controller;
+    controller.remove();
+    localStorage.clear();
+    $('#application').empty();
+  });
+
+  afterEach(function() {
+    SigninController.prototype.publish.restore();
   });
 
   it('should exist.', function() {
-    expect(this.controller).to.exist;
+    expect(controller).to.exist;
   });
 
-  it('should have a name.', function() {
-    expect(this.controller.name).to.equal('SigninController');
-  });
-
-  describe('SigninController.initialize', function() {
-    it('should have initialized the user model.', function() {
-      expect(this.controller.user).to.exist;
-      expect(this.controller.user.name).to.equal('User');
-      expect(this.controller.user.moduleName).to.equal('model');
+  describe('initialize', function() {
+    it('should init the user model.', function() {
+      expect(controller.user).to.exist;
+      expect(controller.user.name).to.equal('User');
     });
 
     it('should fetch the model from cache.', function() {
-      expect(this.controller.user.hasFetched).to.be.true;
-      expect(this.controller.user.get('token')).to.equal('1234567890');
+      expect(controller.user.get('token')).to.equal(JWT_TEST_TOKEN);
     });
 
-    it('should redirect to boards route if the user is logged in.', function() {
-      this.controller.user.unset('token').updateCache();
-      this.controller.initialize();
-      expect(this.redirectSpy).to.have.been.calledOnce;
+    it('should render and insert the controller if the user is logged out.', function() {
+      controller.user.clear().cache.clearAll();
+      controller.initialize();
+      expect(controller.isRendered).to.be.true;
+      expect(controller.isInserted).to.be.true;
+    });
+
+    it('should navigate to the boards route if the user is logged in.', function() {
+      controller.initialize();
+      expect(publishSpy).to.have.been.calledWith('router:navigate', 'boards');
     });
   });
 
-  describe('SigninController.afterInserted', function() {
-    it('should have initialized the signin-form view.', function() {
-      expect(this.controller.signinForm).to.exist;
-      expect(this.controller.signinForm.name).to.equal('SigninForm');
-      expect(this.controller.signinForm.moduleName).to.equal('formView');
+  describe('initForm', function() {
+    it('should init the form.', function() {
+      controller.initForm();
+      expect(controller.getChildByName('SigninForm')).to.exist;
     });
   });
 });

@@ -1,76 +1,55 @@
 describe('SignupController', function() {
-  var SignupController = require('controllers/signup');
+  var controller, publishSpy,
+      SignupController = require('controllers/signup');
 
-  before(function() {
-    this.token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAibmFtZUBleGFtcGxlLmNvbSJ9.PTbp7CGAJ3C4woorlCeWHRKqkcP7ZuiuWxn0FEiK9-0';
-    localStorage.setItem('User', '{"email": "name@example.com"}');
-
-    this.redirectSpy = sinon.spy(SignupController.prototype, 'redirect');
-
-    this.controller = new SignupController();
+  beforeEach(function() {
+    localStorage.setItem('User', '{"token": "' + JWT_TEST_TOKEN + '"}');
+    publishSpy = sinon.spy(SignupController.prototype, 'publish');
+    controller = new SignupController();
   });
 
   after(function() {
-    SignupController.prototype.redirect.restore();
-    this.controller.dispose();
-    delete this.controller;
+    controller.remove();
+    localStorage.clear();
+    $('#application').empty();
+  });
+
+  afterEach(function() {
+    SignupController.prototype.publish.restore();
   });
 
   it('should exist.', function() {
-    expect(this.controller).to.exist;
+    expect(controller).to.exist;
   });
 
-  it('should have a name.', function() {
-    expect(this.controller.name).to.equal('SignupController');
-  });
-
-  describe('SignupController.initialize', function() {
-    it('should have initialized the user model.', function() {
-      expect(this.controller.user).to.exist;
-      expect(this.controller.user.name).to.equal('User');
-      expect(this.controller.user.moduleName).to.equal('model');
+  describe('initialize', function() {
+    it('should init the user model.', function() {
+      expect(controller.user).to.exist;
+      expect(controller.user.name).to.equal('User');
     });
 
     it('should fetch the model from cache.', function() {
-      expect(this.controller.user.hasFetched).to.be.true;
-      expect(this.controller.user.get('email')).to.equal('name@example.com');
+      expect(controller.user.get('token')).to.equal(JWT_TEST_TOKEN);
     });
 
-    it('should redirect to boards route if the user is logged in.', function() {
-      this.controller.user.set('token', '12345');
-      this.controller.initialize();
-      expect(this.redirectSpy).to.have.been.calledOnce;
+    it('should render and insert the controller if the user is logged out.', function() {
+      controller.user.clear().cache.clearAll();
+      controller.user.set('signup_step', 1);
+      controller.initialize();
+      expect(controller.isRendered).to.be.true;
+      expect(controller.isInserted).to.be.true;
     });
-  });
 
-  describe('SignupController.afterInserted', function() {
-    it('should have initialized the signup-form view.', function() {
-      expect(this.controller.signupForm).to.exist;
-      expect(this.controller.signupForm.name).to.equal('SignupForm');
-      expect(this.controller.signupForm.moduleName).to.equal('formView');
+    it('should navigate to the boards route if the user is logged in.', function() {
+      controller.initialize();
+      expect(publishSpy).to.have.been.calledWith('router:navigate', 'boards');
     });
   });
 
-  describe('SignupController.continueWithToken', function() {
-    it('should render the next signup step (with no token).', function() {
-      this.controller.continueWithToken();
-      expect(this.controller.user.get('signup_step')).to.equal(1);
-    });
-
-    it('should render the next signup step (with no token but waiting for email).', function() {
-      this.controller.user.set({
-        'email': 'name@example.com',
-        'signup_step': 2
-      });
-
-      this.controller.continueWithToken();
-      expect(this.controller.user.get('signup_step')).to.equal(2);
-    });
-
-    it('should render the next signup step (with token).', function() {
-      this.controller.continueWithToken({token: this.token});
-      expect(this.controller.user.get('email')).to.equal('name@example.com');
-      expect(this.controller.user.get('signup_step')).to.equal(3);
+  describe('initForm', function() {
+    it('should init the form.', function() {
+      controller.initForm();
+      expect(controller.getChildByName('SignupForm')).to.exist;
     });
   });
 });

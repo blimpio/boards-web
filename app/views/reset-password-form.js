@@ -1,4 +1,6 @@
 module.exports = Zeppelin.FormView.extend({
+  name: 'ResetPasswordForm',
+
   el: 'form.reset-password__form',
 
   events: {

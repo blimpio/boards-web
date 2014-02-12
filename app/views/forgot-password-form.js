@@ -1,4 +1,6 @@
 module.exports = Zeppelin.FormView.extend({
+  name: 'ForgotPasswordForm',
+
   el: 'form.forgot-password__form',
 
   events: {

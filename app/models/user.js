@@ -46,8 +46,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   hasInviteDomains: function() {
-    var domains = this.get('signup_domains');
-    return domains && domains.length > 0;
+    return this.has('signup_domains') && this.get('signup_domains').length > 0;
   },
 
   validateUsername: function() {

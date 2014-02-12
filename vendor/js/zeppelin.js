@@ -618,6 +618,7 @@
       this.isInserted = false;
       this.isFirstRender = true;
       this.isUnplugged = false;
+      this.isRemoved = false;
 
       if (this.model) {
         this.setModel(this.model);
@@ -1073,6 +1074,8 @@
     remove: function () {
       this.unplug(true);
       this.$el.remove();
+      this.children = {};
+      this.isRemoved = true;
       return this;
     },
 

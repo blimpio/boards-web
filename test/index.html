@@ -9,8 +9,57 @@
       <div id="application"></div>
     </div>
 
+    <script>
+      // Disable sockjs to use HTTP for tests.
+      window.SockJS = undefined;
+      window.APPLICATION_HTTP_URL = '';
+      window.APPLICATION_CONNECTION = 'HTTP';
+      window.APPLICATION_WEBSOCKET_URL = '';
+      window.JWT_TEST_TOKEN = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogImEyMmMzYjFkLWRkOGQtNDllZS05ZDA2LWQwNjJmNWY0NzQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.D_D-tGwUmPSUofHEuWoZrgduVxCcVl36XCiiwGyxfaY';
+    </script>
+
     <!-- Application JS -->
     <script src="../public/js/app.js"></script>
+
+    <!-- Enviroment Setup -->
+    <script>
+      // Define Namespace.
+      window.Boards = {};
+
+      // Register Swag Helpers.
+      Swag.registerHelpers();
+
+      // Load Helpers
+      require('lib/helpers');
+
+      // Fix for faking server requests.
+      jQuery.ajaxSetup({processData: false});
+
+      // Patch Backbone History in PhantomJS.
+      var Location = function(href) {
+        this.replace(href);
+      };
+
+      _.extend(Location.prototype, {
+        replace: function(href) {
+          _.extend(this, _.pick($('<a></a>', {href: href})[0], 'href', 'hash', 'host', 'search', 'fragment', 'pathname', 'protocol'));
+
+          if (!/^\//.test(this.pathname)) {
+            this.pathname = '/' + this.pathname;
+          }
+        },
+
+        toString: function() {
+          return this.href;
+        }
+      });
+
+      Backbone.history = _.extend(new Backbone.History, {
+        location: new Location('http://example.com')
+      });
+
+      Backbone.history.interval = 9;
+    </script>
 
     <!-- Testing Dependencies -->
     <script src="../bower_components/mocha/mocha.js"></script>
@@ -25,16 +74,7 @@
       window.expect = chai.expect;
     </script>
 
-    <script>
-      // Disable sockjs to use HTTP for tests.
-      window.SockJS = undefined;
-      window.APPLICATION_HTTP_URL = '';
-      window.APPLICATION_CONNECTION = 'HTTP';
-      window.APPLICATION_WEBSOCKET_URL = '';
-    </script>
-
-    <!-- Tests -->
-    <script src="application-test.js"></script>
+    <script src="router-test.js"></script>
 
     <!-- Lib -->
     <script src="lib/connection-test.js"></script>
@@ -43,13 +83,14 @@
     <!-- Controllers -->
     <script src="controllers/signup-test.js"></script>
     <script src="controllers/signin-test.js"></script>
-    <script src="controllers/signout-test.js"></script>
     <script src="controllers/boards-test.js"></script>
     <script src="controllers/forgot-password-test.js"></script>
     <script src="controllers/reset-password-test.js"></script>
 
     <!-- Views -->
-    <script src="views/signup-form-test.js"></script>
+    <script src="views/forgot-password-form-test.js"></script>
+    <script src="views/reset-password-form-test.js"></script>
+    <script src="views/signin-form-test.js"></script>
     <script src="views/signin-form-test.js"></script>
 
     <!-- Models -->

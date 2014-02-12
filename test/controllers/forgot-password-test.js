@@ -1,86 +1,73 @@
 describe('ForgotPasswordController', function() {
-  var ForgotPasswordController = require('controllers/forgot-password');
-  var Connection = require('lib/connection');
+  var server, controller, publishSpy,
+      Connection = require('lib/connection'),
+      ForgotPasswordController = require('controllers/forgot-password');
 
   before(function() {
-    jQuery.ajaxSetup({
-      processData: false
-    });
-
-    this.Application = require('application');
-
-    this.Application.connection = new Connection({
+    Boards.Connection = new Connection({
       type: 'HTTP',
       httpUrl: ''
     });
-
-    localStorage.setItem('User', '{"token": "1234567890"}');
-
-    this.redirectSpy = sinon.spy(ForgotPasswordController.prototype, 'redirect');
-
-    this.controller = new ForgotPasswordController();
   });
 
   beforeEach(function() {
-    this.server = sinon.fakeServer.create();
-    this.server.autoRespond = false;
-    this.server.autoRespondAfter = 500;
+    server = sinon.fakeServer.create();
+    server.autoRespond = false;
+    server.autoRespondAfter = 500;
+
+    localStorage.setItem('User', '{"token": "' + JWT_TEST_TOKEN + '"}');
+
+    publishSpy = sinon.spy(ForgotPasswordController.prototype, 'publish');
+    controller = new ForgotPasswordController();
   });
 
   afterEach(function() {
-    this.server.restore();
+    server.restore();
+    ForgotPasswordController.prototype.publish.restore();
   });
 
   after(function() {
-    ForgotPasswordController.prototype.redirect.restore();
-    this.controller.dispose();
-    delete this.controller;
+    controller.remove();
+    localStorage.clear();
+    $('#application').empty();
   });
 
   it('should exist.', function() {
-    expect(this.controller).to.exist;
+    expect(controller).to.exist;
   });
 
-  it('should have a name.', function() {
-    expect(this.controller.name).to.equal('ForgotPasswordController');
-  });
-
-  describe('ForgotPasswordController.initialize', function() {
-    it('should have initialized the user model.', function() {
-      expect(this.controller.user).to.exist;
-      expect(this.controller.user.name).to.equal('User');
-      expect(this.controller.user.moduleName).to.equal('model');
+  describe('initialize', function() {
+    it('should init the user model.', function() {
+      expect(controller.user).to.exist;
+      expect(controller.user.name).to.equal('User');
     });
 
     it('should fetch the model from cache.', function() {
-      expect(this.controller.user.hasFetched).to.be.true;
-      expect(this.controller.user.get('token')).to.equal('1234567890');
+      expect(controller.user.get('token')).to.equal(JWT_TEST_TOKEN);
     });
 
-    it('should redirect to boards route if the user is logged in.', function() {
-      this.controller.user.unset('token').updateCache();
-      this.controller.initialize();
-      expect(this.redirectSpy).to.have.been.calledOnce;
+    it('should navigate to the boards route if the user is logged in.', function() {
+      expect(publishSpy).to.have.been.calledWith('router:navigate', 'boards');
+    });
+
+    it('should render and insert the controller if the user is logged out.', function() {
+      controller.user.clear().cache.clearAll();
+      controller.initialize();
+      expect(controller.isRendered).to.be.true;
+      expect(controller.isInserted).to.be.true;
+    });
+
+    it('should init the form if the user is logged out.', function() {
+      controller.user.clear().cache.clearAll();
+      controller.initialize();
+      expect(controller.getChildByName('ForgotPasswordForm')).to.exist;
     });
   });
 
-  describe('ForgotPasswordController.sendPasswordRecoveryEmail', function() {
-    it('should send a password reset email.', function(done) {
-      var url = '/api/auth/forgot_password/',
-          contentType = {"Content-Type":"application/json"};
-
-      this.controller.$email.val('elving.pr@gmail.com');
-
-      this.server.respondWith('POST', url, function(request) {
-        request.respond(200, contentType, '{"email": "elving.pr@gmail.com"}');
-      });
-
-      this.controller.sendPasswordRecoveryEmail().done(function() {
-        expect(this.controller.user.get('email')).to.equal('elving.pr@gmail.com');
-        done();
-      }.bind(this));
-
-      this.server.respond();
+  describe('initForm', function() {
+    it('should init the form.', function() {
+      controller.initForm();
+      expect(controller.getChildByName('ForgotPasswordForm')).to.exist;
     });
   });
 });
