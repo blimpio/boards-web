@@ -61,13 +61,33 @@ _.extend(Connection.prototype, {
     return this.connectionPromise.promise();
   },
 
-  request: function(method, url, data) {
+  request: function(method, url, data, token, type) {
     this.requestPromise = $.Deferred();
 
-    if (this.type === 'WebSocket') {
+    data = data || {};
+
+    if (!token && !type && !_.isPlainObject(data)) {
+      if (/(WebSockets|HTTP)/i.test(data)) {
+        type = data;
+        data = {};
+        token = '';
+      } else {
+        token = data;
+        data = {};
+        type = this.type;
+      }
+    } else if (!type) {
+      if (/[WebSockets|HTTP]/i.test(token)) {
+        type = token;
+        token = null;
+      }
+    }
+
+    if (type === 'WebSocket') {
       this.socket.send(JSON.stringify({
         url: url,
         data: data,
+        token: token,
         method: method || 'GET'
       }));
     } else {
@@ -79,13 +99,13 @@ _.extend(Connection.prototype, {
           var resp = response.responseText || response,
               data = resp && _.isString(resp) ? JSON.parse(resp) : resp;
 
-          this.requestPromise.resolve(data, response);
+          return this.requestPromise.resolve(data, response);
         }.bind(this),
         error: function(response) {
           var resp = response.responseText || response,
               data = resp && _.isString(resp) ? JSON.parse(resp) : resp;
 
-          this.requestPromise.reject(data.error || data, response);
+          return this.requestPromise.reject(data.error || data, response);
         }.bind(this)
       });
     }
@@ -93,24 +113,24 @@ _.extend(Connection.prototype, {
     return this.requestPromise.promise();
   },
 
-  get: function(url, data) {
-    return this.request('GET', url, data);
+  get: function(url, data, token, type) {
+    return this.request('GET', url, data, token, type);
   },
 
-  post: function(url, data) {
-    return this.request('POST', url, data);
+  post: function(url, data, token, type) {
+    return this.request('POST', url, data, token, type);
   },
 
-  put: function(url, data) {
-    return this.request('PUT', url, data);
+  put: function(url, data, token, type) {
+    return this.request('PUT', url, data, token, type);
   },
 
-  patch: function(url, data) {
-    return this.request('PATCH', url, data);
+  patch: function(url, data, token, type) {
+    return this.request('PATCH', url, data, token, type);
   },
 
-  delete: function(url, data) {
-    return this.request('DELETE', url, data);
+  delete: function(url, data, token, type) {
+    return this.request('DELETE', url, data, token, type);
   }
 });
 

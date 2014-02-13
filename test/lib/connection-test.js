@@ -3,19 +3,17 @@ describe('Connection', function() {
       Connection = require('lib/connection');
 
   before(function() {
+    server = sinon.fakeServer.create();
+    server.autoRespond = false;
+    server.autoRespondAfter = 500;
+
     connection = new Connection({
       type: 'HTTP',
       httpUrl: '/api/'
     });
   });
 
-  beforeEach(function() {
-    server = sinon.fakeServer.create();
-    server.autoRespond = false;
-    server.autoRespondAfter = 500;
-  });
-
-  afterEach(function() {
+  after(function() {
     server.restore();
   });
 
@@ -51,15 +49,16 @@ describe('Connection', function() {
       var response = '{"id": 1, "name": "Elving Rodriguez"}',
           contentType = {"Content-Type": "application/json"};
 
-      server.respondWith('GET', '/api/user/', [200, contentType, response]);
+      server.respondWith('GET', '/api/user/', function(request) {
+        request.respond(200, contentType, JSON.stringify(request.requestBody));
+      });
 
       connection.request('GET', 'user/').done(function(data) {
-        expect(data.id).to.equal(1);
-        expect(data.name).to.equal('Elving Rodriguez');
+        expect(data.id).to.equal(2);
         done();
       }.bind(this));
 
-      server.respond();
+      server.respond('{"id": 2}');
     });
   });
 
@@ -68,15 +67,16 @@ describe('Connection', function() {
       var response = '{"animal": "dog", "rules": true}',
           contentType = {"Content-Type": "application/json"};
 
-      server.respondWith('GET', '/api/user/', [200, contentType, response]);
+      server.respondWith('GET', '/api/user/', function(request) {
+        request.respond(200, contentType, JSON.stringify(request.requestBody));
+      });
 
       connection.get('user/').done(function(data) {
-        expect(data.rules).to.be.true;
-        expect(data.animal).to.equal('dog');
+        expect(data.id).to.equal(2);
         done();
       }.bind(this));
 
-      server.respond();
+      server.respond('{"id": 2}');
     });
   });
 
