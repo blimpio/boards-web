@@ -7,6 +7,7 @@ module.exports = Zeppelin.Router.extend({
     'forgot_password(/)': 'forgotPassword',
     'reset_password(/)': 'resetPassword',
     'reset_password?token:token(/)': 'resetPasswordWithToken',
+    'accounts(/)': 'accounts',
     'boards(/)': 'boards'
   },
 
@@ -62,6 +63,11 @@ module.exports = Zeppelin.Router.extend({
   signout: function() {
     Boards.getUser().signout();
     this.navigateWithTrigger('signin');
+  },
+
+  accounts: function() {
+    this.removeLastController();
+    this.controller = _.createController('accounts');
   },
 
   boards: function() {

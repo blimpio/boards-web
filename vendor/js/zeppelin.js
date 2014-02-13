@@ -404,15 +404,14 @@
 
   Zeppelin.Model = Backbone.Model.extend({
     constructor: function () {
-      this.name = this.name || _.uniqueId('modelName');
+      this.name = this.name || _.uniqueId('M');
+      this.presenters = this.presenters || [];
+      this.validations = this.validations || {};
+      this.localAttributes = this.localAttributes || [];
 
       this.registerSubscriptions();
       Backbone.Model.prototype.constructor.apply(this, arguments);
     },
-
-    name: null,
-
-    localAttributes: [],
 
     getLocalAttributes: function () {
       return this.pick(this.localAttributes);
@@ -422,8 +421,36 @@
       return this.omit(this.localAttributes);
     },
 
-    validations: {
+    getPresenter: function (name) {
+      var property = this[name] ? this[name] : name;
 
+      if (name === 'name') property = name;
+
+      if (_.isFunction(property)) {
+        return property.bind(this);
+      } else {
+        return function () {
+          return this.get(property);
+        }.bind(this);
+      }
+
+      return null;
+    },
+
+    getPresenters: function (names) {
+      var presenters = {};
+
+      names = names || this.presenters;
+
+      _.forEach(names, function (name) {
+        presenters[name] = this.getPresenter(name);
+      }.bind(this));
+
+      return presenters;
+    },
+
+    present: function (name) {
+      return this.getPresenter(name)();
     },
 
     validate: function (attributes) {
@@ -555,13 +582,12 @@
   Zeppelin.Collection = Backbone.Collection.extend({
     constructor: function () {
       this.cid = _.uniqueId('col');
-      this.name = this.name || _.uniqueId('collectionName');
+      this.name = this.name || _.uniqueId('C');
+      this.presenters = this.presenters || [];
 
       this.registerSubscriptions();
       Backbone.Collection.prototype.constructor.apply(this, arguments);
     },
-
-    name: null,
 
     getAttributes: function () {
       return this.map(function (model) {
@@ -573,6 +599,36 @@
       return this.map(function (model) {
         return model.getLocalAttributes();
       });
+    },
+
+    getPresenter: function (name) {
+      var property = this[name] ? this[name] : name;
+
+      if (_.isFunction(property)) {
+        return property.bind(this);
+      } else {
+        return function () {
+          return property;
+        }.bind(this);
+      }
+
+      return null;
+    },
+
+    getPresenters: function (names) {
+      var presenters = {};
+
+      names = names || this.presenters;
+
+      _.forEach(names, function (name) {
+        presenters[name] = this.getPresenter(name);
+      }.bind(this));
+
+      return presenters;
+    },
+
+    present: function (name) {
+      return this.getPresenter(name)();
     },
 
     createCache: function (type) {
@@ -605,28 +661,36 @@
 
   _.extend(Zeppelin.Collection.prototype, Zeppelin.Events);
 
+  var reservedElementNames = ['el', 'container', 'form', 'list'];
+
   Zeppelin.View = Backbone.View.extend({
     constructor: function (options) {
       options = options || {};
 
-      _.extend(this, options);
+      this.name = options.name || this.name || _.uniqueId('V');
 
-      this.name = this.name || _.uniqueId('viewName');
-      this.children = {};
-      this.containerIsSet = false;
+      if (!this.events) this.events = {};
+      if (!this.elements) this.elements = {};
+      if (!this.bindings) this.bindings = {};
+      if (!this.children) this.children = {};
+
+      _.extend(this.events, options.events);
+      _.extend(this.elements, options.elements);
+      _.extend(this.bindings, options.bindings);
+      _.extend(this.children, options.children);
+
+      this.isRemoved = false;
       this.isRendered = false;
       this.isInserted = false;
-      this.isFirstRender = true;
       this.isUnplugged = false;
-      this.isRemoved = false;
+      this.isFirstRender = true;
+      this.containerIsSet = false;
 
-      if (this.model) {
-        this.setModel(this.model);
-      }
+      this.model = options.model || this.model;
+      if (this.model) this.setModel(this.model);
 
-      if (this.collection) {
-        this.setCollection(this.collection);
-      }
+      this.collection = options.collection || this.collection;
+      if (this.collection) this.setCollection(this.collection);
 
       this.registerBindings();
       this.registerSubscriptions();
@@ -634,36 +698,18 @@
       this.registerElements();
     },
 
-    name: null,
-
-    events: {
-
-    },
-
-    elements: {
-
-    },
-
     _isReservedElementName: function (name) {
-      var reserved = ['el', 'container', 'form', 'list'];
-
-      if (name) {
-        if (_.indexOf(reserved, name) === -1) {
-          return false;
-        } else {
-          return true;
-        }
+      if (_.indexOf(reservedElementNames, name) === -1) {
+        return false;
+      } else {
+        return true;
       }
-
-      return false;
     },
 
     registerElement: function (name, options) {
       var $element, selector;
 
-      if (!name || !options || this._isReservedElementName(name)) {
-        return this;
-      }
+      if (!name || !options || this._isReservedElementName(name)) return this;
 
       if (_.isString(options)) {
         selector = options;
@@ -678,11 +724,7 @@
       }
 
       $element = this.$el.find(selector);
-
-      if (!$element.length) {
-        return this;
-      }
-
+      if (!$element.length) return this;
       this['$' + name] = $element;
       this.elements[name] = selector;
 
@@ -706,29 +748,17 @@
     getElementSelector: function (name) {
       var selector;
 
-      if (!name || this._isReservedElementName(name) || this.getElement(name) === null) {
-        return null;
-      }
-
+      if (!name || this._isReservedElementName(name) || this.getElement(name) === null) return null;
       selector = this.elements[name];
+      if (_.isPlainObject(selector)) selector = selector.selector;
 
-      if (_.isPlainObject(selector)) {
-        selector = selector.selector;
-      }
-
-      if (selector) {
-        return selector;
-      } else {
-        return null;
-      }
+      return selector || null;
     },
 
     unregisterElement: function (name) {
       var $element, selector;
 
-      if (!name || this._isReservedElementName(name) || !this.getElement(name)) {
-        return this;
-      }
+      if (!name || this._isReservedElementName(name) || !this.getElement(name)) return this;
 
       $element = this.getElement(name);
       selector = this.getElementSelector(name);
@@ -746,10 +776,6 @@
     registerElements: function (elements) {
       elements = elements || this.elements;
 
-      if (!_.size(elements)) {
-        return this;
-      }
-
       _.forOwn(elements, function (options, name) {
         this.registerElement(name, options);
       }.bind(this));
@@ -759,10 +785,6 @@
 
     unregisterElements: function (elements) {
       elements = elements || this.elements;
-
-      if (!_.size(elements)) {
-        return this;
-      }
 
       _.forOwn(elements, function (options, name) {
         this.unregisterElement(name);
@@ -780,6 +802,7 @@
 
       if (binding) {
         _binding = binding.split(' ');
+
         deconstructedBinding = {
           once: false,
           other: this
@@ -798,9 +821,7 @@
             return null;
           }
 
-          if (_.last(_binding) === 'once') {
-            deconstructedBinding.once = true;
-          }
+          if (_.last(_binding) === 'once') deconstructedBinding.once = true;
         } else {
           return null;
         }
@@ -820,15 +841,9 @@
         callback = this[callback];
       }
 
-      if (!binding || !callback || !_.isString(binding)) {
-        return this;
-      }
-
+      if (!binding || !callback || !_.isString(binding)) return this;
       _binding = this._deconstructBinding(binding);
-
-      if (!_binding) {
-        return this;
-      }
+      if (!_binding) return this;
 
       if (_binding.other.cid === this.cid) {
         if (_binding.once) {
@@ -854,9 +869,7 @@
       if (binding && this.bindings[binding]) {
         _binding = this._deconstructBinding(binding);
 
-        if (!_binding) {
-          return this;
-        }
+        if (!_binding) return this;
 
         if (_binding.other.cid === this.cid) {
           this.off(_binding.eventName);
@@ -873,10 +886,6 @@
     registerBindings: function (bindings) {
       bindings = bindings || this.bindings;
 
-      if (!_.size(bindings)) {
-        return this;
-      }
-
       _.forOwn(bindings, function (callback, binding) {
         this.registerBinding(binding, callback);
       }.bind(this));
@@ -886,10 +895,6 @@
 
     unregisterBindings: function (bindings) {
       bindings = bindings || this.bindings;
-
-      if (!_.size(bindings)) {
-        return this;
-      }
 
       _.forOwn(bindings, function (callback, binding) {
         this.unregisterBinding(binding);
@@ -913,13 +918,8 @@
         callback = this[callback];
       }
 
-      if (!eventName || !callback) {
-        return this;
-      }
-
-      if (selector && this.getElementSelector(selector)) {
-        selector = this.getElementSelector(selector);
-      }
+      if (!eventName || !callback) return this;
+      if (selector && this.getElementSelector(selector)) selector = this.getElementSelector(selector);
 
       originalEventName = eventName;
       eventName += '.delegateEvents' + this.cid;
@@ -951,14 +951,8 @@
     setModel: function (model) {
       model = model || this.model;
 
-      if (!model) {
-        return this;
-      }
-
-      if (_.isFunction(model)) {
-        model = new model();
-      }
-
+      if (!model) return this;
+      if (_.isFunction(model)) model = new model();
       this.model = model;
 
       return this;
@@ -967,14 +961,8 @@
     setCollection: function (collection) {
       collection = collection || this.collection;
 
-      if (!collection) {
-        return this;
-      }
-
-      if (_.isFunction(collection)) {
-        collection = new collection();
-      }
-
+      if (!collection) return this;
+      if (_.isFunction(collection)) collection = new collection();
       this.collection = collection;
 
       return this;
@@ -993,46 +981,58 @@
       } else {
         this.container = container;
         this.$container = this.$(this.container);
-
-        if (!this.$container.length) {
-          this.$container = this.$el;
-        }
+        if (!this.$container.length) this.$container = this.$el;
       }
 
       this.containerIsSet = true;
       return this;
     },
 
-    template: null,
+    template: '',
 
-    render: function (template, data) {
-      if (arguments.length === 1) {
+    context: function () {
+      if (this.model) {
+        return this.model.getPresenters();
+      } else if (this.collection) {
+        return this.collection.getPresenters();
+      } else {
+        return {};
+      }
+    },
+
+    renderTemplate: function (template, context) {
+      if (!context) {
         if (_.isPlainObject(template)) {
-          data = template;
+          context = template;
           template = this.template;
+        } else if (_.isFunction(template) || _.isString(template)) {
+          context = _.result(this, 'context');
+          template = template;
+          if (_.isFunction(template)) template = template.bind(this);
         } else {
-          data = data || this.model || this.collection || {};
-          template = template || this.template;
+          context = _.result(this, 'context');
+          template = this.template;
         }
       } else {
-        data = data || this.model || this.collection || {};
+        context = context || _.result(this, 'context');
         template = template || this.template;
       }
 
-      if (!template) {
-        return this;
-      }
-
-      if (!this.containerIsSet) {
-        this.setContainer();
-      }
-
       if (_.isFunction(template)) {
-        this.$container.html(template(data));
+        return template(context);
       } else if (_.isString(template)) {
-        this.$container.html(template);
+        return template;
+      } else {
+        return '';
       }
+    },
 
+    render: function (template, context) {
+      var output = this.renderTemplate(template, context);
+
+      if (!output) return this;
+      if (!this.containerIsSet) this.setContainer();
+      this.$container.html(output);
       this.isRendered = true;
       this.isFirstRender = false;
 
@@ -1041,10 +1041,7 @@
 
     insert: function (destination) {
       if (destination) {
-        if (this.isFirstRender) {
-          this.render();
-        }
-
+        if (this.isFirstRender) this.render();
         this.$el.appendTo(destination);
         this.isInserted = true;
       }
@@ -1063,10 +1060,7 @@
       this.isUnplugged = true;
 
       delete this.parent;
-
-      if (deep) {
-        this.unplugChildren(deep);
-      }
+      if (deep) this.unplugChildren(deep);
 
       return this;
     },
@@ -1083,14 +1077,8 @@
       data = data || {};
 
       if (child) {
-        if (_.isFunction(child)) {
-          child = new child(data);
-        }
-
-        if (!/^view/.test(child.cid)) {
-          return this;
-        }
-
+        if (_.isFunction(child)) child = new child(data);
+        if (!child.cid) return this;
         child.parent = this;
         this.children[child.cid] = child;
       }
@@ -1099,18 +1087,13 @@
     },
 
     addChildren: function (children) {
-      if (_.isArray(children)) {
-        _.forEach(children, this.addChild, this);
-      }
-
+      if (_.isArray(children)) _.forEach(children, this.addChild, this);
       return this;
     },
 
     forEachChild: function (callback) {
-      if (callback && _.isFunction(callback)) {
-        _.forOwn(this.children, callback.bind(this));
-      }
-
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (callback) _.forOwn(this.children, callback.bind(this));
       return this;
     },
 
@@ -1122,10 +1105,7 @@
 
         this.forEachChild(function (_child) {
           child = comparator(_child) ? _child : null;
-
-          if (child) {
-            return false;
-          }
+          if (child) return false;
         });
 
         return child;
@@ -1141,9 +1121,7 @@
         comparator = comparator.bind(this);
 
         this.forEachChild(function (child) {
-          if (comparator(child)) {
-            children.unshift(child);
-          }
+          if (comparator(child)) children.unshift(child);
         });
       }
 
@@ -1151,23 +1129,15 @@
     },
 
     getChildByCid: function (cid) {
-      if (cid) {
-        return _.find(this.children, function (child) {
-          return child.cid === cid;
-        });
-      } else {
-        return null;
-      }
+      return _.find(this.children, function (child) {
+        return child.cid === cid;
+      });
     },
 
     getChildByName: function (name) {
-      if (name) {
-        return _.find(this.children, function (child) {
-          return child.name === name;
-        });
-      } else {
-        return null;
-      }
+      return _.find(this.children, function (child) {
+        return child.name === name;
+      });
     },
 
     unplugChildren: function (deep) {
@@ -1519,7 +1489,7 @@
   Zeppelin.Router = Backbone.Router.extend({
     constructor: function () {
       this.cid = _.uniqueId('r');
-      this.name = this.name || _.uniqueId('routerName');
+      this.name = this.name || _.uniqueId('R');
 
       this.registerSubscriptions();
       Backbone.Router.prototype.constructor.apply(this, arguments);

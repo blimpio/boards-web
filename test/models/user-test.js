@@ -1,11 +1,13 @@
 describe('UserModel', function() {
-  var user, token, passToken, server,
+  var user, token, passToken, server, publishSpy,
       UserModel = require('models/user'),
       Connection = require('lib/connection');
 
   before(function() {
     token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAibmFtZUBleGFtcGxlLmNvbSJ9.PTbp7CGAJ3C4woorlCeWHRKqkcP7ZuiuWxn0FEiK9-0';
     passToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogIjRlMjMwM2IyLWIwYmEtNDA2OS05NzM2LTBlMDkzZDNmZTQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.4JaqInkg-5p63cHQdJz1pfm7kfijinab9XK1h6jDk-Q';
+
+    publishSpy = sinon.spy(UserModel.prototype, 'publish');
 
     user = new UserModel();
 
@@ -28,6 +30,7 @@ describe('UserModel', function() {
   after(function() {
     user.clear();
     localStorage.clear();
+    UserModel.prototype.publish.restore();
   });
 
   it('should exist.', function() {
@@ -211,6 +214,23 @@ describe('UserModel', function() {
       server.respondWith('POST', url, [200, contentType, 'OK']);
       user.setPasswordResetDataFromJWT(passToken);
       expect(user.resetPassword('password1').promise).to.exist;
+      server.respond();
+    });
+  });
+
+  describe('fetchAccounts', function() {
+    it('should publish a user:accounts:fetched event with the accounts.', function(done) {
+      var url = '/api/accounts/',
+          contentType = {"Content-Type":"application/json"};
+
+      server.respondWith('GET', url, [200, contentType, '{"accounts": []}']);
+      user.fetchAccounts();
+
+      setTimeout(function() {
+        expect(publishSpy).to.have.calledWith('user:accounts:fetched');
+        done();
+      }, 600);
+
       server.respond();
     });
   });

@@ -113,5 +113,28 @@ module.exports = Zeppelin.Model.extend({
         password: password
       });
     }
+  },
+
+  fetchAccounts: function() {
+    Boards.Connection.get('/api/accounts/', this.get('token')).done(function(accounts) {
+      this.set('accounts', accounts);
+      this.publish('user:accounts:fetched', accounts);
+    }.bind(this)).fail(function(error) {
+      this.publish('user:accounts:fetched', error);
+    }.bind(this));
+  },
+
+  accounts: function() {
+    var accounts = [];
+
+    _.forEach(this.get('accounts'), function(account) {
+      accounts.push({
+        url: '/' + account.slug + '/',
+        name: account.name,
+        image: account.image_url ? account.image_url : '/default/'
+      });
+    });
+
+    return accounts;
   }
 });

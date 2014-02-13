@@ -23,6 +23,10 @@ module.exports = Zeppelin.FormView.extend({
     'model change:signup_step': 'onSignupStepChange'
   },
 
+  context: function() {
+    return this.model.getPresenters(['email', 'signup_domains']);
+  },
+
   initialize: function() {
     this.renderStep();
   },
