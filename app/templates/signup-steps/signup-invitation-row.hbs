@@ -1,9 +1,9 @@
 <div class="signup__invitation-row">
   <input type="text" class="signup__invitation-field">
   <span class="signup__invitation-at">@</span>
-  {{#if attributes.signup_domains}}
+  {{#if signup_domains}}
     <select class="signup__invitation-domains" data-domain-source="true">
-      {{#each attributes.signup_domains}}
+      {{#each signup_domains}}
         <option value="{{this}}">{{this}}</option>
       {{/each}}
       <option value="other">Other Domain</option>
