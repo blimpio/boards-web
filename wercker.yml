@@ -1,0 +1,30 @@
+box: wercker/nodejs
+# Build definition
+build:
+  # The steps that will be executed on build
+  steps:
+    # A step that executes `npm install` command
+    - npm-install
+
+    # A step that installs bower globally
+    - script:
+        name: install bower
+        code: sudo npm install -g bower
+
+    # A step that executes `bower install` command
+    - script:
+        name: run bower install
+        code: bower install
+
+    # A step that executes `gulp test` command
+    - script:
+        name: run gulp test
+        code: gulp test
+
+    # A custom script step, name value is used in the UI
+    # and the code value contains the command that get executed
+    - script:
+        name: echo nodejs information
+        code: |
+          echo "node version $(node -v) running"
+          echo "npm version $(npm -v) running"
