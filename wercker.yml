@@ -6,7 +6,7 @@ build:
     # A step that executes `npm install` command
     - npm-install
 
-    # A step that installs bower globally
+    # A step that installs bower and gulp globally
     - script:
         name: install bower
         code: sudo npm install -g bower gulp
@@ -28,3 +28,8 @@ build:
         code: |
           echo "node version $(node -v) running"
           echo "npm version $(npm -v) running"
+
+  after-steps:
+    - hipchat-notify:
+        token: $HIPCHAT_TOKEN
+        room-id: $HIPCHAT_ROOM_ID
