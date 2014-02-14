@@ -9,7 +9,7 @@ build:
     # A step that installs bower globally
     - script:
         name: install bower
-        code: sudo npm install -g bower
+        code: sudo npm install -g bower gulp
 
     # A step that executes `bower install` command
     - script:
