@@ -13,15 +13,20 @@ build:
           echo "node version $(node -v) running"
           echo "npm version $(npm -v) running"
 
-    # A step that installs bower and gulp globally
+    # A step that installs brunch, bower and gulp globally
     - script:
         name: install bower
-        code: sudo npm install -g bower gulp
+        code: sudo npm install -g brunch bower gulp
 
     # A step that executes `bower install` command
     - script:
         name: run bower install
         code: bower install
+
+    # A step that executes `brunch build` command
+    - script:
+        name: run brunch build
+        code: brunch build
 
     # A step that executes `gulp test` command
     - script:
