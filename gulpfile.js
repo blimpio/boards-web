@@ -9,9 +9,9 @@ gulp.task('test', function() {
     if (stdout) {
       console.log(stdout);
     } else if (stderr) {
-      console.error(stderr);
+      process.stderr.write(stderr);
     } else if (error) {
-      console.error(error);
+      process.stderr.write(error);
     }
   });
 });
