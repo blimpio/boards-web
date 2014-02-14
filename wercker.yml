@@ -33,6 +33,11 @@ build:
         name: run gulp test
         code: gulp test
 
+    # A step that executes `mocha-phantomjs` command
+    - script:
+        name: run mocha-phantomjs
+        code: ./node_modules/mocha-phantomjs/bin/mocha-phantomjs ./test/index.html
+
   after-steps:
     - hipchat-notify:
         token: $HIPCHAT_TOKEN
