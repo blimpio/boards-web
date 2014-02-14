@@ -3,6 +3,8 @@ blimp-boards-web
 
 Blimp Boards Front-End for the web client.
 
+![wercker status](https://app.wercker.com/status/6618c352f999f43ba14a55b3ac2a36f5/s/ "wercker status")
+
 Dependencies
 ------------
 
@@ -15,16 +17,16 @@ Install
     $ cd boards-web
     $ npm install
     $ bower install
-    
+
 Run
 ---
 
     $ brunch w -s
-    
+
 Tests
 -----
-    
-    $ gulp test        
+
+    $ gulp test
 
 Generators
 ----------
@@ -32,11 +34,11 @@ Generators
     scaffolt view <name>
         → app/views/name.js
         → test/views/name-test.js
-        
+
     scaffolt formView <name>
         → app/views/name.js
         → test/views/name-test.js
-        
+
     scaffolt collectionView <name>
         → app/views/name.js
         → test/views/name-test.js
@@ -44,7 +46,7 @@ Generators
         → test/collections/name-test.js
         → app/models/name.js
         → test/models/name-test.js
-        
+
     scaffolt model <name>
         → app/models/name.js
         → test/models/name-test.js
