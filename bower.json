@@ -18,6 +18,9 @@
     "chai-jquery": "~1.2.1"
   },
   "overrides": {
+    "jquery": {
+      "main": "dist/jquery.js"
+    },
     "backbone": {
       "main": "backbone.js",
       "dependencies": {
