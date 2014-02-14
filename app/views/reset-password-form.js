@@ -12,7 +12,7 @@ module.exports = Zeppelin.FormView.extend({
 
     event.preventDefault()
 
-    if (Z.Validations.isOfMinimumLength(password, 8)) {
+    if (Z.Validations.isOfMinimumLength(password, 6)) {
       return this.model.resetPassword(password).done(function(data) {
         this.model.unset('passwordResetData').cache.clearAll();
         this.render(require('templates/reset-password-success'));
