@@ -61,7 +61,7 @@ module.exports = Zeppelin.Router.extend({
   },
 
   signout: function() {
-    Boards.getUser().signout();
+    _.getModel('User').signout();
     this.navigateWithTrigger('signin');
   },
 
