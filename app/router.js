@@ -1,9 +1,10 @@
 module.exports = Zeppelin.Router.extend({
   routes: {
-    'signup(/)': 'signup',
+    '': 'index',
     'signin(/)': 'signin',
-    'signout(/)': 'signout',
+    'signup(/)': 'signup',
     'signup?token:token(/)': 'signupWithToken',
+    'signout(/)': 'signout',
     'forgot_password(/)': 'forgotPassword',
     'reset_password(/)': 'resetPassword',
     'reset_password?token:token(/)': 'resetPasswordWithToken',
