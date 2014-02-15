@@ -1,9 +1,11 @@
 describe('ResetPasswordController', function() {
-  var server, controller, publishSpy,
+  var server, controller, publishSpy, passToken,
       Connection = require('lib/connection'),
       ResetPasswordController = require('controllers/reset-password');
 
   before(function() {
+    passToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogIjRlMjMwM2IyLWIwYmEtNDA2OS05NzM2LTBlMDkzZDNmZTQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.4JaqInkg-5p63cHQdJz1pfm7kfijinab9XK1h6jDk-Q';
+
     Boards.Connection = new Connection({
       type: 'HTTP',
       httpUrl: ''
@@ -49,6 +51,7 @@ describe('ResetPasswordController', function() {
 
   describe('renderForm', function() {
     it('should render and insert the controller if the user can reset the password.', function() {
+      controller.user.setPasswordResetDataFromJWT(passToken);
       controller.renderForm();
       expect(controller.isRendered).to.be.true;
       expect(controller.isInserted).to.be.true;
