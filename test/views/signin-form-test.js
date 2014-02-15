@@ -20,7 +20,7 @@ describe('SigninForm', function() {
     server.autoRespondAfter = 500;
 
     formView = new SigninForm({
-      model: Boards.getUser()
+      model: _.getModel('User')
     });
 
     formView.render();

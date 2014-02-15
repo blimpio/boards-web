@@ -86,7 +86,7 @@ describe('Router', function() {
   describe('signout', function() {
     it('sign out the current user and navigate to the signin route.', function() {
       router.signout();
-      expect(Boards.getUser().isSignedIn()).to.be.false;
+      expect(_.getModel('User').isSignedIn()).to.be.false;
       expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
     });
   });

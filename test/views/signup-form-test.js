@@ -1,6 +1,6 @@
 describe('SignupForm', function() {
   var formView, server, renderStepSpy,
-      User = Boards.getUser(),
+      User = _.getModel('User'),
       SignupForm = require('views/signup-form'),
       Connection = require('lib/connection');
 

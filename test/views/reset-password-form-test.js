@@ -20,7 +20,7 @@ describe('ResetPasswordForm', function() {
     server.autoRespondAfter = 500;
 
     formView = new ResetPasswordForm({
-      model: Boards.getUser()
+      model: _.getModel('User')
     });
 
     formView.render();

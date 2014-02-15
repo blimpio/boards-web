@@ -8,7 +8,7 @@ describe('AccountsList', function() {
 
   beforeEach(function() {
     list = new AccountsList({
-      model: Boards.getUser()
+      model: _.getModel('User')
     });
   });
 
