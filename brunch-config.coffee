@@ -11,18 +11,6 @@ exports.config =
       joinTo: 'js/app.js'
 
   plugins:
-    jshint:
-      pattern: /^app\/.*\.js$/
-      options:
-        curly: true
-        bitwise: true
-      globals:
-        _: true
-        jQuery: true
-        Zeppelin: true
-        Backbone: true
-      warnOnly: true
-
     handlebars:
       include:
         enabled: false
