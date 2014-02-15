@@ -103,7 +103,7 @@ module.exports = Zeppelin.Model.extend({
 
   canResetPassword: function() {
     var reset = this.get('passwordResetData');
-    return this.isSignedIn() || (reset && reset.token && reset.type === 'PasswordReset');
+    return reset && reset.token && reset.type === 'PasswordReset';
   },
 
   resetPassword: function(password) {
