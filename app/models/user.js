@@ -72,7 +72,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   isSignedIn: function() {
-    return this.has('token') && this.get('token') !== '';
+    return this.has('token');
   },
 
   forgotPassword: function(email) {
