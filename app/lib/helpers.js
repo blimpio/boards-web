@@ -1,20 +1,13 @@
 module.exports = (function() {
-  Boards.getUser = function() {
-    var User = require('models/user');
+  _.mixin({'getModel': function(name) {
+    if (!Boards.Models[name]) Boards.Models[name] = _.createModel(name.toLowerCase());
+    return Boards.Models[name];
+  }});
 
-    if (!Boards.User) {
-      Boards.User = new User();
-    }
-
-    return Boards.User;
-  };
-
-  $(document).on('click', '[data-route]', function(event) {
-    if (!event.metaKey) {
-      event.preventDefault();
-      Backbone.Events.trigger('router:navigate', $(this).data('route'));
-    }
-  });
+  _.mixin({'getCollection': function(name) {
+    if (!Boards.Collections[name]) Boards.Collections[name] = _.createCollection(name.toLowerCase());
+    return Boards.Collections[name];
+  }});
 
   _.mixin({'createController': function(path, options) {
     var Collection = require('controllers/' + path);
@@ -54,4 +47,11 @@ module.exports = (function() {
     // Return the token data decoded.
     return JSON.parse(atob(token));
   }});
+
+  $(document).on('click', '[data-route]', function(event) {
+    if (!event.metaKey) {
+      event.preventDefault();
+      Backbone.Events.trigger('router:navigate', $(this).data('route'));
+    }
+  });
 })();
