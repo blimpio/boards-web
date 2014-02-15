@@ -12,27 +12,23 @@ describe('Helpers', function() {
     $('#application').remove('#route');
   });
 
-  describe('Boards.getUser', function() {
-    it('should get the current user from the window global or create a new one.', function() {
-      var user = Boards.getUser();
+  describe('_.getModel', function() {
+    it('should get given model from the window global or create a new one.', function() {
+      var user = _.getModel('User');
       expect(user).to.exist;
       expect(user.name).to.equal('User');
+      expect(window.Boards.Models.User).to.exist;
+      expect(window.Boards.Models.User.name).to.equal('User');
     });
   });
 
-  describe('a[data-route]', function() {
-    it('should trigger a route change on click.', function() {
-      $('#route').click();
-      expect(this.navigateSpy).to.have.been.calledWith('boards', {trigger: true});
-    });
-  });
-
-  describe('_.decodeJWT', function() {
-    it('should decode a JSON Web Token.', function() {
-      var decoded = _.decodeJWT(JWT_TEST_TOKEN);
-      expect(decoded.id).to.equal(2);
-      expect(decoded.type).to.equal('PasswordReset');
-      expect(decoded.token_version).to.equal('a22c3b1d-dd8d-49ee-9d06-d062f5f47456');
+  describe('_.getCollection', function() {
+    it('should get the given collection from the window global or create a new one.', function() {
+      var boards = _.getCollection('Boards');
+      expect(boards).to.exist;
+      expect(boards.name).to.equal('Boards');
+      expect(window.Boards.Collections.Boards).to.exist;
+      expect(window.Boards.Collections.Boards.name).to.equal('Boards');
     });
   });
 
@@ -57,6 +53,30 @@ describe('Helpers', function() {
       var model = _.createModel('user');
       expect(model).to.exist;
       expect(model.name).to.equal('User');
+    });
+  });
+
+  describe('_.createCollection', function() {
+    it('should create a new collection based on the given path.', function() {
+      var collection = _.createCollection('boards');
+      expect(collection).to.exist;
+      expect(collection.name).to.equal('Boards');
+    });
+  });
+
+  describe('_.decodeJWT', function() {
+    it('should decode a JSON Web Token.', function() {
+      var decoded = _.decodeJWT(JWT_TEST_TOKEN);
+      expect(decoded.id).to.equal(2);
+      expect(decoded.type).to.equal('PasswordReset');
+      expect(decoded.token_version).to.equal('a22c3b1d-dd8d-49ee-9d06-d062f5f47456');
+    });
+  });
+
+  describe('a[data-route]', function() {
+    it('should trigger a route change on click.', function() {
+      $('#route').click();
+      expect(this.navigateSpy).to.have.been.calledWith('boards', {trigger: true});
     });
   });
 });
