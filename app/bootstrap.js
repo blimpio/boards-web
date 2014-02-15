@@ -11,6 +11,12 @@ module.exports = (function() {
   // Load helpers.
   require('lib/helpers');
 
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      xhr.setRequestHeader('Authorization', 'JWT ' + _.getModel('User').get('token'));
+    }
+  });
+
   // Register Swag Helpers.
   Swag.registerHelpers();
 
