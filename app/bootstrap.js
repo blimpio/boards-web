@@ -3,7 +3,10 @@ module.exports = (function() {
       Connection = require('lib/connection');
 
   // App namespace.
-  window.Boards = {};
+  window.Boards = {
+    Models: {},
+    Collections: {}
+  };
 
   // Load helpers.
   require('lib/helpers');
