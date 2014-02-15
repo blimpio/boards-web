@@ -188,15 +188,9 @@ describe('UserModel', function() {
   });
 
   describe('canResetPassword', function() {
-    it('should return false if the user is not logged in.', function() {
+    it('should return false if the user has password no reset token..', function() {
       user.clear().cache.clearAll();
       expect(user.canResetPassword()).to.not.be.ok;
-    });
-
-    it('should return true if the user is logged in.', function() {
-      user.clear().cache.clearAll();
-      user.set('token', token);
-      expect(user.canResetPassword()).to.be.true;
     });
 
     it('should return true if the user has password reset token.', function() {
