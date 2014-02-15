@@ -27,6 +27,16 @@ module.exports = Zeppelin.Router.extend({
     return this;
   },
 
+  index: function() {
+    this.removeLastController();
+
+    if (_.getModel('User').isSignedIn()) {
+      this.navigateWithTrigger('accounts');
+    } else {
+      this.navigateWithTrigger('signin');
+    }
+  },
+
   signup: function() {
     this.removeLastController();
     this.controller = _.createController('signup');
