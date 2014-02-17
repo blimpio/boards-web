@@ -136,5 +136,13 @@ module.exports = Zeppelin.Model.extend({
     });
 
     return accounts;
+  },
+
+  isInAccount: function(slug) {
+    if (slug) {
+      return _.find(this.get('accounts'), {slug: slug}) !== undefined;
+    } else {
+      return false;
+    }
   }
 });
