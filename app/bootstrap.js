@@ -13,7 +13,8 @@ module.exports = (function() {
 
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
-      xhr.setRequestHeader('Authorization', 'JWT ' + _.getModel('User').get('token'));
+      var token = _.getModel('User').get('token');
+      if (token) xhr.setRequestHeader('Authorization', 'JWT ' + token);
     }
   });
 
