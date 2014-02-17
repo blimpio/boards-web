@@ -6,11 +6,11 @@ module.exports = Zeppelin.FormView.extend({
   template: require('templates/signin-form'),
 
   initialize: function() {
-    this.addValidations();
+    this.registerValidations();
   },
 
-  addValidations: function() {
-    this.model.addValidation('username', [{
+  registerValidations: function() {
+    this.model.registerValidation('username', [{
       isEmpty: false,
       message: 'A username is required to authenticate you.'
     }, {
@@ -18,7 +18,7 @@ module.exports = Zeppelin.FormView.extend({
       message: 'Your username must be an alphanumeric value.'
     }]);
 
-    this.model.addValidation('password', [{
+    this.model.registerValidation('password', [{
       isEmpty: false,
       message: 'A password is required to authenticate you.'
     }, {

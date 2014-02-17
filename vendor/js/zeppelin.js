@@ -272,32 +272,19 @@
     },
 
     subscribe: function (eventName, callback) {
-      if (_.isFunction(callback)) {
-        callback = callback.bind(this);
-      } else {
-        callback = this[callback];
-      }
-
-      if (callback) {
-        this.listenTo(Backbone.Events, eventName, callback);
-        this.subscriptions[eventName] = callback;
-      }
+      if (!eventName || !callback) return this;
+      if (!_.isFunction(callback)) callback = this[callback];
+      this.listenTo(Backbone.Events, eventName, callback);
+      this.subscriptions[eventName] = callback;
 
       return this;
     },
 
     subscribeToOnce: function (eventName, callback) {
-      if (_.isFunction(callback)) {
-        callback = callback.bind(this);
-      } else {
-        callback = this[callback];
-      }
-
-      if (callback) {
-        callback = callback.bind(this);
-        this.listenToOnce(Backbone.Events, eventName, callback);
-        this.subscriptions[eventName] = callback;
-      }
+      if (!eventName || !callback) return this;
+      if (!_.isFunction(callback)) callback = this[callback];
+      this.listenToOnce(Backbone.Events, eventName, callback);
+      this.subscriptions[eventName] = callback;
 
       return this;
     },
@@ -521,7 +508,7 @@
       }
     },
 
-    addValidation: function (attributeName, validation) {
+    registerValidation: function (attributeName, validation) {
       if (attributeName && validation) {
         if (_.isArray(validation) || _.isPlainObject(validation) || _.isFunction(validation)) {
           this.validations[attributeName] = _.isArray(validation) ? validation : [validation];
@@ -531,11 +518,18 @@
       return this;
     },
 
-    removeValidation: function (attributeName) {
-      if (attributeName) {
-        delete this.validations[attributeName];
-      } else {
-        this.validations = {};
+    unregisterValidation: function (attributeName) {
+      if (attributeName) delete this.validations[attributeName];
+      return this;
+    },
+
+    unregisterValidations: function (validations) {
+      validations = validations || _.keys(this.validations);
+
+      if (_.isArray(validations)) {
+        _.forEach(validations, function (attributeName) {
+          this.unregisterValidation(attributeName);
+        }.bind(this));
       }
 
       return this;
@@ -695,7 +689,7 @@
       this.registerBindings();
       this.registerSubscriptions();
       Backbone.View.prototype.constructor.apply(this, arguments);
-      this.registerElements();
+      if (!this.template) this.registerElements();
     },
 
     _isReservedElementName: function (name) {
@@ -784,17 +778,9 @@
     },
 
     unregisterElements: function (elements) {
-      elements = elements || this.elements;
-
-      _.forOwn(elements, function (options, name) {
-        this.unregisterElement(name);
-      }.bind(this));
-
+      elements = elements || _.keys(this.elements);
+      if (_.isArray(elements)) _.forEach(elements, this.unregisterElement, this);
       return this;
-    },
-
-    bindings: {
-
     },
 
     _deconstructBinding: function (binding) {
@@ -835,13 +821,14 @@
     registerBinding: function (binding, callback) {
       var _binding, eventName, binded;
 
+      if (!binding || !callback || !_.isString(binding)) return this;
+
       if (_.isFunction(callback)) {
         callback = callback.bind(this);
       } else {
-        callback = this[callback];
+        callback = this[callback].bind(this);
       }
 
-      if (!binding || !callback || !_.isString(binding)) return this;
       _binding = this._deconstructBinding(binding);
       if (!_binding) return this;
 
@@ -894,12 +881,8 @@
     },
 
     unregisterBindings: function (bindings) {
-      bindings = bindings || this.bindings;
-
-      _.forOwn(bindings, function (callback, binding) {
-        this.unregisterBinding(binding);
-      }.bind(this));
-
+      bindings = bindings || _.keys(this.bindings);
+      if (_.isArray(bindings)) _.forEach(bindings, this.unregisterBinding, this);
       return this;
     },
 
@@ -912,13 +895,14 @@
         selector = undefined;
       }
 
+      if (!eventName || !callback) return this;
+
       if (_.isFunction(callback)) {
         callback = callback.bind(this);
       } else {
-        callback = this[callback];
+        callback = this[callback].bind(this);
       }
 
-      if (!eventName || !callback) return this;
       if (selector && this.getElementSelector(selector)) selector = this.getElementSelector(selector);
 
       originalEventName = eventName;
@@ -1033,6 +1017,7 @@
       if (!output) return this;
       if (!this.containerIsSet) this.setContainer();
       this.$container.html(output);
+      this.registerElements();
       this.isRendered = true;
       this.isFirstRender = false;
 
@@ -1073,14 +1058,16 @@
       return this;
     },
 
-    addChild: function (child, data) {
-      data = data || {};
+    addChild: function (child, data, name) {
+      if (_.isString(data)) name = data;
+      if (!_.isPlainObject(data)) data = {};
 
       if (child) {
         if (_.isFunction(child)) child = new child(data);
         if (!child.cid) return this;
+        name = _.isString(name) ? name : child.cid;
         child.parent = this;
-        this.children[child.cid] = child;
+        this.children[name] = child;
       }
 
       return child;
@@ -1328,12 +1315,16 @@
   });
 
   Zeppelin.CollectionView = Zeppelin.View.extend({
-    constructor: function () {
+    constructor: function (options) {
+      options = options || {};
+
       this.listIsSet = false;
       this.isFiltered = false;
       this.collectionIsRendered = false;
 
-      this.setItemView();
+      this.itemView = options.itemView || this.itemView;
+      if (this.itemView) this.setItemView(this.itemView);
+
       Zeppelin.View.prototype.constructor.apply(this, arguments);
     },
 
@@ -1367,10 +1358,7 @@
       } else {
         this.list = list;
         this.$list = this.$(this.list);
-
-        if (!this.$list.length) {
-          this.$list = this.$el;
-        }
+        if (!this.$list.length) this.$list = this.$el;
       }
 
       this.listIsSet = true;
@@ -1380,20 +1368,14 @@
     itemView: Zeppelin.View,
 
     setItemView: function (view) {
-      if (_.isFunction(view)) {
-        this.itemView = view;
-      }
-
+      if (_.isFunction(view)) this.itemView = view;
       return this;
     },
 
     renderItem: function (model) {
-      if (model && model.cid) {
-        return this.addChild(this.itemView, {
-          model: model
-        }).render();
-      }
-
+      if (model && model.cid) return this.addChild(this.itemView, {
+        model: model
+      }).render();
       return null;
     },
 
@@ -1417,12 +1399,9 @@
 
     render: function () {
       Zeppelin.View.prototype.render.apply(this, arguments);
-
-      if (!this.listIsSet) {
-        this.setList();
-      }
-
+      if (!this.listIsSet) this.setList();
       this.renderCollection();
+      return this;
     },
 
     getItemElement: function (comparator) {
@@ -1433,10 +1412,7 @@
 
         this.forEachChild(function (child) {
           $element = comparator(child) ? child.$el : null;
-
-          if ($element) {
-            return false;
-          }
+          if ($element) return false;
         });
 
         return $element;
@@ -1452,9 +1428,7 @@
         comparator = comparator.bind(this);
 
         this.forEachChild(function (child) {
-          if (comparator(child)) {
-            $elements.unshift(child);
-          }
+          if (comparator(child)) $elements.push(child);
         });
       }
 
@@ -1490,16 +1464,15 @@
     constructor: function () {
       this.cid = _.uniqueId('r');
       this.name = this.name || _.uniqueId('R');
+      this.validations = this.validations || {};
 
+      this._transformValidations();
       this.registerSubscriptions();
       Backbone.Router.prototype.constructor.apply(this, arguments);
     },
 
     start: function (options) {
-      if (!Backbone.History.started) {
-        Backbone.history.start(options);
-      }
-
+      if (!Backbone.History.started) Backbone.history.start(options);
       return this;
     },
 
@@ -1508,10 +1481,7 @@
     },
 
     stop: function () {
-      if (Backbone.History.started) {
-        Backbone.history.stop();
-      }
-
+      if (Backbone.History.started) Backbone.history.stop();
       return this;
     },
 
@@ -1543,6 +1513,79 @@
         params: params,
         fragment: fragment
       };
+    },
+
+    beforeRoute: function (route) {
+
+    },
+
+    afterRoute: function (route) {
+
+    },
+
+    _transformValidations: function () {
+      this.validations = _.transform(this.validations, function (result, callback, route) {
+        if (!_.isRegExp(route) && !_.isFunction(route)) route = this._routeToRegExp(route).toString();
+        if (!_.isFunction(callback)) callback = this[callback];
+        if (route && callback) result[route] = callback.bind(this);
+      }.bind(this));
+
+      return this;
+    },
+
+    resgiterValidation: function (route, callback) {
+      if (!_.isRegExp(route) && !_.isFunction(route)) route = this._routeToRegExp(route).toString();
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (route && callback) this.validations[route] = callback.bind(this);
+      return this;
+    },
+
+    registerValidations: function (validations) {
+      validations = validations || this.validations;
+
+      _.forOwn(validations, function (callback, route) {
+        this.resgiterValidation(route, callback);
+      }.bind(this));
+
+      return this;
+    },
+
+    unregisterValidation: function (route) {
+      if (route) {
+        if (!this.validations[route] && !_.isRegExp(route)) {
+          delete this.validations[this._routeToRegExp(route).toString()];
+        } else {
+          delete this.validations[route];
+        }
+      }
+
+      return this;
+    },
+
+    unregisterValidations: function (validations) {
+      validations = validations || _.keys(this.validations);
+      if (_.isArray(validations)) _.forEach(validations, this.unregisterValidation, this);
+      return this;
+    },
+
+    validate: function (route) {
+      var validation = this.validations[route.route.toString()];
+      if (validation) return validation(route);
+    },
+
+    execute: function () {
+      var error, route = this.getRoute();
+
+      error = this.validate(route);
+
+      if (!error) {
+        this.beforeRoute(route);
+        Backbone.Router.prototype.execute.apply(this, arguments);
+        this.afterRoute(route);
+        this.trigger('route:valid', route);
+      } else {
+        this.trigger('route:invalid', route, error);
+      }
     }
   });
 

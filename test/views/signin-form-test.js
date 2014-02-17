@@ -1,5 +1,5 @@
 describe('SigninForm', function() {
-  var formView, server, addValidationsSpy,
+  var formView, server, registerValidationsSpy,
       SigninForm = require('views/signin-form'),
       Connection = require('lib/connection');
 
@@ -13,7 +13,7 @@ describe('SigninForm', function() {
   });
 
   beforeEach(function() {
-    addValidationsSpy = sinon.spy(SigninForm.prototype, 'addValidations');
+    registerValidationsSpy = sinon.spy(SigninForm.prototype, 'registerValidations');
 
     server = sinon.fakeServer.create();
     server.autoRespond = false;
@@ -27,7 +27,7 @@ describe('SigninForm', function() {
   });
 
   afterEach(function() {
-    SigninForm.prototype.addValidations.restore();
+    SigninForm.prototype.registerValidations.restore();
     server.restore();
   });
 
@@ -46,15 +46,15 @@ describe('SigninForm', function() {
   });
 
   describe('initialize', function() {
-    it('should call addValidations().', function() {
-      expect(addValidationsSpy).to.have.been.calledOnce;
+    it('should call registerValidations().', function() {
+      expect(registerValidationsSpy).to.have.been.calledOnce;
     });
   });
 
-  describe('addValidations', function() {
+  describe('registerValidations', function() {
     it('should add model validations for username and password attributes.', function() {
-      formView.model.removeValidation();
-      formView.addValidations();
+      formView.model.unregisterValidation();
+      formView.registerValidations();
       expect(formView.model.validations.username).to.exist;
       expect(formView.model.validations.password).to.exist;
     });

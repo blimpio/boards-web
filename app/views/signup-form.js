@@ -61,7 +61,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validateEmail: function(event) {
-    this.model.addValidation('email', [{
+    this.model.registerValidation('email', [{
       isEmpty: false,
       message: 'An email is required to authenticate you.'
     }, {
@@ -96,7 +96,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validateFullName: function(event) {
-    this.model.addValidation('full_name', function(name) {
+    this.model.registerValidation('full_name', function(name) {
       if (!name) {
         return 'Your name is required to authenticate you.';
       } else if (!name.split(' ')[1]) {
@@ -107,7 +107,7 @@ module.exports = Zeppelin.FormView.extend({
     this.setAttribute('full_name');
 
     if (!this.model.validationError) {
-      this.model.addValidation('account_name', {
+      this.model.registerValidation('account_name', {
         isEmpty: false,
         message: 'An account name is required to authenticate you.'
       }).updateSignupStep(5);
@@ -117,7 +117,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validateAccountName: function(event) {
-    this.model.addValidation('account_name', {
+    this.model.registerValidation('account_name', {
       isEmpty: false,
       message: 'An account name is required to authenticate you.'
     });
@@ -237,7 +237,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validateUsername: function(event) {
-    this.model.addValidation('username', {
+    this.model.registerValidation('username', {
       isEmpty: false,
       message: 'An username is required to authenticate you.'
     });
@@ -256,7 +256,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validatePassword: function(event) {
-    this.model.addValidation('password', [{
+    this.model.registerValidation('password', [{
       isEmpty: false,
       message: 'A password is required to authenticate you.'
     }, {
