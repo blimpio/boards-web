@@ -44,3 +44,6 @@ public/
 
 # Bower stuff.
 bower_components/
+
+# Compiled test files.
+test/tests.js
