@@ -5,24 +5,18 @@ module.exports = Zeppelin.View.extend({
 
   subscriptions: {
     'user:signed:in': function() {
-      this.publish('router:navigate', 'boards');
+      this.publish('router:navigate', 'accounts');
     }
   },
 
   initialize: function() {
     document.title = 'Blimp | Signin';
-
-    this.user = _.getModel('User');
-    this.user.fetchCache();
-
-    if (this.user.isSignedIn()) {
-      this.publish('router:navigate', 'boards');
-    } else {
-      this.insert('#application').initForm();
-    }
+    this.insert('#application').initForm();
   },
 
   initForm: function() {
-    return this.addChild(require('views/signin-form'), {model: this.user}).render();
+    return this.addChild(require('views/signin-form'), {
+      model: _.getModel('User')
+    }, 'form').render();
   }
 });

@@ -5,14 +5,7 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Boards';
-
     this.user = _.getModel('User');
-    this.user.fetchCache();
-
-    if (!this.user.isSignedIn()) {
-      this.publish('router:navigate', 'signin');
-    } else {
-      this.insert('#application');
-    }
+    this.insert('#application');
   }
 });

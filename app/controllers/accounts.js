@@ -3,33 +3,14 @@ module.exports = Zeppelin.View.extend({
 
   template: require('templates/accounts'),
 
-  subscriptions: {
-    'user:accounts:fetched': 'onAccountsFetch'
-  },
-
   initialize: function() {
     document.title = 'Blimp | Accounts';
-
-    this.user = _.getModel('User');
-    this.user.fetchCache();
-
-    if (!this.user.isSignedIn()) {
-      this.publish('router:navigate', 'signin');
-    } else {
-      this.user.fetchAccounts();
-      this.insert('#application');
-    }
+    this.insert('#application').initList();
   },
 
   initList: function() {
-    return this.addChild(require('views/accounts-list'), {model: this.user});
-  },
-
-  onAccountsFetch: function(accounts) {
-    if (accounts.length > 1) {
-      this.initList().render();
-    } else {
-      this.publish('router:navigate', 'boards');
-    }
+    return this.addChild(require('views/accounts-list'), {
+      model: _.getModel('User')
+    }, 'accounts').render();
   }
 });

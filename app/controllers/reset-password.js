@@ -5,9 +5,7 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Reset Recovery';
-
     this.user = _.getModel('User');
-    this.user.fetchCache();
   },
 
   renderForm: function() {
@@ -21,15 +19,14 @@ module.exports = Zeppelin.View.extend({
   },
 
   validateToken: function(token) {
-    if (token) {
-      this.user.setPasswordResetDataFromJWT(token);
-    }
-
+    if (token) this.user.setPasswordResetDataFromJWT(token);
     this.renderForm();
     return this;
   },
 
   initForm: function() {
-    return this.addChild(require('views/reset-password-form'), {model: this.user}).render();
+    return this.addChild(require('views/reset-password-form'), {
+      model: this.user
+    }, 'form').render();
   }
 });
