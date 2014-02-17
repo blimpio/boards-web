@@ -21,6 +21,9 @@ module.exports = (function() {
   // Register Swag Helpers.
   Swag.registerHelpers();
 
+  // Fetch user data from local storage, if any.
+  _.getModel('User').fetchCache();
+
   // Initialize Router.
   Boards.Router = new Router();
 
