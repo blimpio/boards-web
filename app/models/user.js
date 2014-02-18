@@ -115,15 +115,6 @@ module.exports = Zeppelin.Model.extend({
     }
   },
 
-  fetchAccounts: function() {
-    Boards.Connection.get('/api/accounts/', this.get('token')).done(function(accounts) {
-      this.set('accounts', accounts);
-      this.publish('user:accounts:fetched', accounts);
-    }.bind(this)).fail(function(error) {
-      this.publish('user:accounts:fetched', error);
-    }.bind(this));
-  },
-
   accounts: function() {
     var accounts = [];
 
