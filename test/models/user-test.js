@@ -212,20 +212,44 @@ describe('UserModel', function() {
     });
   });
 
-  describe('fetchAccounts', function() {
-    it('should publish a user:accounts:fetched event with the accounts.', function(done) {
-      var url = '/api/accounts/',
-          contentType = {"Content-Type":"application/json"};
+  describe('accounts', function() {
+    it('should the accounts data used for rendering.', function() {
+      user.set('accounts', [{
+        'id': 2,
+        'name': 'Pueblo Co',
+        'slug': 'pueblo-co',
+        'image_url': ''
+      }]);
 
-      server.respondWith('GET', url, [200, contentType, '{"accounts": []}']);
-      user.fetchAccounts();
+      expect(user.accounts()).to.eql([{
+        url: '/pueblo-co/',
+        name: 'Pueblo Co',
+        image: '/default/'
+      }]);
+    });
+  });
 
-      setTimeout(function() {
-        expect(publishSpy).to.have.calledWith('user:accounts:fetched');
-        done();
-      }, 600);
+  describe('isInAccount', function() {
+    it('should return true if the user is part of an account given an account slug.', function() {
+      user.set('accounts', [{
+        'id': 2,
+        'name': 'Pueblo Co',
+        'slug': 'pueblo-co',
+        'image_url': ''
+      }]);
 
-      server.respond();
+      expect(user.isInAccount('pueblo-co')).to.be.true;
+    });
+
+    it('should return false if the user is not part of an account given an account slug.', function() {
+      user.set('accounts', [{
+        'id': 2,
+        'name': 'Pueblo Co',
+        'slug': 'pueblo-co',
+        'image_url': ''
+      }]);
+
+      expect(user.isInAccount('bla')).to.be.false;
     });
   });
 });

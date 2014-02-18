@@ -1,21 +1,13 @@
 describe('SigninController', function() {
-  var controller, publishSpy,
+  var controller,
       SigninController = require('controllers/signin');
 
   beforeEach(function() {
-    localStorage.setItem('User', '{"token": "'+ JWT_TEST_TOKEN +'"}');
-    publishSpy = sinon.spy(SigninController.prototype, 'publish');
     controller = new SigninController();
   });
 
-  after(function() {
+ afterEach(function() {
     controller.remove();
-    localStorage.clear();
-    $('#application').empty();
-  });
-
-  afterEach(function() {
-    SigninController.prototype.publish.restore();
   });
 
   it('should exist.', function() {
@@ -23,32 +15,21 @@ describe('SigninController', function() {
   });
 
   describe('initialize', function() {
-    it('should init the user model.', function() {
-      expect(controller.user).to.exist;
-      expect(controller.user.name).to.equal('User');
-    });
-
-    it('should fetch the model from cache.', function() {
-      expect(controller.user.get('token')).to.equal(JWT_TEST_TOKEN);
-    });
-
-    it('should render and insert the controller if the user is logged out.', function() {
-      controller.user.clear().cache.clearAll();
-      controller.initialize();
+    it('should render and insert.', function() {
       expect(controller.isRendered).to.be.true;
       expect(controller.isInserted).to.be.true;
     });
 
-    it('should navigate to the boards route if the user is logged in.', function() {
-      controller.initialize();
-      expect(publishSpy).to.have.been.calledWith('router:navigate', 'boards');
+    it('should have a form child view.', function() {
+      expect(controller.children.form).to.exist;
     });
   });
 
   describe('initForm', function() {
-    it('should init the form.', function() {
+    it('should init and render the signin form view.', function() {
       controller.initForm();
-      expect(controller.getChildByName('SigninForm')).to.exist;
+      expect(controller.children.form.name).to.equal('SigninForm');
+      expect(controller.children.form.isRendered).to.be.true;
     });
   });
 });

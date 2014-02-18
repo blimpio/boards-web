@@ -4,8 +4,6 @@ describe('ResetPasswordForm', function() {
       Connection = require('lib/connection');
 
   before(function() {
-    $('#application').append(require('templates/reset-password')());
-
     Boards.Connection = new Connection({
       type: 'HTTP',
       httpUrl: ''
@@ -13,11 +11,13 @@ describe('ResetPasswordForm', function() {
   });
 
   beforeEach(function() {
-    setFormSpy = sinon.spy(ResetPasswordForm.prototype, 'setForm');
+    $('#application').append(require('templates/reset-password')());
 
     server = sinon.fakeServer.create();
     server.autoRespond = false;
     server.autoRespondAfter = 500;
+
+    setFormSpy = sinon.spy(ResetPasswordForm.prototype, 'setForm');
 
     formView = new ResetPasswordForm({
       model: _.getModel('User')
@@ -29,11 +29,7 @@ describe('ResetPasswordForm', function() {
   afterEach(function() {
     ResetPasswordForm.prototype.setForm.restore();
     server.restore();
-  });
-
-  after(function() {
     formView.remove();
-    $('#application').empty();
   });
 
   it('should exist.', function() {

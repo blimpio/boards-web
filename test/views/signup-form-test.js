@@ -5,8 +5,6 @@ describe('SignupForm', function() {
       Connection = require('lib/connection');
 
   before(function() {
-    $('#application').append('<form class="signup"></form>');
-
     Boards.Connection = new Connection({
       type: 'HTTP',
       httpUrl: ''
@@ -16,11 +14,13 @@ describe('SignupForm', function() {
   });
 
   beforeEach(function() {
-    renderStepSpy = sinon.spy(SignupForm.prototype, 'renderStep');
+    $('#application').append('<form class="signup"></form>');
 
     server = sinon.fakeServer.create();
     server.autoRespond = false;
     server.autoRespondAfter = 500;
+
+    renderStepSpy = sinon.spy(SignupForm.prototype, 'renderStep');
 
     formView = new SignupForm({
       model: User
@@ -34,11 +34,7 @@ describe('SignupForm', function() {
     formView.stopListening(formView.model);
     SignupForm.prototype.renderStep.restore();
     server.restore();
-  });
-
-  after(function() {
     formView.remove();
-    $('#application').empty();
   });
 
   it('should exist.', function() {

@@ -2,19 +2,16 @@ describe('AccountsList', function() {
   var list,
       AccountsList = require('views/accounts-list');
 
-  before(function() {
-    $('#application').append(require('templates/accounts')());
-  });
-
   beforeEach(function() {
+    $('#application').append(require('templates/accounts')());
+
     list = new AccountsList({
       model: _.getModel('User')
     });
   });
 
-  after(function() {
+  afterEach(function() {
     list.remove();
-    $('#application').empty();
   });
 
   it('should exist.', function() {
@@ -30,13 +27,6 @@ describe('AccountsList', function() {
     it('should return the user accounts.', function() {
       list.model.set('accounts', [{id: 1, name: 'A'}, {id: 2, name: 'B'}]);
       expect(list.context().accounts().length).to.equal(2);
-    });
-  });
-
-  describe('onAccountsChange', function() {
-    it('should render the list.', function() {
-      list.onAccountsChange();
-      expect(list.isRendered).to.be.true;
     });
   });
 });

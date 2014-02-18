@@ -22,15 +22,15 @@ describe('Helpers', function() {
     });
   });
 
-  describe('_.getCollection', function() {
-    it('should get the given collection from the window global or create a new one.', function() {
-      var boards = _.getCollection('Boards');
-      expect(boards).to.exist;
-      expect(boards.name).to.equal('Boards');
-      expect(window.Boards.Collections.Boards).to.exist;
-      expect(window.Boards.Collections.Boards.name).to.equal('Boards');
-    });
-  });
+  // describe('_.getCollection', function() {
+  //   it('should get the given collection from the window global or create a new one.', function() {
+  //     var boards = _.getCollection('Boards');
+  //     expect(boards).to.exist;
+  //     expect(boards.name).to.equal('Boards');
+  //     expect(window.Boards.Collections.Boards).to.exist;
+  //     expect(window.Boards.Collections.Boards.name).to.equal('Boards');
+  //   });
+  // });
 
   describe('_.createController', function() {
     it('should create a new controller view based on the given path.', function() {
@@ -56,13 +56,13 @@ describe('Helpers', function() {
     });
   });
 
-  describe('_.createCollection', function() {
-    it('should create a new collection based on the given path.', function() {
-      var collection = _.createCollection('boards');
-      expect(collection).to.exist;
-      expect(collection.name).to.equal('Boards');
-    });
-  });
+  // describe('_.createCollection', function() {
+  //   it('should create a new collection based on the given path.', function() {
+  //     var collection = _.createCollection('boards');
+  //     expect(collection).to.exist;
+  //     expect(collection.name).to.equal('Boards');
+  //   });
+  // });
 
   describe('_.decodeJWT', function() {
     it('should decode a JSON Web Token.', function() {

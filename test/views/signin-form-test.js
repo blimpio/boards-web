@@ -4,8 +4,6 @@ describe('SigninForm', function() {
       Connection = require('lib/connection');
 
   before(function() {
-    $('#application').append('<form class="signin"></form>');
-
     Boards.Connection = new Connection({
       type: 'HTTP',
       httpUrl: ''
@@ -13,11 +11,13 @@ describe('SigninForm', function() {
   });
 
   beforeEach(function() {
-    registerValidationsSpy = sinon.spy(SigninForm.prototype, 'registerValidations');
+    $('#application').append('<form class="signin"></form>');
 
     server = sinon.fakeServer.create();
     server.autoRespond = false;
     server.autoRespondAfter = 500;
+
+    registerValidationsSpy = sinon.spy(SigninForm.prototype, 'registerValidations');
 
     formView = new SigninForm({
       model: _.getModel('User')
@@ -29,11 +29,7 @@ describe('SigninForm', function() {
   afterEach(function() {
     SigninForm.prototype.registerValidations.restore();
     server.restore();
-  });
-
-  after(function() {
     formView.remove();
-    $('#application').empty();
   });
 
   it('should exist.', function() {

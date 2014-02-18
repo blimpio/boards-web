@@ -4,8 +4,6 @@ describe('ForgotPasswordForm', function() {
       Connection = require('lib/connection');
 
   before(function() {
-    $('#application').append(require('templates/forgot-password')());
-
     Boards.Connection = new Connection({
       type: 'HTTP',
       httpUrl: ''
@@ -13,11 +11,13 @@ describe('ForgotPasswordForm', function() {
   });
 
   beforeEach(function() {
-    setFormSpy = sinon.spy(ForgotPasswordForm.prototype, 'setForm');
+    $('#application').append(require('templates/forgot-password')());
 
     server = sinon.fakeServer.create();
     server.autoRespond = false;
     server.autoRespondAfter = 500;
+
+    setFormSpy = sinon.spy(ForgotPasswordForm.prototype, 'setForm');
 
     formView = new ForgotPasswordForm({
       model: _.getModel('User')
@@ -29,11 +29,7 @@ describe('ForgotPasswordForm', function() {
   afterEach(function() {
     ForgotPasswordForm.prototype.setForm.restore();
     server.restore();
-  });
-
-  after(function() {
     formView.remove();
-    $('#application').empty();
   });
 
   it('should exist.', function() {

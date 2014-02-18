@@ -66,10 +66,7 @@ module.exports = Zeppelin.Router.extend({
   },
 
   removeLastController: function() {
-    if (this.controller) {
-      this.controller.remove();
-    }
-
+    if (this.controller) this.controller.remove();
     return this;
   },
 

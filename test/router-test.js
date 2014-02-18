@@ -27,10 +27,58 @@ describe('Router', function() {
     ResetPassword.prototype.validateToken.restore();
   });
 
+  describe('onError', function() {
+    it('should navigate to the signin route if the authIsRequired() validation fails.', function() {
+      router.onError({}, 'Auth is required.');
+      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+    });
+
+    it('should navigate to the accounts route if the accountExists() validation fails.', function() {
+      router.onError({}, 'User is not in account.');
+      expect(navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
+    });
+
+    it('should navigate to the accounts route if the isNotAuthenticated() validation fails.', function() {
+      router.onError({}, 'User is already authenticated.');
+      expect(navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
+    });
+  });
+
+  describe('beforeRoute', function() {
+    it('should remove the current controller.', function() {
+      router.controller = new Z.View();
+      router.beforeRoute();
+      expect(router.controller.isUnplugged).to.be.true;
+    });
+  });
+
+  describe('authIsRequired', function() {
+    it('should return an error if the user is not signed in.', function() {
+      expect(router.authIsRequired({fragment: 'accounts/'})).to.equal('Auth is required.');
+    });
+  });
+
+  describe('isNotAuthenticated', function() {
+    it('should return an error if the user is signed in.', function() {
+      _.getModel('User').set('token', '12345')
+      expect(router.isNotAuthenticated({fragment: 'signin/'})).to.equal('User is already authenticated.');
+    });
+  });
+
+  describe('accountExists', function() {
+    it('should return an error if the user is not in the given account.', function() {
+      _.getModel('User').set('token', '12345')
+      expect(router.accountExists({
+        params: ['blimp'],
+        fragment: 'blimp/'
+      })).to.equal('User is not in account.');
+    });
+  });
+
   describe('navigateWithTrigger', function() {
     it('should navigate and trigger the route.', function() {
-      router.navigateWithTrigger('posts');
-      expect(navigateSpy).to.have.been.calledWith('posts', {trigger: true});
+      router.navigateWithTrigger('signin');
+      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
     });
   });
 
@@ -88,6 +136,14 @@ describe('Router', function() {
       router.signout();
       expect(_.getModel('User').isSignedIn()).to.be.false;
       expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+    });
+  });
+
+  describe('accounts', function() {
+    it('should init the accounts controller view.', function() {
+      router.accounts();
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('AccountsController');
     });
   });
 
