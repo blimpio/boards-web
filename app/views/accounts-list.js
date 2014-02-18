@@ -5,15 +5,7 @@ module.exports = Zeppelin.View.extend({
 
   template: require('templates/accounts-list'),
 
-  bindings: {
-    'model change:accounts': 'onAccountsChange'
-  },
-
   context: function() {
     return this.model.getPresenters(['accounts']);
-  },
-
-  onAccountsChange: function(user, accounts) {
-    this.render();
   }
 });
