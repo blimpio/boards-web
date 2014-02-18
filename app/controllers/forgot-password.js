@@ -11,6 +11,6 @@ module.exports = Zeppelin.View.extend({
   initForm: function() {
     return this.addChild(require('views/forgot-password-form'), {
       model: _.getModel('User')
-    }, 'form').render();
+    }, 'form');
   }
 });

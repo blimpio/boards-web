@@ -9,24 +9,19 @@ module.exports = Zeppelin.View.extend({
   },
 
   renderForm: function() {
-    if (this.user.canResetPassword()) {
-      this.insert('#application').initForm();
-    } else {
-      this.publish('router:navigate', 'signin');
-    }
-
+    this.insert('#application').initForm();
     return this;
   },
 
   validateToken: function(token) {
     if (token) this.user.setPasswordResetDataFromJWT(token);
-    this.renderForm();
+    if (this.user.canResetPassword()) this.renderForm();
     return this;
   },
 
   initForm: function() {
     return this.addChild(require('views/reset-password-form'), {
       model: this.user
-    }, 'form').render();
+    }, 'form');
   }
 });
