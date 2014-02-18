@@ -1,6 +1,5 @@
 module.exports = (function() {
-  var Router = require('router'),
-      Connection = require('lib/connection');
+  var Router = require('router');
 
   // App namespace.
   window.Boards = {
@@ -27,19 +26,6 @@ module.exports = (function() {
   // Initialize Router.
   Boards.Router = new Router();
 
-  // Create a Connection object to communicate with the server through web sockets.
-  // The `connection` object will be added to the `Application` object so it's available through
-  // `window.Application.connection`.
-  Boards.Connection = new Connection({
-    type: APPLICATION_CONNECTION,
-    httpUrl: APPLICATION_HTTP_URL,
-    socketUrl: APPLICATION_WEBSOCKET_URL
-  });
-
-  // Connect to the server.
-  Boards.Connection.create().done(function() {
-    Boards.Router.start();
-  }).fail(function() {
-    console.log('Connection Error', arguments);
-  });
+  // Start listening to routes.
+  Boards.Router.start();
 })();

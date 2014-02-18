@@ -1,7 +1,6 @@
 describe('UserModel', function() {
   var user, token, passToken, server, publishSpy,
-      UserModel = require('models/user'),
-      Connection = require('lib/connection');
+      UserModel = require('models/user');
 
   before(function() {
     token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAibmFtZUBleGFtcGxlLmNvbSJ9.PTbp7CGAJ3C4woorlCeWHRKqkcP7ZuiuWxn0FEiK9-0';
@@ -10,11 +9,6 @@ describe('UserModel', function() {
     publishSpy = sinon.spy(UserModel.prototype, 'publish');
 
     user = new UserModel();
-
-    Boards.Connection = new Connection({
-      type: 'HTTP',
-      httpUrl: '/api/'
-    });
   });
 
   beforeEach(function() {

@@ -1,14 +1,6 @@
 describe('ResetPasswordForm', function() {
   var formView, server, setFormSpy,
-      ResetPasswordForm = require('views/reset-password-form'),
-      Connection = require('lib/connection');
-
-  before(function() {
-    Boards.Connection = new Connection({
-      type: 'HTTP',
-      httpUrl: ''
-    });
-  });
+      ResetPasswordForm = require('views/reset-password-form');
 
   beforeEach(function() {
     $('#application').append(require('templates/reset-password')());

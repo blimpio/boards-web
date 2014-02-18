@@ -1,14 +1,6 @@
 describe('SigninForm', function() {
   var formView, server, registerValidationsSpy,
-      SigninForm = require('views/signin-form'),
-      Connection = require('lib/connection');
-
-  before(function() {
-    Boards.Connection = new Connection({
-      type: 'HTTP',
-      httpUrl: ''
-    });
-  });
+      SigninForm = require('views/signin-form');
 
   beforeEach(function() {
     $('#application').append('<form class="signin"></form>');

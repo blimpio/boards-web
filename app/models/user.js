@@ -8,7 +8,7 @@ module.exports = Zeppelin.Model.extend({
   localAttributes: ['signup_step', 'passwordReset'],
 
   requestSignup: function() {
-    return Boards.Connection.post('/api/auth/signup_request/', {
+    return $.post(APPLICATION_HTTP_URL + '/api/auth/signup_request/', {
       email: this.get('email')
     });
   },
@@ -40,7 +40,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   validateSignupEmailDomain: function(domains) {
-    return Boards.Connection.post('/api/auth/signup_domains/validate/', {
+    return $.post(APPLICATION_HTTP_URL + '/api/auth/signup_domains/validate/', {
       signup_domains: domains
     });
   },
@@ -50,19 +50,19 @@ module.exports = Zeppelin.Model.extend({
   },
 
   validateUsername: function() {
-    return Boards.Connection.post('/api/auth/username/validate/', {
+    return $.post(APPLICATION_HTTP_URL + '/api/auth/username/validate/', {
       username: this.get('username')
     });
   },
 
   signup: function(user) {
     user = user || this.toJSON();
-    return Boards.Connection.post('/api/auth/signup/', user);
+    return $.post(APPLICATION_HTTP_URL + '/api/auth/signup/', user);
   },
 
   signin: function(user) {
     user = user || this.toJSON();
-    return Boards.Connection.post('/api/auth/signin/', user);
+    return $.post(APPLICATION_HTTP_URL + '/api/auth/signin/', user);
   },
 
   signout: function() {
@@ -77,7 +77,7 @@ module.exports = Zeppelin.Model.extend({
 
   forgotPassword: function(email) {
     email = email || this.get('email');
-    return Boards.Connection.post('/api/auth/forgot_password/', {email: email});
+    return $.post(APPLICATION_HTTP_URL + '/api/auth/forgot_password/', {email: email});
   },
 
   setPasswordResetDataFromJWT: function(token) {
@@ -108,7 +108,7 @@ module.exports = Zeppelin.Model.extend({
 
   resetPassword: function(password) {
     if (this.canResetPassword() && password) {
-      return Boards.Connection.post('/api/auth/reset_password/', {
+      return $.post(APPLICATION_HTTP_URL + '/api/auth/reset_password/', {
         token: this.get('passwordResetData').token,
         password: password
       });

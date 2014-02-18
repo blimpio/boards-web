@@ -1,14 +1,6 @@
 describe('ForgotPasswordForm', function() {
   var formView, server, setFormSpy,
-      ForgotPasswordForm = require('views/forgot-password-form'),
-      Connection = require('lib/connection');
-
-  before(function() {
-    Boards.Connection = new Connection({
-      type: 'HTTP',
-      httpUrl: ''
-    });
-  });
+      ForgotPasswordForm = require('views/forgot-password-form');
 
   beforeEach(function() {
     $('#application').append(require('templates/forgot-password')());

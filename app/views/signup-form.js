@@ -75,8 +75,8 @@ module.exports = Zeppelin.FormView.extend({
       return this.model.requestSignup().done(function(data) {
         this.model.set(data);
         this.model.updateSignupStep(2);
-      }.bind(this)).fail(function(error) {
-        this.getAttributeErrorElement('email').text(error.email);
+      }.bind(this)).fail(function(resp) {
+        this.getAttributeErrorElement('email').text(resp.responseJSON.error.email);
       }.bind(this));
     }
 
@@ -171,8 +171,8 @@ module.exports = Zeppelin.FormView.extend({
     if (!hasInvalidDomains) {
       return this.model.validateSignupEmailDomain(domains).done(function(data) {
         this.model.set('signup_domains', data.signup_domains).updateSignupStep(7);
-      }.bind(this)).fail(function(error) {
-        this.getAttributeErrorElement('signup_domains').text(error.signup_domains);
+      }.bind(this)).fail(function(resp) {
+        this.getAttributeErrorElement('signup_domains').text(resp.responseJSON.error.signup_domains);
       }.bind(this));
     }
 
@@ -247,8 +247,8 @@ module.exports = Zeppelin.FormView.extend({
     if (!this.model.validationError) {
       return this.model.validateUsername().done(function(data) {
         this.model.updateSignupStep(9);
-      }.bind(this)).fail(function(error) {
-        this.getAttributeErrorElement('username').text(error.username);
+      }.bind(this)).fail(function(resp) {
+        this.getAttributeErrorElement('username').text(resp.responseJSON.error.username);
       }.bind(this));
     }
 
@@ -256,6 +256,8 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validatePassword: function(event) {
+    var error;
+
     this.model.registerValidation('password', [{
       isEmpty: false,
       message: 'A password is required to authenticate you.'
@@ -276,7 +278,8 @@ module.exports = Zeppelin.FormView.extend({
           .saveCache();
 
         this.publish('user:signed:in');
-      }.bind(this)).fail(function(error) {
+      }.bind(this)).fail(function(resp) {
+        error = resp.responseJSON.error;
         this.getAttributeErrorElement('password').text(error.email || error.username);
       }.bind(this));
     }
