@@ -1,5 +1,5 @@
 module.exports = (function() {
-  var Router = require('router');
+  var Router;
 
   // App namespace.
   window.Boards = {
@@ -14,16 +14,22 @@ module.exports = (function() {
     beforeSend: function(xhr, settings) {
       var token = _.getModel('User').get('token');
       if (token) xhr.setRequestHeader('Authorization', 'JWT ' + token);
-    }
+    },
+
+    contentType: 'application/json; charset=utf-8'
   });
 
   // Register Swag Helpers.
   Swag.registerHelpers();
 
-  // Fetch user data from local storage, if any.
-  _.getModel('User').fetchCache();
+  // Create the accounts collection.
+  _.getCollection('Accounts');
+
+  // Try to login user form localstorage.
+  _.getModel('User').signinFromCache();
 
   // Initialize Router.
+  Router = require('router');
   Boards.Router = new Router();
 
   // Start listening to routes.
