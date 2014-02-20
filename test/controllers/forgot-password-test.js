@@ -1,34 +1,41 @@
 describe('ForgotPasswordController', function() {
-  var controller,
-      ForgotPasswordController = require('controllers/forgot-password');
+  var ForgotPasswordController = require('controllers/forgot-password');
 
   beforeEach(function() {
-    controller = new ForgotPasswordController();
+    this.ForgotPasswordController = new ForgotPasswordController();
   });
 
   afterEach(function() {
-    controller.remove();
+    this.ForgotPasswordController.remove();
+    delete this.ForgotPasswordController;
   });
 
   it('should exist.', function() {
-    expect(controller).to.exist;
+    expect(this.ForgotPasswordController).to.exist;
   });
 
-  describe('initialize', function() {
-    it('should render and insert.', function() {
-      expect(controller.isRendered).to.be.true;
-      expect(controller.isInserted).to.be.true;
-    });
+  it('should have a name property.', function() {
+    expect(this.ForgotPasswordController.name).to.exist;
+    expect(this.ForgotPasswordController.name).to.equal('ForgotPasswordController');
+  });
 
-    it('should have a form child view.', function() {
-      expect(controller.children.form).to.exist;
-    });
+  it('should have a name template.', function() {
+    expect(this.ForgotPasswordController.template).to.exist;
+  });
+
+  it('should render and insert.', function() {
+    expect(this.ForgotPasswordController.isRendered).to.be.true;
+    expect(this.ForgotPasswordController.isInserted).to.be.true;
+  });
+
+  it('should have a form child view.', function() {
+    expect(this.ForgotPasswordController.children.form).to.exist;
   });
 
   describe('initForm', function() {
     it('should init the forgot password form view.', function() {
-      controller.initForm();
-      expect(controller.children.form.name).to.equal('ForgotPasswordForm');
+      this.ForgotPasswordController.initForm();
+      expect(this.ForgotPasswordController.children.form).to.exist;
     });
   });
 });

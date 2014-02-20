@@ -1,72 +1,68 @@
 describe('SigninForm', function() {
-  var formView, server, registerValidationsSpy,
-      SigninForm = require('views/signin-form');
+  var SigninForm = require('views/signin-form');
 
   beforeEach(function() {
-    $('#application').append('<form class="signin"></form>');
+    $('#application').html('<form class="signin"></form>');
 
-    server = sinon.fakeServer.create();
-    server.autoRespond = false;
-    server.autoRespondAfter = 500;
+    this.server = sinon.fakeServer.create();
+    this.server.autoRespond = false;
+    this.server.autoRespondAfter = 500;
 
-    registerValidationsSpy = sinon.spy(SigninForm.prototype, 'registerValidations');
-
-    formView = new SigninForm({
+    this.SigninForm = new SigninForm({
       model: _.getModel('User')
     });
 
-    formView.render();
+    this.SigninForm.render();
   });
 
   afterEach(function() {
-    SigninForm.prototype.registerValidations.restore();
-    server.restore();
-    formView.remove();
+    this.server.restore();
+    delete this.server;
+    this.SigninForm.remove();
+    delete this.SigninForm;
   });
 
   it('should exist.', function() {
-    expect(formView).to.exist;
+    expect(this.SigninForm).to.exist;
+  });
+
+  it('should have a name property.', function() {
+    expect(this.SigninForm.name).to.exist;
+    expect(this.SigninForm.name).to.equal('SigninForm');
+  });
+
+  it('should have a template property.', function() {
+    expect(this.SigninForm.template).to.exist;
+  });
+
+  it('should have a subscriptions property.', function() {
+    expect(this.SigninForm.subscriptions).to.exist;
   });
 
   it('should have a model.', function() {
-    expect(formView.model).to.exist;
-    expect(formView.model.name).to.equal('User');
-  });
-
-  describe('initialize', function() {
-    it('should call registerValidations().', function() {
-      expect(registerValidationsSpy).to.have.been.calledOnce;
-    });
-  });
-
-  describe('registerValidations', function() {
-    it('should add model validations for username and password attributes.', function() {
-      formView.model.unregisterValidation();
-      formView.registerValidations();
-      expect(formView.model.validations.username).to.exist;
-      expect(formView.model.validations.password).to.exist;
-    });
+    expect(this.SigninForm.model).to.exist;
+    expect(this.SigninForm.model.name).to.equal('User');
   });
 
   describe('onSubmit', function() {
-    it('should signin the user.', function(done) {
-      var url = '/api/auth/signin/',
-          contentType = {"Content-Type":"application/json"};
-
-      formView.getAttributeElement('username').val('elving');
-      formView.getAttributeElement('password').val('123456789');
-
-      server.respondWith('POST', url, function(request) {
-        request.respond(200, contentType, '{"token": "' + JWT_TEST_TOKEN + '"}');
+    it('should call the signin method on the user model if the given username and password are valid.', function(done) {
+      this.server.respondWith('POST', '/api/auth/signin/', function(req) {
+        req.respond(200, {'Content-Type': 'application/json'}, 'OK');
+        done();
       });
 
-      formView.onSubmit({preventDefault: function(){}}).done(function() {
-        expect(formView.model.get('token')).to.exist;
-        expect(formView.model.isSignedIn()).to.be.true;
-        done();
-      }.bind(this));
+      this.SigninForm.getAttributeElement('username').val('mctavish');
+      this.SigninForm.getAttributeElement('password').val('12345678');
+      this.SigninForm.onSubmit({preventDefault: function(){}});
+      this.server.respond();
+    });
+  });
 
-      server.respond();
+  describe('onAuthError', function() {
+    it('should display an error message.', function() {
+      this.SigninForm.onAuthError({username: 'error', password: 'error'});
+      expect(this.SigninForm.getAttributeErrorElement('username').text()).to.equal('error');
+      expect(this.SigninForm.getAttributeErrorElement('password').text()).to.equal('error');
     });
   });
 });

@@ -4,7 +4,7 @@ module.exports = Zeppelin.View.extend({
   template: require('templates/signin'),
 
   subscriptions: {
-    'user:signed:in': function() {
+    'user:signin:success': function() {
       this.publish('router:navigate', 'accounts');
     }
   },
@@ -12,6 +12,7 @@ module.exports = Zeppelin.View.extend({
   initialize: function() {
     document.title = 'Blimp | Signin';
     this.insert('#application').initForm();
+    return this;
   },
 
   initForm: function() {

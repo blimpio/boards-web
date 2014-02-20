@@ -20,7 +20,11 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   bindings: {
-    'model change:signup_step': 'onSignupStepChange'
+    'model change:signup_step': 'onSignupStepChange',
+    'model user:signup-request:error': 'onSignupRequestError',
+    'model user:signup-domains:error': 'onSignupDomainsError',
+    'model user:signup-username:error': 'onSignupUsernameError',
+    'model user:signup:error': 'onValidatePasswordError'
   },
 
   context: function() {
@@ -29,63 +33,45 @@ module.exports = Zeppelin.FormView.extend({
 
   initialize: function() {
     this.renderStep();
+    return this;
   },
 
   onSubmit: function(event) {
     event.preventDefault();
     this[this.$('[data-next-step]').data('action')]();
+    return this;
   },
 
   onSignupStepChange: function(model, step) {
     this.renderStep(step);
+    return this;
   },
 
   renderStep: function(step) {
-    step = step || this.model.get('signup_step') || 1;
-
     var nextStep;
 
-    if (this.model.isWaitingForEmailValidation()) {
-      nextStep = 'signup-step-2';
-    } else {
-      nextStep = 'signup-step-' + step;
-    }
-
+    step = step || this.model.get('signup_step') || 1;
+    nextStep = 'signup-step-' + step;
+    if (this.model.isWaitingForEmailValidation()) nextStep = 'signup-step-2';
     this.render(require('templates/signup-steps/' + nextStep));
-
-    if (step === 7) {
-      this.$('input.signup__invitation-field').first().focus();
-    }
+    if (step === 7) this.$('input.signup__invitation-field').first().focus();
 
     return this;
   },
 
   validateEmail: function(event) {
-    this.model.registerValidation('email', [{
-      isEmpty: false,
-      message: 'An email is required to authenticate you.'
-    }, {
-      isEmail: true,
-      message: 'Provide a valid email.'
-    }]);
-
     this.setAttribute('email');
+    if (!this.model.validationError) this.model.requestSignup();
+    return this;
+  },
 
-    if (!this.model.validationError) {
-      return this.model.requestSignup().done(function(data) {
-        this.model.set(data);
-        this.model.updateSignupStep(2);
-      }.bind(this)).fail(function(resp) {
-        this.getAttributeErrorElement('email').text(resp.responseJSON.error.email);
-      }.bind(this));
-    }
-
+  onSignupRequestError: function(error) {
+    this.getAttributeErrorElement('email').text(error);
     return this;
   },
 
   redirectToFirstStep: function(event) {
-    this.model.set('signup_step', 1, {silent: true});
-    this.model.saveCache();
+    this.model.updateSignupStep(1);
     this.publish('router:navigate', 'signup');
     return this;
   },
@@ -96,86 +82,44 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validateFullName: function(event) {
-    this.model.registerValidation('full_name', function(name) {
-      if (!name) {
-        return 'Your name is required to authenticate you.';
-      } else if (!name.split(' ')[1]) {
-        return 'Enter your full name.';
-      }
-    });
-
     this.setAttribute('full_name');
-
-    if (!this.model.validationError) {
-      this.model.registerValidation('account_name', {
-        isEmpty: false,
-        message: 'An account name is required to authenticate you.'
-      }).updateSignupStep(5);
-    }
-
+    if (!this.model.validationError) this.model.updateSignupStep(5);
     return this;
   },
 
   validateAccountName: function(event) {
-    this.model.registerValidation('account_name', {
-      isEmpty: false,
-      message: 'An account name is required to authenticate you.'
-    });
-
     this.setAttribute('account_name');
-
-    if (!this.model.validationError) {
-      this.model.updateSignupStep(6);
-    }
-
+    if (!this.model.validationError) this.model.updateSignupStep(6);
     return this;
-  },
-
-  addOtherDomainInput: function(event) {
-    var $select = $(event.currentTarget),
-        template = require('templates/signup-steps/signup-invitation-domain-input');
-
-    if ($select.val() === 'other') {
-      $select
-        .after(template())
-        .next()
-          .focus()
-          .end()
-        .remove();
-
-      return this;
-    }
   },
 
   validateSignupDomains: function(event) {
     var domains = [],
-        signupDomains = this.getAttributeValue('signup_domains'),
         hasInvalidDomains = false;
 
     this.setAttribute('allow_signup');
 
     _.forEach(this.getAttributeValue('signup_domains').split(','), function(domain) {
-      domain = $.trim(domain);
+      var error = 'Provide a valid domain name.';
 
-      var error = '';
+      domain = $.trim(domain);
 
       if (!Z.Validations.isDomainName(domain)) {
         hasInvalidDomains = true;
-        this.getAttributeErrorElement('signup_domains').text(domain + ' is not a valid domain name.');
+        if (domain) error = domain + ' is not a valid domain name.'
+        this.getAttributeErrorElement('signup_domains').text(error);
         return false;
       }
 
       domains.push(domain);
     }.bind(this));
 
-    if (!hasInvalidDomains) {
-      return this.model.validateSignupEmailDomain(domains).done(function(data) {
-        this.model.set('signup_domains', data.signup_domains).updateSignupStep(7);
-      }.bind(this)).fail(function(resp) {
-        this.getAttributeErrorElement('signup_domains').text(resp.responseJSON.error.signup_domains);
-      }.bind(this));
-    }
+    if (!hasInvalidDomains) this.model.validateSignupEmailDomain(domains)
+    return this;
+  },
 
+  onSignupDomainsError: function(error) {
+    this.getAttributeErrorElement('signup_domains').text(error);
     return this;
   },
 
@@ -193,6 +137,17 @@ module.exports = Zeppelin.FormView.extend({
 
   removeInvitationRow: function(event) {
     $(event.currentTarget).parent().remove();
+    return this;
+  },
+
+  addOtherDomainInput: function(event) {
+    var $select = $(event.currentTarget);
+
+    if ($select.val() === 'other') $select.after(this.renderTemplate(
+      require('templates/signup-steps/signup-invitation-domain-input')
+    )).next().focus().end().remove();
+
+    return this;
   },
 
   validateInvitations: function(event) {
@@ -201,7 +156,9 @@ module.exports = Zeppelin.FormView.extend({
         $invitations = this.$('div.signup__invitation-row'),
         invitationsError = false;
 
-    $invitations.each(function(index, element) {
+    $error.text('');
+
+    _.forEach($invitations, function(element) {
       var invitation = $(element).find('input.signup__invitation-field').val();
 
       if (invitation) {
@@ -211,18 +168,13 @@ module.exports = Zeppelin.FormView.extend({
     });
 
     if (invitations.length) {
-      _.forEach(invitations, function(invitation, index) {
+      _.forEach(invitations, function(invitation) {
         if (!Z.Validations.isEmail(invitation)) {
           invitationsError = true;
           $error.text('One or more emails are invalid.');
-        } else {
-          invitationsError = false;
-          $error.text('');
+          return false;
         }
       });
-    } else {
-      invitationsError = false;
-      $error.text('');
     }
 
     if (!invitationsError) {
@@ -237,53 +189,24 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   validateUsername: function(event) {
-    this.model.registerValidation('username', {
-      isEmpty: false,
-      message: 'An username is required to authenticate you.'
-    });
-
     this.setAttribute('username');
+    if (!this.model.validationError) this.model.validateUsername();
+    return this;
+  },
 
-    if (!this.model.validationError) {
-      return this.model.validateUsername().done(function(data) {
-        this.model.updateSignupStep(9);
-      }.bind(this)).fail(function(resp) {
-        this.getAttributeErrorElement('username').text(resp.responseJSON.error.username);
-      }.bind(this));
-    }
-
+  onSignupUsernameError: function(error) {
+    this.getAttributeErrorElement('username').text(error);
     return this;
   },
 
   validatePassword: function(event) {
-    var error;
-
-    this.model.registerValidation('password', [{
-      isEmpty: false,
-      message: 'A password is required to authenticate you.'
-    }, {
-      isOfMinimumLength: 6,
-      message: 'Your password must have a minimun of 6 characters.'
-    }]);
-
     this.setAttribute('password');
+    if (!this.model.validationError) this.model.signup();
+    return this;
+  },
 
-    if (!this.model.validationError) {
-      return this.model.signup().done(function(data) {
-        this.model
-          .set(data)
-          .unset('signup_step', {silent: true})
-          .unset('signup_request_token', {silent: true})
-          .unset('password', {silent: true})
-          .saveCache();
-
-        this.publish('user:signed:in');
-      }.bind(this)).fail(function(resp) {
-        error = resp.responseJSON.error;
-        this.getAttributeErrorElement('password').text(error.email || error.username);
-      }.bind(this));
-    }
-
+  onValidatePasswordError: function(error) {
+    this.getAttributeErrorElement('password').text(error);
     return this;
   }
 });

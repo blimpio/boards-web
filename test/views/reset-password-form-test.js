@@ -1,61 +1,69 @@
 describe('ResetPasswordForm', function() {
-  var formView, server, setFormSpy,
-      ResetPasswordForm = require('views/reset-password-form');
+  var ResetPasswordForm = require('views/reset-password-form');
 
   beforeEach(function() {
-    $('#application').append(require('templates/reset-password')());
+    $('#application').html(require('templates/reset-password')());
 
-    server = sinon.fakeServer.create();
-    server.autoRespond = false;
-    server.autoRespondAfter = 500;
+    this.server = sinon.fakeServer.create();
+    this.server.autoRespond = false;
+    this.server.autoRespondAfter = 500;
 
-    setFormSpy = sinon.spy(ResetPasswordForm.prototype, 'setForm');
-
-    formView = new ResetPasswordForm({
+    this.ResetPasswordForm = new ResetPasswordForm({
       model: _.getModel('User')
     });
 
-    formView.render();
+    this.ResetPasswordForm.render();
   });
 
   afterEach(function() {
-    ResetPasswordForm.prototype.setForm.restore();
-    server.restore();
-    formView.remove();
+    this.server.restore();
+    delete this.server;
+    this.ResetPasswordForm.remove();
+    delete this.ResetPasswordForm;
   });
 
   it('should exist.', function() {
-    expect(formView).to.exist;
+    expect(this.ResetPasswordForm).to.exist;
   });
 
-  it('should have a model.', function() {
-    expect(formView.model).to.exist;
-    expect(formView.model.name).to.equal('User');
+  it('should have a name property.', function() {
+    expect(this.ResetPasswordForm.name).to.exist;
+    expect(this.ResetPasswordForm.name).to.equal('ResetPasswordForm');
   });
 
-  describe('initialize', function() {
-    it('should call setForm().', function() {
-      expect(setFormSpy).to.have.been.calledOnce;
-    });
+  it('should have a bindings property.', function() {
+    expect(this.ResetPasswordForm.bindings).to.exist;
+  });
+
+  it('should have a formIsSet property.', function() {
+    expect(this.ResetPasswordForm.formIsSet).to.exist;
+    expect(this.ResetPasswordForm.formIsSet).to.be.true;
   });
 
   describe('onSubmit', function() {
-    it('should reset the password if a valid password is provided.', function(done) {
-      var url = '/api/auth/reset_password/',
-          contentType = {"Content-Type":"application/json"};
-
-      formView.getAttributeElement('password').val('1234567890');
-
-      server.respondWith('POST', url, function(request) {
-        request.respond(200, contentType, '{"token": "' + JWT_TEST_TOKEN + '"}');
+    it('should call the resetPassword method on the user model if the given password is valid.', function(done) {
+      this.server.respondWith('POST', '/api/auth/reset_password/', function(req) {
+        req.respond(200, {'Content-Type': 'application/json'}, 'OK');
+        done();
       });
 
-      formView.onSubmit({preventDefault: function(){}}).done(function() {
-        expect(formView.model.get('token')).to.exist;
-        done();
-      }.bind(this));
+      this.ResetPasswordForm.getAttributeElement('password').val('12345678');
+      this.ResetPasswordForm.onSubmit({preventDefault: function(){}});
+      this.server.respond();
+    });
+  });
 
-      server.respond();
+  describe('onResetPasswordSuccess', function() {
+    it('should render success message.', function() {
+      this.ResetPasswordForm.onResetPasswordSuccess();
+      expect(this.ResetPasswordForm.$('h3')).to.exist;
+    });
+  });
+
+  describe('onResetPasswordError', function() {
+    it('should display an error message.', function() {
+      this.ResetPasswordForm.onResetPasswordError('error');
+      expect(this.ResetPasswordForm.getAttributeErrorElement('password').text()).to.equal('error');
     });
   });
 });

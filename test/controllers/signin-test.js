@@ -1,35 +1,42 @@
 describe('SigninController', function() {
-  var controller,
-      SigninController = require('controllers/signin');
+  var SigninController = require('controllers/signin');
 
   beforeEach(function() {
-    controller = new SigninController();
+    this.SigninController = new SigninController();
   });
 
  afterEach(function() {
-    controller.remove();
+    this.SigninController.remove();
+    delete this.SigninController;
   });
 
   it('should exist.', function() {
-    expect(controller).to.exist;
+    expect(this.SigninController).to.exist;
   });
 
-  describe('initialize', function() {
-    it('should render and insert.', function() {
-      expect(controller.isRendered).to.be.true;
-      expect(controller.isInserted).to.be.true;
-    });
+  it('should have a name property.', function() {
+    expect(this.SigninController.name).to.exist;
+    expect(this.SigninController.name).to.equal('SigninController');
+  });
 
-    it('should have a form child view.', function() {
-      expect(controller.children.form).to.exist;
-    });
+  it('should have a template property.', function() {
+    expect(this.SigninController.template).to.exist;
+  });
+
+  it('should render and insert.', function() {
+    expect(this.SigninController.isRendered).to.be.true;
+    expect(this.SigninController.isInserted).to.be.true;
+  });
+
+  it('should have a form child view.', function() {
+    expect(this.SigninController.children.form).to.exist;
   });
 
   describe('initForm', function() {
     it('should init and render the signin form view.', function() {
-      controller.initForm();
-      expect(controller.children.form.name).to.equal('SigninForm');
-      expect(controller.children.form.isRendered).to.be.true;
+      this.SigninController.initForm();
+      expect(this.SigninController.children.form).to.exist;
+      expect(this.SigninController.children.form.isRendered).to.be.true;
     });
   });
 });

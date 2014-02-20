@@ -4,7 +4,7 @@ module.exports = Zeppelin.View.extend({
   template: require('templates/signup'),
 
   subscriptions: {
-    'user:signed:in': function() {
+    'user:signup:success': function() {
       this.publish('router:navigate', 'accounts');
     }
   },
@@ -13,6 +13,7 @@ module.exports = Zeppelin.View.extend({
     document.title = 'Blimp | Signup';
     this.user = _.getModel('User');
     this.insert('#application').initForm();
+    return this;
   },
 
   initForm: function() {
@@ -31,5 +32,7 @@ module.exports = Zeppelin.View.extend({
         this.user.updateSignupStep(1);
       }
     }
+
+    return this;
   }
 });

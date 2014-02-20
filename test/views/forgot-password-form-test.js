@@ -1,62 +1,69 @@
 describe('ForgotPasswordForm', function() {
-  var formView, server, setFormSpy,
-      ForgotPasswordForm = require('views/forgot-password-form');
+  var ForgotPasswordForm = require('views/forgot-password-form');
 
   beforeEach(function() {
-    $('#application').append(require('templates/forgot-password')());
+    $('#application').html(require('templates/forgot-password')());
 
-    server = sinon.fakeServer.create();
-    server.autoRespond = false;
-    server.autoRespondAfter = 500;
+    this.server = sinon.fakeServer.create();
+    this.server.autoRespond = false;
+    this.server.autoRespondAfter = 500;
 
-    setFormSpy = sinon.spy(ForgotPasswordForm.prototype, 'setForm');
-
-    formView = new ForgotPasswordForm({
+    this.ForgotPasswordForm = new ForgotPasswordForm({
       model: _.getModel('User')
     });
 
-    formView.render();
+    this.ForgotPasswordForm.render();
   });
 
   afterEach(function() {
-    ForgotPasswordForm.prototype.setForm.restore();
-    server.restore();
-    formView.remove();
+    this.server.restore();
+    delete this.server;
+    this.ForgotPasswordForm.remove();
+    delete this.ForgotPasswordForm;
   });
 
   it('should exist.', function() {
-    expect(formView).to.exist;
+    expect(this.ForgotPasswordForm).to.exist;
   });
 
-  it('should have a model.', function() {
-    expect(formView.model).to.exist;
-    expect(formView.model.name).to.equal('User');
+  it('should have a name property.', function() {
+    expect(this.ForgotPasswordForm.name).to.exist;
+    expect(this.ForgotPasswordForm.name).to.equal('ForgotPasswordForm');
   });
 
-  describe('initialize', function() {
-    it('should call setForm().', function() {
-      expect(setFormSpy).to.have.been.calledOnce;
-    });
+  it('should have a bindings property.', function() {
+    expect(this.ForgotPasswordForm.bindings).to.exist;
+  });
+
+  it('should have a formIsSet property.', function() {
+    expect(this.ForgotPasswordForm.formIsSet).to.exist;
+    expect(this.ForgotPasswordForm.formIsSet).to.be.true;
   });
 
   describe('onSubmit', function() {
-    it('should send the password recovery email if a valid email is provided.', function(done) {
-      var url = '/api/auth/forgot_password/',
-          contentType = {"Content-Type":"application/json"};
-
-      formView.getAttributeElement('email').val('elving@example.com');
-
-      server.respondWith('POST', url, function(request) {
-        request.respond(200, contentType, '{"token": "' + JWT_TEST_TOKEN + '"}');
+    it('should call the forgotPassword method on the user model if the given email is valid.', function(done) {
+      this.server.respondWith('POST', '/api/auth/forgot_password/', function(req) {
+        req.respond(200, {'Content-Type': 'application/json'}, 'OK');
+        done();
       });
 
-      formView.onSubmit({preventDefault: function(){}}).done(function() {
-        expect(formView.$('h3')).to.exist;
-        expect(formView.model.get('token')).to.exist;
-        done();
-      }.bind(this));
+      this.ForgotPasswordForm.getAttributeElement('email').val('name@example.com');
+      this.ForgotPasswordForm.onSubmit({preventDefault: function(){}});
+      this.server.respond();
+    });
+  });
 
-      server.respond();
+  describe('onForgotPasswordSuccess', function() {
+    it('should render success message.', function() {
+      this.ForgotPasswordForm.onForgotPasswordSuccess();
+      expect(this.ForgotPasswordForm.$('h3')).to.exist;
+    });
+  });
+
+  describe('onForgotPasswordError', function() {
+    it('should display an error message.', function() {
+      this.ForgotPasswordForm.onForgotPasswordError('error');
+      expect(this.ForgotPasswordForm.getAttributeErrorElement('email').text()).to.equal('error');
     });
   });
 });

@@ -7,10 +7,65 @@ module.exports = Zeppelin.Model.extend({
 
   localAttributes: ['signup_step', 'passwordReset'],
 
-  requestSignup: function() {
-    return $.post(APPLICATION_HTTP_URL + '/api/auth/signup_request/', {
-      email: this.get('email')
-    });
+  validations: {
+    username: [{
+      isEmpty: false,
+      message: 'A username is required to authenticate you.'
+    }, {
+      isAlphanumeric: true,
+      message: 'Your username must be an alphanumeric value.'
+    }],
+
+    email: [{
+      isEmpty: false,
+      message: 'An email is required to authenticate you.'
+    }, {
+      isEmail: true,
+      message: 'Provide a valid email.'
+    }],
+
+    password: [{
+      isEmpty: false,
+      message: 'A password is required to authenticate you.'
+    }, {
+      isOfMinimumLength: 8,
+      message: 'Your password must have a minimun of 8 characters.'
+    }],
+
+    full_name: [{
+      isEmpty: false,
+      message: 'Your name is required to authenticate you.'
+    }, function(name) {
+      if (!name.split(' ')[1]) return 'Your full name is required to authenticate you.';
+    }],
+
+    account_name: [{
+      isEmpty: false,
+      message: 'An account name is required to authenticate you.'
+    }]
+  },
+
+  requestSignup: function(email) {
+    email = JSON.stringify({email: email || this.get('email')});
+
+    $.post(APPLICATION_HTTP_URL + '/api/auth/signup_request/', email)
+      .done(this.onRequestSignupSuccess.bind(this))
+      .fail(this.onRequestSignupError.bind(this));
+
+    return this;
+  },
+
+  onRequestSignupSuccess: function(response) {
+    this.set(response).updateSignupStep(2);
+    this.trigger('user:signup-request:success', this.attributes);
+    return this;
+  },
+
+  onRequestSignupError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    error = error.email ? error.email[0] : 'An error ocurred.';
+    this.trigger('user:signup-request:error', error);
+    return this;
   },
 
   setEmailFromJWT: function(token) {
@@ -20,12 +75,10 @@ module.exports = Zeppelin.Model.extend({
     token = token.replace(/^=/, '');
     tokenData = _.decodeJWT(token);
 
-    if (tokenData.email) {
-      this.set({
-        'email': tokenData.email,
-        'signup_request_token': token
-      });
-    }
+    if (tokenData.email) this.set({
+      'email': tokenData.email,
+      'signup_request_token': token
+    });
 
     return this;
   },
@@ -40,34 +93,132 @@ module.exports = Zeppelin.Model.extend({
   },
 
   validateSignupEmailDomain: function(domains) {
-    return $.post(APPLICATION_HTTP_URL + '/api/auth/signup_domains/validate/', {
-      signup_domains: domains
-    });
+    domains = JSON.stringify({signup_domains: domains});
+
+    if (!domains) {
+      this.onValidateSignupEmailDomainError({signup_domains: ['Provide a valid domain name.']});
+    } else {
+      $.post(APPLICATION_HTTP_URL + '/api/auth/signup_domains/validate/', domains)
+        .done(this.onValidateSignupEmailDomainSuccess.bind(this))
+        .fail(this.onValidateSignupEmailDomainError.bind(this));
+    }
+
+    return this;
+  },
+
+  onValidateSignupEmailDomainSuccess: function(response) {
+    this.set(response).updateSignupStep(7);
+    this.trigger('user:signup-domains:success', this.attributes);
+    return this;
+  },
+
+  onValidateSignupEmailDomainError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    error = error.signup_domains ? error.signup_domains[0] : 'An error ocurred.';
+    this.trigger('user:signup-domains:error', error);
+    return this;
   },
 
   hasInviteDomains: function() {
     return this.has('signup_domains') && this.get('signup_domains').length > 0;
   },
 
-  validateUsername: function() {
-    return $.post(APPLICATION_HTTP_URL + '/api/auth/username/validate/', {
-      username: this.get('username')
+  validateUsername: function(username) {
+    username = JSON.stringify({username: username || this.get('username')});
+
+    $.post(APPLICATION_HTTP_URL + '/api/auth/username/validate/', username)
+      .done(this.onValidateUsernameSuccess.bind(this))
+      .fail(this.onValidateUsernameError.bind(this));
+
+    return this;
+  },
+
+  onValidateUsernameSuccess: function(response) {
+    this.set(response).updateSignupStep(9);
+    this.trigger('user:signup-username:success', this.attributes);
+    return this;
+  },
+
+  onValidateUsernameError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    error = error.username ? error.username[0] : 'An error ocurred.';
+    this.trigger('user:signup-username:error', error);
+    return this;
+  },
+
+  signup: function(credentials) {
+    credentials = JSON.stringify(credentials || this.toJSON());
+
+    $.post(APPLICATION_HTTP_URL + '/api/auth/signup/', credentials)
+      .done(this.onSignupSuccess.bind(this))
+      .fail(this.onSignupError.bind(this));
+
+    return this;
+  },
+
+  onSignupSuccess: function(response) {
+    this.set(response)
+      .unset('password', {silent: true})
+      .unset('signup_step', {silent: true})
+      .unset('signup_request_token', {silent: true})
+      .saveCache();
+
+    this.trigger('user:signup:success', this.attributes);
+    return this;
+  },
+
+  onSignupError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    error = error.email || error.username || error.password;
+    error = error ? error[0] : 'An error ocurred.';
+    this.trigger('user:signup:error', error);
+    return this;
+  },
+
+  signin: function(username, password) {
+    var credentials = {};
+
+    if (username && password) {
+      credentials.username = username;
+      credentials.password = password;
+    } else if (this.get('username') && this.get('password')) {
+      credentials.username = this.get('username');
+      credentials.password = this.get('password');
+    }
+
+    if (!_.size(credentials)) this.onSigninError({
+      username: ['Credentials are required to signin.'],
+      password: ['Credentials are required to signin.']
     });
+
+    credentials = JSON.stringify(credentials);
+
+    $.post(APPLICATION_HTTP_URL + '/api/auth/signin/', credentials)
+      .done(this.onSigninSuccess.bind(this))
+      .fail(this.onSigninError.bind(this));
+
+    return this;
   },
 
-  signup: function(user) {
-    user = user || this.toJSON();
-    return $.post(APPLICATION_HTTP_URL + '/api/auth/signup/', user);
+  signinFromCache: function() {
+    this.fetchCache();
+    if (this.isSignedIn()) this.onSigninSuccess();
+    return this;
   },
 
-  signin: function(user) {
-    user = user || this.toJSON();
-    return $.post(APPLICATION_HTTP_URL + '/api/auth/signin/', user);
+  onSigninSuccess: function(response) {
+    this.unset('password').set(response).saveCache();
+    this.trigger('user:signin:success', this.attributes);
+    this.publish('user:signin:success', this.attributes);
+    return this;
   },
 
-  signout: function() {
-    this.clear();
-    this.cache.clearAll();
+  onSigninError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    if (error.email) error = {email: error.email[0] || 'An error ocurred.'};
+    if (error.password) error = {password: error.password[0] || 'An error ocurred.'};
+    this.trigger('user:signin:error', error);
+    this.publish('user:signin:error', error);
     return this;
   },
 
@@ -75,9 +226,33 @@ module.exports = Zeppelin.Model.extend({
     return this.has('token');
   },
 
+  signout: function() {
+    this.clear();
+    this.destroyCache();
+    return this;
+  },
+
   forgotPassword: function(email) {
-    email = email || this.get('email');
-    return $.post(APPLICATION_HTTP_URL + '/api/auth/forgot_password/', {email: email});
+    email = JSON.stringify({email: email || this.get('email')});
+
+    $.post(APPLICATION_HTTP_URL + '/api/auth/forgot_password/', email)
+      .done(this.onForgotPasswordSuccess.bind(this))
+      .fail(this.onForgotPasswordError.bind(this));
+
+    return this;
+  },
+
+  onForgotPasswordSuccess: function(response) {
+    this.set(response).saveCache();
+    this.trigger('user:forgot-password:success', this.attributes);
+    return this;
+  },
+
+  onForgotPasswordError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    error = error.email ? error.email[0] : 'An error ocurred';
+    this.trigger('user:forgot-password:error', error);
+    return this;
   },
 
   setPasswordResetDataFromJWT: function(token) {
@@ -107,33 +282,35 @@ module.exports = Zeppelin.Model.extend({
   },
 
   resetPassword: function(password) {
-    if (this.canResetPassword() && password) {
-      return $.post(APPLICATION_HTTP_URL + '/api/auth/reset_password/', {
-        token: this.get('passwordResetData').token,
-        password: password
-      });
-    }
-  },
+    var token = this.has('passwordResetData') ? this.get('passwordResetData').token : token;
 
-  accounts: function() {
-    var accounts = [];
-
-    _.forEach(this.get('accounts'), function(account) {
-      accounts.push({
-        url: '/' + account.slug + '/',
-        name: account.name,
-        image: account.image_url ? account.image_url : '/default/'
-      });
+    data = JSON.stringify({
+      token: token,
+      password: password || this.get('password')
     });
 
-    return accounts;
+    if (this.canResetPassword()) {
+      $.post(APPLICATION_HTTP_URL + '/api/auth/reset_password/', data)
+        .done(this.onResetPasswordSuccess.bind(this))
+        .fail(this.onResetPasswordError.bind(this));
+    } else {
+      this.onResetPasswordError({token: ['A valid token is required to reset your password.']})
+    }
+
+    return this;
   },
 
-  isInAccount: function(slug) {
-    if (slug) {
-      return _.find(this.get('accounts'), {slug: slug}) !== undefined;
-    } else {
-      return false;
-    }
+  onResetPasswordSuccess: function(response) {
+    this.unset('passwordResetData').destroyCache();
+    this.trigger('user:reset-password:success', this.attributes);
+    return this;
+  },
+
+  onResetPasswordError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    error = error.token || error.password;
+    error = error ? error[0] : 'An error ocurred';
+    this.trigger('user:reset-password:error', error);
+    return this;
   }
 });

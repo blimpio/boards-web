@@ -3,8 +3,14 @@ module.exports = Zeppelin.FormView.extend({
 
   el: 'form.forgot-password__form',
 
+  bindings: {
+    'model user:forgot-password:success': 'onForgotPasswordSuccess',
+    'model user:forgot-password:error': 'onForgotPasswordError'
+  },
+
   initialize: function() {
     this.setForm();
+    return this;
   },
 
   onSubmit: function(event) {
@@ -13,15 +19,21 @@ module.exports = Zeppelin.FormView.extend({
     event.preventDefault();
 
     if (Z.Validations.isEmail(email)) {
-      return this.model.forgotPassword(email).done(function(data) {
-        this.model.set(data).saveCache();
-        this.render(require('templates/forgot-password-success'));
-      }.bind(this)).fail(function(error) {
-        this.getAttributeErrorElement('email').text(error.email);
-      }.bind(this));
+      return this.model.forgotPassword(email);
     } else {
-      this.getAttributeErrorElement('email').text('Provide a valid email.');
+      this.onForgotPasswordError({email: ['Provide a valid email.']});
     }
-  }
 
+    return this;
+  },
+
+  onForgotPasswordSuccess: function() {
+    this.render(require('templates/forgot-password-success'));
+    return this;
+  },
+
+  onForgotPasswordError: function(error) {
+    this.getAttributeErrorElement('email').text(error);
+    return this;
+  }
 });

@@ -5,40 +5,20 @@ module.exports = Zeppelin.FormView.extend({
 
   template: require('templates/signin-form'),
 
-  initialize: function() {
-    this.registerValidations();
-  },
-
-  registerValidations: function() {
-    this.model.registerValidation('username', [{
-      isEmpty: false,
-      message: 'A username is required to authenticate you.'
-    }, {
-      isAlphanumeric: true,
-      message: 'Your username must be an alphanumeric value.'
-    }]);
-
-    this.model.registerValidation('password', [{
-      isEmpty: false,
-      message: 'A password is required to authenticate you.'
-    }, {
-      isOfMinimumLength: 6,
-      message: 'Your password must have a minimun of 6 characters.'
-    }]);
+  subscriptions: {
+    'user:auth:error': 'onAuthError'
   },
 
   onSubmit: function(event) {
     event.preventDefault();
-
     this.setAttributes();
+    if (!this.model.validationError) this.model.signin();
+    return this;
+  },
 
-    if (!this.model.validationError) {
-      return this.model.signin().done(function(data) {
-        this.model.clear().set(data).saveCache();
-        this.publish('user:signed:in');
-      }.bind(this)).fail(function(error) {
-        this.getAttributeErrorElement('password').text(error.non_field_errors);
-      }.bind(this));
-    }
+  onAuthError: function(error) {
+    if (error.username) this.getAttributeErrorElement('username').text(error.username);
+    if (error.password) this.getAttributeErrorElement('password').text(error.password);
+    return this;
   }
 });

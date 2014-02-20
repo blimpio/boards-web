@@ -6,6 +6,7 @@ module.exports = Zeppelin.View.extend({
   initialize: function() {
     document.title = 'Blimp | Password Recovery';
     this.insert('#application').initForm();
+    return this;
   },
 
   initForm: function() {
