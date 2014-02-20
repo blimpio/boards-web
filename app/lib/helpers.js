@@ -9,24 +9,24 @@ module.exports = (function() {
     return Boards.Collections[name];
   }});
 
-  _.mixin({'createController': function(path, options) {
-    var Collection = require('controllers/' + path);
-    return new Collection(options || {});
+  _.mixin({'createController': function(name, options) {
+    var Collection = require('controllers/' + name);
+    return new Collection(options);
   }});
 
-  _.mixin({'createView': function(path, options) {
-    var View = require('views/' + path);
-    return new View(options || {});
+  _.mixin({'createView': function(name, options) {
+    var View = require('views/' + name);
+    return new View(options);
   }});
 
-  _.mixin({'createModel': function(path, options) {
-    var Model = require('models/' + path);
-    return new Model(options || {});
+  _.mixin({'createModel': function(name, attributes, options) {
+    var Model = require('models/' + name);
+    return new Model(attributes, options);
   }});
 
-  _.mixin({'createCollection': function(path, options) {
-    var Collection = require('collections/' + path);
-    return new Collection(options || {});
+  _.mixin({'createCollection': function(name, models, options) {
+    var Collection = require('collections/' + name);
+    return new Collection(models, options);
   }});
 
   // Decodes a JSON Web Token.
