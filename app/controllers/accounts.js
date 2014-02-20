@@ -6,11 +6,12 @@ module.exports = Zeppelin.View.extend({
   initialize: function() {
     document.title = 'Blimp | Accounts';
     this.insert('#application').initList();
+    return this;
   },
 
   initList: function() {
     return this.addChild(require('views/accounts-list'), {
-      model: _.getModel('User')
+      collection: _.getCollection('Accounts')
     }, 'accounts').render();
   }
 });

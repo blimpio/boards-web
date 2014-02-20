@@ -1,32 +1,39 @@
 describe('AccountsList', function() {
-  var list,
-      AccountsList = require('views/accounts-list');
+  var AccountsList = require('views/accounts-list');
 
   beforeEach(function() {
-    $('#application').append(require('templates/accounts')());
+    $('#application').html(require('templates/accounts')());
 
-    list = new AccountsList({
-      model: _.getModel('User')
+    this.AccountsList = new AccountsList({
+      collection: _.getCollection('Accounts')
     });
   });
 
   afterEach(function() {
-    list.remove();
+    this.AccountsList.remove();
+    delete this.AccountsList;
   });
 
   it('should exist.', function() {
-    expect(list).to.exist;
+    expect(this.AccountsList).to.exist;
   });
 
-  it('should have a model.', function() {
-    expect(list.model).to.exist;
-    expect(list.model.name).to.equal('User');
+  it('should have a name property.', function() {
+    expect(this.AccountsList.name).to.exist;
+    expect(this.AccountsList.name).to.equal('AccountsList');
   });
 
-  describe('context', function() {
-    it('should return the user accounts.', function() {
-      list.model.set('accounts', [{id: 1, name: 'A'}, {id: 2, name: 'B'}]);
-      expect(list.context().accounts().length).to.equal(2);
-    });
+  it('should have a list property.', function() {
+    expect(this.AccountsList.list).to.exist;
+    expect(this.AccountsList.list).to.equal('ol.accounts__list');
+  });
+
+  it('should have a collection property.', function() {
+    expect(this.AccountsList.collection).to.exist;
+    expect(this.AccountsList.collection.name).to.equal('Accounts');
+  });
+
+  it('should have an itemView property.', function() {
+    expect(this.AccountsList.itemView).to.exist;
   });
 });

@@ -1,11 +1,9 @@
-module.exports = Zeppelin.View.extend({
+module.exports = Zeppelin.CollectionView.extend({
   el: 'ol.accounts__list',
 
   name: 'AccountsList',
 
-  template: require('templates/accounts-list'),
+  list: 'ol.accounts__list',
 
-  context: function() {
-    return this.model.getPresenters(['accounts']);
-  }
+  itemView: require('views/accounts-list-item')
 });
