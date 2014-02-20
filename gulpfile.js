@@ -12,10 +12,11 @@ gulp.task('build_tests', function() {
 });
 
 gulp.task('test', ['build_tests'], function() {
-  var path = './node_modules/mocha-phantomjs/bin/mocha-phantomjs';
-  var command = '/test/index.html';
+  var path = './node_modules/mocha-phantomjs/bin/mocha-phantomjs',
+      options = '-s loadImages=false -s webSecurityEnabled=false',
+      command = '/test/index.html';
 
-  exec(path + ' ' + command, function (error, stdout, stderr) {
+  exec(path + ' ' + options + ' ' + command, function (error, stdout, stderr) {
     if (stdout) {
       console.log(stdout);
     } else if (stderr) {

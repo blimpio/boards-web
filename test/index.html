@@ -11,10 +11,7 @@
 
     <script>
       // Disable sockjs to use HTTP for tests.
-      window.SockJS = undefined;
       window.APPLICATION_HTTP_URL = '';
-      window.APPLICATION_CONNECTION = 'HTTP';
-      window.APPLICATION_WEBSOCKET_URL = '';
       window.JWT_TEST_TOKEN = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogImEyMmMzYjFkLWRkOGQtNDllZS05ZDA2LWQwNjJmNWY0NzQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.D_D-tGwUmPSUofHEuWoZrgduVxCcVl36XCiiwGyxfaY';
     </script>
 
@@ -37,6 +34,12 @@
 
       // Fix for faking server requests.
       jQuery.ajaxSetup({processData: false});
+
+      // Create the accounts collection.
+      _.getCollection('Accounts');
+
+      // Try to login user form localstorage.
+      _.getModel('User').signinFromCache();
 
       // Patch Backbone History in PhantomJS.
       var Location = function(href) {

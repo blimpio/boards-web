@@ -141,7 +141,7 @@
 
     isEmail: function (value) {
       if (this.isString(value)) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        return /^[\+a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value);
       } else {
         return false;
       }
@@ -255,17 +255,13 @@
   };
 
   Zeppelin.Events = {
-    subscriptions: {
-
-    },
-
     registerSubscriptions: function (subscriptions) {
       subscriptions = subscriptions || this.subscriptions;
 
       if (_.size(subscriptions)) {
         _.forOwn(subscriptions, function (callback, eventName) {
           this.subscribe(eventName, callback);
-        }.bind(this));
+        }, this);
       }
 
       return this;
@@ -300,7 +296,6 @@
     unsubscribe: function (eventName) {
       if (eventName && this.subscriptions[eventName]) {
         this.stopListening(Backbone.Events, eventName);
-        delete this.subscriptions[eventName];
       } else if (!eventName) {
         this.stopListening(Backbone.Events);
         this.subscriptions = {};
@@ -390,11 +385,20 @@
   });
 
   Zeppelin.Model = Backbone.Model.extend({
-    constructor: function () {
+    constructor: function (attributes, options) {
+      options = options || {};
+
       this.name = this.name || _.uniqueId('M');
-      this.presenters = this.presenters || [];
-      this.validations = this.validations || {};
-      this.localAttributes = this.localAttributes || [];
+
+      if (!this.presenters) this.presenters = [];
+      if (!this.validations) this.validations = {};
+      if (!this.subscriptions) this.subscriptions = {};
+      if (!this.localAttributes) this.localAttributes = {};
+
+      _.union(this.presenters, options.presenters);
+      _.extend(this.validations, options.validations);
+      _.extend(this.subscriptions, options.subscriptions);
+      _.union(this.localAttributes, options.localAttributes);
 
       this.registerSubscriptions();
       Backbone.Model.prototype.constructor.apply(this, arguments);
@@ -431,7 +435,7 @@
 
       _.forEach(names, function (name) {
         presenters[name] = this.getPresenter(name);
-      }.bind(this));
+      }, this);
 
       return presenters;
     },
@@ -497,10 +501,10 @@
                     errors[attributeName] = validation.message || attributeName + ' is not valid.';
                   }
                 }
-              }.bind(this));
+              }, this);
             }
-          }.bind(this));
-        }.bind(this));
+          }, this);
+        }, this);
 
         if (_.size(errors)) {
           return errors;
@@ -513,23 +517,6 @@
         if (_.isArray(validation) || _.isPlainObject(validation) || _.isFunction(validation)) {
           this.validations[attributeName] = _.isArray(validation) ? validation : [validation];
         }
-      }
-
-      return this;
-    },
-
-    unregisterValidation: function (attributeName) {
-      if (attributeName) delete this.validations[attributeName];
-      return this;
-    },
-
-    unregisterValidations: function (validations) {
-      validations = validations || _.keys(this.validations);
-
-      if (_.isArray(validations)) {
-        _.forEach(validations, function (attributeName) {
-          this.unregisterValidation(attributeName);
-        }.bind(this));
       }
 
       return this;
@@ -553,20 +540,20 @@
     },
 
     fetchCache: function () {
-      if (!this.cache) {
-        this.createCache();
-      }
-
+      if (!this.cache) this.createCache();
       this.set(this.cache.getAll());
       return this;
     },
 
     saveCache: function () {
-      if (!this.cache) {
-        this.createCache();
-      }
-
+      if (!this.cache) this.createCache();
       this.cache.setAll(this.attributes);
+      return this;
+    },
+
+    destroyCache: function () {
+      if (!this.cache) this.createCache();
+      this.cache.clearAll(this.attributes);
       return this;
     }
   });
@@ -574,10 +561,17 @@
   _.extend(Zeppelin.Model.prototype, Zeppelin.Events);
 
   Zeppelin.Collection = Backbone.Collection.extend({
-    constructor: function () {
+    constructor: function (models, options) {
+      options = options || {};
+
       this.cid = _.uniqueId('col');
       this.name = this.name || _.uniqueId('C');
-      this.presenters = this.presenters || [];
+
+      if (!this.presenters) this.presenters = [];
+      if (!this.subscriptions) this.subscriptions = {};
+
+      _.union(this.presenters, options.presenters);
+      _.extend(this.subscriptions, options.subscriptions);
 
       this.registerSubscriptions();
       Backbone.Collection.prototype.constructor.apply(this, arguments);
@@ -616,7 +610,7 @@
 
       _.forEach(names, function (name) {
         presenters[name] = this.getPresenter(name);
-      }.bind(this));
+      }, this);
 
       return presenters;
     },
@@ -667,11 +661,13 @@
       if (!this.elements) this.elements = {};
       if (!this.bindings) this.bindings = {};
       if (!this.children) this.children = {};
+      if (!this.subscriptions) this.subscriptions = {};
 
       _.extend(this.events, options.events);
       _.extend(this.elements, options.elements);
       _.extend(this.bindings, options.bindings);
       _.extend(this.children, options.children);
+      _.extend(this.subscriptions, options.subscriptions);
 
       this.isRemoved = false;
       this.isRendered = false;
@@ -725,7 +721,7 @@
       if (options.events && _.isPlainObject(options.events)) {
         _.forOwn(options.events, function (callback, eventName) {
           this.delegateEvent(selector, eventName, callback);
-        }.bind(this));
+        }, this);
       }
 
       return this;
@@ -761,7 +757,6 @@
         $element.off();
         this.undelegateEvent(selector, '');
         delete this['$' + name];
-        delete this.elements[name];
       } else {
         return this;
       }
@@ -772,7 +767,7 @@
 
       _.forOwn(elements, function (options, name) {
         this.registerElement(name, options);
-      }.bind(this));
+      }, this);
 
       return this;
     },
@@ -863,8 +858,6 @@
         } else {
           this.stopListening(_binding.other, _binding.eventName);
         }
-
-        delete this.bindings[binding];
       }
 
       return this;
@@ -875,7 +868,7 @@
 
       _.forOwn(bindings, function (callback, binding) {
         this.registerBinding(binding, callback);
-      }.bind(this));
+      }, this);
 
       return this;
     },
@@ -922,11 +915,9 @@
     undelegateEvent: function (selector, eventName) {
       if (arguments.length === 2) {
         this.$el.off(eventName + '.delegateEvents' + this.cid, selector);
-        delete this.events[eventName + ' ' + selector];
       } else if (arguments.length === 1) {
         eventName = selector;
         this.$el.off(eventName + '.delegateEvents' + this.cid);
-        delete this.events[eventName];
       }
 
       return this;
@@ -1257,7 +1248,7 @@
       _.forEach(this.$form.find('[name]'), function (element) {
         attributeName = $(element).attr('name');
         attributes[attributeName] = this.getAttributeValue(attributeName);
-      }.bind(this));
+      }, this);
 
       return _.size(attributes) ? attributes : null;
     },
@@ -1276,7 +1267,7 @@
       _.forEach(this.$form.find('[name]'), function (element) {
         var attributeName = $(element).attr('name');
         attributes[attributeName] = this.getAttributeValue(attributeName);
-      }.bind(this));
+      }, this);
 
       if (_.size(attributes)) {
         this.model.set(attributes, {
@@ -1293,7 +1284,7 @@
       _.forOwn(error, function (message, attributeName) {
         this.getAttributeElement(attributeName).addClass(this.errorClass);
         this.getAttributeErrorElement(attributeName).text(message);
-      }.bind(this));
+      }, this);
 
       return this;
     },
@@ -1302,7 +1293,7 @@
       _.forOwn(attributes, function (value, attributeName) {
         this.getAttributeElement(attributeName).removeClass(this.errorClass);
         this.getAttributeErrorElement(attributeName).text('');
-      }.bind(this));
+      }, this);
 
       return this;
     },
@@ -1387,7 +1378,7 @@
 
         this.collection.each(function (item) {
           fragment.appendChild(this.renderItem(item).el);
-        }.bind(this));
+        }, this);
 
         this.$list.html(fragment);
         this.isFiltered = false;
@@ -1448,7 +1439,7 @@
 
           filteredCollection.each(function (item) {
             fragment.appendChild(this.renderItem(item).el);
-          }.bind(this));
+          }, this);
 
           this.$list.html(fragment);
           this.isFiltered = true;
@@ -1461,10 +1452,17 @@
   });
 
   Zeppelin.Router = Backbone.Router.extend({
-    constructor: function () {
+    constructor: function (options) {
+      options = options || {};
+
       this.cid = _.uniqueId('r');
       this.name = this.name || _.uniqueId('R');
-      this.validations = this.validations || {};
+
+      if (!this.validations) this.validations = {};
+      if (!this.subscriptions) this.subscriptions = {};
+
+      _.extend(this.validations, options.validations);
+      _.extend(this.subscriptions, options.subscriptions);
 
       this._transformValidations();
       this.registerSubscriptions();
@@ -1528,7 +1526,7 @@
         if (!_.isRegExp(route) && !_.isFunction(route)) route = this._routeToRegExp(route).toString();
         if (!_.isFunction(callback)) callback = this[callback];
         if (route && callback) result[route] = callback.bind(this);
-      }.bind(this));
+      }, null, this);
 
       return this;
     },
@@ -1545,26 +1543,8 @@
 
       _.forOwn(validations, function (callback, route) {
         this.resgiterValidation(route, callback);
-      }.bind(this));
+      }, this);
 
-      return this;
-    },
-
-    unregisterValidation: function (route) {
-      if (route) {
-        if (!this.validations[route] && !_.isRegExp(route)) {
-          delete this.validations[this._routeToRegExp(route).toString()];
-        } else {
-          delete this.validations[route];
-        }
-      }
-
-      return this;
-    },
-
-    unregisterValidations: function (validations) {
-      validations = validations || _.keys(this.validations);
-      if (_.isArray(validations)) _.forEach(validations, this.unregisterValidation, this);
       return this;
     },
 
