@@ -18,10 +18,10 @@ module.exports = Zeppelin.Router.extend({
 
   validations: {
     'signin(/)': 'isNotAuthenticated',
-    'signup(/)': 'isNotAuthenticated',
     'signup?token:token(/)': 'isNotAuthenticated',
+    'signup(/)': 'isNotAuthenticated',
     'forgot_password(/)': 'isNotAuthenticated',
-    'accounts(/)': 'authIsRequired',
+    'accounts(/)': 'accountsValidation',
     ':account(/)': 'accountExists'
   },
 
@@ -34,6 +34,8 @@ module.exports = Zeppelin.Router.extend({
       this.navigateWithTrigger('signin');
     } else if (error === 'User is not in account.') {
       this.navigateWithTrigger('accounts');
+    } else if (error === 'User has only one account.') {
+      this.navigateWithTrigger(_.getCollection('Accounts').at(0).get('slug'));
     } else if (error === 'User is already authenticated.') {
       this.navigateWithTrigger('accounts');
     }
@@ -60,9 +62,19 @@ module.exports = Zeppelin.Router.extend({
   },
 
   accountExists: function(route) {
-    var autoError = this.authIsRequired(route);
-    if (autoError) return autoError;
-    if(!_.getModel('User').isInAccount(route.params[0])) return 'User is not in account.';
+    if(!_.getCollection('Accounts').userHasAccount(route.params[0])) return 'User is not in account.';
+  },
+
+  hasOneAccount: function(route) {
+    if (_.getCollection('Accounts').length === 1) return 'User has only one account.';
+  },
+
+  accountsValidation: function(route) {
+    var authError = this.authIsRequired(route),
+        hasOneAccountError = this.hasOneAccount(route);
+
+    if (authError) return authError;
+    if (hasOneAccountError) return hasOneAccountError;
   },
 
   removeLastController: function() {
@@ -110,8 +122,8 @@ module.exports = Zeppelin.Router.extend({
     this.controller = _.createController('accounts');
   },
 
-  boards: function() {
-    this.removeLastController();
+  boards: function(slug) {
+    _.getCollection('Accounts').setCurrent(slug);
     this.controller = _.createController('boards');
   }
 });
