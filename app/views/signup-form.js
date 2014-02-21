@@ -3,6 +3,8 @@ module.exports = Zeppelin.FormView.extend({
 
   name: 'SignupForm',
 
+  form: 'form.signup',
+
   events: {
     'click button[data-action=validateEmail]': 'validateEmail',
     'click button[data-action=redirectToFirstStep]': 'redirectToFirstStep',
@@ -26,6 +28,8 @@ module.exports = Zeppelin.FormView.extend({
     'model user:signup-username:error': 'onSignupUsernameError',
     'model user:signup:error': 'onValidatePasswordError'
   },
+
+  model: App.User,
 
   context: function() {
     return this.model.getPresenters(['email', 'signup_domains']);

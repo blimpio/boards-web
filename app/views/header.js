@@ -5,6 +5,8 @@ module.exports = Zeppelin.View.extend({
 
   template: require('templates/header'),
 
+  model: App.User,
+
   context: function() {
     return this.model.getPresenters(['isSignedIn']);
   },

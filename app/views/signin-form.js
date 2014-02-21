@@ -3,11 +3,15 @@ module.exports = Zeppelin.FormView.extend({
 
   name: 'SigninForm',
 
+  form: 'form.signin',
+
   template: require('templates/signin-form'),
 
   bindings: {
     'model user:signin:error': 'onAuthError'
   },
+
+  model: App.User,
 
   onSubmit: function(event) {
     event.preventDefault();

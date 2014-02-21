@@ -5,13 +5,12 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Password Recovery';
-    this.insert('#application').initForm();
+    this.insert('#application').initChildren();
     return this;
   },
 
-  initForm: function() {
-    return this.addChild(require('views/forgot-password-form'), {
-      model: App.User
-    }, 'form');
+  initChildren: function() {
+    this.addChild(_.createView('forgot-password-form'), 'form');
+    return this;
   }
 });

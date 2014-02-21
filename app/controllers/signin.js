@@ -11,13 +11,12 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Signin';
-    this.insert('#application').initForm();
+    this.insert('#application').initChildren();
     return this;
   },
 
-  initForm: function() {
-    return this.addChild(require('views/signin-form'), {
-      model: App.User
-    }, 'form').render();
+  initChildren: function() {
+    this.addChild(_.createView('signin-form'), 'form').render();
+    return this;
   }
 });

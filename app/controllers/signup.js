@@ -11,25 +11,23 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Signup';
-    this.user = App.User;
-    this.insert('#application').initForm();
+    this.insert('#application').initChildren();
     return this;
   },
 
-  initForm: function() {
-    return this.addChild(require('views/signup-form'), {
-      model: this.user
-    }, 'form').render();
+  initChildren: function() {
+    this.addChild(_.createView('signup-form'), 'form').render();
+    return this;
   },
 
   continueWithToken: function(token) {
-    if (this.user.get('signup_step') < 3) {
+    if (App.User.get('signup_step') < 3) {
       if (token) {
-        this.user.setEmailFromJWT(token).updateSignupStep(3);
-      } else if (this.user.isWaitingForEmailValidation()) {
-        this.user.updateSignupStep(2).trigger('change:signup_step');
+        App.User.setEmailFromJWT(token).updateSignupStep(3);
+      } else if (App.User.isWaitingForEmailValidation()) {
+        App.User.updateSignupStep(2).trigger('change:signup_step');
       } else {
-        this.user.updateSignupStep(1);
+        App.User.updateSignupStep(1);
       }
     }
 

@@ -4,25 +4,23 @@ module.exports = Zeppelin.View.extend({
   template: require('templates/reset-password'),
 
   initialize: function() {
-    document.title = 'Blimp | Reset Recovery';
-    this.user = App.User;
+    document.title = 'Blimp | Reset Password';
     return this;
   },
 
-  renderForm: function() {
-    this.insert('#application').initForm();
+  afterInsert: function() {
+    this.initChildren();
     return this;
   },
 
   validateToken: function(token) {
-    if (token) this.user.setPasswordResetDataFromJWT(token);
-    if (this.user.canResetPassword()) this.renderForm();
+    if (token) App.User.setPasswordResetDataFromJWT(token);
+    if (App.User.canResetPassword()) this.insert('#application');
     return this;
   },
 
-  initForm: function() {
-    return this.addChild(require('views/reset-password-form'), {
-      model: this.user
-    }, 'form');
+  initChildren: function() {
+    this.addChild(_.createView('reset-password-form'), 'form');
+    return this;
   }
 });

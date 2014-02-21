@@ -105,7 +105,6 @@ module.exports = Zeppelin.Router.extend({
 
   resetPassword: function() {
     this.controller = _.createController('reset-password');
-    this.controller.renderForm();
   },
 
   resetPasswordWithToken: function(token) {

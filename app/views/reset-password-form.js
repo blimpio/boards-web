@@ -8,6 +8,8 @@ module.exports = Zeppelin.FormView.extend({
     'model user:reset-password:error': 'onResetPasswordError'
   },
 
+  model: App.User,
+
   initialize: function() {
     this.setForm();
     return this;
