@@ -5,8 +5,8 @@ module.exports = Zeppelin.FormView.extend({
 
   template: require('templates/signin-form'),
 
-  subscriptions: {
-    'user:auth:error': 'onAuthError'
+  bindings: {
+    'model user:signin:error': 'onAuthError'
   },
 
   onSubmit: function(event) {

@@ -163,7 +163,7 @@ module.exports = Zeppelin.Model.extend({
       .unset('signup_request_token', {silent: true})
       .saveCache();
 
-    this.trigger('user:signup:success', this.attributes);
+    this.publish('user:signup:success', this.attributes);
     return this;
   },
 
@@ -171,7 +171,7 @@ module.exports = Zeppelin.Model.extend({
     error = error.responseJSON ? error.responseJSON.error : error;
     error = error.email || error.username || error.password;
     error = error ? error[0] : 'An error ocurred.';
-    this.trigger('user:signup:error', error);
+    this.publish('user:signup:error', error);
     return this;
   },
 
@@ -208,7 +208,6 @@ module.exports = Zeppelin.Model.extend({
 
   onSigninSuccess: function(response) {
     this.unset('password').set(response).saveCache();
-    this.trigger('user:signin:success', this.attributes);
     this.publish('user:signin:success', this.attributes);
     return this;
   },
@@ -217,7 +216,6 @@ module.exports = Zeppelin.Model.extend({
     error = error.responseJSON ? error.responseJSON.error : error;
     if (error.email) error = {email: error.email[0] || 'An error ocurred.'};
     if (error.password) error = {password: error.password[0] || 'An error ocurred.'};
-    this.trigger('user:signin:error', error);
     this.publish('user:signin:error', error);
     return this;
   },
