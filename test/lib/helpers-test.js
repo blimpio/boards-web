@@ -12,26 +12,6 @@ describe('Helpers', function() {
     $('#application').remove('#route');
   });
 
-  describe('_.getModel', function() {
-    it('should get given model from the window global or create a new one.', function() {
-      var user = _.getModel('User');
-      expect(user).to.exist;
-      expect(user.name).to.equal('User');
-      expect(window.Boards.Models.User).to.exist;
-      expect(window.Boards.Models.User.name).to.equal('User');
-    });
-  });
-
-  describe('_.getCollection', function() {
-    it('should get the given collection from the window global or create a new one.', function() {
-      var boards = _.getCollection('Boards');
-      expect(boards).to.exist;
-      expect(boards.name).to.equal('Boards');
-      expect(window.Boards.Collections.Boards).to.exist;
-      expect(window.Boards.Collections.Boards.name).to.equal('Boards');
-    });
-  });
-
   describe('_.createController', function() {
     it('should create a new controller view based on the given path.', function() {
       var controller = _.createController('boards');

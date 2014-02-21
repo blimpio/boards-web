@@ -5,7 +5,7 @@ module.exports = Zeppelin.View.extend({
 
   template: require('templates/accounts-dropdown'),
 
-  collection: _.getCollection('Accounts'),
+  collection: Boards.Accounts,
 
   events: {
     'click div.accounts-dropdown__current': 'toggle'

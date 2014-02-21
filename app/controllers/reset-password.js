@@ -5,7 +5,7 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Reset Recovery';
-    this.user = _.getModel('User');
+    this.user = Boards.User;
     return this;
   },
 

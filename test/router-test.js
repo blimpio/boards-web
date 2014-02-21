@@ -3,7 +3,7 @@ describe('Router', function() {
       ResetPassword = require('controllers/reset-password');
 
   before(function() {
-    _.getCollection('Accounts').reset([{
+    Boards.Accounts.reset([{
       id: 1,
       name: 'ACME Inc',
       slug: 'acme-inc',
@@ -43,7 +43,7 @@ describe('Router', function() {
   });
 
   after(function() {
-    _.getCollection('Accounts').reset();
+    Boards.Accounts.reset();
   });
 
   describe('onError', function() {
@@ -63,7 +63,7 @@ describe('Router', function() {
     });
 
     it('should navigate to the accounts route if the hasOneAccount() validation fails.', function() {
-      console.log(_.getCollection('Accounts').toJSON());
+      console.log(Boards.Accounts.toJSON());
       this.Router.onError({}, 'User has only one account.');
       expect(this.navigateSpy).to.have.been.calledWith('acme-inc', {trigger: true});
     });
@@ -85,14 +85,14 @@ describe('Router', function() {
 
   describe('isNotAuthenticated', function() {
     it('should return an error if the user is signed in.', function() {
-      _.getModel('User').set('token', '12345');
+      Boards.User.set('token', '12345');
       expect(this.Router.isNotAuthenticated({fragment: 'signin/'})).to.equal('User is already authenticated.');
     });
   });
 
   describe('accountExists', function() {
     it('should return an error if the user is not in the given account.', function() {
-      _.getModel('User').set('token', '12345');
+      Boards.User.set('token', '12345');
       expect(this.Router.accountExists({
         params: ['blimp'],
         fragment: 'blimp/'
@@ -168,7 +168,7 @@ describe('Router', function() {
   describe('signout', function() {
     it('sign out the current user and navigate to the signin route.', function() {
       this.Router.signout();
-      expect(_.getModel('User').isSignedIn()).to.be.false;
+      expect(Boards.User.isSignedIn()).to.be.false;
       expect(this.navigateSpy).to.have.been.calledWith('signin', {trigger: true});
     });
   });

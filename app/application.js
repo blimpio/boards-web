@@ -1,37 +1,17 @@
 module.exports = (function() {
-  var Router;
+  var Router = require('router');
 
-  // App namespace.
-  window.Boards = {
-    Models: {},
-    Collections: {}
-  };
-
-  // Load helpers.
+  require('lib/config');
   require('lib/helpers');
 
-  $.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-      var token = _.getModel('User').get('token');
-      if (token) xhr.setRequestHeader('Authorization', 'JWT ' + token);
-    },
+  window.Boards = {};
 
-    contentType: 'application/json; charset=utf-8'
-  });
+  Boards.User = _.createModel('user');
+  Boards.Boards = _.createCollection('boards');
+  Boards.Accounts = _.createCollection('accounts');
 
-  // Register Swag Helpers.
-  Swag.registerHelpers();
-
-  // Create the accounts collection.
-  _.getCollection('Accounts');
-
-  // Try to login user form localstorage.
-  _.getModel('User').signinFromCache();
-
-  // Initialize Router.
-  Router = require('router');
   Boards.Router = new Router();
 
-  // Start listening to routes.
+  Boards.User.signinFromCache();
   Boards.Router.start();
 })();

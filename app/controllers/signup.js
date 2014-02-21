@@ -11,7 +11,7 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Signup';
-    this.user = _.getModel('User');
+    this.user = Boards.User;
     this.insert('#application').initForm();
     return this;
   },

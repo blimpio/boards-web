@@ -9,7 +9,7 @@ describe('SigninForm', function() {
     this.server.autoRespondAfter = 500;
 
     this.SigninForm = new SigninForm({
-      model: _.getModel('User')
+      model: Boards.User
     });
 
     this.SigninForm.render();

@@ -9,7 +9,7 @@ describe('ForgotPasswordForm', function() {
     this.server.autoRespondAfter = 500;
 
     this.ForgotPasswordForm = new ForgotPasswordForm({
-      model: _.getModel('User')
+      model: Boards.User
     });
 
     this.ForgotPasswordForm.render();
