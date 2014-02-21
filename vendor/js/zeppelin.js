@@ -287,6 +287,7 @@
 
     publish: function () {
       if (arguments.length) {
+        Backbone.Events.trigger.apply(this, arguments);
         Backbone.Events.trigger.apply(Backbone.Events, arguments);
       }
 
@@ -389,6 +390,7 @@
       options = options || {};
 
       this.name = this.name || _.uniqueId('M');
+      this.isUnplugged = false;
 
       if (!this.presenters) this.presenters = [];
       if (!this.validations) this.validations = {};
@@ -454,9 +456,7 @@
         _.forOwn(this.validations, function (validations, attributeName) {
           var attributeValue = attributes[attributeName];
 
-          if (!_.isArray(validations)) {
-            validations = [validations];
-          }
+          if (!_.isArray(validations)) validations = [validations];
 
           _.forEach(validations, function (validation) {
             var validationResult, isRequired;
@@ -506,9 +506,7 @@
           }, this);
         }, this);
 
-        if (_.size(errors)) {
-          return errors;
-        }
+        if (_.size(errors)) return errors;
       }
     },
 
@@ -555,6 +553,20 @@
       if (!this.cache) this.createCache();
       this.cache.clearAll(this.attributes);
       return this;
+    },
+
+    unplug: function () {
+      this.off();
+      this.stopListening();
+      this.clear();
+      this.isUnplugged = true;
+      this.onUnplug();
+      this.trigger('unplug', this);
+      return this;
+    },
+
+    onUnplug: function () {
+
     }
   });
 
@@ -566,6 +578,7 @@
 
       this.cid = _.uniqueId('col');
       this.name = this.name || _.uniqueId('C');
+      this.isUnplugged = false;
 
       if (!this.presenters) this.presenters = [];
       if (!this.subscriptions) this.subscriptions = {};
@@ -629,21 +642,35 @@
     },
 
     fetchCache: function () {
-      if (!this.cache) {
-        this.createCache();
-      }
-
+      if (!this.cache) this.createCache();
       this.set(this.cache.getAll());
       return this;
     },
 
     saveCache: function () {
-      if (!this.cache) {
-        this.createCache();
-      }
-
+      if (!this.cache) this.createCache();
       this.cache.setAll(this.getAttributes());
       return this;
+    },
+
+    destroyCache: function () {
+      if (!this.cache) this.createCache();
+      this.cache.clearAll();
+      return this;
+    },
+
+    unplug: function () {
+      this.off();
+      this.stopListening();
+      this.reset();
+      this.isUnplugged = true;
+      this.onUnplug();
+      this.trigger('unplug', this);
+      return this;
+    },
+
+    onUnplug: function () {
+
     }
   });
 
@@ -1011,8 +1038,14 @@
       this.registerElements();
       this.isRendered = true;
       this.isFirstRender = false;
+      this.onRender();
+      this.trigger('render', this);
 
       return this;
+    },
+
+    onRender: function () {
+
     },
 
     insert: function (destination) {
@@ -1020,9 +1053,15 @@
         if (this.isFirstRender) this.render();
         this.$el.appendTo(destination);
         this.isInserted = true;
+        this.onInsert();
+        this.trigger('insert', this);
       }
 
       return this;
+    },
+
+    onInsert: function () {
+
     },
 
     unplug: function (deep) {
@@ -1038,7 +1077,14 @@
       delete this.parent;
       if (deep) this.unplugChildren(deep);
 
+      this.onUnplug();
+      this.trigger('unplug', this);
+
       return this;
+    },
+
+    onUnplug: function () {
+
     },
 
     remove: function () {
@@ -1046,7 +1092,13 @@
       this.$el.remove();
       this.children = {};
       this.isRemoved = true;
+      this.onRemove();
+      this.trigger('remove', this);
       return this;
+    },
+
+    onRemove: function () {
+
     },
 
     addChild: function (child, data, name) {
@@ -1179,10 +1231,7 @@
 
     render: function () {
       Zeppelin.View.prototype.render.apply(this, arguments);
-
-      if (!this.formIsSet) {
-        this.setForm();
-      }
+      if (!this.formIsSet) this.setForm();
     },
 
     getAttributeElement: function (attributeName) {
@@ -1325,6 +1374,7 @@
       Zeppelin.View.prototype.setCollection.apply(this, arguments);
       this.listenTo(this.collection, 'add', this.onAdd);
       this.listenTo(this.collection, 'remove', this.onRemove);
+      this.listenTo(this.collection, 'reset', this.renderCollection);
       return this;
     },
 
@@ -1364,10 +1414,35 @@
     },
 
     renderItem: function (model) {
-      if (model && model.cid) return this.addChild(this.itemView, {
-        model: model
-      }).render();
-      return null;
+      var child = null;
+
+      if (model && model.cid) {
+        child = this.addChild(this.itemView, {
+          model: model
+        });
+
+        if (child) {
+          child.render();
+          this.onRenderItem(child);
+          this.trigger('render:item', this, child);
+        }
+      }
+
+      return child;
+    },
+
+    onRenderItem: function (item) {
+
+    },
+
+    prependItem: function (item) {
+      this.$list.prepend(item.render().el);
+      return item;
+    },
+
+    appendItem: function (item) {
+      this.$list.append(item.render().el);
+      return item;
     },
 
     renderCollection: function () {
@@ -1383,9 +1458,15 @@
         this.$list.html(fragment);
         this.isFiltered = false;
         this.collectionIsRendered = true;
+        this.onRenderCollection(this.collection);
+        this.trigger('render:collection', this, this.collection);
       }
 
       return this;
+    },
+
+    onRenderCollection: function (collection) {
+
     },
 
     render: function () {
@@ -1444,6 +1525,8 @@
           this.$list.html(fragment);
           this.isFiltered = true;
           this.collectionIsRendered = true;
+          this.onRenderCollection(filteredCollection);
+          this.trigger('render:collection', this, filteredCollection);
         }
       }
 
