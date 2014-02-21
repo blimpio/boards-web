@@ -3,7 +3,7 @@ describe('HeaderView', function() {
 
   beforeEach(function() {
     this.HeaderView = new HeaderView({
-      model: Boards.User
+      model: App.User
     });
   });
 

@@ -21,7 +21,7 @@
     <!-- Enviroment Setup -->
     <script>
       // Define Namespace.
-      window.Boards = {};
+      window.App = {};
 
       // Register Swag Helpers.
       Swag.registerHelpers();
@@ -32,12 +32,12 @@
       // Fix for faking server requests.
       jQuery.ajaxSetup({processData: false});
 
-      Boards.User = _.createModel('user');
-      Boards.Boards = _.createCollection('boards');
-      Boards.Accounts = _.createCollection('accounts');
+      App.User = _.createModel('user');
+      App.Boards = _.createCollection('boards');
+      App.Accounts = _.createCollection('accounts');
 
       // Try to login user form localstorage.
-      Boards.User.signinFromCache();
+      App.User.signinFromCache();
 
       // Patch Backbone History in PhantomJS.
       var Location = function(href) {

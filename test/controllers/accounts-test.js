@@ -3,7 +3,7 @@ describe('AccountsController', function() {
       AccountsCollection = require('collections/accounts');
 
   before(function() {
-    Boards.Collections.Accounts = new AccountsCollection([{
+    App.Accounts = new AccountsCollection([{
       id: 1,
       name: 'ACME Inc',
       slug: 'acme-inc',
@@ -26,8 +26,7 @@ describe('AccountsController', function() {
   });
 
   after(function() {
-    Boards.Collections.Accounts.reset();
-    delete Boards.Collections.Accounts;
+    App.Accounts.reset();
   });
 
   it('should exist.', function() {

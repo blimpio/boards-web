@@ -4,14 +4,14 @@ module.exports = (function() {
   require('lib/config');
   require('lib/helpers');
 
-  window.Boards = {};
+  window.App = {};
 
-  Boards.User = _.createModel('user');
-  Boards.Boards = _.createCollection('boards');
-  Boards.Accounts = _.createCollection('accounts');
+  App.Router = new Router();
 
-  Boards.Router = new Router();
+  App.User = _.createModel('user');
+  App.Boards = _.createCollection('boards');
+  App.Accounts = _.createCollection('accounts');
 
-  Boards.User.signinFromCache();
-  Boards.Router.start();
+  App.User.signinFromCache();
+  App.Router.start();
 })();

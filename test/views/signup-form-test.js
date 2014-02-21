@@ -2,7 +2,7 @@ describe('SignupForm', function() {
   var SignupForm = require('views/signup-form');
 
   before(function() {
-    Boards.User.set('signup_step', 1, {silent: true});
+    App.User.set('signup_step', 1, {silent: true});
   });
 
   beforeEach(function() {
@@ -15,7 +15,7 @@ describe('SignupForm', function() {
     this.renderStepSpy = sinon.spy(SignupForm.prototype, 'renderStep');
 
     this.SignupForm = new SignupForm({
-      model: Boards.User
+      model: App.User
     });
 
     this.SignupForm.render();
@@ -27,7 +27,7 @@ describe('SignupForm', function() {
     SignupForm.prototype.renderStep.restore();
     this.SignupForm.remove();
     delete this.SignupForm;
-    Boards.User.clear();
+    App.User.clear();
   });
 
   it('should exist.', function() {

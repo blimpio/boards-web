@@ -14,9 +14,9 @@ describe('Helpers', function() {
 
   describe('_.createController', function() {
     it('should create a new controller view based on the given path.', function() {
-      var controller = _.createController('boards');
+      var controller = _.createController('accounts');
       expect(controller).to.exist;
-      expect(controller.name).to.equal('BoardsController');
+      expect(controller.name).to.equal('AccountsController');
     });
   });
 

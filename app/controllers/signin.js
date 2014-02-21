@@ -17,7 +17,7 @@ module.exports = Zeppelin.View.extend({
 
   initForm: function() {
     return this.addChild(require('views/signin-form'), {
-      model: Boards.User
+      model: App.User
     }, 'form').render();
   }
 });

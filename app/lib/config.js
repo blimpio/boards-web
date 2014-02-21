@@ -2,7 +2,7 @@ Swag.registerHelpers();
 
 $.ajaxSetup({
   beforeSend: function(xhr, settings) {
-    var token = Boards.User.get('token');
+    var token = App.User.get('token');
     if (token) xhr.setRequestHeader('Authorization', 'JWT ' + token);
   },
 

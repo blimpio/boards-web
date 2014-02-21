@@ -2,7 +2,7 @@ describe('AccountsDropdown', function() {
   var AccountsDropdown = require('views/accounts-dropdown');
 
   before(function() {
-    Boards.Accounts.reset([{
+    App.Accounts.reset([{
       id: 1,
       name: 'ACME Inc',
       slug: 'acme-inc',
@@ -19,7 +19,7 @@ describe('AccountsDropdown', function() {
     $('#application').html('<div class="accounts-dropdown"></div>');
 
     this.AccountsDropdown = new AccountsDropdown({
-      collection: Boards.Accounts
+      collection: App.Accounts
     });
 
     this.AccountsDropdown.render();
@@ -31,7 +31,7 @@ describe('AccountsDropdown', function() {
   });
 
   after(function() {
-    Boards.Accounts.reset();
+    App.Accounts.reset();
   });
 
   it('should exist.', function() {

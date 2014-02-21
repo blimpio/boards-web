@@ -35,7 +35,7 @@ module.exports = Zeppelin.Router.extend({
     } else if (error === 'User is not in account.') {
       this.navigateWithTrigger('accounts');
     } else if (error === 'User has only one account.') {
-      this.navigateWithTrigger(Boards.Accounts.at(0).get('slug'));
+      this.navigateWithTrigger(App.Accounts.at(0).get('slug'));
     } else if (error === 'User is already authenticated.') {
       this.navigateWithTrigger('accounts');
     }
@@ -51,22 +51,22 @@ module.exports = Zeppelin.Router.extend({
 
   authIsRequired: function(route) {
     if (!/(sign(in|up))/.test(route.fragment)) {
-      if (!Boards.User.isSignedIn()) return 'Auth is required.';
+      if (!App.User.isSignedIn()) return 'Auth is required.';
     }
   },
 
   isNotAuthenticated: function(route) {
     if (/(sign(in|up))/.test(route.fragment)) {
-      if (Boards.User.isSignedIn()) return 'User is already authenticated.';
+      if (App.User.isSignedIn()) return 'User is already authenticated.';
     }
   },
 
   accountExists: function(route) {
-    if(!Boards.Accounts.userHasAccount(route.params[0])) return 'User is not in account.';
+    if(!App.Accounts.userHasAccount(route.params[0])) return 'User is not in account.';
   },
 
   hasOneAccount: function(route) {
-    if (Boards.Accounts.length === 1) return 'User has only one account.';
+    if (App.Accounts.length === 1) return 'User has only one account.';
   },
 
   accountsValidation: function(route) {
@@ -114,7 +114,7 @@ module.exports = Zeppelin.Router.extend({
   },
 
   signout: function() {
-    Boards.User.signout();
+    App.User.signout();
     this.navigateWithTrigger('signin');
   },
 
@@ -122,8 +122,8 @@ module.exports = Zeppelin.Router.extend({
     this.controller = _.createController('accounts');
   },
 
-  boards: function(slug) {
-    Boards.Accounts.setCurrent(slug);
-    this.controller = _.createController('boards');
+  account: function(slug) {
+    App.Accounts.setCurrent(slug);
+    this.controller = _.createController('account');
   }
 });

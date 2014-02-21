@@ -5,7 +5,7 @@ describe('AccountsList', function() {
     $('#application').html(require('templates/accounts')());
 
     this.AccountsList = new AccountsList({
-      collection: Boards.Accounts
+      collection: App.Accounts
     });
   });
 

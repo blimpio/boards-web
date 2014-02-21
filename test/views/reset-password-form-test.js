@@ -9,7 +9,7 @@ describe('ResetPasswordForm', function() {
     this.server.autoRespondAfter = 500;
 
     this.ResetPasswordForm = new ResetPasswordForm({
-      model: Boards.User
+      model: App.User
     });
 
     this.ResetPasswordForm.render();

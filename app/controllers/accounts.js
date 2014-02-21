@@ -11,7 +11,7 @@ module.exports = Zeppelin.View.extend({
 
   initList: function() {
     return this.addChild(require('views/accounts-list'), {
-      collection: Boards.Accounts
+      collection: App.Accounts
     }, 'accounts').render();
   }
 });

@@ -3,7 +3,7 @@ describe('Router', function() {
       ResetPassword = require('controllers/reset-password');
 
   before(function() {
-    Boards.Accounts.reset([{
+    App.Accounts.reset([{
       id: 1,
       name: 'ACME Inc',
       slug: 'acme-inc',
@@ -43,7 +43,7 @@ describe('Router', function() {
   });
 
   after(function() {
-    Boards.Accounts.reset();
+    App.Accounts.reset();
   });
 
   describe('onError', function() {
@@ -63,7 +63,7 @@ describe('Router', function() {
     });
 
     it('should navigate to the accounts route if the hasOneAccount() validation fails.', function() {
-      console.log(Boards.Accounts.toJSON());
+      console.log(App.Accounts.toJSON());
       this.Router.onError({}, 'User has only one account.');
       expect(this.navigateSpy).to.have.been.calledWith('acme-inc', {trigger: true});
     });
@@ -85,14 +85,14 @@ describe('Router', function() {
 
   describe('isNotAuthenticated', function() {
     it('should return an error if the user is signed in.', function() {
-      Boards.User.set('token', '12345');
+      App.User.set('token', '12345');
       expect(this.Router.isNotAuthenticated({fragment: 'signin/'})).to.equal('User is already authenticated.');
     });
   });
 
   describe('accountExists', function() {
     it('should return an error if the user is not in the given account.', function() {
-      Boards.User.set('token', '12345');
+      App.User.set('token', '12345');
       expect(this.Router.accountExists({
         params: ['blimp'],
         fragment: 'blimp/'
@@ -168,7 +168,7 @@ describe('Router', function() {
   describe('signout', function() {
     it('sign out the current user and navigate to the signin route.', function() {
       this.Router.signout();
-      expect(Boards.User.isSignedIn()).to.be.false;
+      expect(App.User.isSignedIn()).to.be.false;
       expect(this.navigateSpy).to.have.been.calledWith('signin', {trigger: true});
     });
   });
@@ -181,16 +181,16 @@ describe('Router', function() {
     });
   });
 
-  describe('boards', function() {
-    it('should init the boards controller view.', function(done) {
+  describe('account', function() {
+    it('should init the account controller view.', function(done) {
       this.server.respondWith('GET', '/api/boards/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '[]');
         done();
       });
 
-      this.Router.boards();
+      this.Router.account();
       expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('BoardsController');
+      expect(this.Router.controller.name).to.equal('AccountController');
       this.server.respond();
     });
   });
