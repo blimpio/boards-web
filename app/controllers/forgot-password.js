@@ -10,7 +10,7 @@ module.exports = Zeppelin.View.extend({
   },
 
   initChildren: function() {
-    this.addChild(_.createView('forgot-password-form'), 'form');
+    this.addChild(_.createView('forgot-password-form'), 'form').render();
     return this;
   }
 });
