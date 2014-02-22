@@ -3,6 +3,8 @@ module.exports = Zeppelin.FormView.extend({
 
   el: 'form.reset-password__form',
 
+  template: require('templates/reset-password-form'),
+
   bindings: {
     'model user:reset-password:success': 'onResetPasswordSuccess',
     'model user:reset-password:error': 'onResetPasswordError'

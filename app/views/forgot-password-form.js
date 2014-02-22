@@ -3,6 +3,8 @@ module.exports = Zeppelin.FormView.extend({
 
   el: 'form.forgot-password__form',
 
+  template: require('templates/forgot-password-form'),
+
   bindings: {
     'model user:forgot-password:success': 'onForgotPasswordSuccess',
     'model user:forgot-password:error': 'onForgotPasswordError'
