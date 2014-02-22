@@ -1,6 +1,5 @@
 describe('Router', function() {
-  var Router = require('router'),
-      ResetPassword = require('controllers/reset-password');
+  var Router = require('router');
 
   before(function() {
     App.Accounts.reset([{
@@ -9,189 +8,400 @@ describe('Router', function() {
       slug: 'acme-inc',
       image_url: ''
     }]);
-  });
-
-  beforeEach(function() {
-    this.server = sinon.fakeServer.create();
-    this.server.autoRespond = false;
-    this.server.autoRespondAfter = 500;
-
-    this.navigateSpy = sinon.spy(Backbone.History.prototype, 'navigate');
-    this.validateTokenSpy = sinon.spy(ResetPassword.prototype, 'validateToken');
-
-    this.Router = new Router({
-      routes: {
-        'posts': 'onPosts',
-        'posts/:id': 'onPosts'
-      },
-
-      onPosts: function(id) {
-
-      }
-    });
 
     Backbone.history.start({pushState: false});
   });
 
-  afterEach(function() {
-    this.server.restore;
-    delete this.server;
-    Backbone.History.prototype.navigate.restore();
-    ResetPassword.prototype.validateToken.restore();
-    delete this.Router;
+  after(function() {
+    App.Accounts.reset();
     Backbone.history.stop();
   });
 
-  after(function() {
-    App.Accounts.reset();
-  });
+  describe('onError()', function() {
+    var router, navigateSpy;
 
-  describe('onError', function() {
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+
+      navigateSpy = sinon.spy(Backbone.History.prototype, 'navigate');
+    });
+
     it('should navigate to the signin route if the authIsRequired() validation fails.', function() {
-      this.Router.onError({}, 'Auth is required.');
-      expect(this.navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+      router.onError({}, 'Auth is required.');
+      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
     });
 
     it('should navigate to the accounts route if the accountExists() validation fails.', function() {
-      this.Router.onError({}, 'User is not in account.');
-      expect(this.navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
+      router.onError({}, 'User is not in account.');
+      expect(navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
     });
 
     it('should navigate to the accounts route if the isNotAuthenticated() validation fails.', function() {
-      this.Router.onError({}, 'User is already authenticated.');
-      expect(this.navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
+      router.onError({}, 'User is already authenticated.');
+      expect(navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
     });
 
     it('should navigate to the accounts route if the hasOneAccount() validation fails.', function() {
-      console.log(App.Accounts.toJSON());
-      this.Router.onError({}, 'User has only one account.');
-      expect(this.navigateSpy).to.have.been.calledWith('acme-inc', {trigger: true});
+      router.onError({}, 'User has only one account.');
+      expect(navigateSpy).to.have.been.calledWith('acme-inc', {trigger: true});
+    });
+
+    after(function() {
+      Backbone.History.prototype.navigate.restore();
     });
   });
 
-  describe('beforeRoute', function() {
+  describe('beforeRoute()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should remove the current controller.', function() {
-      this.Router.controller = new Z.View();
-      this.Router.beforeRoute();
-      expect(this.Router.controller.isUnplugged).to.be.true;
+      router.controller = new Z.View();
+      router.beforeRoute();
+      expect(router.controller.isUnplugged).to.be.true;
     });
   });
 
-  describe('authIsRequired', function() {
+  describe('authIsRequired()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should return an error if the user is not signed in.', function() {
-      expect(this.Router.authIsRequired({fragment: 'accounts/'})).to.equal('Auth is required.');
+      expect(router.authIsRequired({fragment: 'accounts/'})).to.equal('Auth is required.');
     });
   });
 
-  describe('isNotAuthenticated', function() {
+  describe('isNotAuthenticated()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should return an error if the user is signed in.', function() {
       App.User.set('token', '12345');
-      expect(this.Router.isNotAuthenticated({fragment: 'signin/'})).to.equal('User is already authenticated.');
+      expect(router.isNotAuthenticated({fragment: 'signin/'})).to.equal('User is already authenticated.');
     });
   });
 
-  describe('accountExists', function() {
+  describe('accountExists()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should return an error if the user is not in the given account.', function() {
       App.User.set('token', '12345');
-      expect(this.Router.accountExists({
+      expect(router.accountExists({
         params: ['blimp'],
         fragment: 'blimp/'
       })).to.equal('User is not in account.');
     });
   });
 
-  describe('hasOneAccount', function() {
+  describe('hasOneAccount()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should return an error if the user has only one account.', function() {
-      expect(this.Router.hasOneAccount({
+      expect(router.hasOneAccount({
         params: [],
         fragment: 'accounts/'
       })).to.equal('User has only one account.');
     });
   });
 
-  describe('navigateWithTrigger', function() {
+  describe('navigateWithTrigger()', function() {
+    var router, navigateSpy;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+
+      navigateSpy = sinon.spy(Backbone.History.prototype, 'navigate');
+    });
+
     it('should navigate and trigger the route.', function() {
-      this.Router.navigateWithTrigger('signin');
-      expect(this.navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+      router.navigateWithTrigger('signin');
+      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+    });
+
+    after(function() {
+      Backbone.History.prototype.navigate.restore();
     });
   });
 
-  describe('removeLastController', function() {
+  describe('removeLastController()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should remove the last controller view.', function() {
-      this.Router.controller = new Z.View();
-      this.Router.removeLastController();
-      expect(this.Router.controller.isUnplugged).to.be.true;
+      router.controller = new Z.View();
+      router.removeLastController();
+      expect(router.controller.isUnplugged).to.be.true;
     });
   });
 
-  describe('signup', function() {
+  describe('signup()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should init the signup controller view.', function() {
-      this.Router.signup();
-      expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('SignupController');
+      router.signup();
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('SignupController');
     });
   });
 
-  describe('signin', function() {
+  describe('signin()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should init the signin controller view.', function() {
-      this.Router.signin();
-      expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('SigninController');
+      router.signin();
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('SigninController');
     });
   });
 
-  describe('forgotPassword', function() {
+  describe('forgotPassword()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should init the forgotPassword controller view.', function() {
-      this.Router.forgotPassword();
-      expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('ForgotPasswordController');
+      router.forgotPassword();
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('ForgotPasswordController');
     });
   });
 
-  describe('resetPassword', function() {
+  describe('resetPassword()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should init the resetPassword controller view.', function() {
-      this.Router.resetPassword();
-      expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('ResetPasswordController');
+      router.resetPassword();
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('ResetPasswordController');
     });
   });
 
-  describe('resetPasswordWithToken', function() {
+  describe('resetPasswordWithToken()', function() {
+    var router,
+        ResetPassword = require('controllers/reset-password'),
+        validateTokenSpy;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+
+      validateTokenSpy = sinon.spy(ResetPassword.prototype, 'validateToken');
+    });
+
     it('should init the resetPassword controller view and call the validateToken() method.', function() {
-      this.Router.resetPasswordWithToken(JWT_TEST_TOKEN);
-      expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('ResetPasswordController');
-      expect(this.validateTokenSpy).to.have.been.calledWith(JWT_TEST_TOKEN);
+      router.resetPasswordWithToken(JWT_PASSWORD_TOKEN);
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('ResetPasswordController');
+      expect(validateTokenSpy).to.have.been.calledWith(JWT_PASSWORD_TOKEN);
+    });
+
+    after(function() {
+      ResetPassword.prototype.validateToken.restore();
     });
   });
 
-  describe('signout', function() {
+  describe('signout()', function() {
+    var router, navigateSpy;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+
+      navigateSpy = sinon.spy(Backbone.History.prototype, 'navigate');
+    });
+
     it('sign out the current user and navigate to the signin route.', function() {
-      this.Router.signout();
+      router.signout();
       expect(App.User.isSignedIn()).to.be.false;
-      expect(this.navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+    });
+
+    after(function() {
+      Backbone.History.prototype.navigate.restore();
     });
   });
 
-  describe('accounts', function() {
+  describe('accounts()', function() {
+    var router;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+    });
+
     it('should init the accounts controller view.', function() {
-      this.Router.accounts();
-      expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('AccountsController');
+      router.accounts();
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('AccountsController');
     });
   });
 
-  describe('account', function() {
+  describe('account()', function() {
+    var router, server;
+
+    before(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+    });
+
     it('should init the account controller view.', function(done) {
-      this.server.respondWith('GET', '/api/boards/', function(req) {
+      server.respondWith('GET', '/api/boards/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '[]');
         done();
       });
 
-      this.Router.account();
-      expect(this.Router.controller).to.exist;
-      expect(this.Router.controller.name).to.equal('AccountController');
-      this.server.respond();
+      router.account();
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('AccountController');
+    });
+
+    after(function() {
+      server.restore();
     });
   });
 });

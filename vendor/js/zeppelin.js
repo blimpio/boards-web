@@ -420,11 +420,11 @@
       if (name === 'name') property = name;
 
       if (_.isFunction(property)) {
-        return property.bind(this);
+        return _.bind(property, this);
       } else {
-        return function () {
+        return _.bind(function () {
           return this.get(property);
-        }.bind(this);
+        }, this);
       }
 
       return null;
@@ -470,7 +470,7 @@
             }
 
             if (_.isFunction(validation)) {
-              validation = validation.bind(this);
+              validation = _.bind(validation, this);
               validationResult = validation(attributeValue);
 
               if (validationResult) {
@@ -606,11 +606,11 @@
       var property = this[name] ? this[name] : name;
 
       if (_.isFunction(property)) {
-        return property.bind(this);
+        return _.bind(property, this);
       } else {
-        return function () {
+        return _.bind(function () {
           return property;
-        }.bind(this);
+        }, this);
       }
 
       return null;
@@ -846,9 +846,9 @@
       if (!binding || !callback || !_.isString(binding)) return this;
 
       if (_.isFunction(callback)) {
-        callback = callback.bind(this);
+        callback = _.bind(callback, this);
       } else {
-        callback = this[callback].bind(this);
+        callback = _.bind(this[callback], this);
       }
 
       _binding = this._deconstructBinding(binding);
@@ -918,9 +918,9 @@
       if (!eventName || !callback) return this;
 
       if (_.isFunction(callback)) {
-        callback = callback.bind(this);
+        callback = _.bind(callback, this);
       } else {
-        callback = this[callback].bind(this);
+        callback = _.bind(this[callback], this);
       }
 
       if (selector && this.getElementSelector(selector)) selector = this.getElementSelector(selector);
@@ -1010,7 +1010,7 @@
         } else if (_.isFunction(template) || _.isString(template)) {
           context = _.result(this, 'context');
           template = template;
-          if (_.isFunction(template)) template = template.bind(this);
+          if (_.isFunction(template)) template = _.bind(template, this);
         } else {
           context = _.result(this, 'context');
           template = this.template;
@@ -1123,7 +1123,7 @@
 
     forEachChild: function (callback) {
       if (!_.isFunction(callback)) callback = this[callback];
-      if (callback) _.forOwn(this.children, callback.bind(this));
+      if (callback) _.forOwn(this.children, _.bind(callback, this));
       return this;
     },
 
@@ -1131,7 +1131,7 @@
       var child;
 
       if (_.isFunction(comparator)) {
-        comparator = comparator.bind(this);
+        comparator = _.bind(comparator, this);
 
         this.forEachChild(function (_child) {
           child = comparator(_child) ? _child : null;
@@ -1148,7 +1148,7 @@
       var children = [];
 
       if (_.isFunction(comparator)) {
-        comparator = comparator.bind(this);
+        comparator = _.bind(comparator, this);
 
         this.forEachChild(function (child) {
           if (comparator(child)) children.unshift(child);
@@ -1209,17 +1209,14 @@
       } else {
         this.form = form;
         this.$form = this.$(this.form);
-
-        if (!this.$form.length) {
-          this.$form = this.$el;
-        }
+        if (!this.$form.length) this.$form = this.$el;
       }
 
       this.formIsSet = true;
 
-      this.$form.on('submit', function (event) {
+      this.$form.on('submit', _.bind(function (event) {
         this.onSubmit(event);
-      }.bind(this));
+      }, this));
 
       return this;
     },
@@ -1480,7 +1477,7 @@
       var $element;
 
       if (_.isFunction(comparator)) {
-        comparator = comparator.bind(this);
+        comparator = _.bind(comparator, this);
 
         this.forEachChild(function (child) {
           $element = comparator(child) ? child.$el : null;
@@ -1497,7 +1494,7 @@
       var $elements = [];
 
       if (_.isFunction(comparator)) {
-        comparator = comparator.bind(this);
+        comparator = _.bind(comparator, this);
 
         this.forEachChild(function (child) {
           if (comparator(child)) $elements.push(child);
@@ -1511,7 +1508,7 @@
       var fragment, filteredModels, filteredCollection = this.collection.clone();
 
       if (_.isFunction(comparator)) {
-        comparator = comparator.bind(this);
+        comparator = _.bind(comparator, this);
         filteredModels = filteredCollection.filter(comparator);
 
         if (this.listIsSet) {
@@ -1608,7 +1605,7 @@
       this.validations = _.transform(this.validations, function (result, callback, route) {
         if (!_.isRegExp(route) && !_.isFunction(route)) route = this._routeToRegExp(route).toString();
         if (!_.isFunction(callback)) callback = this[callback];
-        if (route && callback) result[route] = callback.bind(this);
+        if (route && callback) result[route] = _.bind(callback, this);
       }, null, this);
 
       return this;
@@ -1617,7 +1614,7 @@
     resgiterValidation: function (route, callback) {
       if (!_.isRegExp(route) && !_.isFunction(route)) route = this._routeToRegExp(route).toString();
       if (!_.isFunction(callback)) callback = this[callback];
-      if (route && callback) this.validations[route] = callback.bind(this);
+      if (route && callback) this.validations[route] = _.bind(callback, this);
       return this;
     },
 

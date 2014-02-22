@@ -1,69 +1,103 @@
 describe('ForgotPasswordForm', function() {
   var ForgotPasswordForm = require('views/forgot-password-form');
 
-  beforeEach(function() {
+  before(function() {
     $('#application').html(require('templates/forgot-password')());
+  });
 
-    this.server = sinon.fakeServer.create();
-    this.server.autoRespond = false;
-    this.server.autoRespondAfter = 500;
+  after(function() {
+    $('#application').empty();
+  });
 
-    this.ForgotPasswordForm = new ForgotPasswordForm({
-      model: App.User
+  describe('when instantiated.', function() {
+    var forgotPasswordForm;
+
+    before(function() {
+      forgotPasswordForm = new ForgotPasswordForm();
     });
 
-    this.ForgotPasswordForm.render();
+    it('should exist.', function() {
+      expect(forgotPasswordForm).to.exist;
+    });
+
+    it('should have a name property.', function() {
+      expect(forgotPasswordForm.name).to.exist;
+      expect(forgotPasswordForm.name).to.equal('ForgotPasswordForm');
+    });
+
+    it('should have a bindings property.', function() {
+      expect(forgotPasswordForm.bindings).to.exist;
+    });
+
+    it('should have a formIsSet property.', function() {
+      expect(forgotPasswordForm.formIsSet).to.exist;
+      expect(forgotPasswordForm.formIsSet).to.be.true;
+    });
+
+    after(function() {
+      forgotPasswordForm.unplug(true);
+    });
   });
 
-  afterEach(function() {
-    this.server.restore();
-    delete this.server;
-    this.ForgotPasswordForm.remove();
-    delete this.ForgotPasswordForm;
-  });
+  describe('onSubmit()', function() {
+    var server, forgotPasswordForm;
 
-  it('should exist.', function() {
-    expect(this.ForgotPasswordForm).to.exist;
-  });
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      forgotPasswordForm = new ForgotPasswordForm();
+      forgotPasswordForm.render();
+    });
 
-  it('should have a name property.', function() {
-    expect(this.ForgotPasswordForm.name).to.exist;
-    expect(this.ForgotPasswordForm.name).to.equal('ForgotPasswordForm');
-  });
-
-  it('should have a bindings property.', function() {
-    expect(this.ForgotPasswordForm.bindings).to.exist;
-  });
-
-  it('should have a formIsSet property.', function() {
-    expect(this.ForgotPasswordForm.formIsSet).to.exist;
-    expect(this.ForgotPasswordForm.formIsSet).to.be.true;
-  });
-
-  describe('onSubmit', function() {
     it('should call the forgotPassword method on the user model if the given email is valid.', function(done) {
-      this.server.respondWith('POST', '/api/auth/forgot_password/', function(req) {
+      server.respondWith('POST', '/api/auth/forgot_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });
 
-      this.ForgotPasswordForm.getAttributeElement('email').val('name@example.com');
-      this.ForgotPasswordForm.onSubmit({preventDefault: function(){}});
-      this.server.respond();
+      forgotPasswordForm.getAttributeElement('email').val('name@example.com');
+      forgotPasswordForm.onSubmit({preventDefault: function(){}});
+    });
+
+    after(function() {
+      server.restore();
+      forgotPasswordForm.unplug(true);
     });
   });
 
-  describe('onForgotPasswordSuccess', function() {
+  describe('onForgotPasswordSuccess()', function() {
+    var forgotPasswordForm;
+
+    before(function() {
+      forgotPasswordForm = new ForgotPasswordForm();
+      forgotPasswordForm.render();
+    });
+
     it('should render success message.', function() {
-      this.ForgotPasswordForm.onForgotPasswordSuccess();
-      expect(this.ForgotPasswordForm.$('h3')).to.exist;
+      forgotPasswordForm.onForgotPasswordSuccess();
+      expect(forgotPasswordForm.$('h3')).to.exist;
+    });
+
+    after(function() {
+      forgotPasswordForm.unplug(true);
     });
   });
 
-  describe('onForgotPasswordError', function() {
+  describe('onForgotPasswordError()', function() {
+    var forgotPasswordForm;
+
+    before(function() {
+      forgotPasswordForm = new ForgotPasswordForm();
+      forgotPasswordForm.render();
+    });
+
     it('should display an error message.', function() {
-      this.ForgotPasswordForm.onForgotPasswordError('error');
-      expect(this.ForgotPasswordForm.getAttributeErrorElement('email').text()).to.equal('error');
+      forgotPasswordForm.onForgotPasswordError('error');
+      expect(forgotPasswordForm.getAttributeErrorElement('email').text()).to.equal('error');
+    });
+
+    after(function() {
+      forgotPasswordForm.unplug(true);
     });
   });
 });

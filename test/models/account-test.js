@@ -1,43 +1,59 @@
 describe('AccountModel', function() {
   var AccountModel = require('models/account');
 
-  beforeEach(function() {
-    this.AccountModel = new AccountModel({
-      id: 1,
-      name: 'ACME Inc',
-      slug: 'acme-inc',
-      image_url: ''
+  describe('when instantiated.', function() {
+    var accountModel;
+
+    before(function() {
+      accountModel = new AccountModel({
+        id: 1,
+        name: 'ACME Inc',
+        slug: 'acme-inc',
+        image_url: ''
+      });
+    });
+
+    it('should exist.', function() {
+      expect(accountModel).to.exist;
+    });
+
+    it('should have a name property.', function() {
+      expect(accountModel.name).to.exist;
+      expect(accountModel.name).to.equal('Account');
+    });
+
+    it('should have a presenters property.', function() {
+      expect(accountModel.presenters).to.exist;
+      expect(accountModel.presenters).to.eql(['serialize']);
+    });
+
+    after(function() {
+      accountModel.clear();
     });
   });
 
-  afterEach(function() {
-    this.AccountModel.clear();
-    this.AccountModel.destroyCache();
-    this.AccountModel.stopListening();
-    delete this.AccountModel;
-  });
+  describe('serialize()', function() {
+    var accountModel;
 
-  it('should exist.', function() {
-    expect(this.AccountModel).to.exist;
-  });
+    before(function() {
+      accountModel = new AccountModel({
+        id: 1,
+        name: 'ACME Inc',
+        slug: 'acme-inc',
+        image_url: ''
+      });
+    });
 
-  it('should have a name property.', function() {
-    expect(this.AccountModel.name).to.exist;
-    expect(this.AccountModel.name).to.equal('Account');
-  });
-
-  it('should have a presenters property.', function() {
-    expect(this.AccountModel.presenters).to.exist;
-    expect(this.AccountModel.presenters).to.eql(['serialize']);
-  });
-
-  describe('serialize', function() {
     it('should return the serialized account.', function() {
-      expect(this.AccountModel.serialize()).to.eql({
+      expect(accountModel.serialize()).to.eql({
         url: '/acme-inc/',
         name: 'ACME Inc',
         image: '/default/'
       });
+    });
+
+    after(function() {
+      accountModel.clear();
     });
   });
 });

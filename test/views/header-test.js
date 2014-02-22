@@ -1,47 +1,68 @@
 describe('HeaderView', function() {
   var HeaderView = require('views/header');
 
-  beforeEach(function() {
-    this.HeaderView = new HeaderView({
-      model: App.User
+  describe('when instantiated.', function() {
+    var headerView;
+
+    before(function() {
+      headerView = new HeaderView();
+    });
+
+    it('should exist.', function() {
+      expect(headerView).to.exist;
+    });
+
+    it('should have a name property.', function() {
+      expect(headerView.name).to.exist;
+      expect(headerView.name).to.equal('Header');
+    });
+
+    it('should have a template property.', function() {
+      expect(headerView.template).to.exist;
+    });
+
+    it('should have a model.', function() {
+      expect(headerView.model).to.exist;
+      expect(headerView.model.name).to.equal('User');
+    });
+
+    after(function() {
+      headerView.unplug(true);
     });
   });
 
-  afterEach(function() {
-    this.HeaderView.remove();
-    delete this.HeaderView;
-  });
+  describe('initAccountsDropdown()', function() {
+    var headerView;
 
-  it('should exist.', function() {
-    expect(this.HeaderView).to.exist;
-  });
+    before(function() {
+      headerView = new HeaderView();
+    });
 
-  it('should have a name property.', function() {
-    expect(this.HeaderView.name).to.exist;
-    expect(this.HeaderView.name).to.equal('Header');
-  });
-
-  it('should have a template property.', function() {
-    expect(this.HeaderView.template).to.exist;
-  });
-
-  it('should have a model.', function() {
-    expect(this.HeaderView.model).to.exist;
-    expect(this.HeaderView.model.name).to.equal('User');
-  });
-
-  describe('initAccountsDropdown', function() {
     it('should init and render accounts dropdown view.', function() {
-      this.HeaderView.initAccountsDropdown();
-      expect(this.HeaderView.children.accounts).to.exist;
+      headerView.initAccountsDropdown();
+      expect(headerView.children.accounts).to.exist;
+    });
+
+    after(function() {
+      headerView.unplug(true);
     });
   });
 
-  describe('context', function() {
+  describe('context()', function() {
+    var headerView;
+
+    before(function() {
+      headerView = new HeaderView();
+    });
+
     it('should return the template context.', function() {
-      var context = this.HeaderView.context();
+      var context = headerView.context();
       expect(context).to.exist;
       expect(_.keys(context)).to.eql(['isSignedIn']);
+    });
+
+    after(function() {
+      headerView.unplug(true);
     });
   });
 });

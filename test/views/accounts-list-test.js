@@ -1,39 +1,46 @@
 describe('AccountsList', function() {
   var AccountsList = require('views/accounts-list');
 
-  beforeEach(function() {
+  before(function() {
     $('#application').html(require('templates/accounts')());
+  });
 
-    this.AccountsList = new AccountsList({
-      collection: App.Accounts
+  after(function() {
+    $('#application').empty();
+  });
+
+  describe('when instantiated.', function() {
+    var accountsList;
+
+    before(function() {
+      accountsList = new AccountsList()
     });
-  });
 
-  afterEach(function() {
-    this.AccountsList.remove();
-    delete this.AccountsList;
-  });
+    it('should exist.', function() {
+      expect(accountsList).to.exist;
+    });
 
-  it('should exist.', function() {
-    expect(this.AccountsList).to.exist;
-  });
+    it('should have a name property.', function() {
+      expect(accountsList.name).to.exist;
+      expect(accountsList.name).to.equal('AccountsList');
+    });
 
-  it('should have a name property.', function() {
-    expect(this.AccountsList.name).to.exist;
-    expect(this.AccountsList.name).to.equal('AccountsList');
-  });
+    it('should have a list property.', function() {
+      expect(accountsList.list).to.exist;
+      expect(accountsList.list).to.equal('ol.accounts__list');
+    });
 
-  it('should have a list property.', function() {
-    expect(this.AccountsList.list).to.exist;
-    expect(this.AccountsList.list).to.equal('ol.accounts__list');
-  });
+    it('should have a collection property.', function() {
+      expect(accountsList.collection).to.exist;
+      expect(accountsList.collection.name).to.equal('Accounts');
+    });
 
-  it('should have a collection property.', function() {
-    expect(this.AccountsList.collection).to.exist;
-    expect(this.AccountsList.collection.name).to.equal('Accounts');
-  });
+    it('should have an itemView property.', function() {
+      expect(accountsList.itemView).to.exist;
+    });
 
-  it('should have an itemView property.', function() {
-    expect(this.AccountsList.itemView).to.exist;
+    after(function() {
+      accountsList.unplug(true);
+    });
   });
 });

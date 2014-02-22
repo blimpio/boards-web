@@ -10,9 +10,10 @@
     </div>
 
     <script>
-      // Disable sockjs to use HTTP for tests.
+      window.JWT_SIGNUP_TOKEN = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAic29tZXVzZXJAZXhhbXBsZS5jb20ifQ.heB3Y0qjUMq0cbrzIuz8q0tfn6o3VwKxdTjvUeIEtgM';
+      window.JWT_PASSWORD_TOKEN = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogImEyMmMzYjFkLWRkOGQtNDllZS05ZDA2LWQwNjJmNWY0NzQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.D_D-tGwUmPSUofHEuWoZrgduVxCcVl36XCiiwGyxfaY';
+
       window.APPLICATION_HTTP_URL = '';
-      window.JWT_TEST_TOKEN = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogImEyMmMzYjFkLWRkOGQtNDllZS05ZDA2LWQwNjJmNWY0NzQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.D_D-tGwUmPSUofHEuWoZrgduVxCcVl36XCiiwGyxfaY';
     </script>
 
     <!-- Application JS -->
@@ -36,33 +37,17 @@
       App.Boards = _.createCollection('boards');
       App.Accounts = _.createCollection('accounts');
 
-      // Try to login user form localstorage.
-      App.User.signinFromCache();
-
-      // Patch Backbone History in PhantomJS.
-      var Location = function(href) {
-        this.replace(href);
-      };
-
-      _.extend(Location.prototype, {
-        replace: function(href) {
-          _.extend(this, _.pick($('<a></a>', {href: href})[0], 'href', 'hash', 'host', 'search', 'fragment', 'pathname', 'protocol'));
-
-          if (!/^\//.test(this.pathname)) {
-            this.pathname = '/' + this.pathname;
-          }
-        },
-
-        toString: function() {
-          return this.href;
-        }
-      });
-
-      Backbone.history = _.extend(new Backbone.History, {
-        location: new Location('http://example.com')
-      });
-
-      Backbone.history.interval = 9;
+      // App.Accounts.reset([{
+      //   id: 1,
+      //   name: 'ACME Inc',
+      //   slug: 'acme-inc',
+      //   image_url: ''
+      // }, {
+      //   id: 4,
+      //   name: 'Blimp LLC',
+      //   slug: 'blimp',
+      //   image_url: ''
+      // }]);
     </script>
 
     <!-- Testing Dependencies -->

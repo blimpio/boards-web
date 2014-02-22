@@ -1,18 +1,15 @@
 describe('Helpers', function() {
   before(function() {
-    require('lib/helpers');
+    $('#application').html('<a id=route href="signin" data-route="signin"></a>');
     Backbone.history.start({pushState: false});
-    this.navigateSpy = sinon.spy(Backbone.History.prototype, 'navigate');
-    $('#application').append('<a id=route href=boards data-route=boards></a>');
   });
 
   after(function() {
+    $('#application').empty();
     Backbone.history.stop();
-    Backbone.History.prototype.navigate.restore();
-    $('#application').remove('#route');
   });
 
-  describe('_.createController', function() {
+  describe('_.createController()', function() {
     it('should create a new controller view based on the given path.', function() {
       var controller = _.createController('accounts');
       expect(controller).to.exist;
@@ -20,7 +17,7 @@ describe('Helpers', function() {
     });
   });
 
-  describe('_.createView', function() {
+  describe('_.createView()', function() {
     it('should create a new view based on the given path.', function() {
       var view = _.createView('signin-form');
       expect(view).to.exist;
@@ -28,7 +25,7 @@ describe('Helpers', function() {
     });
   });
 
-  describe('_.createModel', function() {
+  describe('_.createModel()', function() {
     it('should create a new model based on the given path.', function() {
       var model = _.createModel('user');
       expect(model).to.exist;
@@ -36,7 +33,7 @@ describe('Helpers', function() {
     });
   });
 
-  describe('_.createCollection', function() {
+  describe('_.createCollection()', function() {
     it('should create a new collection based on the given path.', function() {
       var collection = _.createCollection('boards');
       expect(collection).to.exist;
@@ -44,9 +41,9 @@ describe('Helpers', function() {
     });
   });
 
-  describe('_.decodeJWT', function() {
+  describe('_.decodeJWT()', function() {
     it('should decode a JSON Web Token.', function() {
-      var decoded = _.decodeJWT(JWT_TEST_TOKEN);
+      var decoded = _.decodeJWT(JWT_PASSWORD_TOKEN);
       expect(decoded.id).to.equal(2);
       expect(decoded.type).to.equal('PasswordReset');
       expect(decoded.token_version).to.equal('a22c3b1d-dd8d-49ee-9d06-d062f5f47456');
@@ -54,9 +51,19 @@ describe('Helpers', function() {
   });
 
   describe('a[data-route]', function() {
+    var navigateSpy;
+
+    before(function() {
+      navigateSpy = sinon.spy(Backbone.History.prototype, 'navigate');
+    });
+
     it('should trigger a route change on click.', function() {
       $('#route').click();
-      expect(this.navigateSpy).to.have.been.calledWith('boards', {trigger: true});
+      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+    });
+
+    after(function() {
+      Backbone.History.prototype.navigate.restore();
     });
   });
 });

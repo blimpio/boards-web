@@ -1,61 +1,59 @@
 describe('AccountsController', function() {
-  var AccountsController = require('controllers/accounts'),
-      AccountsCollection = require('collections/accounts');
-
-  before(function() {
-    App.Accounts = new AccountsCollection([{
-      id: 1,
-      name: 'ACME Inc',
-      slug: 'acme-inc',
-      image_url: ''
-    }, {
-      id: 4,
-      name: 'Blimp LLC',
-      slug: 'blimp',
-      image_url: ''
-    }]);
-  });
-
-  beforeEach(function() {
-    this.AccountsController = new AccountsController();
-  });
-
-  afterEach(function() {
-    this.AccountsController.remove();
-    delete this.AccountsController;
-  });
+  var AccountsController = require('controllers/accounts');
 
   after(function() {
-    App.Accounts.reset();
+    $('#application').empty();
   });
 
-  it('should exist.', function() {
-    expect(this.AccountsController).to.exist;
+  describe('when instantiated.', function() {
+    var accountsController;
+
+    before(function() {
+      accountsController = new AccountsController();
+    });
+
+    it('should exist.', function() {
+      expect(accountsController).to.exist;
+    });
+
+    it('should have a name property.', function() {
+      expect(accountsController.name).to.exist;
+      expect(accountsController.name).to.equal('AccountsController');
+    });
+
+    it('should have a template property.', function() {
+      expect(accountsController.template).to.exist;
+    });
+
+    it('should render and insert.', function() {
+      expect(accountsController.isRendered).to.be.true;
+      expect(accountsController.isInserted).to.be.true;
+    });
+
+    it('should have a accounts child view.', function() {
+      expect(accountsController.children.accounts).to.exist;
+    });
+
+    after(function() {
+      accountsController.unplug(true);
+    });
   });
 
-  it('should have a name property.', function() {
-    expect(this.AccountsController.name).to.exist;
-    expect(this.AccountsController.name).to.equal('AccountsController');
-  });
+  describe('initChildren()', function() {
+    var accountsController;
 
-  it('should have a template property.', function() {
-    expect(this.AccountsController.template).to.exist;
-  });
+    before(function() {
+      accountsController = new AccountsController();
+    });
 
-  it('should render and insert.', function() {
-    expect(this.AccountsController.isRendered).to.be.true;
-    expect(this.AccountsController.isInserted).to.be.true;
-  });
-
-  it('should have a accounts child view.', function() {
-    expect(this.AccountsController.children.accounts).to.exist;
-  });
-
-  describe('initList', function() {
     it('should init and render the account list view.', function() {
-      this.AccountsController.initList();
-      expect(this.AccountsController.children.accounts).to.exist;
-      expect(this.AccountsController.children.accounts.$el.find('li')).to.not.be.empty;
+      accountsController.initChildren();
+      expect(accountsController.children.accounts).to.exist;
+      expect(accountsController.children.accounts.$el.find('li')).to.not.be.empty;
+    });
+
+    after(function() {
+      accountsController.unplug(true);
     });
   });
 });

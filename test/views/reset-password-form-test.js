@@ -1,69 +1,104 @@
 describe('ResetPasswordForm', function() {
   var ResetPasswordForm = require('views/reset-password-form');
 
-  beforeEach(function() {
+  before(function() {
     $('#application').html(require('templates/reset-password')());
+  });
 
-    this.server = sinon.fakeServer.create();
-    this.server.autoRespond = false;
-    this.server.autoRespondAfter = 500;
+  after(function() {
+    $('#application').empty();
+  });
 
-    this.ResetPasswordForm = new ResetPasswordForm({
-      model: App.User
+  describe('when instantiated.', function() {
+    var resetPasswordForm;
+
+    before(function() {
+      resetPasswordForm = new ResetPasswordForm();
     });
 
-    this.ResetPasswordForm.render();
+    it('should exist.', function() {
+      expect(resetPasswordForm).to.exist;
+    });
+
+    it('should have a name property.', function() {
+      expect(resetPasswordForm.name).to.exist;
+      expect(resetPasswordForm.name).to.equal('ResetPasswordForm');
+    });
+
+    it('should have a bindings property.', function() {
+      expect(resetPasswordForm.bindings).to.exist;
+    });
+
+    it('should have a formIsSet property.', function() {
+      expect(resetPasswordForm.formIsSet).to.exist;
+      expect(resetPasswordForm.formIsSet).to.be.true;
+    });
+
+    after(function() {
+      resetPasswordForm.unplug(true);
+    });
   });
 
-  afterEach(function() {
-    this.server.restore();
-    delete this.server;
-    this.ResetPasswordForm.remove();
-    delete this.ResetPasswordForm;
-  });
+  describe('onSubmit()', function() {
+    var server, resetPasswordForm;
 
-  it('should exist.', function() {
-    expect(this.ResetPasswordForm).to.exist;
-  });
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      resetPasswordForm = new ResetPasswordForm();
+      resetPasswordForm.model.setPasswordResetDataFromJWT(JWT_PASSWORD_TOKEN);
+      resetPasswordForm.render();
+    });
 
-  it('should have a name property.', function() {
-    expect(this.ResetPasswordForm.name).to.exist;
-    expect(this.ResetPasswordForm.name).to.equal('ResetPasswordForm');
-  });
-
-  it('should have a bindings property.', function() {
-    expect(this.ResetPasswordForm.bindings).to.exist;
-  });
-
-  it('should have a formIsSet property.', function() {
-    expect(this.ResetPasswordForm.formIsSet).to.exist;
-    expect(this.ResetPasswordForm.formIsSet).to.be.true;
-  });
-
-  describe('onSubmit', function() {
     it('should call the resetPassword method on the user model if the given password is valid.', function(done) {
-      this.server.respondWith('POST', '/api/auth/reset_password/', function(req) {
+      server.respondWith('POST', '/api/auth/reset_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });
 
-      this.ResetPasswordForm.getAttributeElement('password').val('12345678');
-      this.ResetPasswordForm.onSubmit({preventDefault: function(){}});
-      this.server.respond();
+      resetPasswordForm.getAttributeElement('password').val('12345678');
+      resetPasswordForm.onSubmit({preventDefault: function(){}});
+    });
+
+    after(function() {
+      server.restore();
+      resetPasswordForm.unplug(true);
     });
   });
 
-  describe('onResetPasswordSuccess', function() {
+  describe('onResetPasswordSuccess()', function() {
+    var resetPasswordForm;
+
+    before(function() {
+      resetPasswordForm = new ResetPasswordForm();
+      resetPasswordForm.render();
+    });
+
     it('should render success message.', function() {
-      this.ResetPasswordForm.onResetPasswordSuccess();
-      expect(this.ResetPasswordForm.$('h3')).to.exist;
+      resetPasswordForm.onResetPasswordSuccess();
+      expect(resetPasswordForm.$('h3')).to.exist;
+    });
+
+    after(function() {
+      resetPasswordForm.unplug(true);
     });
   });
 
-  describe('onResetPasswordError', function() {
+  describe('onResetPasswordError()', function() {
+    var resetPasswordForm;
+
+    before(function() {
+      resetPasswordForm = new ResetPasswordForm();
+      resetPasswordForm.render();
+    });
+
     it('should display an error message.', function() {
-      this.ResetPasswordForm.onResetPasswordError('error');
-      expect(this.ResetPasswordForm.getAttributeErrorElement('password').text()).to.equal('error');
+      resetPasswordForm.onResetPasswordError('error');
+      expect(resetPasswordForm.getAttributeErrorElement('password').text()).to.equal('error');
+    });
+
+    after(function() {
+      resetPasswordForm.unplug(true);
     });
   });
 });

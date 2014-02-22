@@ -1,68 +1,100 @@
 describe('SigninForm', function() {
   var SigninForm = require('views/signin-form');
 
-  beforeEach(function() {
+  before(function() {
     $('#application').html('<form class="signin"></form>');
+  });
 
-    this.server = sinon.fakeServer.create();
-    this.server.autoRespond = false;
-    this.server.autoRespondAfter = 500;
+  after(function() {
+    $('#application').empty();
+  });
 
-    this.SigninForm = new SigninForm({
-      model: App.User
+  describe('when instantiated.', function() {
+    var signinForm;
+
+    before(function() {
+      signinForm = new SigninForm({
+        model: _.createModel('user')
+      });
     });
 
-    this.SigninForm.render();
+    it('should exist.', function() {
+      expect(signinForm).to.exist;
+    });
+
+    it('should have a name property.', function() {
+      expect(signinForm.name).to.exist;
+      expect(signinForm.name).to.equal('SigninForm');
+    });
+
+    it('should have a template property.', function() {
+      expect(signinForm.template).to.exist;
+    });
+
+    it('should have a subscriptions property.', function() {
+      expect(signinForm.subscriptions).to.exist;
+    });
+
+    it('should have a model.', function() {
+      expect(signinForm.model).to.exist;
+      expect(signinForm.model.name).to.equal('User');
+    });
+
+    after(function() {
+      signinForm.unplug(true);
+    });
   });
 
-  afterEach(function() {
-    this.server.restore();
-    delete this.server;
-    this.SigninForm.remove();
-    delete this.SigninForm;
-  });
+  describe('onSubmit()', function() {
+    var server, signinForm;
 
-  it('should exist.', function() {
-    expect(this.SigninForm).to.exist;
-  });
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
 
-  it('should have a name property.', function() {
-    expect(this.SigninForm.name).to.exist;
-    expect(this.SigninForm.name).to.equal('SigninForm');
-  });
+      signinForm = new SigninForm({
+        model: _.createModel('user')
+      });
 
-  it('should have a template property.', function() {
-    expect(this.SigninForm.template).to.exist;
-  });
+      signinForm.render();
+    });
 
-  it('should have a subscriptions property.', function() {
-    expect(this.SigninForm.subscriptions).to.exist;
-  });
-
-  it('should have a model.', function() {
-    expect(this.SigninForm.model).to.exist;
-    expect(this.SigninForm.model.name).to.equal('User');
-  });
-
-  describe('onSubmit', function() {
     it('should call the signin method on the user model if the given username and password are valid.', function(done) {
-      this.server.respondWith('POST', '/api/auth/signin/', function(req) {
+      server.respondWith('POST', '/api/auth/signin/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });
 
-      this.SigninForm.getAttributeElement('username').val('mctavish');
-      this.SigninForm.getAttributeElement('password').val('12345678');
-      this.SigninForm.onSubmit({preventDefault: function(){}});
-      this.server.respond();
+      signinForm.getAttributeElement('username').val('mctavish');
+      signinForm.getAttributeElement('password').val('12345678');
+      signinForm.onSubmit({preventDefault: function(){}});
+    });
+
+    after(function() {
+      server.restore();
+      signinForm.unplug(true);
     });
   });
 
-  describe('onAuthError', function() {
+  describe('onAuthError()', function() {
+    var signinForm;
+
+    before(function() {
+      signinForm = new SigninForm({
+        model: _.createModel('user')
+      });
+
+      signinForm.render();
+    });
+
     it('should display an error message.', function() {
-      this.SigninForm.onAuthError({username: 'error', password: 'error'});
-      expect(this.SigninForm.getAttributeErrorElement('username').text()).to.equal('error');
-      expect(this.SigninForm.getAttributeErrorElement('password').text()).to.equal('error');
+      signinForm.onAuthError({username: 'error', password: 'error'});
+      expect(signinForm.getAttributeErrorElement('username').text()).to.equal('error');
+      expect(signinForm.getAttributeErrorElement('password').text()).to.equal('error');
+    });
+
+    after(function() {
+      signinForm.unplug(true);
     });
   });
 });

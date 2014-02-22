@@ -1,255 +1,420 @@
 describe('UserModel', function() {
   var UserModel = require('models/user');
 
-  before(function() {
-    this.token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAibmFtZUBleGFtcGxlLmNvbSJ9.PTbp7CGAJ3C4woorlCeWHRKqkcP7ZuiuWxn0FEiK9-0';
-    this.passwordToken = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0b2tlbl92ZXJzaW9uIjogIjRlMjMwM2IyLWIwYmEtNDA2OS05NzM2LTBlMDkzZDNmZTQ1NiIsICJ0eXBlIjogIlBhc3N3b3JkUmVzZXQiLCAiaWQiOiAyfQ.4JaqInkg-5p63cHQdJz1pfm7kfijinab9XK1h6jDk-Q';
-  });
+  describe('when instantiated.', function() {
+    var userModel;
 
-  beforeEach(function() {
-    this.server = sinon.fakeServer.create();
-    this.server.autoRespond = false;
-    this.server.autoRespondAfter = 500;
+    before(function() {
+      userModel = new UserModel()
+    });
 
-    this.UserModel = new UserModel();
-  });
+    it('should exist.', function() {
+      expect(userModel).to.exist;
+    });
 
-  afterEach(function() {
-    this.server.restore();
-    delete this.server;
-    this.UserModel.clear();
-    this.UserModel.destroyCache();
-    this.UserModel.stopListening();
-    delete this.UserModel;
-  });
+    it('should have a name property.', function() {
+      expect(userModel.name).to.exist;
+      expect(userModel.name).to.equal('User');
+    });
 
-  it('should exist.', function() {
-    expect(this.UserModel).to.exist;
-  });
+    it('should have a name defaults.', function() {
+      expect(userModel.defaults).to.exist;
+      expect(userModel.defaults).to.eql({signup_step: 1});
+    });
 
-  it('should have a name property.', function() {
-    expect(this.UserModel.name).to.exist;
-    expect(this.UserModel.name).to.equal('User');
-  });
+    it('should have a name localAttributes.', function() {
+      expect(userModel.localAttributes).to.exist;
+      expect(userModel.localAttributes).to.eql(['signup_step', 'passwordReset']);
+    });
 
-  it('should have a name defaults.', function() {
-    expect(this.UserModel.defaults).to.exist;
-    expect(this.UserModel.defaults).to.eql({signup_step: 1});
-  });
+    it('should have a name validations.', function() {
+      expect(userModel.validations).to.exist;
+      expect(userModel.validations.username).to.exist;
+      expect(userModel.validations.email).to.exist;
+      expect(userModel.validations.password).to.exist;
+      expect(userModel.validations.full_name).to.exist;
+      expect(userModel.validations.account_name).to.exist;
+    });
 
-  it('should have a name localAttributes.', function() {
-    expect(this.UserModel.localAttributes).to.exist;
-    expect(this.UserModel.localAttributes).to.eql(['signup_step', 'passwordReset']);
-  });
-
-  it('should have a name validations.', function() {
-    expect(this.UserModel.validations).to.exist;
-    expect(this.UserModel.validations.username).to.exist;
-    expect(this.UserModel.validations.email).to.exist;
-    expect(this.UserModel.validations.password).to.exist;
-    expect(this.UserModel.validations.full_name).to.exist;
-    expect(this.UserModel.validations.account_name).to.exist;
-  });
-
-  describe('requestSignup', function() {
-    it('should make an HTTP request to /api/auth/signup_request/.', function(done) {
-      this.server.respondWith('POST', '/api/auth/signup_request/', function(req) {
-        req.respond(200, {'Content-Type': 'application/json'}, '{"email": "name@example.com"}');
-        done();
-      });
-
-      this.UserModel.requestSignup('name@example.com');
-      this.server.respond();
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onRequestSignupSuccess', function() {
+  describe('requestSignup()', function() {
+    var server, userModel;
+
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      userModel = new UserModel();
+    });
+
+    it('should make an HTTP request to /api/auth/signup_request/.', function(done) {
+      server.respondWith('POST', '/api/auth/signup_request/', function(req) {
+        req.respond(200, {'Content-Type': 'application/json'}, '{"email": "someuser@example.com"}');
+        done();
+      });
+
+      userModel.requestSignup('someuser@example.com');
+    });
+
+    after(function() {
+      server.restore();
+      userModel.unplug();
+    });
+  });
+
+  describe('onRequestSignupSuccess()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel();
+    });
+
     it('should update the current signup step.', function() {
-      this.UserModel.onRequestSignupSuccess({email: 'name@example.com'});
-      expect(this.UserModel.get('email')).to.equal('name@example.com');
-      expect(this.UserModel.get('signup_step')).to.equal(2);
+      userModel.onRequestSignupSuccess({email: 'someuser@example.com'});
+      expect(userModel.get('email')).to.equal('someuser@example.com');
+      expect(userModel.get('signup_step')).to.equal(2);
     });
 
     it('should trigger an user:signup-request:success event', function(done) {
-      this.UserModel.once('user:signup-request:success', function(){
+      userModel.once('user:signup-request:success', function(){
         done();
       });
 
-      this.UserModel.onRequestSignupSuccess({});
+      userModel.onRequestSignupSuccess({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onRequestSignupError', function() {
+  describe('onRequestSignupError()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel();
+    });
+
     it('should trigger an user:signup-request:error event.', function(done) {
-      this.UserModel.once('user:signup-request:error', function() {
+      userModel.once('user:signup-request:error', function() {
         done();
       });
 
-      this.UserModel.onRequestSignupError({});
+      userModel.onRequestSignupError({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('setEmailFromJWT', function() {
+  describe('setEmailFromJWT()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel();
+    });
+
     it('should set the email decoded from the given JWT.', function() {
-      this.UserModel.setEmailFromJWT(this.token);
-      expect(this.UserModel.get('email')).to.equal('name@example.com');
-      expect(this.UserModel.get('signup_request_token')).to.equal(this.token);
+      userModel.setEmailFromJWT(JWT_SIGNUP_TOKEN);
+      expect(userModel.get('email')).to.equal('someuser@example.com');
+      expect(userModel.get('signup_request_token')).to.equal(JWT_SIGNUP_TOKEN);
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('isWaitingForEmailValidation', function() {
+  describe('isWaitingForEmailValidation()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel();
+    });
+
     it('should return false if the user is not waiting for the signup request email.', function() {
-      expect(this.UserModel.isWaitingForEmailValidation()).to.be.false;
+      expect(userModel.isWaitingForEmailValidation()).to.be.false;
     });
 
     it('should return true if the user is waiting for the signup request email.', function() {
-      expect(this.UserModel.isWaitingForEmailValidation()).to.be.false;
-      this.UserModel.setEmailFromJWT(this.token).set('signup_step', 2);
-      expect(this.UserModel.isWaitingForEmailValidation()).to.be.true;
+      expect(userModel.isWaitingForEmailValidation()).to.be.false;
+      userModel.setEmailFromJWT(JWT_SIGNUP_TOKEN).set('signup_step', 2);
+      expect(userModel.isWaitingForEmailValidation()).to.be.true;
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('updateSignupStep', function() {
+  describe('updateSignupStep()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel();
+    });
+
     it('should update the signup_step attribute and update the cache.', function() {
-      this.UserModel.updateSignupStep(1);
-      expect(this.UserModel.get('signup_step')).to.equal(1);
-      expect(this.UserModel.cache.get('signup_step')).to.equal(1);
-      this.UserModel.updateSignupStep(5);
-      expect(this.UserModel.get('signup_step')).to.equal(5);
-      expect(this.UserModel.cache.get('signup_step')).to.equal(5);
+      userModel.updateSignupStep(1);
+      expect(userModel.get('signup_step')).to.equal(1);
+      expect(userModel.cache.get('signup_step')).to.equal(1);
+      userModel.updateSignupStep(5);
+      expect(userModel.get('signup_step')).to.equal(5);
+      expect(userModel.cache.get('signup_step')).to.equal(5);
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('validateSignupEmailDomain', function() {
-    it('should make an HTTP request to /api/auth/signup_domains/validate/.', function(done) {
+  describe('validateSignupEmailDomain()', function() {
+    var server, userModel;
 
-      this.server.respondWith('POST', '/api/auth/signup_domains/validate/', function(req) {
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      userModel = new UserModel();
+    });
+
+    it('should make an HTTP request to /api/auth/signup_domains/validate/.', function(done) {
+      server.respondWith('POST', '/api/auth/signup_domains/validate/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"signup_domains": "[example.com"]}');
         done();
       });
 
-      this.UserModel.validateSignupEmailDomain(['example.com']);
-      this.server.respond();
+      userModel.validateSignupEmailDomain(['example.com']);
+    });
+
+    after(function() {
+      server.restore();
+      userModel.unplug();
     });
   });
 
-  describe('onValidateSignupEmailDomainSuccess', function() {
+  describe('onValidateSignupEmailDomainSuccess()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should update the current signup step.', function() {
-      this.UserModel.onValidateSignupEmailDomainSuccess({signup_domains: ['example.com']});
-      expect(this.UserModel.get('signup_step')).to.equal(7);
-      expect(this.UserModel.get('signup_domains')).to.eql(['example.com']);
+      userModel.onValidateSignupEmailDomainSuccess({signup_domains: ['example.com']});
+      expect(userModel.get('signup_step')).to.equal(7);
+      expect(userModel.get('signup_domains')).to.eql(['example.com']);
     });
 
     it('should trigger an user:signup-domains:success event', function(done) {
-      this.UserModel.once('user:signup-domains:success', function(){
+      userModel.once('user:signup-domains:success', function(){
         done();
       });
 
-      this.UserModel.onValidateSignupEmailDomainSuccess({});
+      userModel.onValidateSignupEmailDomainSuccess({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onValidateSignupEmailDomainError', function() {
+  describe('onValidateSignupEmailDomainError()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:signup-domains:error event.', function(done) {
-      this.UserModel.once('user:signup-domains:error', function() {
+      userModel.once('user:signup-domains:error', function() {
         done();
       });
 
-      this.UserModel.onValidateSignupEmailDomainError({});
+      userModel.onValidateSignupEmailDomainError({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('hasInviteDomains', function() {
+  describe('hasInviteDomains()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should return false if the user has not set any signup domains.', function() {
-      expect(this.UserModel.hasInviteDomains()).to.be.false;
+      expect(userModel.hasInviteDomains()).to.be.false;
     });
 
     it('should return true if the user set any signup domains.', function() {
-      expect(this.UserModel.hasInviteDomains()).to.be.false;
-      this.UserModel.set('signup_domains', ['blimp.io', 'getblimp.com'])
-      expect(this.UserModel.hasInviteDomains()).to.be.true;
+      expect(userModel.hasInviteDomains()).to.be.false;
+      userModel.set('signup_domains', ['blimp.io', 'getblimp.com'])
+      expect(userModel.hasInviteDomains()).to.be.true;
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('validateUsername', function() {
+  describe('validateUsername()', function() {
+    var server, userModel;
+
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      userModel = new UserModel();
+    });
+
     it('should make an HTTP request to /api/auth/username/validate/.', function(done) {
-      this.server.respondWith('POST', '/api/auth/username/validate/', function(req) {
+      server.respondWith('POST', '/api/auth/username/validate/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"username": "mctavish"}');
         done();
       });
 
-      this.UserModel.validateUsername('mctavish');
-      this.server.respond();
+      userModel.validateUsername('mctavish');
+    });
+
+    after(function() {
+      server.restore();
+      userModel.unplug();
     });
   });
 
-  describe('onValidateUsernameSuccess', function() {
+  describe('onValidateUsernameSuccess()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should update the current signup step.', function() {
-      this.UserModel.onValidateUsernameSuccess({username: 'mctavish'});
-      expect(this.UserModel.get('username')).to.equal('mctavish');
-      expect(this.UserModel.get('signup_step')).to.equal(9);
+      userModel.onValidateUsernameSuccess({username: 'mctavish'});
+      expect(userModel.get('username')).to.equal('mctavish');
+      expect(userModel.get('signup_step')).to.equal(9);
     });
 
     it('should trigger an user:signup-username:success event', function(done) {
-      this.UserModel.once('user:signup-username:success', function(){
+      userModel.once('user:signup-username:success', function(){
         done();
       });
 
-      this.UserModel.onValidateUsernameSuccess({});
+      userModel.onValidateUsernameSuccess({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onValidateUsernameError', function() {
+  describe('onValidateUsernameError()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:signup-username:error event.', function(done) {
-      this.UserModel.once('user:signup-username:error', function() {
+      userModel.once('user:signup-username:error', function() {
         done();
       });
 
-      this.UserModel.onValidateUsernameError({});
+      userModel.onValidateUsernameError({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('signup', function() {
+  describe('signup()', function() {
+    var server, userModel;
+
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      userModel = new UserModel();
+    });
+
     it('should make an HTTP request to /api/auth/signup/.', function(done) {
-      this.server.respondWith('POST', '/api/auth/signup/', function(req) {
+      server.respondWith('POST', '/api/auth/signup/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, JSON.stringify({
-          email: 'name@example.com',
+          email: 'someuser@example.com',
           token: '12345',
           username: 'mctavish'
         }));
         done();
       });
 
-      this.UserModel.signup();
-      this.server.respond();
+      userModel.signup();
+    });
+
+    after(function() {
+      server.restore();
+      userModel.unplug();
     });
   });
 
-  describe('onSignupSuccess', function() {
+  describe('onSignupSuccess()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:signup:success event', function(done) {
-      this.UserModel.once('user:signup:success', function(){
+      userModel.once('user:signup:success', function(){
         done();
       });
 
-      this.UserModel.onSignupSuccess({});
+      userModel.onSignupSuccess({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onSignupError', function() {
+  describe('onSignupError()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:signup:error event.', function(done) {
-      this.UserModel.once('user:signup:error', function() {
+      userModel.once('user:signup:error', function() {
         done();
       });
 
-      this.UserModel.onSignupError({});
+      userModel.onSignupError({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('signin', function() {
+  describe('signin()', function() {
+    var server, userModel;
+
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      userModel = new UserModel();
+    });
+
     it('should make an HTTP request to /api/auth/signin/.', function(done) {
-      this.server.respondWith('POST', '/api/auth/signin/', function(req) {
+      server.respondWith('POST', '/api/auth/signin/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, JSON.stringify({
-          email: 'name@example.com',
+          email: 'someuser@example.com',
           token: '12345',
           username: 'mctavish',
           accounts: []
@@ -257,143 +422,281 @@ describe('UserModel', function() {
         done();
       });
 
-      this.UserModel.signin('mctavish', '12345678');
-      this.server.respond();
+      userModel.signin('mctavish', '12345678');
+    });
+
+    after(function() {
+      server.restore();
+      userModel.unplug();
     });
   });
 
-  describe('signinFromCache', function() {
+  describe('signinFromCache()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should signin the user fetching data from cache.', function() {
-      this.UserModel.set('token', '12345');
-      this.UserModel.signinFromCache();
-      expect(this.UserModel.isSignedIn()).to.be.true;
+      userModel.set('token', '12345');
+      userModel.signinFromCache();
+      expect(userModel.isSignedIn()).to.be.true;
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onSigninSuccess', function() {
+  describe('onSigninSuccess()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:signin:success event', function(done) {
-      this.UserModel.once('user:signin:success', function(){
+      userModel.once('user:signin:success', function(){
         done();
       });
 
-      this.UserModel.onSigninSuccess({});
+      userModel.onSigninSuccess({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onSigninError', function() {
+  describe('onSigninError()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:signin:error event.', function(done) {
-      this.UserModel.once('user:signin:error', function() {
+      userModel.once('user:signin:error', function() {
         done();
       });
 
-      this.UserModel.onSigninError({});
+      userModel.onSigninError({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('isSignedIn', function() {
+  describe('isSignedIn()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should return false if the user is not signed in.', function() {
-      expect(this.UserModel.isSignedIn()).to.be.false;
+      expect(userModel.isSignedIn()).to.be.false;
     });
 
     it('should return true if the user is signed in.', function() {
-      this.UserModel.set('token', '12345');
-      expect(this.UserModel.isSignedIn()).to.be.true;
+      userModel.set('token', '12345');
+      expect(userModel.isSignedIn()).to.be.true;
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('signout', function() {
+  describe('signout()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should signout the user.', function() {
-      this.UserModel.set('token', '12345');
-      this.UserModel.signout();
-      expect(this.UserModel.attributes).to.be.empty;
-      expect(this.UserModel.isSignedIn()).to.be.false;
+      userModel.set('token', '12345');
+      userModel.signout();
+      expect(userModel.attributes).to.be.empty;
+      expect(userModel.isSignedIn()).to.be.false;
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('forgotPassword', function() {
+  describe('forgotPassword()', function() {
+    var server, userModel;
+
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      userModel = new UserModel();
+    });
+
     it('should make an HTTP request to /api/auth/forgot_password/.', function(done) {
-      this.server.respondWith('POST', '/api/auth/forgot_password/', function(req) {
+      server.respondWith('POST', '/api/auth/forgot_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });
 
-      this.UserModel.forgotPassword('name@example.com');
-      this.server.respond();
+      userModel.forgotPassword('someuser@example.com');
+    });
+
+    after(function() {
+      server.restore();
+      userModel.unplug();
     });
   });
 
-  describe('onForgotPasswordSuccess', function() {
+  describe('onForgotPasswordSuccess()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:forgot-password:success event', function(done) {
-      this.UserModel.once('user:forgot-password:success', function(){
+      userModel.once('user:forgot-password:success', function(){
         done();
       });
 
-      this.UserModel.onForgotPasswordSuccess({});
+      userModel.onForgotPasswordSuccess({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onForgotPasswordError', function() {
+  describe('onForgotPasswordError()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:forgot-password:error event.', function(done) {
-      this.UserModel.once('user:forgot-password:error', function() {
+      userModel.once('user:forgot-password:error', function() {
         done();
       });
 
-      this.UserModel.onForgotPasswordError({});
+      userModel.onForgotPasswordError({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
- describe('setPasswordResetDataFromJWT', function() {
+ describe('setPasswordResetDataFromJWT()', function() {
+  var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should set password reset data decoded from a JWT.', function() {
-      this.UserModel.setPasswordResetDataFromJWT(this.passwordToken);
-      expect(this.UserModel.get('passwordResetData')).to.exist;
-      expect(this.UserModel.get('passwordResetData').id).to.exist;
-      expect(this.UserModel.get('passwordResetData').type).to.exist;
-      expect(this.UserModel.get('passwordResetData').token).to.exist;
-      expect(this.UserModel.get('passwordResetData').version).to.exist;
+      userModel.setPasswordResetDataFromJWT(JWT_PASSWORD_TOKEN);
+      expect(userModel.get('passwordResetData')).to.exist;
+      expect(userModel.get('passwordResetData').id).to.exist;
+      expect(userModel.get('passwordResetData').type).to.exist;
+      expect(userModel.get('passwordResetData').token).to.exist;
+      expect(userModel.get('passwordResetData').version).to.exist;
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('canResetPassword', function() {
+  describe('canResetPassword()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should return false if the user has password no reset token.', function() {
-      expect(this.UserModel.canResetPassword()).to.not.be.ok;
+      expect(userModel.canResetPassword()).to.be.false;
     });
 
     it('should return true if the user has a password reset token.', function() {
-      this.UserModel.setPasswordResetDataFromJWT(this.passwordToken);
-      expect(this.UserModel.canResetPassword()).to.be.true;
+      userModel.setPasswordResetDataFromJWT(JWT_PASSWORD_TOKEN);
+      expect(userModel.canResetPassword()).to.be.true;
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('resetPassword', function() {
+  describe('resetPassword()', function() {
+    var server, userModel;
+
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.autoRespond = true;
+      userModel = new UserModel();
+    });
+
     it('should make an HTTP request to /api/auth/reset_password/.', function(done) {
-      this.server.respondWith('POST', '/api/auth/reset_password/', function(req) {
+      server.respondWith('POST', '/api/auth/reset_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"token": "12345"}');
         done();
       });
 
-      this.UserModel.setPasswordResetDataFromJWT(this.passwordToken);
-      this.UserModel.resetPassword('12345678');
-      this.server.respond();
+      userModel.setPasswordResetDataFromJWT(JWT_PASSWORD_TOKEN);
+      userModel.resetPassword('12345678');
+    });
+
+    after(function() {
+      server.restore();
+      userModel.unplug();
     });
   });
 
-  describe('onResetPasswordSuccess', function() {
+  describe('onResetPasswordSuccess()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:reset-password:success event', function(done) {
-      this.UserModel.once('user:reset-password:success', function(){
+      userModel.once('user:reset-password:success', function(){
         done();
       });
 
-      this.UserModel.onResetPasswordSuccess({});
+      userModel.onResetPasswordSuccess({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 
-  describe('onResetPasswordError', function() {
+  describe('onResetPasswordError()', function() {
+    var userModel;
+
+    before(function() {
+      userModel = new UserModel()
+    });
+
     it('should trigger an user:reset-password:error event.', function(done) {
-      this.UserModel.once('user:reset-password:error', function() {
+      userModel.once('user:reset-password:error', function() {
         done();
       });
 
-      this.UserModel.onResetPasswordError({});
+      userModel.onResetPasswordError({});
+    });
+
+    after(function() {
+      userModel.unplug();
     });
   });
 });

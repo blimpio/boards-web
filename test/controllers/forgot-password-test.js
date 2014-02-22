@@ -1,41 +1,58 @@
 describe('ForgotPasswordController', function() {
   var ForgotPasswordController = require('controllers/forgot-password');
 
-  beforeEach(function() {
-    this.ForgotPasswordController = new ForgotPasswordController();
+  after(function() {
+    $('#application').empty();
   });
 
-  afterEach(function() {
-    this.ForgotPasswordController.remove();
-    delete this.ForgotPasswordController;
+  describe('when instantiated.', function() {
+    var forgotPasswordController;
+
+    before(function() {
+      forgotPasswordController = new ForgotPasswordController();
+    });
+
+    it('should exist.', function() {
+      expect(forgotPasswordController).to.exist;
+    });
+
+    it('should have a name property.', function() {
+      expect(forgotPasswordController.name).to.exist;
+      expect(forgotPasswordController.name).to.equal('ForgotPasswordController');
+    });
+
+    it('should have a name template.', function() {
+      expect(forgotPasswordController.template).to.exist;
+    });
+
+    it('should render and insert.', function() {
+      expect(forgotPasswordController.isRendered).to.be.true;
+      expect(forgotPasswordController.isInserted).to.be.true;
+    });
+
+    it('should have a form child view.', function() {
+      expect(forgotPasswordController.children.form).to.exist;
+    });
+
+    after(function() {
+      forgotPasswordController.unplug(true);
+    });
   });
 
-  it('should exist.', function() {
-    expect(this.ForgotPasswordController).to.exist;
-  });
+  describe('initChildren()', function() {
+    var forgotPasswordController;
 
-  it('should have a name property.', function() {
-    expect(this.ForgotPasswordController.name).to.exist;
-    expect(this.ForgotPasswordController.name).to.equal('ForgotPasswordController');
-  });
+    before(function() {
+      forgotPasswordController = new ForgotPasswordController();
+    });
 
-  it('should have a name template.', function() {
-    expect(this.ForgotPasswordController.template).to.exist;
-  });
-
-  it('should render and insert.', function() {
-    expect(this.ForgotPasswordController.isRendered).to.be.true;
-    expect(this.ForgotPasswordController.isInserted).to.be.true;
-  });
-
-  it('should have a form child view.', function() {
-    expect(this.ForgotPasswordController.children.form).to.exist;
-  });
-
-  describe('initForm', function() {
     it('should init the forgot password form view.', function() {
-      this.ForgotPasswordController.initForm();
-      expect(this.ForgotPasswordController.children.form).to.exist;
+      forgotPasswordController.initChildren();
+      expect(forgotPasswordController.children.form).to.exist;
+    });
+
+    after(function() {
+      forgotPasswordController.unplug(true);
     });
   });
 });

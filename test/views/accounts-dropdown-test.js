@@ -2,76 +2,86 @@ describe('AccountsDropdown', function() {
   var AccountsDropdown = require('views/accounts-dropdown');
 
   before(function() {
-    App.Accounts.reset([{
-      id: 1,
-      name: 'ACME Inc',
-      slug: 'acme-inc',
-      image_url: ''
-    }, {
-      id: 4,
-      name: 'Blimp LLC',
-      slug: 'blimp',
-      image_url: ''
-    }]);
-  });
-
-  beforeEach(function() {
     $('#application').html('<div class="accounts-dropdown"></div>');
-
-    this.AccountsDropdown = new AccountsDropdown({
-      collection: App.Accounts
-    });
-
-    this.AccountsDropdown.render();
-  });
-
-  afterEach(function() {
-    this.AccountsDropdown.remove();
-    delete this.AccountsDropdown;
   });
 
   after(function() {
-    App.Accounts.reset();
+    $('#application').empty();
   });
 
-  it('should exist.', function() {
-    expect(this.AccountsDropdown).to.exist;
-  });
+  describe('when instantiated.', function() {
+    var accountsDropdown;
 
-  it('should have a name property.', function() {
-    expect(this.AccountsDropdown.name).to.exist;
-    expect(this.AccountsDropdown.name).to.equal('AccountsDropdown');
-  });
+    before(function() {
+      accountsDropdown = new AccountsDropdown();
+      accountsDropdown.render();
+    });
 
-  it('should have a template property.', function() {
-    expect(this.AccountsDropdown.template).to.exist;
-  });
+    it('should exist.', function() {
+      expect(accountsDropdown).to.exist;
+    });
 
-  it('should have a collection property.', function() {
-    expect(this.AccountsDropdown.collection).to.exist;
-    expect(this.AccountsDropdown.collection.name).to.equal('Accounts');
-  });
+    it('should have a name property.', function() {
+      expect(accountsDropdown.name).to.exist;
+      expect(accountsDropdown.name).to.equal('AccountsDropdown');
+    });
 
-  it('should have an events property.', function() {
-    expect(this.AccountsDropdown.events).to.exist;
-  });
+    it('should have a template property.', function() {
+      expect(accountsDropdown.template).to.exist;
+    });
 
-  it('should have an elements property.', function() {
-    expect(this.AccountsDropdown.elements).to.exist;
-  });
+    it('should have a collection property.', function() {
+      expect(accountsDropdown.collection).to.exist;
+      expect(accountsDropdown.collection.name).to.equal('Accounts');
+    });
 
-  describe('context', function() {
-    it('should return the template context.', function() {
-      var context = this.AccountsDropdown.context();
-      expect(context).to.exist;
-      expect(_.keys(context)).to.eql(['accounts', 'currentAccount']);
+    it('should have an events property.', function() {
+      expect(accountsDropdown.events).to.exist;
+    });
+
+    it('should have an elements property.', function() {
+      expect(accountsDropdown.elements).to.exist;
+    });
+
+    after(function() {
+      accountsDropdown.unplug(true);
     });
   });
 
-  describe('toggle', function() {
+  describe('context()', function() {
+    var accountsDropdown;
+
+    before(function() {
+      accountsDropdown = new AccountsDropdown();
+      accountsDropdown.render();
+    });
+
+    it('should return the template context.', function() {
+      var context = accountsDropdown.context();
+      expect(context).to.exist;
+      expect(_.keys(context)).to.eql(['accounts', 'currentAccount']);
+    });
+
+    after(function() {
+      accountsDropdown.unplug(true);
+    });
+  });
+
+  describe('toggle()', function() {
+    var accountsDropdown;
+
+    before(function() {
+      accountsDropdown = new AccountsDropdown();
+      accountsDropdown.render();
+    });
+
     it('should toggle the dropdown element.', function() {
-      this.AccountsDropdown.toggle();
-      expect(this.AccountsDropdown.$('ol.accounts-dropdown__list').is(':visible')).to.be.true;
+      accountsDropdown.toggle();
+      expect(accountsDropdown.$('ol.accounts-dropdown__list').is(':visible')).to.be.true;
+    });
+
+    after(function() {
+      accountsDropdown.unplug(true);
     });
   });
 });

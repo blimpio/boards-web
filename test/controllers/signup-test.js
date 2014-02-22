@@ -1,52 +1,70 @@
 describe('SignupController', function() {
   var SignupController = require('controllers/signup');
 
-  before(function() {
-    this.token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ0eXBlIjogIlNpZ251cFJlcXVlc3QiLCAiZW1haWwiOiAic29tZXVzZXJAZXhhbXBsZS5jb20ifQ.heB3Y0qjUMq0cbrzIuz8q0tfn6o3VwKxdTjvUeIEtgM';
+  after(function() {
+    $('#application').empty();
   });
 
-  beforeEach(function() {
-    this.SignupController = new SignupController();
-  });
+  describe('when instantiated.', function() {
+    var signupController;
 
-  afterEach(function() {
-    this.SignupController.remove();
-    delete this.SignupController;
-  });
+    before(function() {
+      signupController = new SignupController();
+    });
 
-  it('should exist.', function() {
-    expect(this.SignupController).to.exist;
-  });
+    it('should exist.', function() {
+      expect(signupController).to.exist;
+    });
 
-  it('should init the user model.', function() {
-    expect(this.SignupController.user).to.exist;
-    expect(this.SignupController.user.name).to.equal('User');
-  });
+    it('should render and insert.', function() {
+      expect(signupController.isRendered).to.be.true;
+      expect(signupController.isInserted).to.be.true;
+    });
 
-  it('should render and insert.', function() {
-    expect(this.SignupController.isRendered).to.be.true;
-    expect(this.SignupController.isInserted).to.be.true;
-  });
+    it('should have a form child view.', function() {
+      expect(signupController.children.form).to.exist;
+    });
 
-  it('should have a form child view.', function() {
-    expect(this.SignupController.children.form).to.exist;
-  });
-
-  describe('initForm', function() {
-    it('should init and render the signup form view.', function() {
-      this.SignupController.initForm();
-      expect(this.SignupController.children.form).to.exist;
-      expect(this.SignupController.children.form.isRendered).to.be.true;
+    after(function() {
+      signupController.unplug(true);
     });
   });
 
-  describe('continueWithToken', function() {
+  describe('initChildren()', function() {
+    var signupController;
+
+    before(function() {
+      signupController = new SignupController();
+    });
+
+    it('should init and render the signup form view.', function() {
+      signupController.initChildren();
+      expect(signupController.children.form).to.exist;
+      expect(signupController.children.form.isRendered).to.be.true;
+    });
+
+    after(function() {
+      signupController.unplug(true);
+    });
+  });
+
+  describe('continueWithToken()', function() {
+    var signupController;
+
+    before(function() {
+      signupController = new SignupController();
+    });
+
     it('should set the email and signup request token in the user model if a token is passed.', function() {
-      this.SignupController.user.set('signup_step', 1);
-      this.SignupController.continueWithToken(this.token);
-      expect(this.SignupController.user.get('email')).to.equal('someuser@example.com');
-      expect(this.SignupController.user.get('signup_step')).to.equal(3);
-      expect(this.SignupController.user.get('signup_request_token')).to.equal(this.token);
+      App.User.set('signup_step', 1);
+      signupController.continueWithToken(JWT_SIGNUP_TOKEN);
+      expect(App.User.get('email')).to.equal('someuser@example.com');
+      expect(App.User.get('signup_step')).to.equal(3);
+      expect(App.User.get('signup_request_token')).to.equal(JWT_SIGNUP_TOKEN);
+    });
+
+    after(function() {
+      signupController.unplug(true);
     });
   });
 });

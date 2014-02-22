@@ -1,49 +1,68 @@
 describe('ResetPasswordController', function() {
   var ResetPasswordController = require('controllers/reset-password');
 
-  beforeEach(function() {
-    this.ResetPasswordController = new ResetPasswordController();
+  after(function() {
+    $('#application').empty();
   });
 
-  afterEach(function() {
-    this.ResetPasswordController.remove();
-    delete this.ResetPasswordController;
-  });
+  describe('when instantiated.', function() {
+    var resetPasswordController;
 
-  it('should exist.', function() {
-    expect(this.ResetPasswordController).to.exist;
-  });
+    before(function() {
+      resetPasswordController = new ResetPasswordController()
+    });
 
-  it('should have a name property.', function() {
-    expect(this.ResetPasswordController.name).to.exist;
-    expect(this.ResetPasswordController.name).to.equal('ResetPasswordController');
-  });
+    it('should exist.', function() {
+      expect(resetPasswordController).to.exist;
+    });
 
-  it('should have a name template.', function() {
-    expect(this.ResetPasswordController.template).to.exist;
-  });
+    it('should have a name property.', function() {
+      expect(resetPasswordController.name).to.exist;
+      expect(resetPasswordController.name).to.equal('ResetPasswordController');
+    });
 
-  describe('renderForm', function() {
-    it('should render and insert the controller.', function() {
-      this.ResetPasswordController.renderForm();
-      expect(this.ResetPasswordController.isRendered).to.be.true;
-      expect(this.ResetPasswordController.isInserted).to.be.true;
+    it('should have a name template.', function() {
+      expect(resetPasswordController.template).to.exist;
+    });
+
+    after(function() {
+      resetPasswordController.unplug(true);
     });
   });
 
-  describe('validateToken', function() {
+  describe('validateToken()', function() {
+    var resetPasswordController;
+
+    before(function() {
+      resetPasswordController = new ResetPasswordController()
+    });
+
     it('should set the password reset data from the url token and render the controller.', function() {
-      this.ResetPasswordController.validateToken(JWT_TEST_TOKEN);
-      expect(this.ResetPasswordController.user.get('passwordResetData')).to.exist;
-      expect(this.ResetPasswordController.isRendered).to.be.true;
-      expect(this.ResetPasswordController.isInserted).to.be.true;
+      resetPasswordController.validateToken(JWT_PASSWORD_TOKEN);
+      expect(App.User.get('passwordResetData')).to.exist;
+      expect(resetPasswordController.isRendered).to.be.true;
+      expect(resetPasswordController.isInserted).to.be.true;
+    });
+
+    after(function() {
+      resetPasswordController.unplug(true);
     });
   });
 
-  describe('initForm', function() {
+  describe('initChildren()', function() {
+    var resetPasswordController;
+
+    before(function() {
+      resetPasswordController = new ResetPasswordController()
+    });
+
     it('should init the form.', function() {
-      this.ResetPasswordController.initForm();
-      expect(this.ResetPasswordController.children.form).to.exist;
+      resetPasswordController.initChildren();
+      expect(resetPasswordController.children.form).to.exist;
+    });
+
+    after(function() {
+      resetPasswordController.unplug(true);
     });
   });
 });
