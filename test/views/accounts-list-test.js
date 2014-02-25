@@ -13,7 +13,7 @@ describe('AccountsList', function() {
     var accountsList;
 
     before(function() {
-      accountsList = new AccountsList()
+      accountsList = new AccountsList();
     });
 
     it('should exist.', function() {

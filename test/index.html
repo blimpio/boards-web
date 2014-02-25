@@ -34,20 +34,9 @@
       jQuery.ajaxSetup({processData: false});
 
       App.User = _.createModel('user');
+      App.Cache = _.createModel('app');
       App.Boards = _.createCollection('boards');
       App.Accounts = _.createCollection('accounts');
-
-      // App.Accounts.reset([{
-      //   id: 1,
-      //   name: 'ACME Inc',
-      //   slug: 'acme-inc',
-      //   image_url: ''
-      // }, {
-      //   id: 4,
-      //   name: 'Blimp LLC',
-      //   slug: 'blimp',
-      //   image_url: ''
-      // }]);
     </script>
 
     <!-- Testing Dependencies -->

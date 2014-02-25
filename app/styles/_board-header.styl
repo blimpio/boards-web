@@ -1,0 +1,29 @@
+.boards__header {
+  padding: 10px;
+
+  &.is-editing {
+    .board-header__form { display: block; }
+    .board-header__preview { display: none; }
+  }
+
+  [data-action="edit"] {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  .board-header__image {
+    border-radius: 30px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  .board-header__title {
+    display: inline-block;
+    margin: 0;
+    vertical-align: middle;
+  }
+
+  .board-header__form { display: none; }
+}

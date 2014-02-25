@@ -18,6 +18,7 @@ module.exports = Zeppelin.Collection.extend({
 
   setCurrent: function(slug) {
     this.current = this.userHasAccount(slug) ? this.findWhere({slug: slug}).id : null;
+    App.Cache.set('current_account', this.current).saveCache();
     return this;
   },
 

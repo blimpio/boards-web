@@ -743,7 +743,7 @@
       $element = this.$el.find(selector);
       if (!$element.length) return this;
       this['$' + name] = $element;
-      this.elements[name] = selector;
+      if (!this.elements[name]) this.elements[name] = selector;
 
       if (options.events && _.isPlainObject(options.events)) {
         _.forOwn(options.events, function (callback, eventName) {
@@ -868,7 +868,7 @@
         }
       }
 
-      this.bindings[binding] = callback;
+      if (!this.bindings[binding]) this.bindings[binding] = callback;
       return this;
     },
 
@@ -906,6 +906,26 @@
       return this;
     },
 
+    _getModelBindings: function () {
+      var bindings = {};
+
+      _.forOwn(this.bindings, function (callback, binding) {
+        if (binding.split(' ')[0] === 'model') bindings[binding] = callback;
+      }, this);
+
+      return bindings;
+    },
+
+    _getCollectionBindings: function () {
+      var bindings = {};
+
+      _.forOwn(this.bindings, function (callback, binding) {
+        if (binding.split(' ')[0] === 'collection') bindings[binding] = callback;
+      }, this);
+
+      return bindings;
+    },
+
     delegateEvent: function (selector, eventName, callback) {
       var originalEventName;
 
@@ -930,10 +950,13 @@
 
       if (selector) {
         this.$el.on(eventName, selector, callback);
-        this.events[originalEventName + ' ' + selector] = callback;
+
+        if (!this.events[originalEventName + ' ' + selector]) {
+          this.events[originalEventName + ' ' + selector] = callback;
+        }
       } else {
         this.$el.on(eventName, callback);
-        this.events[originalEventName] = callback;
+        if (!this.events[originalEventName]) this.events[originalEventName] = callback;
       }
 
       return this;
@@ -950,22 +973,26 @@
       return this;
     },
 
-    setModel: function (model) {
+    setModel: function (model, bind) {
+      bind = bind || false;
       model = model || this.model;
 
       if (!model) return this;
       if (_.isFunction(model)) model = new model();
       this.model = model;
+      if (bind) this.registerBindings(this._getModelBindings());
 
       return this;
     },
 
-    setCollection: function (collection) {
+    setCollection: function (collection, bind) {
+      bind = bind || false;
       collection = collection || this.collection;
 
       if (!collection) return this;
       if (_.isFunction(collection)) collection = new collection();
       this.collection = collection;
+      if (bind) this.registerBindings(this._getCollectionBindings());
 
       return this;
     },
@@ -1072,10 +1099,15 @@
       this.undelegateEvents();
       this.unregisterElements();
       this.unregisterBindings();
-      this.isUnplugged = true;
 
+      delete this.model;
       delete this.parent;
+      delete this.collection;
+
       if (deep) this.unplugChildren(deep);
+
+      this.children = {};
+      this.isUnplugged = true;
 
       this.onUnplug();
       this.trigger('unplug', this);
@@ -1176,6 +1208,10 @@
       this.forEachChild(function (child) {
         child.unplug(deep);
       });
+
+      this.children = {};
+
+      return this;
     }
   });
 
@@ -1448,6 +1484,8 @@
       if (this.listIsSet && this.collection.length) {
         fragment = document.createDocumentFragment();
 
+        this.unplugChildren(true);
+
         this.collection.each(function (item) {
           fragment.appendChild(this.renderItem(item).el);
         }, this);
@@ -1513,6 +1551,7 @@
 
         if (this.listIsSet) {
           fragment = document.createDocumentFragment();
+          this.unplugChildren(true);
           filteredCollection.reset(filteredModels);
 
           filteredCollection.each(function (item) {
@@ -1634,11 +1673,10 @@
     },
 
     execute: function () {
-      var error, route = this.getRoute();
+      var route = this.getRoute(),
+          error = this.validate(route);
 
-      error = this.validate(route);
-
-      if (!error) {
+      if (!_.size(error)) {
         this.beforeRoute(route);
         Backbone.Router.prototype.execute.apply(this, arguments);
         this.afterRoute(route);

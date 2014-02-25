@@ -9,7 +9,7 @@ module.exports = Zeppelin.Router.extend({
     'reset_password?token:token(/)': 'resetPasswordWithToken',
     'reset_password(/)': 'resetPassword',
     'accounts(/)': 'accounts',
-    ':account(/)': 'boards'
+    ':account(/)': 'account'
   },
 
   subscriptions: {

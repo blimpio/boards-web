@@ -1,11 +1,11 @@
 describe('AccountsCollection', function() {
-  var AccountsController = require('collections/accounts');
+  var AccountsCollection = require('collections/accounts');
 
   describe('when instantiated.', function() {
-    var accountsController;
+    var accountsCollection;
 
     before(function() {
-      accountsController = new AccountsController([{
+      accountsCollection = new AccountsCollection([{
         id: 1,
         name: 'ACME Inc',
         slug: 'acme-inc',
@@ -19,37 +19,37 @@ describe('AccountsCollection', function() {
     });
 
     it('should exist.', function() {
-      expect(accountsController).to.exist;
+      expect(accountsCollection).to.exist;
     });
 
     it('should have a url property.', function() {
-      expect(accountsController.url).to.exist;
+      expect(accountsCollection.url).to.exist;
     });
 
     it('should have a name property.', function() {
-      expect(accountsController.name).to.exist;
-      expect(accountsController.name).to.equal('Accounts');
+      expect(accountsCollection.name).to.exist;
+      expect(accountsCollection.name).to.equal('Accounts');
     });
 
     it('should have a model property.', function() {
-      expect(accountsController.model).to.exist;
+      expect(accountsCollection.model).to.exist;
     });
 
     it('should have a presenters property.', function() {
-      expect(accountsController.presenters).to.exist;
-      expect(accountsController.presenters).to.eql(['accounts']);
+      expect(accountsCollection.presenters).to.exist;
+      expect(accountsCollection.presenters).to.eql(['accounts']);
     });
 
     after(function() {
-      accountsController.reset();
+      accountsCollection.reset();
     });
   });
 
   describe('userHasAccount()', function() {
-    var accountsController;
+    var accountsCollection;
 
     before(function() {
-      accountsController = new AccountsController([{
+      accountsCollection = new AccountsCollection([{
         id: 1,
         name: 'ACME Inc',
         slug: 'acme-inc',
@@ -63,25 +63,25 @@ describe('AccountsCollection', function() {
     });
 
     it('should return true if the given slug matches a user account.', function() {
-      expect(accountsController.userHasAccount('blimp')).to.be.true;
-      expect(accountsController.userHasAccount('acme-inc')).to.be.true;
+      expect(accountsCollection.userHasAccount('blimp')).to.be.true;
+      expect(accountsCollection.userHasAccount('acme-inc')).to.be.true;
     });
 
     it('should return false if the given slug does not match a user account.', function() {
-      expect(accountsController.userHasAccount('boards')).to.be.false;
-      expect(accountsController.userHasAccount('acme-llc')).to.be.false;
+      expect(accountsCollection.userHasAccount('boards')).to.be.false;
+      expect(accountsCollection.userHasAccount('acme-llc')).to.be.false;
     });
 
     after(function() {
-      accountsController.reset();
+      accountsCollection.reset();
     });
   });
 
   describe('setCurrent()', function() {
-    var accountsController;
+    var accountsCollection;
 
     before(function() {
-      accountsController = new AccountsController([{
+      accountsCollection = new AccountsCollection([{
         id: 1,
         name: 'ACME Inc',
         slug: 'acme-inc',
@@ -95,27 +95,27 @@ describe('AccountsCollection', function() {
     });
 
     it('should set the current property to the id of the matched account given a slug.', function() {
-      accountsController.setCurrent('blimp');
-      expect(accountsController.current).to.equal(4);
-      accountsController.setCurrent('acme-inc');
-      expect(accountsController.current).to.equal(1);
+      accountsCollection.setCurrent('blimp');
+      expect(accountsCollection.current).to.equal(4);
+      accountsCollection.setCurrent('acme-inc');
+      expect(accountsCollection.current).to.equal(1);
     });
 
     it('should set the current property to null given a slug does not match any account.', function() {
-      accountsController.setCurrent('acme-llc');
-      expect(accountsController.current).to.be.null;
+      accountsCollection.setCurrent('acme-llc');
+      expect(accountsCollection.current).to.be.null;
     });
 
     after(function() {
-      accountsController.reset();
+      accountsCollection.reset();
     });
   });
 
   describe('accounts()', function() {
-    var accountsController;
+    var accountsCollection;
 
     before(function() {
-      accountsController = new AccountsController([{
+      accountsCollection = new AccountsCollection([{
         id: 1,
         name: 'ACME Inc',
         slug: 'acme-inc',
@@ -129,7 +129,7 @@ describe('AccountsCollection', function() {
     });
 
     it('should return an array of serialized accounts.', function() {
-      expect(accountsController.accounts()).to.eql([{
+      expect(accountsCollection.accounts()).to.eql([{
         url: '/acme-inc/',
         name: 'ACME Inc',
         image: '/default/'
@@ -141,15 +141,15 @@ describe('AccountsCollection', function() {
     });
 
     after(function() {
-      accountsController.reset();
+      accountsCollection.reset();
     });
   });
 
   describe('account()', function() {
-    var accountsController;
+    var accountsCollection;
 
     before(function() {
-      accountsController = new AccountsController([{
+      accountsCollection = new AccountsCollection([{
         id: 1,
         name: 'ACME Inc',
         slug: 'acme-inc',
@@ -163,7 +163,7 @@ describe('AccountsCollection', function() {
     });
 
     it('should return a serialized account given an id.', function() {
-      expect(accountsController.account(4)).to.eql({
+      expect(accountsCollection.account(4)).to.eql({
         url: '/blimp/',
         name: 'Blimp LLC',
         image: '/default/'
@@ -171,15 +171,15 @@ describe('AccountsCollection', function() {
     });
 
     after(function() {
-      accountsController.reset();
+      accountsCollection.reset();
     });
   });
 
   describe('currentAccount()', function() {
-    var accountsController;
+    var accountsCollection;
 
     before(function() {
-      accountsController = new AccountsController([{
+      accountsCollection = new AccountsCollection([{
         id: 1,
         name: 'ACME Inc',
         slug: 'acme-inc',
@@ -193,8 +193,8 @@ describe('AccountsCollection', function() {
     });
 
     it('should return a the current account serialized.', function() {
-      accountsController.current = 4;
-      expect(accountsController.currentAccount()).to.eql({
+      accountsCollection.current = 4;
+      expect(accountsCollection.currentAccount()).to.eql({
         url: '/blimp/',
         name: 'Blimp LLC',
         image: '/default/'
@@ -202,7 +202,37 @@ describe('AccountsCollection', function() {
     });
 
     after(function() {
-      accountsController.reset();
+      accountsCollection.reset();
+    });
+  });
+
+  describe('onUserSignin()', function() {
+    var accountsCollection;
+
+    before(function() {
+      accountsCollection = new AccountsCollection();
+    });
+
+    it('should reset the collection with the given user accounts.', function() {
+      expect(accountsCollection.length).to.equal(0);
+      accountsCollection.onUserSignin({
+        accounts: [{
+          id: 1,
+          name: 'ACME Inc',
+          slug: 'acme-inc',
+          image_url: ''
+        }, {
+          id: 4,
+          name: 'Blimp LLC',
+          slug: 'blimp',
+          image_url: ''
+        }]
+      });
+      expect(accountsCollection.length).to.equal(2);
+    });
+
+    after(function() {
+      accountsCollection.reset();
     });
   });
 });

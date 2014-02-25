@@ -9,6 +9,7 @@ module.exports = (function() {
   App.Router = new Router();
 
   App.User = _.createModel('user');
+  App.Cache = _.createModel('app');
   App.Boards = _.createCollection('boards');
   App.Accounts = _.createCollection('accounts');
 
