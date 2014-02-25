@@ -15,8 +15,8 @@ build:
 
     # A step that installs brunch and bower globally
     - script:
-        name: install bower
-        code: sudo npm install -g brunch bower
+        name: install dev dependencies
+        code: sudo npm install -g brunch bower gulp
 
     # A step that executes `bower install` command
     - script:
@@ -28,10 +28,10 @@ build:
         name: run brunch build
         code: brunch build
 
-    # A step that executes `mocha-phantomjs` command
+    # A step that runs the test suite using the `gulp test` command
     - script:
-        name: run mocha-phantomjs
-        code: ./node_modules/mocha-phantomjs/bin/mocha-phantomjs ./test/index.html
+        name: run gulp test
+        code: gulp test
 
   after-steps:
     - hipchat-notify:
