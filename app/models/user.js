@@ -28,8 +28,8 @@ module.exports = Zeppelin.Model.extend({
       isEmpty: false,
       message: 'A password is required to authenticate you.'
     }, {
-      isOfMinimumLength: 8,
-      message: 'Your password must have a minimun of 8 characters.'
+      isOfMinimumLength: 6,
+      message: 'Your password must have a minimun of 6 characters.'
     }],
 
     full_name: [{
