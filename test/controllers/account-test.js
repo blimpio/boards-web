@@ -144,10 +144,9 @@ describe('AccountController', function() {
     after(function() {
       App.Cache.clear({silent: true}).destroyCache();
       App.Boards.reset([], {silent: true});
-      App.Cache.set('current_board', 2);
+      App.Cache.clear({silent: true});
       accountController.unplug(true);
       AccountController.prototype.publish.restore();
     });
   });
-
 });

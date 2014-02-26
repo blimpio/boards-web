@@ -9,7 +9,8 @@ module.exports = Zeppelin.Router.extend({
     'reset_password?token:token(/)': 'resetPasswordWithToken',
     'reset_password(/)': 'resetPassword',
     'accounts(/)': 'accounts',
-    ':account(/)': 'account'
+    ':account(/)': 'account',
+    ':account/:board(/)': 'board'
   },
 
   subscriptions: {
@@ -23,7 +24,8 @@ module.exports = Zeppelin.Router.extend({
     'signup(/)': 'isNotAuthenticated',
     'forgot_password(/)': 'isNotAuthenticated',
     'accounts(/)': 'accountsValidation',
-    ':account(/)': 'accountExists'
+    ':account(/)': 'accountExists',
+    ':account/:board(/)': 'authIsRequired'
   },
 
   initialize: function() {
@@ -122,12 +124,17 @@ module.exports = Zeppelin.Router.extend({
     this.controller = _.createController('accounts');
   },
 
-  account: function(slug) {
-    App.Accounts.setCurrent(slug);
+  account: function(account) {
+    App.Accounts.setCurrent(account);
     this.controller = _.createController('account');
   },
 
   onBoardSelected: function(board) {
     this.navigate(App.Accounts.getSlug() + '/' + board.get('slug'));
+  },
+
+  board: function(account, board) {
+    App.Accounts.setCurrent(account);
+    this.controller = _.createController('board', {boardSlug: board});
   }
 });
