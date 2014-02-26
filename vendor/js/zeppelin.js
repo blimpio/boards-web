@@ -756,7 +756,7 @@
 
     getElement: function (name) {
       if (!name || this._isReservedElementName(name) || !this['$' + name]) {
-        return null;
+        return undefined;
       } else {
         return this['$' + name];
       }
@@ -765,11 +765,11 @@
     getElementSelector: function (name) {
       var selector;
 
-      if (!name || this._isReservedElementName(name) || this.getElement(name) === null) return null;
+      if (!name || this._isReservedElementName(name) || !this.getElement(name)) return undefined;
       selector = this.elements[name];
       if (_.isPlainObject(selector)) selector = selector.selector;
 
-      return selector || null;
+      return selector || undefined;
     },
 
     unregisterElement: function (name) {
@@ -783,7 +783,7 @@
       if (selector) {
         $element.off();
         this.undelegateEvent(selector, '');
-        delete this['$' + name];
+        this['$' + name] = undefined;
       } else {
         return this;
       }
@@ -826,15 +826,15 @@
           } else if (_binding[0] === 'collection' && this.collection) {
             deconstructedBinding.other = this.collection;
           } else {
-            return null;
+            return undefined;
           }
 
           if (_.last(_binding) === 'once') deconstructedBinding.once = true;
         } else {
-          return null;
+          return undefined;
         }
       } else {
-        return null;
+        return undefined;
       }
 
       return deconstructedBinding;
@@ -1100,9 +1100,13 @@
       this.unregisterElements();
       this.unregisterBindings();
 
-      delete this.model;
-      delete this.parent;
-      delete this.collection;
+      this._model = this.model ? this.model.cid : undefined;
+      this._parent = this.parent ? this.parent.cid : undefined;
+      this._collection = this.collection ? this.collection.cid : undefined;
+
+      this.model = undefined;
+      this.parent = undefined;
+      this.collection = undefined;
 
       if (deep) this.unplugChildren(deep);
 
@@ -1165,15 +1169,15 @@
       if (_.isFunction(comparator)) {
         comparator = _.bind(comparator, this);
 
-        this.forEachChild(function (_child) {
-          child = comparator(_child) ? _child : null;
+        this.forEachChild(function (view) {
+          child = comparator(view) ? view : undefined;
           if (child) return false;
         });
 
         return child;
       }
 
-      return null;
+      return undefined;
     },
 
     getChildren: function (comparator) {
@@ -1208,8 +1212,6 @@
       this.forEachChild(function (child) {
         child.unplug(deep);
       });
-
-      this.children = {};
 
       return this;
     }
@@ -1391,9 +1393,13 @@
     constructor: function (options) {
       options = options || {};
 
+      this.renderOnReset = options.renderOnReset || this.renderOnReset || true;
+
       this.listIsSet = false;
       this.isFiltered = false;
       this.collectionIsRendered = false;
+
+      this._itemViews = {};
 
       this.itemView = options.itemView || this.itemView;
       if (this.itemView) this.setItemView(this.itemView);
@@ -1405,9 +1411,13 @@
 
     setCollection: function () {
       Zeppelin.View.prototype.setCollection.apply(this, arguments);
+
       this.listenTo(this.collection, 'add', this.onAdd);
       this.listenTo(this.collection, 'remove', this.onRemove);
-      this.listenTo(this.collection, 'reset', this.renderCollection);
+      if (this.renderOnReset) this.listenTo(this.collection, 'reset', this.renderCollection);
+
+      this.listenTo(this.collection, 'add', this._addItemView);
+      this.listenTo(this.collection, 'remove', this._removeItemView);
       return this;
     },
 
@@ -1446,22 +1456,49 @@
       return this;
     },
 
-    renderItem: function (model) {
-      var child = null;
+    _addItemView: function (model) {
+      var itemView;
 
-      if (model && model.cid) {
-        child = this.addChild(this.itemView, {
-          model: model
-        });
+      if (!model) return undefined;
+      itemView = this.getItemViewByModel(model);
+      if (itemView) return itemView;
 
-        if (child) {
-          child.render();
-          this.onRenderItem(child);
-          this.trigger('render:item', this, child);
-        }
+      itemView = this.addChild(this.itemView, {
+        model: model
+      });
+      if (itemView) this._itemViews[itemView.cid] = itemView;
+
+      return itemView;
+    },
+
+    _removeItemView: function (model) {
+      var itemView;
+
+      if (!model) return this;
+      itemView = this.getItemViewByModel(model);
+
+      if (itemView) {
+        itemView.unplug(true);
+        delete this.children[itemView.cid];
+        delete this._itemViews[itemView.cid];
       }
 
-      return child;
+      return this;
+    },
+
+    _renderItemView: function (itemView) {
+      if (!itemView) return undefined;
+      itemView.render();
+      this.onRenderItem(itemView);
+      this.trigger('render:item', this, itemView);
+      return itemView;
+    },
+
+    renderItem: function (model) {
+      var itemView = this.getItemViewByModel(model);
+
+      if (!itemView) itemView = this._addItemView(model);
+      return this._renderItemView(itemView);
     },
 
     onRenderItem: function (item) {
@@ -1484,7 +1521,7 @@
       if (this.listIsSet && this.collection.length) {
         fragment = document.createDocumentFragment();
 
-        this.unplugChildren(true);
+        this.removeItemViews();
 
         this.collection.each(function (item) {
           fragment.appendChild(this.renderItem(item).el);
@@ -1517,15 +1554,15 @@
       if (_.isFunction(comparator)) {
         comparator = _.bind(comparator, this);
 
-        this.forEachChild(function (child) {
-          $element = comparator(child) ? child.$el : null;
+        this.forEachItemView(function (child) {
+          $element = comparator(child) ? child.$el : undefined;
           if ($element) return false;
         });
 
         return $element;
       }
 
-      return null;
+      return undefined;
     },
 
     getItemElements: function (comparator) {
@@ -1534,7 +1571,7 @@
       if (_.isFunction(comparator)) {
         comparator = _.bind(comparator, this);
 
-        this.forEachChild(function (child) {
+        this.forEachItemView(function (child) {
           if (comparator(child)) $elements.push(child);
         });
       }
@@ -1551,11 +1588,16 @@
 
         if (this.listIsSet) {
           fragment = document.createDocumentFragment();
-          this.unplugChildren(true);
           filteredCollection.reset(filteredModels);
 
-          filteredCollection.each(function (item) {
-            fragment.appendChild(this.renderItem(item).el);
+          filteredCollection.each(function (model) {
+            var itemView = this.getItemViewByModel(model);
+
+            if (itemView) {
+              fragment.appendChild(this._renderItemView(itemView).el);
+            } else {
+              fragment.appendChild(this.renderItem(model).el);
+            }
           }, this);
 
           this.$list.html(fragment);
@@ -1567,6 +1609,69 @@
       }
 
       return this;
+    },
+
+    forEachItemView: function (callback) {
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (callback) _.forOwn(this._itemViews, _.bind(callback, this));
+      return this;
+    },
+
+    getItemView: function (comparator) {
+      var itemView;
+
+      if (_.isFunction(comparator)) {
+        comparator = _.bind(comparator, this);
+
+        this.forEachItemView(function (view) {
+          itemView = comparator(view) ? view : undefined;
+          if (itemView) return false;
+        });
+
+        return itemView;
+      }
+
+      return undefined;
+    },
+
+    getItemViewByModel: function (model) {
+      if (!model) return undefined;
+
+      return this.getItemView(function (itemView) {
+        if (model.isNew()) {
+          return itemView.model.cid === model.cid;
+        } else {
+          return itemView.model.get(itemView.model.idAttribute) === model.get(model.idAttribute);
+        }
+      });
+    },
+
+    unplugItemViews: function (itemViews) {
+      itemViews = itemViews || this._itemViews;
+
+      _.forOwn(itemViews, function (itemView, cid) {
+        itemView.unplug(true);
+      }, this);
+
+      return this;
+    },
+
+    removeItemViews: function (itemViews) {
+      itemViews = itemViews || this._itemViews;
+
+      _.forOwn(itemViews, function (itemView, cid) {
+        itemView.unplug(true);
+        delete this.children[cid];
+      }, this);
+
+      this._itemViews = {};
+
+      return this;
+    },
+
+    unplug: function () {
+      this.removeItemViews();
+      Zeppelin.View.prototype.unplug.apply(this, arguments);
     }
   });
 

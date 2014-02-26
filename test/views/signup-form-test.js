@@ -41,8 +41,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -58,8 +58,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -88,8 +88,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -110,8 +110,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -132,8 +132,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -165,8 +165,8 @@ describe('SignupForm', function() {
 
     after(function() {
       server.restore();
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -188,8 +188,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -211,8 +211,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -234,8 +234,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -265,8 +265,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -299,8 +299,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -342,8 +342,8 @@ describe('SignupForm', function() {
 
     after(function() {
       server.restore();
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -365,8 +365,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -388,8 +388,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -427,8 +427,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -451,8 +451,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -477,8 +477,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -565,8 +565,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -610,8 +610,8 @@ describe('SignupForm', function() {
 
     after(function() {
       server.restore();
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -633,8 +633,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -679,8 +679,8 @@ describe('SignupForm', function() {
 
     after(function() {
       server.restore();
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 
@@ -702,8 +702,8 @@ describe('SignupForm', function() {
     });
 
     after(function() {
-      signupForm.unplug(true);
       signupForm.model.unplug();
+      signupForm.unplug(true);
     });
   });
 });
