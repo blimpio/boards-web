@@ -14,7 +14,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   url: function() {
-    var url = APPLICATION_HTTP_URL + '/api/boards/';
+    var url = '/api/boards/';
     return this.isNew() ? url : url + this.id + '/';
   }
 });
