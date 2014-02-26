@@ -38,6 +38,11 @@ module.exports = Zeppelin.Collection.extend({
     return this.account(this.current);
   },
 
+  getSlug: function() {
+    var account = this.get(this.current);
+    return account ? account.get('slug') : '';
+  },
+
   onUserSignin: function(user) {
     if (user.accounts && user.accounts.length) this.reset(user.accounts);
     return this;

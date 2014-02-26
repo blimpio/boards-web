@@ -13,6 +13,7 @@ module.exports = Zeppelin.Router.extend({
   },
 
   subscriptions: {
+    'board:selected': 'onBoardSelected',
     'router:navigate': 'navigateWithTrigger'
   },
 
@@ -124,5 +125,9 @@ module.exports = Zeppelin.Router.extend({
   account: function(slug) {
     App.Accounts.setCurrent(slug);
     this.controller = _.createController('account');
+  },
+
+  onBoardSelected: function(board) {
+    this.navigate(App.Accounts.getSlug() + '/' + board.get('slug'));
   }
 });

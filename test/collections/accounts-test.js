@@ -206,6 +206,38 @@ describe('AccountsCollection', function() {
     });
   });
 
+  describe('getSlug()', function() {
+    var accountsCollection;
+
+    before(function() {
+      accountsCollection = new AccountsCollection([{
+        id: 1,
+        name: 'ACME Inc',
+        slug: 'acme-inc',
+        image_url: ''
+      }, {
+        id: 4,
+        name: 'Blimp LLC',
+        slug: 'blimp',
+        image_url: ''
+      }]);
+    });
+
+    it('should return the slug of the current account.', function() {
+      accountsCollection.current = 4;
+      expect(accountsCollection.getSlug()).to.equal('blimp');
+    });
+
+    it('should return an empty string if there is no current account.', function() {
+      accountsCollection.current = undefined;
+      expect(accountsCollection.getSlug()).to.equal('');
+    });
+
+    after(function() {
+      accountsCollection.reset();
+    });
+  });
+
   describe('onUserSignin()', function() {
     var accountsCollection;
 

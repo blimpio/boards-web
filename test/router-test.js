@@ -404,4 +404,36 @@ describe('Router', function() {
       server.restore();
     });
   });
+
+  describe('onBoardSelected()', function() {
+    var router;
+
+    before(function() {
+      router = new Router();
+      App.Accounts.reset([{
+        id: 4,
+        name: 'Blimp LLC',
+        slug: 'blimp',
+        image_url: ''
+      }], {silent: true});
+
+      App.Accounts.current = 4;
+    });
+
+    it('should navigate to the board url given a board model.', function() {
+      router.onBoardSelected(_.createModel('board', {
+        id: 12,
+        name: 'Design',
+        slug: 'design',
+        account: 4
+      }));
+
+      expect(router.getFragment()).to.equal('blimp/design');
+    });
+
+    after(function() {
+      App.Accounts.reset([], {silent: true});
+      App.Accounts.current = undefined;
+    });
+  });
 });
