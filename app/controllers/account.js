@@ -24,7 +24,7 @@ module.exports = Zeppelin.View.extend({
 
     if (currentBoard && App.Boards.get(currentBoard)) {
       this.publish('board:selected', App.Boards.get(currentBoard));
-    } else if (App.Boards.at(0)) {
+    } else if (App.Boards.length) {
       this.publish('board:selected', App.Boards.at(0));
     } else {
       return this;
