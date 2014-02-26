@@ -20,9 +20,9 @@ gulp.task('test', ['build_tests'], function() {
     if (stdout) {
       console.log(stdout);
     } else if (stderr) {
-      console.log(stderr);
+      console.error(stderr);
     } else if (error) {
-      console.log(error);
+      console.error(error);
     }
   });
 });
