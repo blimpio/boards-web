@@ -48,7 +48,7 @@ module.exports = Zeppelin.Model.extend({
   requestSignup: function(email) {
     email = JSON.stringify({email: email || this.get('email')});
 
-    $.post(APPLICATION_HTTP_URL + '/api/auth/signup_request/', email)
+    $.post('/api/auth/signup_request/', email)
       .done(this.onRequestSignupSuccess.bind(this))
       .fail(this.onRequestSignupError.bind(this));
 
@@ -98,7 +98,7 @@ module.exports = Zeppelin.Model.extend({
     if (!domains) {
       this.onValidateSignupEmailDomainError({signup_domains: ['Provide a valid domain name.']});
     } else {
-      $.post(APPLICATION_HTTP_URL + '/api/auth/signup_domains/validate/', domains)
+      $.post('/api/auth/signup_domains/validate/', domains)
         .done(this.onValidateSignupEmailDomainSuccess.bind(this))
         .fail(this.onValidateSignupEmailDomainError.bind(this));
     }
@@ -126,7 +126,7 @@ module.exports = Zeppelin.Model.extend({
   validateUsername: function(username) {
     username = JSON.stringify({username: username || this.get('username')});
 
-    $.post(APPLICATION_HTTP_URL + '/api/auth/username/validate/', username)
+    $.post('/api/auth/username/validate/', username)
       .done(this.onValidateUsernameSuccess.bind(this))
       .fail(this.onValidateUsernameError.bind(this));
 
@@ -149,7 +149,7 @@ module.exports = Zeppelin.Model.extend({
   signup: function(credentials) {
     credentials = JSON.stringify(credentials || this.toJSON());
 
-    $.post(APPLICATION_HTTP_URL + '/api/auth/signup/', credentials)
+    $.post('/api/auth/signup/', credentials)
       .done(this.onSignupSuccess.bind(this))
       .fail(this.onSignupError.bind(this));
 
@@ -193,7 +193,7 @@ module.exports = Zeppelin.Model.extend({
 
     credentials = JSON.stringify(credentials);
 
-    $.post(APPLICATION_HTTP_URL + '/api/auth/signin/', credentials)
+    $.post('/api/auth/signin/', credentials)
       .done(this.onSigninSuccess.bind(this))
       .fail(this.onSigninError.bind(this));
 
@@ -233,7 +233,7 @@ module.exports = Zeppelin.Model.extend({
   forgotPassword: function(email) {
     email = JSON.stringify({email: email || this.get('email')});
 
-    $.post(APPLICATION_HTTP_URL + '/api/auth/forgot_password/', email)
+    $.post('/api/auth/forgot_password/', email)
       .done(this.onForgotPasswordSuccess.bind(this))
       .fail(this.onForgotPasswordError.bind(this));
 
@@ -293,7 +293,7 @@ module.exports = Zeppelin.Model.extend({
     });
 
     if (this.canResetPassword()) {
-      $.post(APPLICATION_HTTP_URL + '/api/auth/reset_password/', data)
+      $.post('/api/auth/reset_password/', data)
         .done(this.onResetPasswordSuccess.bind(this))
         .fail(this.onResetPasswordError.bind(this));
     } else {

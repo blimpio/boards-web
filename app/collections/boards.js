@@ -1,5 +1,5 @@
 module.exports = Zeppelin.Collection.extend({
-  url: APPLICATION_HTTP_URL + '/api/boards/',
+  url: '/api/boards/',
 
   name: 'Boards',
 
