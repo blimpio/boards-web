@@ -14,5 +14,5 @@ module.exports = (function() {
   App.Accounts = _.createCollection('accounts');
 
   App.User.signinFromCache();
-  App.Router.start();
+  App.Router.start({pushState: true});
 })();
