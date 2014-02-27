@@ -23,10 +23,10 @@ build:
         name: run bower install
         code: bower install
 
-    # A step that runs the test suite using the `gulp test:prod` command
+    # A step that runs the test suite using the `gulp test:dev` command
     - script:
-        name: run gulp test:prod
-        code: gulp test:prod
+        name: run gulp test:dev
+        code: gulp test:dev
 
   after-steps:
     - hipchat-notify:
