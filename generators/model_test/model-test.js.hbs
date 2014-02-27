@@ -1,11 +1,19 @@
 describe('{{#camelize}}{{name}}{{/camelize}}Model', function() {
-  var {{#camelize}}{{name}}{{/camelize}}Model = require 'models/{{name}}';
+  var {{#camelize}}{{name}}{{/camelize}}Model = require('model/{{name}}');
 
-  beforeEach(function() {
-    this.model = new {{#camelize}}{{name}}{{/camelize}}Model();
+  describe('when instantiated.', function() {
+    var {{name}}Model;
+
+    before(function() {
+      {{name}}Model = new {{#camelize}}{{name}}{{/camelize}}Model();
+    });
 
     it('should exist.', function() {
-      expect(this.model).to.be.ok;
+      expect({{name}}Model).to.exist;
+    });
+
+    after(function() {
+      {{name}}Model.unplug();
     });
   });
 });

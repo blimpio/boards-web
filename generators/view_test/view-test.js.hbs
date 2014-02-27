@@ -1,12 +1,19 @@
 describe('{{#camelize}}{{name}}{{/camelize}}View', function() {
   var {{#camelize}}{{name}}{{/camelize}}View = require('views/{{name}}');
 
-  beforeEach(function() {
-    this.view = new {{#camelize}}{{name}}{{/camelize}}View();
-  });
+  describe('when instantiated.', function() {
+    var {{name}}View;
 
+    before(function() {
+      {{name}}View = new {{#camelize}}{{name}}{{/camelize}}View();
+    });
 
-  it('should exist.', function() {
-    expect(this.view).to.exist;
+    it('should exist.', function() {
+      expect({{name}}View).to.exist;
+    });
+
+    after(function() {
+      {{name}}View.unplug();
+    });
   });
 });
