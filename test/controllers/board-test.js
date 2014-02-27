@@ -127,7 +127,6 @@ describe('BoardController', function() {
     after(function() {
       App.Cache.clear({silent: true}).destroyCache();
       App.Boards.reset([], {silent: true});
-      App.Cache.clear({silent: true});
       boardController.unplug(true);
       BoardController.prototype.publish.restore();
     });
