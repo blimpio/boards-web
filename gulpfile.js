@@ -1,28 +1,40 @@
-var exec = require('child_process').exec,
+var gulp = require('gulp'),
+    karma = require('gulp-karma'),
+    brunch = require('brunch');
 
-    gulp = require('gulp'),
-    size = require('gulp-size'),
-    concat = require('gulp-concat')
-
-gulp.task('build_tests', function() {
-  return gulp.src('./test/**/!(tests)**.js')
-    .pipe(concat('tests.js'))
-    .pipe(size())
-    .pipe(gulp.dest('./test'))
+gulp.task('build:dev', function(cb) {
+  brunch.build({}, function() {
+    cb();
+  });
 });
 
-gulp.task('test', ['build_tests'], function() {
-  var path = './node_modules/mocha-phantomjs/bin/mocha-phantomjs',
-      options = '-s loadImages=false -s webSecurityEnabled=false',
-      command = '/test/index.html';
-
-  exec(path + ' ' + options + ' ' + command, function (error, stdout, stderr) {
-    if (stdout) {
-      console.log(stdout);
-    } else if (stderr) {
-      console.error(stderr);
-    } else if (error) {
-      console.error(error);
-    }
+gulp.task('build:prod', function(cb) {
+  brunch.build({production: true}, function() {
+    cb();
   });
+});
+
+gulp.task('test:dev', ['build:dev'], function() {
+  return gulp.src([
+    'public/css/app.css',
+    'public/js/app.js',
+    'test/enviroment.js',
+    'test/**/*-test.js'
+  ]).pipe(karma({
+    action: 'run',
+    configFile: 'karma.conf.coffee'
+  }));
+});
+
+gulp.task('test:prod', ['build:prod'], function() {
+  return gulp.src([
+    'public/css/app.css',
+    'public/js/app.js',
+    'test/enviroment.js',
+    'test/**/*-test.js'
+  ]).pipe(karma({
+    action: 'run',
+    browsers: ['Chrome', 'Safari', 'Firefox'],
+    configFile: 'karma.conf.coffee'
+  }));
 });
