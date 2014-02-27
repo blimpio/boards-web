@@ -27,7 +27,6 @@ module.exports = Zeppelin.View.extend({
     if (board) {
       this.publish('board:selected', board);
     } else {
-      alert('Board doens\'t exist.');
       return this;
     }
 
