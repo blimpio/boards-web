@@ -23,15 +23,10 @@ build:
         name: run bower install
         code: bower install
 
-    # A step that executes `brunch build` command
+    # A step that runs the test suite using the `gulp test:prod` command
     - script:
-        name: run brunch build
-        code: brunch build
-
-    # A step that runs the test suite using the `gulp test` command
-    - script:
-        name: run gulp test
-        code: gulp test
+        name: run gulp test:prod
+        code: gulp test:prod
 
   after-steps:
     - hipchat-notify:
