@@ -5,7 +5,15 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function(options) {
     this.boardSlug = options ? options.boardSlug : '';
-    App.Boards.fetch({reset: true}).done(_.bind(this.onBoardsSync, this));
+
+    App.Boards.fetch({
+      data: {
+        account: App.Cache.get('current_account')
+      },
+
+      reset: true
+    }).done(_.bind(this.onBoardsSync, this));
+
     this.insert('#application').initChildren();
     return this;
   },
