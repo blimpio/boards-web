@@ -2,18 +2,18 @@ describe('{{#camelize}}{{name}}{{/camelize}}View', function() {
   var {{#camelize}}{{name}}{{/camelize}}View = require('views/{{name}}');
 
   describe('when instantiated.', function() {
-    var {{name}}View;
+    var {{camelizeDashed name}}View;
 
     before(function() {
-      {{name}}View = new {{#camelize}}{{name}}{{/camelize}}View();
+      {{camelizeDashed name}}View = new {{#camelize}}{{name}}{{/camelize}}View();
     });
 
     it('should exist.', function() {
-      expect({{name}}View).to.exist;
+      expect({{camelizeDashed name}}View).to.exist;
     });
 
     after(function() {
-      {{name}}View.unplug();
+      {{camelizeDashed name}}View.unplug();
     });
   });
 });

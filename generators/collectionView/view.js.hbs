@@ -1,4 +1,6 @@
 module.exports = Zeppelin.CollectionView.extend({
+  name: '{{#camelize}}{{name}}{{/camelize}}',
+
   el: '.{{pluralName}}',
 
   collection: require('collections/{{pluralName}}')

@@ -52,6 +52,8 @@ Generators
         → test/models/name-test.js
 
     scaffolt collection <name>
+        → app/models/name.js
+        → test/models/name-test.js
         → app/collections/name.js
         → test/collections/name-test.js
 
