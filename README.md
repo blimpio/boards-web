@@ -62,3 +62,17 @@ Generators
 
     scaffolt template <name>
         → app/views/templates/name.hbs
+
+Deploying to s3
+---------------
+
+    $ gulp deploy
+
+*To deploy static files to s3 you need to have an aws-config.coffee file in your root*
+
+    # aws-config.coffee example:
+
+    module.exports =
+        key: 'S3_KEY'
+        secret: 'S3_SECRET'
+        bucket: 'S3_BUCKET'

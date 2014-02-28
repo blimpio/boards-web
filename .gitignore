@@ -47,3 +47,6 @@ bower_components/
 
 # Compiled test files.
 test/tests.js
+
+# AWS Configration file.
+aws-config.coffee

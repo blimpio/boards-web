@@ -1,4 +1,6 @@
-var gulp = require('gulp'),
+var s3 = require('gulp-s3'),
+    git = require('git-rev'),
+    gulp = require('gulp'),
     karma = require('gulp-karma'),
     brunch = require('brunch');
 
@@ -37,4 +39,23 @@ gulp.task('test:prod', ['build:prod'], function() {
     browsers: ['Chrome', 'Safari', 'Firefox'],
     configFile: 'karma.conf.coffee'
   }));
+});
+
+gulp.task('deploy', ['build:prod'], function(cb) {
+  var aws = require('./aws-config'),
+      options = {};
+
+  git.short(function (hash) {
+    options.uploadPath = '/' + hash + '/';
+
+    gulp.src([
+      'public/js/*',
+      'public/css/*',
+      'public/images/*'
+    ], {read: false})
+    .pipe(s3(aws, options))
+    .on('end', function() {
+      cb();
+    });
+  });
 });
