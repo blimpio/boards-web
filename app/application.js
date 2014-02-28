@@ -4,7 +4,7 @@ module.exports = (function() {
   require('lib/config');
   require('lib/helpers');
 
-  window.App = {};
+  window.App = window.App || {};
 
   App.Router = new Router();
 
