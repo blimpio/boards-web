@@ -4,10 +4,8 @@ var Q = require('q'),
     gulp = require('gulp'),
     karma = require('gulp-karma'),
     brunch = require('brunch'),
-    coffee = require('coffee-script'),
     imagemin = require('gulp-imagemin'),
-
-    aws = require('./aws-config');
+    runSequence = require('run-sequence');
 
 gulp.task('build:dev', function() {
   var deferred = Q.defer();
@@ -55,7 +53,8 @@ gulp.task('test:prod', ['build:prod'], function() {
 });
 
 gulp.task('deploy:js', function() {
-  var deferred = Q.defer();
+  var aws = require('./aws-config'),
+      deferred = Q.defer();
 
   git.short(function (hash) {
     gulp.src([
@@ -72,7 +71,8 @@ gulp.task('deploy:js', function() {
 
 
 gulp.task('deploy:css', function() {
-  var deferred = Q.defer();
+  var aws = require('./aws-config'),
+      deferred = Q.defer();
 
   git.short(function (hash) {
     gulp.src([
@@ -88,7 +88,8 @@ gulp.task('deploy:css', function() {
 });
 
 gulp.task('deploy:images', function() {
-  var deferred = Q.defer();
+  var aws = require('./aws-config'),
+      deferred = Q.defer();
 
   git.short(function (hash) {
     gulp.src([
@@ -104,4 +105,6 @@ gulp.task('deploy:images', function() {
   return deferred.promise;
 });
 
-gulp.task('deploy', ['build:prod', 'deploy:js', 'deploy:css', 'deploy:images']);
+gulp.task('deploy', function(cb) {
+  runSequence('build:prod', 'deploy:js', 'deploy:css', 'deploy:images', cb);
+});
