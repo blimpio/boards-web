@@ -1,14 +1,14 @@
 describe('ResetPasswordController', function() {
   var ResetPasswordController = require('controllers/reset-password');
 
-  after(function() {
+  afterEach(function() {
     $('#application').empty();
   });
 
   describe('when instantiated.', function() {
     var resetPasswordController;
 
-    before(function() {
+    beforeEach(function() {
       resetPasswordController = new ResetPasswordController()
     });
 
@@ -25,7 +25,7 @@ describe('ResetPasswordController', function() {
       expect(resetPasswordController.template).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       resetPasswordController.unplug(true);
     });
   });
@@ -33,7 +33,7 @@ describe('ResetPasswordController', function() {
   describe('validateToken()', function() {
     var resetPasswordController;
 
-    before(function() {
+    beforeEach(function() {
       resetPasswordController = new ResetPasswordController()
     });
 
@@ -44,7 +44,7 @@ describe('ResetPasswordController', function() {
       expect(resetPasswordController.isInserted).to.be.true;
     });
 
-    after(function() {
+    afterEach(function() {
       resetPasswordController.unplug(true);
     });
   });
@@ -52,7 +52,7 @@ describe('ResetPasswordController', function() {
   describe('initChildren()', function() {
     var resetPasswordController;
 
-    before(function() {
+    beforeEach(function() {
       resetPasswordController = new ResetPasswordController()
     });
 
@@ -61,7 +61,7 @@ describe('ResetPasswordController', function() {
       expect(resetPasswordController.children.form).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       resetPasswordController.unplug(true);
     });
   });

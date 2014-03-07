@@ -1,14 +1,14 @@
 describe('ForgotPasswordController', function() {
   var ForgotPasswordController = require('controllers/forgot-password');
 
-  after(function() {
+  afterEach(function() {
     $('#application').empty();
   });
 
   describe('when instantiated.', function() {
     var forgotPasswordController;
 
-    before(function() {
+    beforeEach(function() {
       forgotPasswordController = new ForgotPasswordController();
     });
 
@@ -34,7 +34,7 @@ describe('ForgotPasswordController', function() {
       expect(forgotPasswordController.children.form).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       forgotPasswordController.unplug(true);
     });
   });
@@ -42,7 +42,7 @@ describe('ForgotPasswordController', function() {
   describe('initChildren()', function() {
     var forgotPasswordController;
 
-    before(function() {
+    beforeEach(function() {
       forgotPasswordController = new ForgotPasswordController();
     });
 
@@ -51,7 +51,7 @@ describe('ForgotPasswordController', function() {
       expect(forgotPasswordController.children.form).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       forgotPasswordController.unplug(true);
     });
   });

@@ -1,14 +1,14 @@
 describe('AccountsController', function() {
   var AccountsController = require('controllers/accounts');
 
-  after(function() {
+  afterEach(function() {
     $('#application').empty();
   });
 
   describe('when instantiated.', function() {
     var accountsController;
 
-    before(function() {
+    beforeEach(function() {
       accountsController = new AccountsController();
     });
 
@@ -34,7 +34,7 @@ describe('AccountsController', function() {
       expect(accountsController.children.accounts).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       accountsController.unplug(true);
     });
   });
@@ -42,7 +42,7 @@ describe('AccountsController', function() {
   describe('initChildren()', function() {
     var accountsController;
 
-    before(function() {
+    beforeEach(function() {
       accountsController = new AccountsController();
     });
 
@@ -52,7 +52,7 @@ describe('AccountsController', function() {
       expect(accountsController.children.accounts.$el.find('li')).to.not.be.empty;
     });
 
-    after(function() {
+    afterEach(function() {
       accountsController.unplug(true);
     });
   });

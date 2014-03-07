@@ -1,14 +1,14 @@
 describe('SignupController', function() {
   var SignupController = require('controllers/signup');
 
-  after(function() {
+  afterEach(function() {
     $('#application').empty();
   });
 
   describe('when instantiated.', function() {
     var signupController;
 
-    before(function() {
+    beforeEach(function() {
       signupController = new SignupController();
     });
 
@@ -25,7 +25,7 @@ describe('SignupController', function() {
       expect(signupController.children.form).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       signupController.unplug(true);
     });
   });
@@ -33,7 +33,7 @@ describe('SignupController', function() {
   describe('initChildren()', function() {
     var signupController;
 
-    before(function() {
+    beforeEach(function() {
       signupController = new SignupController();
     });
 
@@ -43,7 +43,7 @@ describe('SignupController', function() {
       expect(signupController.children.form.isRendered).to.be.true;
     });
 
-    after(function() {
+    afterEach(function() {
       signupController.unplug(true);
     });
   });
@@ -51,7 +51,7 @@ describe('SignupController', function() {
   describe('continueWithToken()', function() {
     var signupController;
 
-    before(function() {
+    beforeEach(function() {
       signupController = new SignupController();
     });
 
@@ -63,7 +63,7 @@ describe('SignupController', function() {
       expect(App.User.get('signup_request_token')).to.equal(JWT_SIGNUP_TOKEN);
     });
 
-    after(function() {
+    afterEach(function() {
       signupController.unplug(true);
     });
   });

@@ -1,14 +1,14 @@
 describe('SigninController', function() {
   var SigninController = require('controllers/signin');
 
-  after(function() {
+  afterEach(function() {
     $('#application').empty();
   });
 
   describe('when instantiated.', function() {
     var signinController;
 
-    before(function() {
+    beforeEach(function() {
       signinController = new SigninController()
     });
 
@@ -34,7 +34,7 @@ describe('SigninController', function() {
       expect(signinController.children.form).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       signinController.unplug(true);
     });
   });
@@ -42,7 +42,7 @@ describe('SigninController', function() {
   describe('initChildren()', function() {
     var signinController;
 
-    before(function() {
+    beforeEach(function() {
       signinController = new SigninController()
     });
 
@@ -52,7 +52,7 @@ describe('SigninController', function() {
       expect(signinController.children.form.isRendered).to.be.true;
     });
 
-    after(function() {
+    afterEach(function() {
       signinController.unplug(true);
     });
   });
