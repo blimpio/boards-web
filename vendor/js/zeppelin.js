@@ -677,10 +677,13 @@
   _.extend(Zeppelin.Collection.prototype, Zeppelin.Events);
 
   var reservedElementNames = ['el', 'container', 'form', 'list'];
+  var nonExtendableProperties = ['events', 'elements', 'bindings', 'children', 'subscriptions'];
 
   Zeppelin.View = Backbone.View.extend({
     constructor: function (options) {
       options = options || {};
+
+      _.extend(this, _.omit(options, nonExtendableProperties));
 
       this.name = options.name || this.name || _.uniqueId('V');
 
@@ -883,7 +886,7 @@
         if (_binding.other.cid === this.cid) {
           this.off(_binding.eventName);
         } else {
-          this.stopListening(_binding.other, _binding.eventName);
+          if (_.isPlainObject(_binding.other)) this.stopListening(_binding.other, _binding.eventName);
         }
       }
 
@@ -980,6 +983,7 @@
       if (!model) return this;
       if (_.isFunction(model)) model = new model();
       this.model = model;
+      this.model._view = this.cid;
       if (bind) this.registerBindings(this._getModelBindings());
 
       return this;
@@ -992,6 +996,7 @@
       if (!collection) return this;
       if (_.isFunction(collection)) collection = new collection();
       this.collection = collection;
+      this.collection._view = this.cid;
       if (bind) this.registerBindings(this._getCollectionBindings());
 
       return this;
@@ -1100,13 +1105,22 @@
       this.unregisterElements();
       this.unregisterBindings();
 
-      this._model = this.model ? this.model.cid : undefined;
-      this._parent = this.parent ? this.parent.cid : undefined;
-      this._collection = this.collection ? this.collection.cid : undefined;
+      if (this.model) {
+        this._model = this.model.cid;
+        delete this.model._view;
+        delete this.model;
+      }
 
-      this.model = undefined;
-      this.parent = undefined;
-      this.collection = undefined;
+      if (this.collection) {
+        this._collection = this.collection.cid;
+        delete this.collection._view;
+        delete this.collection;
+      }
+
+      if (this.parent) {
+        this._parent = this.parent;
+        delete this.parent;
+      }
 
       if (deep) this.unplugChildren(deep);
 
@@ -1393,7 +1407,7 @@
     constructor: function (options) {
       options = options || {};
 
-      this.renderOnReset = options.renderOnReset || this.renderOnReset || true;
+      this.renderOnReset = options.renderOnReset || this.renderOnReset || false;
 
       this.listIsSet = false;
       this.isFiltered = false;
@@ -1543,7 +1557,7 @@
 
     render: function () {
       Zeppelin.View.prototype.render.apply(this, arguments);
-      if (!this.listIsSet) this.setList();
+      this.setList();
       this.renderCollection();
       return this;
     },
@@ -1590,14 +1604,10 @@
           fragment = document.createDocumentFragment();
           filteredCollection.reset(filteredModels);
 
-          filteredCollection.each(function (model) {
-            var itemView = this.getItemViewByModel(model);
+          this.removeItemViews();
 
-            if (itemView) {
-              fragment.appendChild(this._renderItemView(itemView).el);
-            } else {
-              fragment.appendChild(this.renderItem(model).el);
-            }
+          filteredCollection.each(function (item) {
+            fragment.appendChild(this.renderItem(item).el);
           }, this);
 
           this.$list.html(fragment);
@@ -1638,10 +1648,12 @@
       if (!model) return undefined;
 
       return this.getItemView(function (itemView) {
-        if (model.isNew()) {
-          return itemView.model.cid === model.cid;
-        } else {
-          return itemView.model.get(itemView.model.idAttribute) === model.get(model.idAttribute);
+        if (itemView.model && itemView.model.cid) {
+          if (model.isNew() || !itemView.model.id) {
+            return itemView.model.cid === model.cid;
+          } else {
+            return itemView.model.get(itemView.model.idAttribute) === model.get(model.idAttribute);
+          }
         }
       });
     },
