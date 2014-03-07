@@ -52,23 +52,19 @@ describe('AccountController', function() {
     });
   });
 
-  describe('initChildren()', function() {
+  describe('setDocumentTitle()', function() {
     var accountController;
 
-    before(function() {
+    beforeEach(function() {
       accountController = new AccountController();
     });
 
-    it('should init and render child views.', function() {
-      accountController.initChildren();
-      expect(accountController.children.header).to.exist;
-      expect(accountController.children.header.isRendered).to.be.true;
-      expect(accountController.children.sidebar).to.exist;
-      expect(accountController.children.sidebar.isRendered).to.be.true;
-      expect(accountController.children.boardHeader).to.exist;
+    it('should set the document title.', function() {
+      accountController.setDocumentTitle();
+      expect(document.title).to.equal('Blimp | ACME Inc');
     });
 
-    after(function() {
+    afterEach(function() {
       accountController.unplug(true);
     });
   });

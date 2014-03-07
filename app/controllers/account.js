@@ -4,9 +4,9 @@ module.exports = Zeppelin.View.extend({
   template: require('templates/account-main'),
 
   initialize: function() {
-    document.title = 'Blimp | Boards';
     _.bindAll(this, 'onBoardsSync');
 
+    this.setDocumentTitle();
     this.insert('#application').initChildren();
     this.fetchBoards();
 
@@ -17,6 +17,10 @@ module.exports = Zeppelin.View.extend({
     this.addChild(_.createView('header'), 'header').render();
     this.addChild(_.createView('boards-sidebar'), 'sidebar').render();
     this.addChild(_.createView('board-header-form'), 'boardHeader');
+  setDocumentTitle: function() {
+    var account = App.Accounts.getCurrent();
+
+    if (account) document.title = 'Blimp | ' + account.get('name');
     return this;
   },
 
