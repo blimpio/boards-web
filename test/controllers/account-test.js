@@ -73,68 +73,51 @@ describe('AccountController', function() {
     });
   });
 
-  describe('onBoardsSync()', function() {
-    var accountController, publishSpy;
+  describe('fetchBoards()', function() {
+    var accountController, onBoardsSyncSpy;
 
-    before(function() {
-      publishSpy = sinon.spy(AccountController.prototype, 'publish');
+    beforeEach(function() {
+      App.Boards.reset([{
+        account: 1,
+        created_by: 2,
+        date_created: '2014-02-24T21:21:54.134Z',
+        date_modified: '2014-02-24T21:39:39.283Z',
+        id: 2,
+        is_shared: false,
+        name: 'Designs_',
+        slug: 'designs-1',
+        thumbnail_lg_path: '',
+        thumbnail_md_path: '',
+        thumbnail_sm_path: ''
+      }, {
+        account: 1,
+        created_by: 2,
+        date_created: '2014-02-24T21:19:43.334Z',
+        date_modified: '2014-02-24T21:21:12.674Z',
+        id: 1,
+        is_shared: false,
+        name: 'Inspiration',
+        slug: 'designs',
+        thumbnail_lg_path: '',
+        thumbnail_md_path: '',
+        thumbnail_sm_path: ''
+      }], {silent: true});
+
+      onBoardsSyncSpy = sinon.spy(AccountController.prototype, 'onBoardsSync');
       accountController = new AccountController();
     });
 
-    it('should publish a board:selected event if there is a board selected from cache.', function() {
-      App.Boards.reset([{
-        account: 1,
-        created_by: 2,
-        date_created: '2014-02-24T21:21:54.134Z',
-        date_modified: '2014-02-24T21:39:39.283Z',
-        id: 2,
-        is_shared: false,
-        name: 'Designs_',
-        slug: 'designs-1',
-        thumbnail_lg_path: '',
-        thumbnail_md_path: '',
-        thumbnail_sm_path: ''
-      }], {silent: true});
-
-      App.Cache.set('current_board', 2).saveCache();
-
-      accountController.onBoardsSync();
-      expect(publishSpy).to.have.been.calledWith('board:selected', App.Boards.at(0));
+    it('should immediately call onBoardsSync if the collection has boards.', function() {
+      accountController.fetchBoards();
+      expect(onBoardsSyncSpy).to.have.been.called;
     });
 
-    it('should publish a board:selected event if is at least one board available.', function() {
-      App.Boards.reset([{
-        account: 1,
-        created_by: 2,
-        date_created: '2014-02-24T21:21:54.134Z',
-        date_modified: '2014-02-24T21:39:39.283Z',
-        id: 2,
-        is_shared: false,
-        name: 'Designs_',
-        slug: 'designs-1',
-        thumbnail_lg_path: '',
-        thumbnail_md_path: '',
-        thumbnail_sm_path: ''
-      }], {silent: true});
-
-      accountController.onBoardsSync();
-      expect(publishSpy).to.have.been.calledWith('board:selected', App.Boards.at(0));
+    afterEach(function() {
+      accountController.unplug(true);
+      App.Boards.reset([], {silent: true});
+      AccountController.prototype.onBoardsSync.restore();
     });
-
-    it('should render the board header with the current board model.', function() {
-      App.Boards.reset([{
-        account: 1,
-        created_by: 2,
-        date_created: '2014-02-24T21:21:54.134Z',
-        date_modified: '2014-02-24T21:39:39.283Z',
-        id: 2,
-        is_shared: false,
-        name: 'Designs_',
-        slug: 'designs-1',
-        thumbnail_lg_path: '',
-        thumbnail_md_path: '',
-        thumbnail_sm_path: ''
-      }], {silent: true});
+  });
 
       accountController.onBoardsSync();
       expect(accountController.children.boardHeader.isRendered).to.be.true;

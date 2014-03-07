@@ -5,9 +5,10 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function() {
     document.title = 'Blimp | Boards';
+    _.bindAll(this, 'onBoardsSync');
 
-    App.Boards.fetch({reset: true}).done(_.bind(this.onBoardsSync, this));
     this.insert('#application').initChildren();
+    this.fetchBoards();
 
     return this;
   },
@@ -19,20 +20,21 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  onBoardsSync: function(boards) {
-    var currentBoard = App.Cache.get('current_board') || App.Boards.currentBoard();
+  fetchBoards: function() {
+    if (App.Boards.isEmpty()) {
+      App.Boards.fetch({
+        data: {
+          account: App.Cache.get('current_account')
+        },
 
-    if (currentBoard && App.Boards.get(currentBoard)) {
-      this.publish('board:selected', App.Boards.get(currentBoard));
-    } else if (App.Boards.length) {
-      this.publish('board:selected', App.Boards.at(0));
+        reset: true
+      }).done(this.onBoardsSync);
     } else {
-      return this;
+      this.onBoardsSync();
     }
 
-    this.children.boardHeader
-      .setModel(App.Boards.currentBoard(), true)
-      .render();
+    return this;
+  },
 
     return this;
   }
