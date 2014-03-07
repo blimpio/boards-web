@@ -37,10 +37,10 @@ _.mixin({'decodeJWT': function(token) {
   return JSON.parse(atob(token));
 }});
 
-$(document).on('click', '[data-route]', function(event) {
+$(document).on('click', '[data-route=true]', function(event) {
   if (!event.metaKey) {
     event.preventDefault();
-    Backbone.Events.trigger('router:navigate', $(this).data('route'));
+    Backbone.Events.trigger('router:navigate', $(this).attr('href'));
   }
 });
 

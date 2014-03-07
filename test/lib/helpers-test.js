@@ -41,19 +41,21 @@ describe('Helpers', function() {
   });
 
   describe('a[data-route]', function() {
-    var eventsSpy;
+    var navigateSpy;
 
     before(function() {
-      eventsSpy = sinon.spy(Backbone.Events, 'trigger');
+      $('#application').html('<a id="navigate" href="/signin/" data-route="true">Navigate</a>');
+      navigateSpy = sinon.spy(Backbone.history, 'navigate');
     });
 
     it('should trigger a route change on click.', function() {
-      $('<a id="route" href="signin" data-route="signin">Navigate</a>').click();
-      expect(true).to.be.true;
+      $('#navigate').click();
+      expect(navigateSpy).to.have.been.calledWith('/signin/', {trigger: true});
     });
 
     after(function() {
-      Backbone.Events.trigger.restore();
+      $('#application').empty();
+      Backbone.history.navigate.restore();
     });
   });
 
