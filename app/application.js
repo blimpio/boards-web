@@ -10,6 +10,7 @@ module.exports = (function() {
 
   App.User = _.createModel('user');
   App.Cache = _.createModel('app');
+  App.Cards = _.createCollection('cards');
   App.Boards = _.createCollection('boards');
   App.Accounts = _.createCollection('accounts');
 
