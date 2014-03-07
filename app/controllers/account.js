@@ -1,7 +1,7 @@
 module.exports = Zeppelin.View.extend({
   name: 'AccountController',
 
-  template: require('templates/account'),
+  template: require('templates/account-main'),
 
   initialize: function() {
     document.title = 'Blimp | Boards';

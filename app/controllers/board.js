@@ -1,7 +1,7 @@
 module.exports = Zeppelin.View.extend({
   name: 'BoardController',
 
-  template: require('templates/account'),
+  template: require('templates/account-main'),
 
   initialize: function(options) {
     this.boardSlug = options ? options.boardSlug : '';
