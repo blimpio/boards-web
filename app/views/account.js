@@ -1,9 +1,9 @@
 module.exports = Zeppelin.View.extend({
-  name: 'AccountsListItem',
+  name: 'Account',
 
   tagName: 'li',
 
   className: 'accounts__account',
 
-  template: require('templates/accounts-list-item')
+  template: require('templates/account')
 });

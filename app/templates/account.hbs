@@ -1,7 +1,6 @@
-<div class="header"></div>
-<div class="boards">
-  <div class="boards__sidebar"></div>
-  <div class="boards__content">
-    <div class="boards__header"></div>
-  </div> {{! .boards__content }}
-</div> {{! .boards }}
+{{#with serialize}}
+  <a class="accounts__account-link" href="{{url}}" data-route="{{url}}">
+    <img class="accounts__account-image" src="{{image}}">
+    <span class="accounts__account-name">{{name}}</span>
+  </a>
+{{/with}}
