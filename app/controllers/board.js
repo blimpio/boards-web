@@ -5,14 +5,25 @@ module.exports = Zeppelin.View.extend({
 
   initialize: function(options) {
     this.boardSlug = options ? options.boardSlug : '';
+    _.bindAll(this, ['renderCurrentBoard', 'renderCards']);
 
-    App.Boards.fetch({
-      data: {
-        account: App.Cache.get('current_account')
-      },
+    this.fetchBoards();
 
-      reset: true
-    }).done(_.bind(this.onBoardsSync, this));
+  fetchBoards: function() {
+    if (App.Boards.isEmpty()) {
+      App.Boards.fetch({
+        data: {
+          account: App.Cache.get('current_account')
+        },
+
+        reset: true
+      }).done(this.renderCurrentBoard);
+    } else {
+      this.renderCurrentBoard();
+    }
+
+    return this;
+  },
 
     this.insert('#application').initChildren();
     return this;

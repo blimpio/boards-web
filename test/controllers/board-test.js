@@ -56,6 +56,44 @@ describe('BoardController', function() {
     });
   });
 
+  describe('fetchBoards()', function() {
+    var boardController, renderCurrentBoardSpy;
+
+    beforeEach(function() {
+      renderCurrentBoardSpy = sinon.spy(BoardController.prototype, 'renderCurrentBoard');
+      boardController = new BoardController();
+    });
+
+    it('should immediately call renderCurrentBoard if the collection has boards.', function() {
+      boardController.fetchBoards();
+      expect(renderCurrentBoardSpy).to.have.been.called;
+    });
+
+    afterEach(function() {
+      boardController.unplug(true);
+      BoardController.prototype.renderCurrentBoard.restore();
+    });
+  });
+
+  describe('fetchCards()', function() {
+    var boardController, renderCardsSpy;
+
+    beforeEach(function() {
+      renderCardsSpy = sinon.spy(BoardController.prototype, 'renderCards');
+      boardController = new BoardController();
+    });
+
+    it('should immediately call renderCards if the collection has cards.', function() {
+      boardController.fetchCards({id: 2});
+      expect(renderCardsSpy).to.have.been.called;
+    });
+
+    afterEach(function() {
+      boardController.unplug(true);
+      BoardController.prototype.renderCards.restore();
+    });
+  });
+
   describe('initChildren()', function() {
     var boardController;
 
