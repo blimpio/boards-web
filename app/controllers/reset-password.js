@@ -8,7 +8,7 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  afterInsert: function() {
+  onInsert: function() {
     this.initChildren();
     return this;
   },
