@@ -3,19 +3,13 @@
   "version": "0.0.1",
   "main": "public/js/app.js",
   "dependencies": {
-    "sockjs": "~0.3.x",
     "lodash": "~2",
     "jquery": "~2",
     "backbone": "~1",
     "handlebars": "~1",
-    "swag": "~0.5.1"
-  },
-  "devDependencies": {
-    "chai": "~1",
-    "mocha": "~1",
-    "sinonjs": "~1",
-    "sinon-chai": "~2.5.0",
-    "chai-jquery": "~1.2.1"
+    "swag": "~0.5.1",
+    "marked": "0.3.1",
+    "normalize-css": "~3.0.0"
   },
   "overrides": {
     "jquery": {
@@ -31,6 +25,9 @@
     },
     "handlebars": {
       "main": "handlebars.runtime.js"
+    },
+    "marked": {
+      "main": "lib/marked.js"
     }
   }
 }
