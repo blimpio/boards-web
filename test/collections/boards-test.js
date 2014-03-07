@@ -146,6 +146,41 @@ describe('BoardsCollection', function() {
       boardsCollection.reset();
     });
   });
+
+  describe('getSlug()', function() {
+    var boardsCollection;
+
+    before(function() {
+      boardsCollection = new BoardsCollection([{
+        account: 1,
+        created_by: 2,
+        date_created: '2014-02-24T21:21:54.134Z',
+        date_modified: '2014-02-24T21:39:39.283Z',
+        id: 2,
+        is_shared: false,
+        name: 'Designs_',
+        slug: 'designs-1',
+        thumbnail_lg_path: '',
+        thumbnail_md_path: '',
+        thumbnail_sm_path: ''
+      }, {
+        account: 1,
+        created_by: 2,
+        date_created: '2014-02-24T21:19:43.334Z',
+        date_modified: '2014-02-24T21:21:12.674Z',
+        id: 1,
+        is_shared: false,
+        name: 'Inspiration',
+        slug: 'designs',
+        thumbnail_lg_path: '',
+        thumbnail_md_path: '',
+        thumbnail_sm_path: ''
+      }]);
+    });
+
+    it('should return a the slug of the current board.', function() {
+      boardsCollection.current = 2;
+      expect(boardsCollection.getSlug()).to.equal('designs-1');
     });
 
     after(function() {

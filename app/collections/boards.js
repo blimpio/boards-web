@@ -20,7 +20,13 @@ module.exports = Zeppelin.Collection.extend({
     return this.current ? this.get(this.current) : null;
   },
 
+  getSlug: function() {
+    var board = this.get(this.current);
+    return board ? board.get('slug') : '';
+  },
+
   onBoardSelected: function(board) {
-    this.setCurrent(board.get('slug'));
+    if (board) this.setCurrent(board.get('slug'));
+    return this;
   }
 });
