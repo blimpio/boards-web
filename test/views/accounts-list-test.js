@@ -2,7 +2,7 @@ describe('AccountsList', function() {
   var AccountsList = require('views/accounts-list');
 
   before(function() {
-    $('#application').html(require('templates/accounts')());
+    $('#application').html(require('templates/accounts-main')());
   });
 
   after(function() {

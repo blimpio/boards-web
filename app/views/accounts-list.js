@@ -5,7 +5,7 @@ module.exports = Zeppelin.CollectionView.extend({
 
   list: 'ol.accounts__list',
 
-  itemView: require('views/accounts-list-item'),
+  itemView: require('views/account'),
 
   collection: App.Accounts
 });
