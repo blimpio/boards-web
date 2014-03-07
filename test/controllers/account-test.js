@@ -1,31 +1,33 @@
 describe('AccountController', function() {
-  var server,
-      AccountController = require('controllers/account');
-
-  before(function() {
-    server = sinon.fakeServer.create()
-    server.autoRespond = true;
-  });
+  var AccountController = require('controllers/account');
 
   beforeEach(function() {
-    server.respondWith('GET', '/api/boards/', function(req) {
-      req.respond(200, {'Content-Type': 'application/json'}, '[]');
-    });
+    App.Accounts.reset([{
+      id: 1,
+      name: 'ACME Inc',
+      slug: 'acme-inc',
+      image_url: ''
+    }, {
+      id: 4,
+      name: 'Blimp LLC',
+      slug: 'blimp',
+      image_url: ''
+    }], {silent: true});
+
+    App.Accounts.setCurrent('acme-inc');
   });
 
   afterEach(function() {
-    server.restore();
-  });
-
-  after(function() {
-    $('#application').empty();
     App.Boards.reset([], {silent: true});
+    App.Accounts.reset([], {silent: true});
+    App.Cache.clear({silent: true}).destroyCache();
+    $('#application').empty();
   });
 
   describe('when instantiated.', function() {
     var accountController;
 
-    before(function() {
+    beforeEach(function() {
       accountController = new AccountController();
     });
 
@@ -47,7 +49,7 @@ describe('AccountController', function() {
       expect(accountController.isInserted).to.be.true;
     });
 
-    after(function() {
+    afterEach(function() {
       accountController.unplug(true);
     });
   });
@@ -115,17 +117,39 @@ describe('AccountController', function() {
     });
   });
 
-      accountController.onBoardsSync();
-      expect(accountController.children.boardHeader.isRendered).to.be.true;
-      expect(accountController.children.boardHeader.model.id).to.equal(App.Boards.at(0).id);
+  describe('initChildren()', function() {
+    var accountController;
+
+    beforeEach(function() {
+      accountController = new AccountController();
     });
 
-    after(function() {
-      App.Cache.clear({silent: true}).destroyCache();
-      App.Boards.reset([], {silent: true});
-      App.Cache.clear({silent: true});
+    it('should init and render child views.', function() {
+      accountController.initChildren();
+      expect(accountController.children.header).to.exist;
+      expect(accountController.children.header.isRendered).to.be.true;
+      expect(accountController.children.allBoards).to.exist;
+    });
+
+    afterEach(function() {
       accountController.unplug(true);
-      AccountController.prototype.publish.restore();
+    });
+  });
+
+  describe('onBoardsSync()', function() {
+    var accountController;
+
+    beforeEach(function() {
+      accountController = new AccountController();
+    });
+
+    it('should insert the allBoards child view.', function() {
+      accountController.onBoardsSync();
+      expect(accountController.children.allBoards.isInserted).to.be.true;
+    });
+
+    afterEach(function() {
+      accountController.unplug(true);
     });
   });
 });

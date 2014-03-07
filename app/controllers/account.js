@@ -13,10 +13,6 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  initChildren: function() {
-    this.addChild(_.createView('header'), 'header').render();
-    this.addChild(_.createView('boards-sidebar'), 'sidebar').render();
-    this.addChild(_.createView('board-header-form'), 'boardHeader');
   setDocumentTitle: function() {
     var account = App.Accounts.getCurrent();
 
@@ -40,6 +36,14 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
+  initChildren: function() {
+    this.addChild(_.createView('header'), 'header').render();
+    this.addChild(_.createView('boards-list'), 'allBoards');
+    return this;
+  },
+
+  onBoardsSync: function() {
+    this.children.allBoards.insert('div.sidebar');
     return this;
   }
 });
