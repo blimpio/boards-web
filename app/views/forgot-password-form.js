@@ -23,7 +23,7 @@ module.exports = Zeppelin.FormView.extend({
     event.preventDefault();
 
     if (Z.Validations.isEmail(email)) {
-      return this.model.forgotPassword(email);
+      this.model.forgotPassword(email);
     } else {
       this.onForgotPasswordError({email: ['Provide a valid email.']});
     }
