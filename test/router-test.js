@@ -1,26 +1,23 @@
 describe('Router', function() {
   var Router = require('router');
 
-  before(function() {
+  beforeEach(function() {
     App.Accounts.reset([{
       id: 1,
       name: 'ACME Inc',
       slug: 'acme-inc',
       image_url: ''
     }]);
-
-    Backbone.history.start({pushState: false});
   });
 
-  after(function() {
+  afterEach(function() {
     App.Accounts.reset();
-    Backbone.history.stop();
   });
 
   describe('onError()', function() {
     var router, navigateSpy;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -53,7 +50,7 @@ describe('Router', function() {
       expect(navigateSpy).to.have.been.calledWith('acme-inc', {trigger: true});
     });
 
-    after(function() {
+    afterEach(function() {
       Backbone.History.prototype.navigate.restore();
     });
   });
@@ -61,7 +58,7 @@ describe('Router', function() {
   describe('beforeRoute()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -82,7 +79,7 @@ describe('Router', function() {
   describe('authIsRequired()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -101,7 +98,7 @@ describe('Router', function() {
   describe('isNotAuthenticated()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -121,7 +118,7 @@ describe('Router', function() {
   describe('accountExists()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -130,21 +127,26 @@ describe('Router', function() {
 
         onPosts: function(id) {}
       });
+
+      App.User.set('token', '12345');
     });
 
     it('should return an error if the user is not in the given account.', function() {
-      App.User.set('token', '12345');
       expect(router.accountExists({
         params: ['blimp'],
         fragment: 'blimp/'
       })).to.equal('User is not in account.');
+    });
+
+    afterEach(function() {
+      App.User.clear();
     });
   });
 
   describe('hasOneAccount()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -166,7 +168,7 @@ describe('Router', function() {
   describe('navigateWithTrigger()', function() {
     var router, navigateSpy;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -184,7 +186,7 @@ describe('Router', function() {
       expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
     });
 
-    after(function() {
+    afterEach(function() {
       Backbone.History.prototype.navigate.restore();
     });
   });
@@ -192,7 +194,7 @@ describe('Router', function() {
   describe('removeLastController()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -213,7 +215,7 @@ describe('Router', function() {
   describe('signup()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -234,7 +236,7 @@ describe('Router', function() {
   describe('signin()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -255,7 +257,7 @@ describe('Router', function() {
   describe('forgotPassword()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -276,7 +278,7 @@ describe('Router', function() {
   describe('resetPassword()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -299,7 +301,7 @@ describe('Router', function() {
         ResetPassword = require('controllers/reset-password'),
         validateTokenSpy;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -319,7 +321,7 @@ describe('Router', function() {
       expect(validateTokenSpy).to.have.been.calledWith(JWT_PASSWORD_TOKEN);
     });
 
-    after(function() {
+    afterEach(function() {
       ResetPassword.prototype.validateToken.restore();
     });
   });
@@ -327,7 +329,7 @@ describe('Router', function() {
   describe('signout()', function() {
     var router, navigateSpy;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -346,7 +348,7 @@ describe('Router', function() {
       expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
     });
 
-    after(function() {
+    afterEach(function() {
       Backbone.History.prototype.navigate.restore();
     });
   });
@@ -354,7 +356,7 @@ describe('Router', function() {
   describe('accounts()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -373,9 +375,9 @@ describe('Router', function() {
   });
 
   describe('account()', function() {
-    var router, server;
+    var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router({
         routes: {
           'posts': 'onPosts',
@@ -384,31 +386,19 @@ describe('Router', function() {
 
         onPosts: function(id) {}
       });
-
-      server = sinon.fakeServer.create();
-      server.autoRespond = true;
     });
 
-    it('should init the account controller view.', function(done) {
-      server.respondWith('GET', '/api/boards/', function(req) {
-        req.respond(200, {'Content-Type': 'application/json'}, '[]');
-        done();
-      });
-
+    it('should init the account controller view.', function() {
       router.account();
       expect(router.controller).to.exist;
       expect(router.controller.name).to.equal('AccountController');
-    });
-
-    after(function() {
-      server.restore();
     });
   });
 
   describe('onBoardSelected()', function() {
     var router;
 
-    before(function() {
+    beforeEach(function() {
       router = new Router();
       App.Accounts.reset([{
         id: 4,
@@ -421,6 +411,8 @@ describe('Router', function() {
     });
 
     it('should navigate to the board url given a board model.', function() {
+      App.User.set('token', '123');
+
       router.onBoardSelected(_.createModel('board', {
         id: 12,
         name: 'Design',
@@ -431,7 +423,136 @@ describe('Router', function() {
       expect(router.getFragment()).to.equal('blimp/design');
     });
 
-    after(function() {
+    afterEach(function() {
+      App.User.clear();
+      App.Accounts.reset([], {silent: true});
+      App.Accounts.current = undefined;
+    });
+  });
+
+  describe('onCardSelected()', function() {
+    var router;
+
+    beforeEach(function() {
+      router = new Router();
+
+      App.Accounts.reset([{
+        id: 4,
+        name: 'Blimp LLC',
+        slug: 'blimp',
+        image_url: ''
+      }], {silent: true});
+
+      App.Accounts.current = 4;
+
+      App.Boards.reset([{
+        account: 1,
+        created_by: 2,
+        date_created: '2014-02-24T21:19:43.334Z',
+        date_modified: '2014-02-24T21:21:12.674Z',
+        id: 1,
+        is_shared: false,
+        name: 'Inspiration',
+        slug: 'designs',
+        thumbnail_lg_path: '',
+        thumbnail_md_path: '',
+        thumbnail_sm_path: ''
+      }], {silent: true});
+
+      App.Boards.current = 1;
+    });
+
+    it('should navigate to the card url given a card model.', function() {
+      App.User.set('token', '123');
+
+      router.onCardSelected(_.createModel('card', {
+        id: 12,
+        name: 'Dog',
+        slug: 'dog-3',
+        board: 1
+      }));
+
+      expect(router.getFragment()).to.equal('blimp/designs/dog-3');
+    });
+
+    afterEach(function() {
+      App.User.clear();
+      App.Boards.reset([], {silent: true});
+      App.Boards.current = undefined;
+      App.Accounts.reset([], {silent: true});
+      App.Accounts.current = undefined;
+    });
+  });
+
+  describe('card()', function() {
+    var router;
+
+    beforeEach(function() {
+      router = new Router({
+        routes: {
+          'posts': 'onPosts',
+          'posts/:id': 'onPosts'
+        },
+
+        onPosts: function(id) {}
+      });
+
+      App.Accounts.reset([{
+        id: 4,
+        name: 'Blimp LLC',
+        slug: 'blimp',
+        image_url: ''
+      }], {silent: true});
+
+      App.Accounts.current = 4;
+
+      App.Boards.reset([{
+        account: 1,
+        created_by: 2,
+        date_created: '2014-02-24T21:19:43.334Z',
+        date_modified: '2014-02-24T21:21:12.674Z',
+        id: 1,
+        is_shared: false,
+        name: 'Inspiration',
+        slug: 'designs',
+        thumbnail_lg_path: '',
+        thumbnail_md_path: '',
+        thumbnail_sm_path: ''
+      }], {silent: true});
+
+      App.Boards.current = 1;
+
+      App.Cards.reset([{
+        'created_by':2,
+        'id':2,
+        'date_created':'2014-02-28T18:25:56.961Z',
+        'date_modified':'2014-02-28T18:25:56.966Z',
+        'name':'Another note',
+        'type':'note',
+        'slug':'another-note',
+        'board':1,
+        'featured':false,
+        'origin_url':'',
+        'content':'With some other content...',
+        'is_shared':false,
+        'thumbnail_sm_path':'',
+        'thumbnail_md_path':'',
+        'thumbnail_lg_path':'',
+        'file_size':null,
+        'file_extension':'',
+        'cards':[]
+      }], {silent: true});
+    });
+
+    it('should init the account controller view.', function() {
+      router.card('blimp', 'designs', 'another-note');
+      expect(router.controller).to.exist;
+      expect(router.controller.name).to.equal('CardController');
+    });
+
+    afterEach(function() {
+      App.Boards.reset([], {silent: true});
+      App.Boards.current = undefined;
       App.Accounts.reset([], {silent: true});
       App.Accounts.current = undefined;
     });

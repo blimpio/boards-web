@@ -10,10 +10,12 @@ module.exports = Zeppelin.Router.extend({
     'reset_password(/)': 'resetPassword',
     'accounts(/)': 'accounts',
     ':account(/)': 'account',
-    ':account/:board(/)': 'board'
+    ':account/:board(/)': 'board',
+    ':account/:board/:card(/)': 'card'
   },
 
   subscriptions: {
+    'card:selected': 'onCardSelected',
     'board:selected': 'onBoardSelected',
     'router:navigate': 'navigateWithTrigger'
   },
@@ -130,11 +132,43 @@ module.exports = Zeppelin.Router.extend({
   },
 
   onBoardSelected: function(board) {
-    this.navigate(App.Accounts.getSlug() + '/' + board.get('slug'));
+    var url;
+
+    if (!board) {
+      this.navigateWithTrigger(App.Accounts.getSlug() + '/');
+    } else {
+      url = App.Accounts.getSlug() + '/' + board.get('slug');
+
+      if (this.controller && this.controller.name === 'BoardController') {
+        this.navigate(url);
+        this.controller.changeCurrentBoard(board);
+      } else {
+        this.navigateWithTrigger(url);
+      }
+    }
   },
 
   board: function(account, board) {
     App.Accounts.setCurrent(account);
     this.controller = _.createController('board', {boardSlug: board});
+  },
+
+  onCardSelected: function(card) {
+    var url;
+
+    if (!card) {
+      this.navigateWithTrigger(App.Accounts.getSlug() + '/' + App.Boards.getSlug() + '/');
+    } else {
+      url = App.Accounts.getSlug() + '/' + App.Boards.getSlug() + '/' + card.get('slug');
+      this.navigateWithTrigger(url);
+    }
+  },
+
+  card: function(account, board, card) {
+    App.Accounts.setCurrent(account);
+    this.controller = _.createController('card', {
+      cardSlug: card,
+      boardSlug: board
+    });
   }
 });
