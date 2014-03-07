@@ -36,13 +36,13 @@ module.exports = Zeppelin.Router.extend({
 
   onError: function(route, error) {
     if (error === 'Auth is required.') {
-      this.navigateWithTrigger('signin');
+      this.navigateWithTrigger('/signin/');
     } else if (error === 'User is not in account.') {
-      this.navigateWithTrigger('accounts');
+      this.navigateWithTrigger('/accounts/');
     } else if (error === 'User has only one account.') {
-      this.navigateWithTrigger(App.Accounts.at(0).get('slug'));
+      this.navigateWithTrigger(App.Accounts.at(0).get('slug') + '/');
     } else if (error === 'User is already authenticated.') {
-      this.navigateWithTrigger('accounts');
+      this.navigateWithTrigger('/accounts/');
     }
   },
 
@@ -88,7 +88,7 @@ module.exports = Zeppelin.Router.extend({
   },
 
   index: function() {
-    this.navigateWithTrigger('accounts');
+    this.navigateWithTrigger('/accounts/');
   },
 
   signup: function() {
@@ -119,7 +119,7 @@ module.exports = Zeppelin.Router.extend({
 
   signout: function() {
     App.User.signout();
-    this.navigateWithTrigger('signin');
+    this.navigateWithTrigger('/signin/');
   },
 
   accounts: function() {
@@ -137,7 +137,7 @@ module.exports = Zeppelin.Router.extend({
     if (!board) {
       this.navigateWithTrigger(App.Accounts.getSlug() + '/');
     } else {
-      url = App.Accounts.getSlug() + '/' + board.get('slug');
+      url = App.Accounts.getSlug() + '/' + board.get('slug') + '/';
 
       if (this.controller && this.controller.name === 'BoardController') {
         this.navigate(url);
@@ -159,7 +159,7 @@ module.exports = Zeppelin.Router.extend({
     if (!card) {
       this.navigateWithTrigger(App.Accounts.getSlug() + '/' + App.Boards.getSlug() + '/');
     } else {
-      url = App.Accounts.getSlug() + '/' + App.Boards.getSlug() + '/' + card.get('slug');
+      url = App.Accounts.getSlug() + '/' + App.Boards.getSlug() + '/' + card.get('slug') + '/';
       this.navigateWithTrigger(url);
     }
   },

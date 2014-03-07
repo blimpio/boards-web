@@ -32,22 +32,22 @@ describe('Router', function() {
 
     it('should navigate to the signin route if the authIsRequired() validation fails.', function() {
       router.onError({}, 'Auth is required.');
-      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+      expect(navigateSpy).to.have.been.calledWith('/signin/', {trigger: true});
     });
 
     it('should navigate to the accounts route if the accountExists() validation fails.', function() {
       router.onError({}, 'User is not in account.');
-      expect(navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
+      expect(navigateSpy).to.have.been.calledWith('/accounts/', {trigger: true});
     });
 
     it('should navigate to the accounts route if the isNotAuthenticated() validation fails.', function() {
       router.onError({}, 'User is already authenticated.');
-      expect(navigateSpy).to.have.been.calledWith('accounts', {trigger: true});
+      expect(navigateSpy).to.have.been.calledWith('/accounts/', {trigger: true});
     });
 
     it('should navigate to the accounts route if the hasOneAccount() validation fails.', function() {
       router.onError({}, 'User has only one account.');
-      expect(navigateSpy).to.have.been.calledWith('acme-inc', {trigger: true});
+      expect(navigateSpy).to.have.been.calledWith('acme-inc/', {trigger: true});
     });
 
     afterEach(function() {
@@ -182,8 +182,8 @@ describe('Router', function() {
     });
 
     it('should navigate and trigger the route.', function() {
-      router.navigateWithTrigger('signin');
-      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+      router.navigateWithTrigger('/signin/');
+      expect(navigateSpy).to.have.been.calledWith('/signin/', {trigger: true});
     });
 
     afterEach(function() {
@@ -345,7 +345,7 @@ describe('Router', function() {
     it('sign out the current user and navigate to the signin route.', function() {
       router.signout();
       expect(App.User.isSignedIn()).to.be.false;
-      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+      expect(navigateSpy).to.have.been.calledWith('/signin/', {trigger: true});
     });
 
     afterEach(function() {
@@ -420,7 +420,7 @@ describe('Router', function() {
         account: 4
       }));
 
-      expect(router.getFragment()).to.equal('blimp/design');
+      expect(router.getFragment()).to.equal('blimp/design/');
     });
 
     afterEach(function() {
@@ -472,7 +472,7 @@ describe('Router', function() {
         board: 1
       }));
 
-      expect(router.getFragment()).to.equal('blimp/designs/dog-3');
+      expect(router.getFragment()).to.equal('blimp/designs/dog-3/');
     });
 
     afterEach(function() {

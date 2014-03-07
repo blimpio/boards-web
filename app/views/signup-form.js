@@ -76,7 +76,7 @@ module.exports = Zeppelin.FormView.extend({
 
   redirectToFirstStep: function(event) {
     this.model.updateSignupStep(1);
-    this.publish('router:navigate', 'signup');
+    this.publish('router:navigate', '/signup/');
     return this;
   },
 

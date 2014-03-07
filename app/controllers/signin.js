@@ -5,7 +5,7 @@ module.exports = Zeppelin.View.extend({
 
   subscriptions: {
     'user:signin:success': function() {
-      this.publish('router:navigate', 'accounts');
+      this.publish('router:navigate', '/accounts/');
     }
   },
 
