@@ -1,5 +1,5 @@
 module.exports = Zeppelin.FormView.extend({
-  name: 'CreateBoardForm',
+  name: 'CreateBoard',
 
   el: 'form.create-board',
 
@@ -12,7 +12,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   elements: {
-    'nameInput': 'input[name=name]'
+    'nameInput': '[name=name]'
   },
 
   initialize: function() {
@@ -25,8 +25,7 @@ module.exports = Zeppelin.FormView.extend({
     this.setAttributes();
 
     if (!this.model.validationError) {
-      this.hide();
-      this.trigger('new:board', this.model);
+      this.hide().trigger('new:board', this.model);
       this.model.save();
       this.setModel(_.createModel('board', {
         account: App.Cache.get('current_account')
@@ -35,8 +34,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   hide: function() {
-    this.reset();
-    this.$el.hide();
+    this.reset().$el.hide();
     return this;
   },
 

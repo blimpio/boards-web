@@ -1,13 +1,17 @@
-<div class="board-header__preview">
+<div class="board-header-preview">
   <button type="button" data-action="edit">Edit</button>
   <img src="{{thumbnail_sm_path}}" class="board-header__image" width="30" height="30">
   <h1 class="board-header__title">{{name}}</h1>
-</div> {{! .board-header__preview }}
+</div> {{! .board-header-preview }}
 
-<form class="board-header__form">
+<form class="board-header-form">
   <input type="text" name="name" value="{{name}}" autofocus>
   <span data-error="name"></span>
   <button data-action="save">Save</button>
   <button data-action="cancel" type="button">Cancel</button>
   <button data-action="delete" type="button">Delete</button>
-</form> {{! .board-header__form }}
+</form> {{! .board-header-form }}
+
+<div class="board-header-actions">
+  <button type="button" data-action="createCard">Add Card</button>
+</div> {{! .actions }}

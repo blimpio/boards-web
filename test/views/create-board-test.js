@@ -1,8 +1,8 @@
-describe('CreateBoardForm', function() {
-  var CreateBoardForm = require('views/create-board-form');
+describe('CreateBoard', function() {
+  var CreateBoard = require('views/create-board');
 
   before(function() {
-    $('#application').html(require('templates/boards-sidebar')());
+    $('#application').html('<form class="create-board"></form>');
     App.Cache.set('current_account', 2, {silent: true});
   });
 
@@ -15,7 +15,7 @@ describe('CreateBoardForm', function() {
     var createBoardForm;
 
     before(function() {
-      createBoardForm = new CreateBoardForm();
+      createBoardForm = new CreateBoard();
     });
 
     it('should exist.', function() {
@@ -24,7 +24,7 @@ describe('CreateBoardForm', function() {
 
     it('should have a name property.', function() {
       expect(createBoardForm.name).to.exist;
-      expect(createBoardForm.name).to.equal('CreateBoardForm');
+      expect(createBoardForm.name).to.equal('CreateBoard');
     });
 
     it('should have a template property.', function() {
@@ -52,7 +52,7 @@ describe('CreateBoardForm', function() {
     var createBoardForm;
 
     before(function() {
-      createBoardForm = new CreateBoardForm();
+      createBoardForm = new CreateBoard();
     });
 
     it('should set the current account id to the view model.', function() {
@@ -66,18 +66,15 @@ describe('CreateBoardForm', function() {
   });
 
   describe('onSubmit()', function() {
-    var server, createBoardForm;
+    var createBoardForm;
 
     before(function() {
-      server = sinon.fakeServer.create();
-      server.autoRespond = true;
-      createBoardForm = new CreateBoardForm();
+      createBoardForm = new CreateBoard();
       createBoardForm.render();
     });
 
     it('should save the model.', function(done) {
-      server.respondWith('POST', '/api/boards/', function(req) {
-        req.respond(200, {'Content-Type': 'application/json'}, '{"name": "Design"}');
+      createBoardForm.once('new:board', function() {
         done();
       });
 
@@ -86,7 +83,6 @@ describe('CreateBoardForm', function() {
     });
 
     after(function() {
-      server.restore();
       createBoardForm.unplug(true);
     });
   });
@@ -95,7 +91,7 @@ describe('CreateBoardForm', function() {
     var createBoardForm;
 
     before(function() {
-      createBoardForm = new CreateBoardForm();
+      createBoardForm = new CreateBoard();
       createBoardForm.render();
     });
 
@@ -115,7 +111,7 @@ describe('CreateBoardForm', function() {
     var createBoardForm;
 
     before(function() {
-      createBoardForm = new CreateBoardForm();
+      createBoardForm = new CreateBoard();
       createBoardForm.render();
     });
 
