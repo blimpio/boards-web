@@ -31,6 +31,7 @@ gulp.task('test:dev', ['build:dev'], function() {
   return gulp.src([
     'public/css/app.css',
     'public/js/app.js',
+    'bower_components/handlebars/handlebars.js',
     'test/enviroment.js',
     'test/**/*-test.js'
   ]).pipe(karma({
@@ -43,6 +44,7 @@ gulp.task('test:prod', ['build:prod'], function() {
   return gulp.src([
     'public/css/app.css',
     'public/js/app.js',
+    'bower_components/handlebars/handlebars.js',
     'test/enviroment.js',
     'test/**/*-test.js'
   ]).pipe(karma({
