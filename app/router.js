@@ -1,17 +1,17 @@
 module.exports = Zeppelin.Router.extend({
   routes: {
     '': 'index',
-    'signin(/)': 'signin',
-    'signup?token:token(/)': 'signupWithToken',
-    'signup(/)': 'signup',
-    'signout(/)': 'signout',
-    'forgot_password(/)': 'forgotPassword',
-    'reset_password?token:token(/)': 'resetPasswordWithToken',
-    'reset_password(/)': 'resetPassword',
-    'accounts(/)': 'accounts',
-    ':account(/)': 'account',
-    ':account/:board(/)': 'board',
-    ':account/:board/:card(/)': 'card'
+    'signin/': 'signin',
+    'signup/?token:token': 'signupWithToken',
+    'signup/': 'signup',
+    'signout/': 'signout',
+    'forgot_password/': 'forgotPassword',
+    'reset_password/?token:token': 'resetPasswordWithToken',
+    'reset_password/': 'resetPassword',
+    'accounts/': 'accounts',
+    ':account/': 'account',
+    ':account/:board/': 'board',
+    ':account/:board/:card/': 'card'
   },
 
   subscriptions: {
@@ -21,13 +21,13 @@ module.exports = Zeppelin.Router.extend({
   },
 
   validations: {
-    'signin(/)': 'isNotAuthenticated',
-    'signup?token:token(/)': 'isNotAuthenticated',
-    'signup(/)': 'isNotAuthenticated',
-    'forgot_password(/)': 'isNotAuthenticated',
-    'accounts(/)': 'accountsValidation',
-    ':account(/)': 'accountExists',
-    ':account/:board(/)': 'authIsRequired'
+    'signin/': 'isNotAuthenticated',
+    'signup/?token:token': 'isNotAuthenticated',
+    'signup/': 'isNotAuthenticated',
+    'forgot_password/': 'isNotAuthenticated',
+    'accounts/': 'accountsValidation',
+    ':account/': 'accountExists',
+    ':account/:board/': 'authIsRequired'
   },
 
   initialize: function() {
