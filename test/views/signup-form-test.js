@@ -1,7 +1,7 @@
 describe('SignupForm', function() {
   var SignupForm = require('views/signup-form');
 
-  before(function() {
+  beforeEach(function() {
     $('#application').html('<form class="signup"></form>');
   });
 
@@ -246,11 +246,9 @@ describe('SignupForm', function() {
       signupForm = new SignupForm({
         model: _.createModel('user')
       });
-
-      signupForm.render();
     });
 
-    it('should validate the name entered on the form and render the next step if it\'s validated.', function() {
+    it('should validate the name entered on the form and render the next step if its validated.', function() {
       signupForm.model.set({
         'email': 'name@example.com',
         'signup_request_token': JWT_SIGNUP_TOKEN,
