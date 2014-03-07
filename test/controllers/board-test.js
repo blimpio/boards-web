@@ -1,31 +1,70 @@
 describe('BoardController', function() {
-  var server,
-      BoardController = require('controllers/board');
-
-  before(function() {
-    server = sinon.fakeServer.create()
-    server.autoRespond = true;
-  });
+  var BoardController = require('controllers/board');
 
   beforeEach(function() {
-    server.respondWith('GET', '/api/boards/', function(req) {
-      req.respond(200, {'Content-Type': 'application/json'}, '[]');
-    });
+    App.Cache.set('current_account', 1, {silent: true});
+
+    App.Boards.reset([{
+      account: 1,
+      created_by: 2,
+      date_created: '2014-02-24T21:21:54.134Z',
+      date_modified: '2014-02-24T21:39:39.283Z',
+      id: 2,
+      is_shared: false,
+      name: 'Designs_',
+      slug: 'designs-1',
+      thumbnail_lg_path: '',
+      thumbnail_md_path: '',
+      thumbnail_sm_path: ''
+    }, {
+      account: 1,
+      created_by: 2,
+      date_created: '2014-02-24T21:19:43.334Z',
+      date_modified: '2014-02-24T21:21:12.674Z',
+      id: 1,
+      is_shared: false,
+      name: 'Inspiration',
+      slug: 'designs',
+      thumbnail_lg_path: '',
+      thumbnail_md_path: '',
+      thumbnail_sm_path: ''
+    }], {silent: true});
+
+    App.Boards.setCurrent('designs-1');
+
+    App.Cards.reset([{
+      'created_by':2,
+      'id':2,
+      'date_created':'2014-02-28T18:25:56.961Z',
+      'date_modified':'2014-02-28T18:25:56.966Z',
+      'name':'Another note',
+      'type':'note',
+      'slug':'another-note',
+      'board':2,
+      'featured':false,
+      'origin_url':'',
+      'content':'With some other content...',
+      'is_shared':false,
+      'thumbnail_sm_path':'',
+      'thumbnail_md_path':'',
+      'thumbnail_lg_path':'',
+      'file_size':null,
+      'file_extension':'',
+      'cards':[]
+    }], {silent: true});
   });
 
   afterEach(function() {
-    server.restore();
-  });
-
-  after(function() {
-    $('#application').empty();
     App.Boards.reset([], {silent: true});
+    App.Cards.reset([], {silent: true});
+    App.Cache.clear({silent: true}).destroyCache();
+    $('#application').empty();
   });
 
   describe('when instantiated.', function() {
     var boardController;
 
-    before(function() {
+    beforeEach(function() {
       boardController = new BoardController();
     });
 
@@ -51,7 +90,7 @@ describe('BoardController', function() {
       expect(boardController.boardSlug).to.exist;
     });
 
-    after(function() {
+    afterEach(function() {
       boardController.unplug(true);
     });
   });
@@ -113,65 +152,64 @@ describe('BoardController', function() {
       boardController.unplug(true);
     });
   });
+
+  describe('renderCurrentBoard()', function() {
+    var boardController;
+
+    beforeEach(function() {
+      boardController = new BoardController();
     });
 
-    after(function() {
+    it('should render the current board.', function() {
+      boardController.renderCurrentBoard();
+      expect(document.title).to.equal('Blimp | Designs_');
+      expect(boardController.children.allBoards.isRendered).to.be.true;
+      expect(boardController.children.currentBoard.isRendered).to.be.true;
+    });
+
+    afterEach(function() {
       boardController.unplug(true);
     });
   });
 
-  describe('onBoardsSync()', function() {
-    var boardController, publishSpy;
+  describe('changeCurrentBoard()', function() {
+    var boardController;
 
-    before(function() {
-      publishSpy = sinon.spy(BoardController.prototype, 'publish');
-      boardController = new BoardController({boardSlug: 'designs-1'});
+    beforeEach(function() {
+      boardController = new BoardController();
     });
 
-    it('should publish a board:selected event with the for the board.', function() {
-      App.Boards.reset([{
-        account: 1,
-        created_by: 2,
-        date_created: '2014-02-24T21:21:54.134Z',
-        date_modified: '2014-02-24T21:39:39.283Z',
-        id: 2,
-        is_shared: false,
-        name: 'Designs_',
-        slug: 'designs-1',
-        thumbnail_lg_path: '',
-        thumbnail_md_path: '',
-        thumbnail_sm_path: ''
-      }], {silent: true});
+    it('should render the current board.', function() {
+      boardController.changeCurrentBoard(App.Boards.get(2));
+      expect(boardController.children.allBoards.isRendered).to.be.true;
+      expect(boardController.children.currentBoard.isRendered).to.be.true;
+      expect(boardController.children.currentBoard.model.id).to.equal(2);
 
-      boardController.onBoardsSync();
-      expect(publishSpy).to.have.been.calledWith('board:selected', App.Boards.at(0));
+      boardController.changeCurrentBoard(App.Boards.get(1));
+      expect(boardController.children.allBoards.isRendered).to.be.true;
+      expect(boardController.children.currentBoard.isRendered).to.be.true;
+      expect(boardController.children.currentBoard.model.id).to.equal(1);
     });
 
-    it('should render the board header with the current board model.', function() {
-      App.Boards.reset([{
-        account: 1,
-        created_by: 2,
-        date_created: '2014-02-24T21:21:54.134Z',
-        date_modified: '2014-02-24T21:39:39.283Z',
-        id: 2,
-        is_shared: false,
-        name: 'Designs_',
-        slug: 'designs-1',
-        thumbnail_lg_path: '',
-        thumbnail_md_path: '',
-        thumbnail_sm_path: ''
-      }], {silent: true});
-
-      boardController.onBoardsSync();
-      expect(boardController.children.boardHeader.isRendered).to.be.true;
-      expect(boardController.children.boardHeader.model.id).to.equal(App.Boards.at(0).id);
-    });
-
-    after(function() {
-      App.Cache.clear({silent: true}).destroyCache();
-      App.Boards.reset([], {silent: true});
+    afterEach(function() {
       boardController.unplug(true);
-      BoardController.prototype.publish.restore();
+    });
+  });
+
+  describe('renderCards()', function() {
+    var boardController;
+
+    beforeEach(function() {
+      boardController = new BoardController();
+    });
+
+    it('should render the cards from the current board.', function() {
+      boardController.renderCards();
+      expect(_.size(boardController.children.cardsList._itemViews)).to.equal(1);
+    });
+
+    afterEach(function() {
+      boardController.unplug(true);
     });
   });
 });

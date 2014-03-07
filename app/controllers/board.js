@@ -10,6 +10,9 @@ module.exports = Zeppelin.View.extend({
     this.insert('#application').initChildren();
     this.fetchBoards();
 
+    return this;
+  },
+
   fetchBoards: function() {
     if (App.Boards.isEmpty()) {
       App.Boards.fetch({
@@ -26,7 +29,19 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-    this.insert('#application').initChildren();
+  fetchCards: function(board) {
+    if (App.Cards.isEmpty() || !App.Cards.hasCardsFromBoard(board.id)) {
+      App.Cards.fetch({
+        data: {
+          board: board.id
+        },
+
+        remove: false
+      }).done(this.renderCards);
+    } else {
+      this.renderCards();
+    }
+
     return this;
   },
 
@@ -41,25 +56,54 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  onBoardsSync: function(boards) {
+  renderCurrentBoard: function() {
     var board;
 
     App.Boards.setCurrent(this.boardSlug);
-    board = App.Boards.currentBoard();
-    board = board ? board : App.Boards.at(0);
+    board = App.Boards.getCurrent();
 
-    if (board) {
-      this.publish('board:selected', board);
-    } else {
+    if (!board) {
+      this.$el.html('Board not Found...');
       return this;
     }
 
     document.title = 'Blimp | ' + board.get('name');
 
-    this.children.boardHeader
+    this.children.allBoards
+      .insert('div.sidebar')
+      .selectBoard(board);
+
+    this.children.currentBoard
+      .setModel(board, true)
+      .insert('div.sub-header-content')
+      .initActions();
+
+    this.fetchCards(board);
+
+    return this;
+  },
+
+  changeCurrentBoard: function(board) {
+    if (!board) return this;
+
+    document.title = 'Blimp | ' + board.get('name');
+
+    App.Boards.setCurrent(board.get('slug'));
+    this.fetchCards(board);
+
+    this.children.allBoards
+      .selectBoard(board);
+
+    this.children.currentBoard
       .setModel(board, true)
       .render();
 
     return this;
+  },
+
+  renderCards: function() {
+    this.children.cardsList.render().filter(function(card) {
+      return card.get('board') === App.Cache.get('current_board');
+    });
   }
 });
