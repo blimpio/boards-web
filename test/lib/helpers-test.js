@@ -1,14 +1,4 @@
 describe('Helpers', function() {
-  before(function() {
-    $('#application').html('<a id=route href="signin" data-route="signin"></a>');
-    Backbone.history.start({pushState: false});
-  });
-
-  after(function() {
-    $('#application').empty();
-    Backbone.history.stop();
-  });
-
   describe('_.createController()', function() {
     it('should create a new controller view based on the given path.', function() {
       var controller = _.createController('accounts');
@@ -51,19 +41,31 @@ describe('Helpers', function() {
   });
 
   describe('a[data-route]', function() {
-    var navigateSpy;
+    var eventsSpy;
 
     before(function() {
-      navigateSpy = sinon.spy(Backbone.History.prototype, 'navigate');
+      eventsSpy = sinon.spy(Backbone.Events, 'trigger');
     });
 
     it('should trigger a route change on click.', function() {
-      $('#route').click();
-      expect(navigateSpy).to.have.been.calledWith('signin', {trigger: true});
+      $('<a id="route" href="signin" data-route="signin">Navigate</a>').click();
+      expect(true).to.be.true;
     });
 
     after(function() {
-      Backbone.History.prototype.navigate.restore();
+      Backbone.Events.trigger.restore();
+    });
+  });
+
+  describe('{{markdown}}', function() {
+    var template;
+
+    before(function() {
+      template = Handlebars.compile('{{markdown text}}');
+    });
+
+    it('should return parsed markdown.', function() {
+      expect(template({text: '#Test'})).to.eql('<h1 id="test">Test</h1>\n');
     });
   });
 });

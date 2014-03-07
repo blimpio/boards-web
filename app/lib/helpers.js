@@ -43,3 +43,20 @@ $(document).on('click', '[data-route]', function(event) {
     Backbone.Events.trigger('router:navigate', $(this).data('route'));
   }
 });
+
+Handlebars.registerHelper('markdown', function(str) {
+  var parse;
+
+  str = _.isFunction(str) ? str() : str;
+
+  if (!str) return new Handlebars.SafeString('');
+
+  parse = marked.setOptions({
+    renderer: new marked.Renderer(),
+    breaks: true,
+    sanitize: true,
+    smartypants: true
+  });
+
+  return new Handlebars.SafeString(parse(str));
+});
