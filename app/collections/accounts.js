@@ -22,6 +22,10 @@ module.exports = Zeppelin.Collection.extend({
     return this;
   },
 
+  getCurrent: function() {
+    return this.current ? this.get(this.current) : null;
+  },
+
   accounts: function() {
     return this.map(function(account) {
       return account.serialize();
