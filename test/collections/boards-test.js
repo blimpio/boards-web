@@ -106,7 +106,7 @@ describe('BoardsCollection', function() {
     });
   });
 
-  describe('currentBoard()', function() {
+  describe('getCurrent()', function() {
     var boardsCollection;
 
     before(function() {
@@ -139,7 +139,13 @@ describe('BoardsCollection', function() {
 
     it('should return a the current board.', function() {
       boardsCollection.current = 2;
-      expect(boardsCollection.currentBoard().attributes).to.eql(boardsCollection.at(0).attributes);
+      expect(boardsCollection.getCurrent().attributes).to.eql(boardsCollection.at(0).attributes);
+    });
+
+    after(function() {
+      boardsCollection.reset();
+    });
+  });
     });
 
     after(function() {

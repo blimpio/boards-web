@@ -16,7 +16,7 @@ module.exports = Zeppelin.Collection.extend({
     return this;
   },
 
-  currentBoard: function() {
+  getCurrent: function() {
     return this.current ? this.get(this.current) : null;
   },
 
