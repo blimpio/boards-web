@@ -1,0 +1,49 @@
+.card {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 10px;
+
+  &.is-editing {
+    .card-preview { display: none; }
+    .card-edit-form { display: block; }
+
+    &:hover {
+      .card-actions-hover { display: none !important; }
+    }
+  }
+
+  &.can-edit {
+    &:hover {
+      .card-actions-hover { display: inline-block; }
+    }
+
+    .card-actions-visible { display: inline-block; }
+  }
+
+  &[data-type="note"] {
+    .card-name { font-size: 14px; }
+    .card-content { font-size: 12px; }
+  }
+
+  &.is-item {
+    cursor: pointer;
+    margin-bottom: 10px;
+    min-height: 150px;
+    min-width: 250px;
+    -webkit-column-break-inside: avoid;
+    -moz-column-break-inside: avoid;
+    -moz-page-break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  &.is-detail {
+    margin 10px;
+  }
+}
+
+.card-edit-form { display: none; }
+
+
+.card-actions {
+  float: right;
+}

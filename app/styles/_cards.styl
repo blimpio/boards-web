@@ -1,0 +1,21 @@
+.cards {
+  &.is-creating {
+    .cards-list { display: none; }
+    .create-card { display: block; }
+  }
+}
+
+.cards-list {
+  column-count: 4;
+  column-gap: 10px;
+  column-width: 250px;
+  list-style-type: none;
+  margin: 0;
+  padding: 10px;
+}
+
+.create-card {
+  display: none;
+  padding: 10px;
+}
+
