@@ -97,17 +97,22 @@ describe('BoardController', function() {
   describe('initChildren()', function() {
     var boardController;
 
-    before(function() {
+    beforeEach(function() {
       boardController = new BoardController();
     });
 
     it('should init and render child views.', function() {
       boardController.initChildren();
       expect(boardController.children.header).to.exist;
-      expect(boardController.children.header.isRendered).to.be.true;
-      expect(boardController.children.sidebar).to.exist;
-      expect(boardController.children.sidebar.isRendered).to.be.true;
-      expect(boardController.children.boardHeader).to.exist;
+      expect(boardController.children.allBoards).to.exist;
+      expect(boardController.children.currentBoard).to.exist;
+      expect(boardController.children.cardsList).to.exist;
+    });
+
+    afterEach(function() {
+      boardController.unplug(true);
+    });
+  });
     });
 
     after(function() {

@@ -7,6 +7,7 @@ module.exports = Zeppelin.View.extend({
     this.boardSlug = options ? options.boardSlug : '';
     _.bindAll(this, ['renderCurrentBoard', 'renderCards']);
 
+    this.insert('#application').initChildren();
     this.fetchBoards();
 
   fetchBoards: function() {
@@ -31,8 +32,12 @@ module.exports = Zeppelin.View.extend({
 
   initChildren: function() {
     this.addChild(_.createView('header'), 'header').render();
-    this.addChild(_.createView('boards-sidebar'), 'sidebar').render();
-    this.addChild(_.createView('board-header-form'), 'boardHeader');
+    this.addChild(_.createView('boards-list'), 'allBoards');
+    this.addChild(_.createView('board', {
+      canEdit: true,
+      isDetail: true
+    }), 'currentBoard');
+    this.addChild(_.createView('cards-list'), 'cardsList');
     return this;
   },
 
