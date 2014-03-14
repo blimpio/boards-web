@@ -3,19 +3,21 @@ module.exports = Zeppelin.FormView.extend({
 
   el: 'form.reset-password__form',
 
+  form: 'form.reset-password__form',
+
   template: require('templates/reset-password-form'),
 
   bindings: {
-    'model user:reset-password:success': 'onResetPasswordSuccess',
-    'model user:reset-password:error': 'onResetPasswordError'
+    'user:reset-password:success': {
+      callback: 'onResetPasswordSuccess'
+    },
+
+    'user:reset-password:error': {
+      callback: 'onResetPasswordError'
+    }
   },
 
   model: App.User,
-
-  initialize: function() {
-    this.setForm();
-    return this;
-  },
 
   onSubmit: function(event) {
     var password = this.getAttributeValue('password');
@@ -25,7 +27,7 @@ module.exports = Zeppelin.FormView.extend({
     if (Z.Validations.isOfMinimumLength(password, 8)) {
       this.model.resetPassword(password);
     } else {
-      this.onResetPasswordError({password: ['Your password must have at least 8 characters.']});
+      this.onResetPasswordError(null, {password: 'Your password must have at least 8 characters.'});
     }
 
     return this;
@@ -36,8 +38,8 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
-  onResetPasswordError: function(error) {
-    this.getAttributeErrorElement('password').text(error);
+  onResetPasswordError: function(element, error) {
+    this.getAttributeErrorElement('password').text(error.password);
     return this;
   }
 });

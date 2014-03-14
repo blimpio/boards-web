@@ -3,26 +3,22 @@ module.exports = Zeppelin.CollectionView.extend({
 
   el: 'div.cards',
 
-  template: require('templates/cards'),
-
   list: 'ol.cards-list',
+
+  template: require('templates/cards'),
 
   collection: App.Cards,
 
   itemView: require('views/card'),
 
+  views: {
+    createForm: require('views/create-card')
+  },
+
   subscriptions: {
     'card:creating': 'showCreateMode',
     'card:creating:cancel': 'hideCreateMode',
     'card:created': 'addCard'
-  },
-
-  onRender: function() {
-    this.addChild(_.createView('create-card', {
-      el: 'form.create-card'
-    }), 'createForm');
-
-    return this;
   },
 
   showCreateMode: function() {
@@ -38,10 +34,5 @@ module.exports = Zeppelin.CollectionView.extend({
   addCard: function(card) {
     this.hideCreateMode().collection.add(card);
     return this;
-  },
-
-  onAdd: function(card) {
-    if (!this.isFirstRender) this.appendItem(this.renderItem(card));
-    return this;
-  },
+  }
 });

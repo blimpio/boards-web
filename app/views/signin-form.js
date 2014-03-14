@@ -1,14 +1,16 @@
 module.exports = Zeppelin.FormView.extend({
-  el: 'form.signin',
-
   name: 'SigninForm',
+
+  el: 'form.signin',
 
   form: 'form.signin',
 
   template: require('templates/signin-form'),
 
   bindings: {
-    'model user:signin:error': 'onAuthError'
+    'user:signin:error': {
+      callback: 'onAuthError'
+    }
   },
 
   model: App.User,

@@ -10,7 +10,7 @@ module.exports = Zeppelin.View.extend({
   },
 
   className: function() {
-    var className = 'board';
+    var className = 'board clearfix';
     className += this.isDetail ? ' is-detail' : ' is-item';
     if (this.canEdit) className += ' can-edit';
     return className;
@@ -30,7 +30,13 @@ module.exports = Zeppelin.View.extend({
   },
 
   bindings: {
-    'model edited': 'onEdited'
+    'edited': {
+      callback: 'onEdited'
+    }
+  },
+
+  subscriptions: {
+    'board:editing:cancel': 'onClickCancel'
   },
 
   model: require('models/board'),
@@ -39,8 +45,23 @@ module.exports = Zeppelin.View.extend({
 
   canEdit: false,
 
+  onSetModel: function(board) {
+    if (!this._isRendered) return this;
+    this.registerBindings();
+    if (this.hasView('editForm')) this.getView('editForm').setModel(board);
+    return this
+  },
+
   context: function() {
     return this.model.getPresenters(['name', 'thumbnail_sm_path']);
+  },
+
+  onRender: function() {
+    if (this.hasView('editForm')) {
+      this.getView('editForm')
+        .setElement(this.$editForm)
+        .setForm(this.$editForm);
+    }
   },
 
   update: function() {
@@ -50,9 +71,8 @@ module.exports = Zeppelin.View.extend({
   },
 
   initActions: function() {
-    this.addChild(_.createView('board-actions'), 'actions')
-      .insert('div.sub-header-actions');
-
+    this.registerView(_.createView('board-actions'), 'actions');
+    this.getView('actions').insert('div.sub-header-actions');
     return this;
   },
 
@@ -69,30 +89,31 @@ module.exports = Zeppelin.View.extend({
   },
 
   initEditForm: function() {
-    this.addChild(_.createView('board-edit-form', {
+    this.registerView(_.createView('board-edit-form', {
       el: this.$editForm,
+      form: this.$editForm,
       model: this.model
-    }), 'editForm').setForm();
+    }), 'editForm');
 
     return this;
   },
 
   onClickEdit: function() {
     if (!this.canEdit) return this;
-    if (!this.children.editForm) this.initEditForm();
+    if (!this.hasView('editForm')) this.initEditForm();
     this.showEditMode();
     return this;
   },
 
   showEditMode: function() {
     this.$el.addClass('is-editing');
-    this.children.editForm.focus();
+    this.getView('editForm').focus();
     return this;
   },
 
   onClickCancel: function() {
     if (!this.canEdit) return this;
-    if (!this.children.editForm) this.initEditForm();
+    if (!this.hasView('editForm')) this.initEditForm();
     this.hideEditMode();
   },
 
@@ -101,12 +122,10 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  onEdited: function(model, changed) {
-    if (changed) {
-      this.hideEditMode();
-      this.update();
-    }
-
+  onEdited: function(element, model, changed) {
+    if (!changed) return this;
+    this.hideEditMode();
+    this.update();
     return this;
   },
 

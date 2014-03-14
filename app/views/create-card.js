@@ -1,6 +1,8 @@
 module.exports = Zeppelin.FormView.extend({
   name: 'CreateCard',
 
+  el: 'form.create-card',
+
   model: require('models/card'),
 
   events: {

@@ -36,7 +36,9 @@ module.exports = Zeppelin.View.extend({
   },
 
   bindings: {
-    'model edited': 'onEdited'
+    'edited': {
+      callback: 'onEdited'
+    }
   },
 
   subscriptions: {
@@ -62,9 +64,8 @@ module.exports = Zeppelin.View.extend({
   },
 
   initActions: function() {
-    this.addChild(_.createView('card-actions'), 'actions')
-      .insert('div.sub-header-actions');
-
+    this.registerView(_.createView('card-actions'), 'actions')
+    this.getView('actions').insert('div.sub-header-actions');
     return this;
   },
 
@@ -74,30 +75,31 @@ module.exports = Zeppelin.View.extend({
   },
 
   initEditForm: function() {
-    this.addChild(_.createView('card-edit-form', {
+    this.registerView(_.createView('card-edit-form', {
       el: this.$editForm,
+      form: this.$editForm,
       model: this.model
-    }), 'editForm').setForm();
+    }), 'editForm');
 
     return this;
   },
 
   onClickEdit: function() {
     if (!this.canEdit) return this;
-    if (!this.children.editForm) this.initEditForm();
+    if (!this.hasView('editForm')) this.initEditForm();
     this.showEditMode();
     return this;
   },
 
   showEditMode: function() {
     this.$el.addClass('is-editing');
-    this.children.editForm.focus();
+    this.getView('editForm').focus();
     return this;
   },
 
   onClickCancel: function() {
     if (!this.canEdit) return this;
-    if (!this.children.editForm) this.initEditForm();
+    if (!this.hasView('editForm')) this.initEditForm();
     this.hideEditMode();
   },
 

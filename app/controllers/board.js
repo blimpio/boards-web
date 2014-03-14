@@ -1,15 +1,27 @@
 module.exports = Zeppelin.View.extend({
   name: 'BoardController',
 
+  el: '#application',
+
   template: require('templates/account-main'),
 
+  views: {
+    header: require('views/header'),
+    allBoards: require('views/boards-list'),
+    cardsList: require('views/cards-list'),
+    currentBoard: {
+      view: require('views/board'),
+      data: {
+        canEdit: true,
+        isDetail: true
+      }
+    }
+  },
+
   initialize: function(options) {
-    this.boardSlug = options ? options.boardSlug : '';
     _.bindAll(this, ['renderCurrentBoard', 'renderCards']);
-
-    this.insert('#application').initChildren();
+    this.boardSlug = options ? options.boardSlug : '';
     this.fetchBoards();
-
     return this;
   },
 
@@ -45,17 +57,6 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  initChildren: function() {
-    this.addChild(_.createView('header'), 'header').render();
-    this.addChild(_.createView('boards-list'), 'allBoards');
-    this.addChild(_.createView('board', {
-      canEdit: true,
-      isDetail: true
-    }), 'currentBoard');
-    this.addChild(_.createView('cards-list'), 'cardsList');
-    return this;
-  },
-
   renderCurrentBoard: function() {
     var board;
 
@@ -69,13 +70,13 @@ module.exports = Zeppelin.View.extend({
 
     document.title = 'Blimp | ' + board.get('name');
 
-    this.children.allBoards
-      .insert('div.sidebar')
+    this.getView('allBoards')
       .selectBoard(board);
 
-    this.children.currentBoard
-      .setModel(board, true)
+    this.getView('currentBoard')
+      .setModel(board)
       .insert('div.sub-header-content')
+      .initEditForm()
       .initActions();
 
     this.fetchCards(board);
@@ -91,18 +92,18 @@ module.exports = Zeppelin.View.extend({
     App.Boards.setCurrent(board.get('slug'));
     this.fetchCards(board);
 
-    this.children.allBoards
+    this.getView('allBoards')
       .selectBoard(board);
 
-    this.children.currentBoard
-      .setModel(board, true)
+    this.getView('currentBoard')
+      .setModel(board)
       .render();
 
     return this;
   },
 
   renderCards: function() {
-    this.children.cardsList.render().filter(function(card) {
+    this.getView('cardsList').render(function(card) {
       return card.get('board') === App.Cache.get('current_board');
     });
   }

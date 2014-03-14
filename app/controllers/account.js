@@ -1,21 +1,24 @@
 module.exports = Zeppelin.View.extend({
   name: 'AccountController',
 
+  el: '#application',
+
   template: require('templates/account-main'),
+
+  views: {
+    header: require('views/header'),
+    allBoards: require('views/boards-list')
+  },
 
   initialize: function() {
     _.bindAll(this, 'onBoardsSync');
-
     this.setDocumentTitle();
-    this.insert('#application').initChildren();
     this.fetchBoards();
-
     return this;
   },
 
   setDocumentTitle: function() {
     var account = App.Accounts.getCurrent();
-
     if (account) document.title = 'Blimp | ' + account.get('name');
     return this;
   },
@@ -36,14 +39,8 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  initChildren: function() {
-    this.addChild(_.createView('header'), 'header').render();
-    this.addChild(_.createView('boards-list'), 'allBoards');
-    return this;
-  },
-
   onBoardsSync: function() {
-    this.children.allBoards.insert('div.sidebar');
+    this.getView('allBoards').render();
     return this;
   }
 });

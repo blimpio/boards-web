@@ -1,17 +1,35 @@
 module.exports = Zeppelin.View.extend({
   name: 'CardController',
 
+  el: '#application',
+
   template: require('templates/account-main'),
 
+  views: {
+    header: require('views/header'),
+    allBoards: require('views/boards-list'),
+    cardsList: require('views/cards-list'),
+    currentBoard: {
+      view: require('views/board'),
+      data: {
+        canEdit: true,
+        isDetail: true
+      }
+    },
+    currentCard: {
+      view: require('views/card'),
+      data: {
+        canEdit: true,
+        isDetail: true
+      }
+    }
+  },
+
   initialize: function(options) {
+    _.bindAll(this, ['renderCurrentBoard', 'renderCurrentCard']);
     this.cardSlug = options ? options.cardSlug : '';
     this.boardSlug = options ? options.boardSlug : '';
-
-    _.bindAll(this, ['renderCurrentBoard', 'renderCurrentCard']);
-
-    this.insert('#application').initChildren();
     this.fetchBoards();
-
     return this;
   },
 
@@ -48,22 +66,6 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  initChildren: function() {
-    this.addChild(_.createView('header'), 'header').render();
-
-    this.addChild(_.createView('boards-list'), 'allBoards');
-    this.addChild(_.createView('board', {
-      canEdit: true,
-      isDetail: true
-    }), 'currentBoard');
-
-    this.addChild(_.createView('card', {
-      canEdit: true,
-      isDetail: true
-    }), 'card');
-    return this;
-  },
-
   renderCurrentBoard: function() {
     var board;
 
@@ -77,13 +79,14 @@ module.exports = Zeppelin.View.extend({
 
     this.fetchCards(board);
 
-    this.children.allBoards
-      .insert('div.sidebar')
+    this.getView('allBoards')
       .selectBoard(board);
 
-    this.children.currentBoard
-      .setModel(board, true)
-      .insert('div.sub-header-content');
+    this.getView('currentBoard')
+      .setModel(board)
+      .insert('div.sub-header-content')
+      .initEditForm()
+      .initActions();
 
     return this;
   },
@@ -99,8 +102,8 @@ module.exports = Zeppelin.View.extend({
       return this;
     }
 
-    this.children.card
-      .setModel(card, true)
+    this.getView('currentCard')
+      .setModel(card)
       .insert('div.cards')
       .initActions();
   }

@@ -1,16 +1,16 @@
 module.exports = Zeppelin.View.extend({
   name: 'ForgotPasswordController',
 
+  el: '#application',
+
   template: require('templates/forgot-password'),
+
+  views: {
+    'form': require('views/forgot-password-form')
+  },
 
   initialize: function() {
     document.title = 'Blimp | Password Recovery';
-    this.insert('#application').initChildren();
-    return this;
-  },
-
-  initChildren: function() {
-    this.addChild(_.createView('forgot-password-form'), 'form').render();
     return this;
   }
 });

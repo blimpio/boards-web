@@ -8,7 +8,8 @@ module.exports = Zeppelin.Collection.extend({
   presenters: ['accounts'],
 
   subscriptions: {
-    'user:signin:success': 'onUserSignin'
+    'user:signup:success': 'onUserAuth',
+    'user:signin:success': 'onUserAuth'
   },
 
   userHasAccount: function(slug) {
@@ -47,7 +48,7 @@ module.exports = Zeppelin.Collection.extend({
     return account ? account.get('slug') : '';
   },
 
-  onUserSignin: function(user) {
+  onUserAuth: function(user) {
     if (user.accounts && user.accounts.length) this.reset(user.accounts);
     return this;
   }

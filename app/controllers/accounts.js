@@ -1,16 +1,16 @@
 module.exports = Zeppelin.View.extend({
   name: 'AccountsController',
 
+  el: '#application',
+
   template: require('templates/accounts-main'),
+
+  views: {
+    'accounts': require('views/accounts-list')
+  },
 
   initialize: function() {
     document.title = 'Blimp | Accounts';
-    this.insert('#application').initChildren();
-    return this;
-  },
-
-  initChildren: function() {
-    this.addChild(_.createView('accounts-list'), 'accounts').render();
     return this;
   }
 });

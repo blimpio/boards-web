@@ -1,22 +1,17 @@
 module.exports = Zeppelin.View.extend({
-  el: 'div.header',
-
   name: 'Header',
 
+  el: 'div.header',
+
   template: require('templates/header'),
+
+  views: {
+    accounts: require('views/accounts-dropdown')
+  },
 
   model: App.User,
 
   context: function() {
     return this.model.getPresenters(['isSignedIn']);
-  },
-
-  onRender: function() {
-    this.initAccountsDropdown()
-  },
-
-  initAccountsDropdown: function() {
-    this.addChild(_.createView('accounts-dropdown'), 'accounts').render();
-    return this;
   }
 });

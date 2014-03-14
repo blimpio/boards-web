@@ -1,8 +1,14 @@
 module.exports = Zeppelin.FormView.extend({
   name: 'BoardEditForm',
 
+  el: 'form.board-edit-form',
+
   elements: {
     'nameInput': 'input[name=name]'
+  },
+
+  events: {
+    'click [data-action=cancel]': 'onClickCancel'
   },
 
   focus: function() {
@@ -26,5 +32,11 @@ module.exports = Zeppelin.FormView.extend({
     }
 
     return this;
-  }
+  },
+
+  onClickCancel: function() {
+    console.log(this);
+    this.publish('board:editing:cancel');
+    return this;
+  },
 });

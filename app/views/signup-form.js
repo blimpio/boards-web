@@ -22,11 +22,25 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   bindings: {
-    'model change:signup_step': 'onSignupStepChange',
-    'model user:signup-request:error': 'onSignupRequestError',
-    'model user:signup-domains:error': 'onSignupDomainsError',
-    'model user:signup-username:error': 'onSignupUsernameError',
-    'model user:signup:error': 'onValidatePasswordError'
+    'change:signup_step': {
+      callback: 'onSignupStepChange'
+    },
+
+    'user:signup-request:error': {
+      callback: 'onSignupRequestError'
+    },
+
+    'user:signup-domains:error': {
+      callback: 'onSignupDomainsError'
+    },
+
+    'user:signup-username:error': {
+      callback: 'onSignupUsernameError'
+    },
+
+    'user:signup:error': {
+      callback: 'onValidatePasswordError'
+    }
   },
 
   model: App.User,
@@ -46,7 +60,7 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
-  onSignupStepChange: function(model, step) {
+  onSignupStepChange: function(element, model, step) {
     this.renderStep(step);
     return this;
   },
@@ -69,7 +83,7 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
-  onSignupRequestError: function(error) {
+  onSignupRequestError: function(element, error) {
     this.getAttributeErrorElement('email').text(error);
     return this;
   },
@@ -122,13 +136,13 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
-  onSignupDomainsError: function(error) {
+  onSignupDomainsError: function(element, error) {
     this.getAttributeErrorElement('signup_domains').text(error);
     return this;
   },
 
   skipSignupDomains: function(event) {
-    this.model.updateSignupStep(7);
+    this.model.updateSignupStep(8);
     return this;
   },
 
@@ -198,7 +212,7 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
-  onSignupUsernameError: function(error) {
+  onSignupUsernameError: function(element, error) {
     this.getAttributeErrorElement('username').text(error);
     return this;
   },
@@ -209,7 +223,7 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
-  onValidatePasswordError: function(error) {
+  onValidatePasswordError: function(element, error) {
     this.getAttributeErrorElement('password').text(error);
     return this;
   }

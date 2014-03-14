@@ -9,6 +9,43 @@
 
   Zeppelin.VERSION = '0.0.1-alpha';
 
+  Zeppelin.Util = {};
+
+  Zeppelin.Util.isView = function (value) {
+    var toString;
+
+    if (!value) return false;
+
+    toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+    return toString === '[object View]';
+  };
+
+
+  Zeppelin.Util.isModel = function (value) {
+    var toString;
+
+    if (!value) return false;
+
+    toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+    return toString === '[object Model]';
+  };
+
+  Zeppelin.Util.isCollection = function (value) {
+    var toString;
+
+    if (!value) return false;
+
+    toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+    return toString === '[object Collection]';
+  };
+
+  Zeppelin.Util.is$ = function (value) {
+    return value instanceof jQuery;
+  };
+
   Zeppelin.Validations = {
     exists: function (value) {
       if (value === undefined) {
@@ -395,7 +432,9 @@
       if (!this.presenters) this.presenters = [];
       if (!this.validations) this.validations = {};
       if (!this.subscriptions) this.subscriptions = {};
-      if (!this.localAttributes) this.localAttributes = {};
+      if (!this.localAttributes) this.localAttributes = [];
+
+      this._views = [];
 
       _.union(this.presenters, options.presenters);
       _.extend(this.validations, options.validations);
@@ -404,6 +443,14 @@
 
       this.registerSubscriptions();
       Backbone.Model.prototype.constructor.apply(this, arguments);
+    },
+
+    toString: function () {
+      return '[object Model]';
+    },
+
+    isPopulated: function () {
+      return _.size(this.attributes) > 0;
     },
 
     getLocalAttributes: function () {
@@ -583,11 +630,17 @@
       if (!this.presenters) this.presenters = [];
       if (!this.subscriptions) this.subscriptions = {};
 
+      this._views = [];
+
       _.union(this.presenters, options.presenters);
       _.extend(this.subscriptions, options.subscriptions);
 
       this.registerSubscriptions();
       Backbone.Collection.prototype.constructor.apply(this, arguments);
+    },
+
+    toString: function () {
+      return '[object Collection]';
     },
 
     getAttributes: function () {
@@ -677,123 +730,379 @@
   _.extend(Zeppelin.Collection.prototype, Zeppelin.Events);
 
   var reservedElementNames = ['el', 'container', 'form', 'list'];
-  var nonExtendableProperties = ['events', 'elements', 'bindings', 'children', 'subscriptions'];
 
   Zeppelin.View = Backbone.View.extend({
     constructor: function (options) {
+      this.cid = _.uniqueId('view');
+      this._configure(options);
+      this.initialize.apply(this, arguments);
+    },
+
+    _configure: function (options) {
       options = options || {};
 
-      _.extend(this, _.omit(options, nonExtendableProperties));
+      this.views = this.views || {};
+      this.bindings = this.bindings || {};
+      this.elements = this.elements || {};
+      this.autoRenders = this.autoRenders || true;
 
-      this.name = options.name || this.name || _.uniqueId('V');
+      _.merge(this, options);
 
-      if (!this.events) this.events = {};
-      if (!this.elements) this.elements = {};
-      if (!this.bindings) this.bindings = {};
-      if (!this.children) this.children = {};
-      if (!this.subscriptions) this.subscriptions = {};
+      if (!this.name) this.name = this.cid;
 
-      _.extend(this.events, options.events);
-      _.extend(this.elements, options.elements);
-      _.extend(this.bindings, options.bindings);
-      _.extend(this.children, options.children);
-      _.extend(this.subscriptions, options.subscriptions);
+      this._isRemoved = false;
+      this._isRendered = false;
+      this._isInserted = false;
+      this._isUnplugged = false;
+      this._isFirstRender = true;
 
-      this.isRemoved = false;
-      this.isRendered = false;
-      this.isInserted = false;
-      this.isUnplugged = false;
-      this.isFirstRender = true;
-      this.containerIsSet = false;
+      this._registeredViews = {};
+      this._registeredBindings = {};
+      this._registeredElements = {};
 
-      this.model = options.model || this.model;
-      if (this.model) this.setModel(this.model);
-
-      this.collection = options.collection || this.collection;
-      if (this.collection) this.setCollection(this.collection);
-
-      this.registerBindings();
+      this.setModel();
+      this._ensureElement();
+      this.delegateEvents();
+      this._ensureContainer();
       this.registerSubscriptions();
-      Backbone.View.prototype.constructor.apply(this, arguments);
-      if (!this.template) this.registerElements();
+      if (this.autoRenders) this.render();
     },
 
-    _isReservedElementName: function (name) {
-      if (_.indexOf(reservedElementNames, name) === -1) {
-        return false;
-      } else {
-        return true;
-      }
+    setElement: function () {
+      Backbone.View.prototype.setElement.apply(this, arguments);
+      if (this.isInDOM()) this._whenInserted();
+      return this;
     },
 
-    registerElement: function (name, options) {
-      var $element, selector;
+    toString: function () {
+      return '[object View]';
+    },
 
-      if (!name || !options || this._isReservedElementName(name)) return this;
+    hasModelSet: function () {
+      return Z.Util.isModel(this.model) && this.model.cid ? true : false;
+    },
 
-      if (_.isString(options)) {
-        selector = options;
-      } else if (_.isPlainObject(options)) {
-        if (options.selector) {
-          selector = options.selector;
-        } else {
-          return this;
-        }
+    setModel: function (model) {
+      model = model || this.model;
+      if (!Z.Util.isModel(model)) return this;
+      if (this.hasModelSet()) this.unsetModel();
+      this.model = _.isFunction(model) ? new model() : model;
+      this.model._views.push(this.cid);
+      this.onSetModel(model);
+      return this;
+    },
+
+    onSetModel: function (model) {
+      return this;
+    },
+
+    unsetModel: function () {
+      if (!this.hasModelSet()) return this;
+      this.unregisterModelBindings();
+      this.model._views.splice(_.indexOf(this.model._views, this.cid), 1);
+      this.onUnsetModel(this.model);
+      delete this.model;
+      return this;
+    },
+
+    onUnsetModel: function (model) {
+      return this;
+    },
+
+    _ensureContainer: function () {
+      this.setContainer(_.result(this, this.container ? 'container' : '$el'));
+      return this;
+    },
+
+    setContainer: function (element) {
+      if (Z.Util.is$(element)) {
+        this.$container = element;
+      } else if ($(element).is(this.$el)) {
+        this.$container = this.$el;
+      } else if (this.$(element)) {
+        this.$container = this.$(element);
       } else {
-        return this;
-      }
-
-      $element = this.$el.find(selector);
-      if (!$element.length) return this;
-      this['$' + name] = $element;
-      if (!this.elements[name]) this.elements[name] = selector;
-
-      if (options.events && _.isPlainObject(options.events)) {
-        _.forOwn(options.events, function (callback, eventName) {
-          this.delegateEvent(selector, eventName, callback);
-        }, this);
+        this.$container = $(element);
       }
 
       return this;
     },
 
+    context: function () {
+      var context = {};
+
+      if (this.hasModelSet()) _.extend(context, this.model.getPresenters());
+      return context;
+    },
+
+    renderTemplate: function (template, context) {
+      var output = '';
+
+      if (arguments.length === 2) {
+        context = _.isPlainObject(context) ? context : _.result(this, 'context');
+
+        template = _.isFunction(template) ? template : this.template;
+      } else {
+        context = _.isPlainObject(template) ? template : _.result(this, 'context');
+
+        template = _.isFunction(template) ? template : this.template;
+      }
+
+      if (template) output = template.call(this, context);
+
+      return output;
+    },
+
+    canRender: function () {
+      return this.template ? true : false;
+    },
+
+    shouldRender: function () {
+      if (!this.canRender()) return false;
+      if (!this.hasModelSet() && this.model) return false;
+      if (this.hasModelSet() && !this.model.isPopulated()) return false;
+      return true;
+    },
+
+    isInDOM: function () {
+      return $.contains(document, this.el);
+    },
+
+    render: function (template, context) {
+      var output = this.renderTemplate(template, context);
+
+      if (output) this.$container.html(output);
+      this._isRendered = true;
+      this._isFirstRender = false;
+
+      this.unregisterElements();
+      this.registerElements();
+      this.unregisterViews();
+      this.registerViews();
+      this.unregisterBindings();
+      this.registerBindings();
+
+      this.trigger('rendered', this);
+      this.onRender();
+
+      return this;
+    },
+
+    onRender: function () {
+      return this;
+    },
+
+    insert: function (element) {
+      var $el = Z.Util.is$(element) ? element : $(element);
+
+      if (!$el.length) return this;
+      if (this.canRender() && this.shouldRender()) this.render();
+      $el.html(this.el);
+      return this;
+    },
+
+    _whenInserted: function () {
+      this._isInserted = true;
+      this.trigger('inserted', this);
+      this.onInsert();
+    },
+
+    onInsert: function () {
+      return this;
+    },
+
+    toHTML: function () {
+      return this.$el.html();
+    },
+
+    hasBindings: function () {
+      return _.size(this._registeredBindings) > 0;
+    },
+
+    registerBinding: function (event, options) {
+      var _options = {};
+
+      if (!_.isString(event) || !_.isPlainObject(options)) return this;
+      if (!options.callback) return this;
+
+      _options.once = options.once || false;
+      _options.delay = options.delay > -1 ? options.delay : 150;
+      _options.element = options.element || this.$el;
+      _options.element = Z.Util.is$(_options.element) ? _options.element : this.$(_options.element);
+      _options.object = options.object;
+
+      if (!_options.object && this.model && this.model.cid) _options.object = this.model;
+
+      if (!_options.object && this.collection && this.collection.cid) _options.object = this.collection;
+
+      if (!_options.object) _options.object = this;
+
+      if (Z.Util.isView(_options.object)) {
+        _options.type = 'view';
+      } else if (Z.Util.isModel(_options.object)) {
+        _options.type = 'model';
+      } else if (Z.Util.isCollection(_options.object)) {
+        _options.type = 'collection';
+      } else {
+        _options.type = '';
+      }
+
+      _options.callback = _.isFunction(options.callback) ? options.callback : this[options.callback];
+
+      if (!_options.callback) return this;
+      _options.callback = _.bind(_options.callback, this);
+      _options.callback = _.partial(_options.callback, _options.element);
+      _options.callback = _.debounce(_options.callback, _options.delay);
+
+      if (_options.object.cid === this.cid) {
+        if (_options.once) {
+          this.once(event, _options.callback, this);
+        } else {
+          this.on(event, _options.callback, this);
+        }
+      } else {
+        if (_options.once) {
+          this.listenToOnce(_options.object, event, _options.callback);
+        } else {
+          this.listenTo(_options.object, event, _options.callback);
+        }
+      }
+
+      this._registeredBindings[event] = _options;
+
+      return this;
+    },
+
+    registerBindings: function (bindings) {
+      bindings = bindings || _.result(this, 'bindings');
+
+      _.forOwn(bindings, function (options, event) {
+        this.registerBinding(event, options);
+      }, this);
+
+      return this;
+    },
+
+    unregisterBinding: function (event) {
+      var binding = this._registeredBindings[event];
+
+      if (!binding) return this;
+
+      if (binding.object.cid === this.cid) {
+        this.off(event, binding.callback, this);
+      } else {
+        this.stopListening(binding.object, event, binding.callback);
+      }
+
+      delete this._registeredBindings[event];
+      return this;
+    },
+
+    unregisterBindings: function (bindings) {
+      bindings = bindings || _.keys(this._registeredBindings);
+      _.forEach(bindings, this.unregisterBinding, this);
+      return this;
+    },
+
+    getModelBindings: function (model) {
+      var bindings = {};
+
+      if (!model && this.hasModelSet()) model = this.model;
+      if (!Z.Util.isModel(model)) return bindings;
+
+      _.forOwn(this._registeredBindings, function (binding, event) {
+        if (binding.object.cid === model.cid) bindings[event] = binding;
+      }, this);
+
+      return bindings;
+    },
+
+    unregisterModelBindings: function () {
+      if (!this.hasModelSet()) return this;
+      this.unregisterBindings(_.keys(this.getModelBindings(this.model)));
+      return this;
+    },
+
+    getViewBindings: function (view) {
+      var bindings = {};
+
+      if (!view) view = this;
+      if (!Z.Util.isView(view)) return bindings;
+
+      _.forOwn(this._registeredBindings, function (binding, event) {
+        if (binding.object.cid === view.cid) bindings[event] = binding;
+      }, this);
+
+      return bindings;
+    },
+
+    unregisterViewBindings: function (view) {
+      if (!Z.Util.isView(view)) return this;
+      this.unregisterBindings(_.keys(this.getViewBindings(view)));
+      return this;
+    },
+
+    _isReservedElementName: function (name) {
+      return _.indexOf(reservedElementNames, name) === -1 ? false : true;
+    },
+
     getElement: function (name) {
-      if (!name || this._isReservedElementName(name) || !this['$' + name]) {
-        return undefined;
-      } else {
-        return this['$' + name];
-      }
+      return this._isReservedElementName(name) ? undefined : this['$' + name];
     },
 
-    getElementSelector: function (name) {
-      var selector;
+    getSelector: function (name) {
+      var options, selector;
 
-      if (!name || this._isReservedElementName(name) || !this.getElement(name)) return undefined;
-      selector = this.elements[name];
-      if (_.isPlainObject(selector)) selector = selector.selector;
+      options = this._registeredElements[name];
+      if (!options) return undefined;
 
-      return selector || undefined;
+      if (Z.Util.is$(options)) {
+        selector = options.selector;
+      } else if (_.isString(options)) {
+        selector = options;
+      } else if (_.isPlainObject(options) && options.selector) {
+        selector = options.selector;
+      }
+
+      return selector;
     },
 
-    unregisterElement: function (name) {
-      var $element, selector;
+    hasElements: function () {
+      return _.size(this._registeredElements) > 0;
+    },
 
-      if (!name || this._isReservedElementName(name) || !this.getElement(name)) return this;
+    registerElement: function (name, options) {
+      var $el, selector;
 
-      $element = this.getElement(name);
-      selector = this.getElementSelector(name);
+      if (!name || !options || this._isReservedElementName(name)) return this;
 
-      if (selector) {
-        $element.off();
-        this.undelegateEvent(selector, '');
-        this['$' + name] = undefined;
-      } else {
-        return this;
+      if (Z.Util.is$(options) && this.$el.find(options)) {
+        $el = options;
+        selector = $el.selector;
+      } else if (_.isString(options)) {
+        $el = this.$el.find(options);
+        selector = options;
+      } else if (_.isPlainObject(options) && options.selector) {
+        $el = this.$el.find(options.selector);
+        selector = options.selector;
       }
+
+      if (!$el || !$el.length) return false;
+      this['$' + name] = $el;
+
+      if (_.isPlainObject(options) && _.isPlainObject(options.events)) {
+        _.forOwn(options.events, function (callback, event) {
+          this.delegateEvent(selector, event, callback);
+        }, this);
+      }
+
+      this._registeredElements[name] = options;
+
+      return this;
     },
 
     registerElements: function (elements) {
-      elements = elements || this.elements;
+      elements = elements || _.result(this, 'elements');
 
       _.forOwn(elements, function (options, name) {
         this.registerElement(name, options);
@@ -802,298 +1111,180 @@
       return this;
     },
 
+    unregisterElement: function (name) {
+      var $el, selector;
+
+      if (this._isReservedElementName(name)) return this;
+      $el = this.getElement(name);
+      selector = this.getSelector(name);
+      if ($el) $el.off();
+      if (selector) this.undelegateEvent(selector, '');
+      delete this['$' + name];
+      delete this._registeredElements[name];
+      return this;
+    },
+
     unregisterElements: function (elements) {
-      elements = elements || _.keys(this.elements);
-      if (_.isArray(elements)) _.forEach(elements, this.unregisterElement, this);
+      elements = elements || _.keys(this._registeredElements);
+      _.forEach(elements, this.unregisterElement, this);
       return this;
     },
 
-    _deconstructBinding: function (binding) {
-      var _binding, deconstructedBinding;
-
-      if (binding) {
-        _binding = binding.split(' ');
-
-        deconstructedBinding = {
-          once: false,
-          other: this
-        };
-
-        if (_binding.length === 1) {
-          deconstructedBinding.eventName = _binding[0];
-        } else if (_binding.length >= 2) {
-          deconstructedBinding.eventName = _binding[1];
-
-          if (_binding[0] === 'model' && this.model) {
-            deconstructedBinding.other = this.model;
-          } else if (_binding[0] === 'collection' && this.collection) {
-            deconstructedBinding.other = this.collection;
-          } else {
-            return undefined;
-          }
-
-          if (_.last(_binding) === 'once') deconstructedBinding.once = true;
-        } else {
-          return undefined;
-        }
-      } else {
-        return undefined;
-      }
-
-      return deconstructedBinding;
-    },
-
-    registerBinding: function (binding, callback) {
-      var _binding, eventName, binded;
-
-      if (!binding || !callback || !_.isString(binding)) return this;
-
-      if (_.isFunction(callback)) {
-        callback = _.bind(callback, this);
-      } else {
-        callback = _.bind(this[callback], this);
-      }
-
-      _binding = this._deconstructBinding(binding);
-      if (!_binding) return this;
-
-      if (_binding.other.cid === this.cid) {
-        if (_binding.once) {
-          this.once(_binding.eventName, callback, this);
-        } else {
-          this.on(_binding.eventName, callback, this);
-        }
-      } else {
-        if (_binding.once) {
-          this.listenToOnce(_binding.other, _binding.eventName, callback);
-        } else {
-          this.listenTo(_binding.other, _binding.eventName, callback);
-        }
-      }
-
-      if (!this.bindings[binding]) this.bindings[binding] = callback;
-      return this;
-    },
-
-    unregisterBinding: function (binding) {
-      var _binding;
-
-      if (binding && this.bindings[binding]) {
-        _binding = this._deconstructBinding(binding);
-
-        if (!_binding) return this;
-
-        if (_binding.other.cid === this.cid) {
-          this.off(_binding.eventName);
-        } else {
-          if (_.isPlainObject(_binding.other)) this.stopListening(_binding.other, _binding.eventName);
-        }
-      }
-
-      return this;
-    },
-
-    registerBindings: function (bindings) {
-      bindings = bindings || this.bindings;
-
-      _.forOwn(bindings, function (callback, binding) {
-        this.registerBinding(binding, callback);
-      }, this);
-
-      return this;
-    },
-
-    unregisterBindings: function (bindings) {
-      bindings = bindings || _.keys(this.bindings);
-      if (_.isArray(bindings)) _.forEach(bindings, this.unregisterBinding, this);
-      return this;
-    },
-
-    _getModelBindings: function () {
-      var bindings = {};
-
-      _.forOwn(this.bindings, function (callback, binding) {
-        if (binding.split(' ')[0] === 'model') bindings[binding] = callback;
-      }, this);
-
-      return bindings;
-    },
-
-    _getCollectionBindings: function () {
-      var bindings = {};
-
-      _.forOwn(this.bindings, function (callback, binding) {
-        if (binding.split(' ')[0] === 'collection') bindings[binding] = callback;
-      }, this);
-
-      return bindings;
-    },
-
-    delegateEvent: function (selector, eventName, callback) {
-      var originalEventName;
-
+    delegateEvent: function (selector, event, callback) {
       if (arguments.length === 2) {
-        callback = eventName;
-        eventName = selector;
+        callback = event;
+        event = selector;
         selector = undefined;
       }
 
-      if (!eventName || !callback) return this;
+      if (!event || !callback) return this;
 
-      if (_.isFunction(callback)) {
-        callback = _.bind(callback, this);
-      } else {
-        callback = _.bind(this[callback], this);
-      }
-
-      if (selector && this.getElementSelector(selector)) selector = this.getElementSelector(selector);
-
-      originalEventName = eventName;
-      eventName += '.delegateEvents' + this.cid;
+      event += '.delegateEvents' + this.cid;
+      callback = _.isFunction(callback) ? _.bind(callback, this) : _.bind(this[callback], this);
 
       if (selector) {
-        this.$el.on(eventName, selector, callback);
-
-        if (!this.events[originalEventName + ' ' + selector]) {
-          this.events[originalEventName + ' ' + selector] = callback;
+        if (Z.Util.is$(selector)) {
+          selector = selector.selector;
+        } else if (this.getSelector(selector)) {
+          selector = this.getSelector(selector);
+        } else if (_.isString(selector)) {
+          selector = selector;
         }
+
+        if (selector) this.$el.on(event, selector, callback);
       } else {
-        this.$el.on(eventName, callback);
-        if (!this.events[originalEventName]) this.events[originalEventName] = callback;
+        this.$el.on(event, callback);
       }
 
       return this;
     },
 
-    undelegateEvent: function (selector, eventName) {
+    undelegateEvent: function (selector, event) {
       if (arguments.length === 2) {
-        this.$el.off(eventName + '.delegateEvents' + this.cid, selector);
+        selector = Z.Util.is$(selector) ? selector.selector : selector;
+        this.$el.off(event + '.delegateEvents' + this.cid, selector);
       } else if (arguments.length === 1) {
-        eventName = selector;
-        this.$el.off(eventName + '.delegateEvents' + this.cid);
+        event = selector;
+        this.$el.off(event + '.delegateEvents' + this.cid);
       }
 
       return this;
     },
 
-    setModel: function (model, bind) {
-      bind = bind || false;
-      model = model || this.model;
-
-      if (!model) return this;
-      if (_.isFunction(model)) model = new model();
-      this.model = model;
-      this.model._view = this.cid;
-      if (bind) this.registerBindings(this._getModelBindings());
-
-      return this;
+    hasView: function (name) {
+      return Z.Util.isView(this.getView(name));
     },
 
-    setCollection: function (collection, bind) {
-      bind = bind || false;
-      collection = collection || this.collection;
-
-      if (!collection) return this;
-      if (_.isFunction(collection)) collection = new collection();
-      this.collection = collection;
-      this.collection._view = this.cid;
-      if (bind) this.registerBindings(this._getCollectionBindings());
-
-      return this;
+    hasViews: function () {
+      return _.size(this._registeredViews) > 0;
     },
 
-    container: null,
+    registerView: function (view, data, name) {
+      var options;
 
-    $container: null,
-
-    setContainer: function (container) {
-      container = container || this.container;
-
-      if (!container) {
-        this.container = this.el;
-        this.$container = this.$el;
-      } else {
-        this.container = container;
-        this.$container = this.$(this.container);
-        if (!this.$container.length) this.$container = this.$el;
+      if (_.isPlainObject(view) && !Z.Util.isView(view)) {
+        options = view;
+        view = options.view;
+        name = data;
+        data = options.data || {};
       }
 
-      this.containerIsSet = true;
+      if (!Z.Util.isView(view)) return this;
+      if (_.isString(data)) name = data;
+      if (!_.isPlainObject(data)) data = {};
+
+      view = _.isFunction(view) ? new view(data) : view;
+      this._registeredViews[name || view.cid] = view;
+      view.on('removed', this._whenViewRemoved, this);
       return this;
     },
 
-    template: '',
+    registerViews: function (views) {
+      views = views || _.result(this, 'views');
 
-    context: function () {
-      if (this.model) {
-        return this.model.getPresenters();
-      } else if (this.collection) {
-        return this.collection.getPresenters();
-      } else {
-        return {};
-      }
+      _.forOwn(views, function (view, name) {
+        this.registerView(view, name);
+      }, this);
+
+      return this;
     },
 
-    renderTemplate: function (template, context) {
-      if (!context) {
-        if (_.isPlainObject(template)) {
-          context = template;
-          template = this.template;
-        } else if (_.isFunction(template) || _.isString(template)) {
-          context = _.result(this, 'context');
-          template = template;
-          if (_.isFunction(template)) template = _.bind(template, this);
-        } else {
-          context = _.result(this, 'context');
-          template = this.template;
+    unregisterView: function (name) {
+      var view;
+
+      if (!_.isString(name)) return this;
+      view = this.getView(name);
+      if (!Z.Util.isView(view)) return this;
+      this.unregisterViewBindings(view);
+      view.off('removed', this._whenViewRemoved, this);
+      delete this._registeredViews[name];
+      return this;
+    },
+
+    unregisterViews: function (views) {
+      views = views || _.keys(this._registeredViews);
+      _.forEach(views, this.unregisterView, this);
+      return this;
+    },
+
+    getView: function (comparator) {
+      var view;
+
+      if (_.isString(comparator)) {
+        view = this._registeredViews[comparator];
+      } else if (_.isFunction(comparator)) {
+        comparator = _.bind(comparator, this);
+        view = _.find(this._registeredViews, function (view) {
+          return comparator(view) === true;
+        }, this);
+      }
+
+      return view;
+    },
+
+    getViews: function (comparator) {
+      var views = [];
+
+      if (_.isFunction(comparator)) {
+        comparator = _.bind(comparator, this);
+        views = _.filter(this._registeredViews, function (view) {
+          return comparator(view) === true;
+        }, this);
+      }
+
+      return views;
+    },
+
+    forEachView: function (callback) {
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (callback) _.forOwn(this._registeredViews, _.bind(callback, this), this);
+      return this;
+    },
+
+    unplugViews: function (deep) {
+      deep = deep || false;
+
+      this.forEachView(function (view) {
+        view.unplug(deep);
+      });
+
+      return this;
+    },
+
+    _whenViewRemoved: function (view) {
+      var name;
+
+      _.forOwn(this._registeredViews, function (_view, _name) {
+        if (view.cid === _view.cid) {
+          name = _name;
+          return false;
         }
-      } else {
-        context = context || _.result(this, 'context');
-        template = template || this.template;
+      }, this);
+
+      if (name) {
+        view.off('removed', this._whenViewRemoved, this);
+        delete this._registeredViews[name];
       }
-
-      if (_.isFunction(template)) {
-        return template(context);
-      } else if (_.isString(template)) {
-        return template;
-      } else {
-        return '';
-      }
-    },
-
-    render: function (template, context) {
-      var output = this.renderTemplate(template, context);
-
-      if (!output) return this;
-      if (!this.containerIsSet) this.setContainer();
-      this.$container.html(output);
-      this.registerElements();
-      this.isRendered = true;
-      this.isFirstRender = false;
-      this.onRender();
-      this.trigger('render', this);
-
-      return this;
-    },
-
-    onRender: function () {
-
-    },
-
-    insert: function (destination) {
-      if (destination) {
-        if (this.isFirstRender) this.render();
-        this.$el.appendTo(destination);
-        this.isInserted = true;
-        this.onInsert();
-        this.trigger('insert', this);
-      }
-
-      return this;
-    },
-
-    onInsert: function () {
-
     },
 
     unplug: function (deep) {
@@ -1104,129 +1295,31 @@
       this.undelegateEvents();
       this.unregisterElements();
       this.unregisterBindings();
+      this.unsetModel();
 
-      if (this.model) {
-        this._model = this.model.cid;
-        delete this.model._view;
-        delete this.model;
-      }
+      if (deep) this.unplugViews();
 
-      if (this.collection) {
-        this._collection = this.collection.cid;
-        delete this.collection._view;
-        delete this.collection;
-      }
-
-      if (this.parent) {
-        this._parent = this.parent;
-        delete this.parent;
-      }
-
-      if (deep) this.unplugChildren(deep);
-
-      this.children = {};
-      this.isUnplugged = true;
-
+      this._isUnplugged = true;
+      this.trigger('unplugged', this);
       this.onUnplug();
-      this.trigger('unplug', this);
 
       return this;
     },
 
     onUnplug: function () {
-
+      return this;
     },
 
     remove: function () {
-      this.unplug(true);
       this.$el.remove();
-      this.children = {};
-      this.isRemoved = true;
+      this._isRemoved = true;
+      this.trigger('removed', this);
       this.onRemove();
-      this.trigger('remove', this);
+      this.unplug(true);
       return this;
     },
 
     onRemove: function () {
-
-    },
-
-    addChild: function (child, data, name) {
-      if (_.isString(data)) name = data;
-      if (!_.isPlainObject(data)) data = {};
-
-      if (child) {
-        if (_.isFunction(child)) child = new child(data);
-        if (!child.cid) return this;
-        name = _.isString(name) ? name : child.cid;
-        child.parent = this;
-        this.children[name] = child;
-      }
-
-      return child;
-    },
-
-    addChildren: function (children) {
-      if (_.isArray(children)) _.forEach(children, this.addChild, this);
-      return this;
-    },
-
-    forEachChild: function (callback) {
-      if (!_.isFunction(callback)) callback = this[callback];
-      if (callback) _.forOwn(this.children, _.bind(callback, this));
-      return this;
-    },
-
-    getChild: function (comparator) {
-      var child;
-
-      if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-
-        this.forEachChild(function (view) {
-          child = comparator(view) ? view : undefined;
-          if (child) return false;
-        });
-
-        return child;
-      }
-
-      return undefined;
-    },
-
-    getChildren: function (comparator) {
-      var children = [];
-
-      if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-
-        this.forEachChild(function (child) {
-          if (comparator(child)) children.unshift(child);
-        });
-      }
-
-      return children;
-    },
-
-    getChildByCid: function (cid) {
-      return _.find(this.children, function (child) {
-        return child.cid === cid;
-      });
-    },
-
-    getChildByName: function (name) {
-      return _.find(this.children, function (child) {
-        return child.name === name;
-      });
-    },
-
-    unplugChildren: function (deep) {
-      deep = deep || false;
-
-      this.forEachChild(function (child) {
-        child.unplug(deep);
-      });
-
       return this;
     }
   });
@@ -1234,12 +1327,37 @@
   _.extend(Zeppelin.View.prototype, Zeppelin.Events);
 
   Zeppelin.FormView = Zeppelin.View.extend({
-    constructor: function () {
-      this.formIsSet = false;
-      Zeppelin.View.prototype.constructor.apply(this, arguments);
-    },
+    _configure: function (options) {
+      options = options || {};
 
-    model: Zeppelin.Model,
+      this.views = this.views || {};
+      this.bindings = this.bindings || {};
+      this.elements = this.elements || {};
+      this.model = this.model || Z.Model;
+      this.autoRenders = this.autoRenders || true;
+
+      _.merge(this, options);
+
+      if (!this.name) this.name = this.cid;
+
+      this._isRemoved = false;
+      this._isRendered = false;
+      this._isInserted = false;
+      this._isUnplugged = false;
+      this._isFirstRender = true;
+
+      this._registeredViews = {};
+      this._registeredBindings = {};
+      this._registeredElements = {};
+
+      this.setModel();
+      this._ensureElement();
+      this.delegateEvents();
+      this._ensureContainer();
+      this._ensureForm();
+      this.registerSubscriptions();
+      if (this.autoRenders) this.render();
+    },
 
     setModel: function () {
       Zeppelin.View.prototype.setModel.apply(this, arguments);
@@ -1248,27 +1366,39 @@
       return this;
     },
 
-    form: null,
+    unsetModel: function () {
+      if (!this.hasModelSet()) return this;
+      this.stopListening(this.model, 'valid', this.onValid);
+      this.stopListening(this.model, 'invalid', this.onInvalid);
+      this.unregisterModelBindings();
+      this.model._views.splice(_.indexOf(this.model._views, this.cid), 1);
+      delete this.model;
+      return this;
+    },
 
-    $form: null,
+    _ensureForm: function () {
+      this.setForm(_.result(this, this.form ? 'form' : '$container'));
+      return this;
+    },
 
-    setForm: function (form) {
-      form = form || this.form;
+    setForm: function (element) {
+      if (this.$form) this.$form.off('submit');
 
-      if (!form) {
-        this.form = this.el;
+      if (Z.Util.is$(element)) {
+        this.$form = element;
+      } else if ($(element).is(this.$el)) {
         this.$form = this.$el;
+      } else if (this.$(element)) {
+        this.$form = this.$(element);
       } else {
-        this.form = form;
-        this.$form = this.$(this.form);
-        if (!this.$form.length) this.$form = this.$el;
+        this.$form = $(element);
       }
 
-      this.formIsSet = true;
-
-      this.$form.on('submit', _.bind(function (event) {
-        this.onSubmit(event);
-      }, this));
+      if (this.$form.length) {
+        this.$form.on('submit', _.bind(function (event) {
+          this.onSubmit(event);
+        }, this));
+      }
 
       return this;
     },
@@ -1280,7 +1410,8 @@
 
     render: function () {
       Zeppelin.View.prototype.render.apply(this, arguments);
-      if (!this.formIsSet) this.setForm();
+      this._ensureForm();
+      return this;
     },
 
     getAttributeElement: function (attributeName) {
@@ -1404,286 +1535,312 @@
   });
 
   Zeppelin.CollectionView = Zeppelin.View.extend({
-    constructor: function (options) {
+    _configure: function (options) {
       options = options || {};
 
-      this.renderOnReset = options.renderOnReset || this.renderOnReset || false;
+      this.views = this.views || {};
+      this.bindings = this.bindings || {};
+      this.elements = this.elements || {};
+      this.collection = this.collection || Z.Collection;
+      this.autoRenders = this.autoRenders || true;
+      this.reactsToCollection = this.reactsToCollection || true;
 
-      this.listIsSet = false;
-      this.isFiltered = false;
-      this.collectionIsRendered = false;
+      _.merge(this, options);
 
-      this._itemViews = {};
+      if (!this.name) this.name = this.cid;
 
-      this.itemView = options.itemView || this.itemView;
-      if (this.itemView) this.setItemView(this.itemView);
+      this._isRemoved = false;
+      this._isRendered = false;
+      this._isInserted = false;
+      this._isFiltered = false;
+      this._isUnplugged = false;
+      this._isFirstRender = true;
+      this._collectionIsRendered = false;
 
-      Zeppelin.View.prototype.constructor.apply(this, arguments);
+      this._registeredViews = {};
+      this._registeredBindings = {};
+      this._registeredElements = {};
+      this._registeredItemViews = {};
+
+      this.setCollection();
+      this._ensureElement();
+      this.delegateEvents();
+      this._ensureContainer();
+      this._ensureList();
+      this.registerSubscriptions();
+      if (this.autoRenders) this.render();
     },
 
-    collection: Zeppelin.Collection,
+    itemView: Z.View,
 
-    setCollection: function () {
-      Zeppelin.View.prototype.setCollection.apply(this, arguments);
+    hasCollectionSet: function () {
+      return Z.Util.isCollection(this.collection) && this.collection.cid ? true : false;
+    },
+
+    setCollection: function (collection) {
+      collection = collection || this.collection;
+      if (!Z.Util.isCollection(collection)) return this;
+      if (this.hasCollectionSet()) this.unsetCollection();
+      this.collection = _.isFunction(collection) ? new collection() : collection;
+      this.collection._views.push(this.cid);
 
       this.listenTo(this.collection, 'add', this.onAdd);
+      this.listenTo(this.collection, 'reset', this.onReset);
       this.listenTo(this.collection, 'remove', this.onRemove);
-      if (this.renderOnReset) this.listenTo(this.collection, 'reset', this.renderCollection);
 
-      this.listenTo(this.collection, 'add', this._addItemView);
-      this.listenTo(this.collection, 'remove', this._removeItemView);
+      if (this.reactsToCollection) {
+        this.listenTo(this.collection, 'add', this.appendItem);
+        this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(this.collection, 'remove', this.removeItem);
+      }
+
+      return this;
+    },
+
+    unsetCollection: function () {
+      if (!this.hasCollectionSet()) return this;
+      this.unregisterCollectionBindings();
+      this.stopListening(this.collection, 'add', this.onAdd);
+      this.stopListening(this.collection, 'reset', this.onReset);
+      this.stopListening(this.collection, 'remove', this.onRemove);
+
+      if (this.reactsToCollection) {
+        this.stopListening(this.collection, 'add', this.appendItem);
+        this.stopListening(this.collection, 'reset', this.renderCollection);
+        this.stopListening(this.collection, 'remove', this.removeItem);
+      }
+
+      this.collection._views.splice(_.indexOf(this.collection._views, this.cid), 1);
+      delete this.collection;
+      return this;
+    },
+
+    isValidModel: function (model) {
+      var valid = false;
+
+      if (this.hasCollectionSet() && model && model.cid && this.collection.contains(model)) valid = true;
+
+      return valid;
+    },
+
+    getCollectionBindings: function (collection) {
+      var bindings = {};
+
+      if (!collection && this.hasCollectionSet()) collection = this.collection;
+      if (!Z.Util.isCollection(collection)) return bindings;
+
+      _.forOwn(this._registeredBindings, function (binding, event) {
+        if (binding.object.cid === collection.cid) bindings[event] = binding;
+      }, this);
+
+      return bindings;
+    },
+
+    unregisterCollectionBindings: function () {
+      if (!this.hasCollectionSet()) return this;
+      this.unregisterBindings(_.keys(this.getCollectionBindings(this.collection)));
       return this;
     },
 
     onAdd: function (model) {
+      return this;
+    },
 
+    onReset: function (collection) {
+      return this;
     },
 
     onRemove: function (model) {
-
+      return this;
     },
 
-    list: null,
+    _ensureList: function () {
+      this.setList(_.result(this, this.list ? 'list' : '$container'));
+      return this;
+    },
 
-    $list: null,
-
-    setList: function (list) {
-      list = list || this.list;
-
-      if (!list) {
-        this.list = this.el;
+    setList: function (element) {
+      if (Z.Util.is$(element)) {
+        this.$list = element;
+      } else if ($(element).is(this.$el)) {
         this.$list = this.$el;
+      } else if (this.$(element)) {
+        this.$list = this.$(element);
       } else {
-        this.list = list;
-        this.$list = this.$(this.list);
-        if (!this.$list.length) this.$list = this.$el;
+        this.$list = $(element);
       }
 
-      this.listIsSet = true;
       return this;
     },
 
-    itemView: Zeppelin.View,
-
-    setItemView: function (view) {
-      if (_.isFunction(view)) this.itemView = view;
-      return this;
+    hasItemViews: function () {
+      return _.size(this._registeredItemViews) > 0;
     },
 
-    _addItemView: function (model) {
-      var itemView;
+    createItemView: function (model) {
+      var itemView = Z.View;
 
-      if (!model) return undefined;
-      itemView = this.getItemViewByModel(model);
-      if (itemView) return itemView;
+      if (!this.isValidModel(model)) return undefined;
 
-      itemView = this.addChild(this.itemView, {
-        model: model
+      if (_.isFunction(this.itemView) && !Z.Util.isView(this.itemView)) {
+        if (Z.Util.isView(this.itemView())) itemView = this.itemView();
+      } else if (Z.Util.isView(this.itemView)) {
+        itemView = this.itemView;
+      }
+
+      return new itemView({
+        model: model,
+        autoRenders: true
       });
-      if (itemView) this._itemViews[itemView.cid] = itemView;
+    },
 
+    getItem: function (model) {
+      var itemView;
+
+      if (!model || !model.cid) return undefined;
+      itemView = this.getView(this._registeredItemViews[model.cid]);
       return itemView;
     },
 
-    _removeItemView: function (model) {
+    addItem: function (model) {
       var itemView;
 
-      if (!model) return this;
-      itemView = this.getItemViewByModel(model);
-
-      if (itemView) {
-        itemView.unplug(true);
-        delete this.children[itemView.cid];
-        delete this._itemViews[itemView.cid];
-      }
-
+      if (this.getItem(model)) return this;
+      itemView = this.createItemView(model);
+      if (!itemView) return this;
+      this.onAddItem(itemView);
+      this._registeredItemViews[model.cid] = itemView.cid;
+      this.registerView(itemView);
       return this;
     },
 
-    _renderItemView: function (itemView) {
-      if (!itemView) return undefined;
-      itemView.render();
-      this.onRenderItem(itemView);
-      this.trigger('render:item', this, itemView);
-      return itemView;
+    onAddItem: function (itemView) {
+      return this;
+    },
+
+    addItems: function (models) {
+      models = models || this.collections.models;
+      _.forEach(models, this.addItem, this);
+      return this;
     },
 
     renderItem: function (model) {
-      var itemView = this.getItemViewByModel(model);
+      var itemView = this.getItem(model);
 
-      if (!itemView) itemView = this._addItemView(model);
-      return this._renderItemView(itemView);
+      if (!itemView) this.addItem(model);
+      itemView = this.getItem(model);
+      if (itemView) itemView.render();
+      return this;
     },
 
-    onRenderItem: function (item) {
+    appendItem: function (model) {
+      var itemView = this.getItem(model);
 
+      if (!itemView) {
+        this.addItem(model);
+        itemView = this.getItem(model);
+        if (itemView) this.$list.append(itemView.render().el);
+      } else {
+        this.$list.append(itemView.render().el);
+      }
+
+      return this;
     },
 
-    prependItem: function (item) {
-      this.$list.prepend(item.render().el);
-      return item;
+    prependItem: function (model) {
+      var itemView = this.getItem(model);
+
+      if (!itemView) {
+        this.addItem(model);
+        itemView = this.getItem(model);
+        if (itemView) this.$list.append(itemView.render().el);
+      } else {
+        this.$list.prepend(itemView.render().el);
+      }
+
+      return this;
     },
 
-    appendItem: function (item) {
-      this.$list.append(item.render().el);
-      return item;
+    removeItem: function (model) {
+      var itemView = this.getItem(model);
+
+      if (!itemView) return this;
+      this.onRemoveItem(itemView);
+      this.unregisterView(itemView.cid);
+      itemView.unplug(true);
+      delete this._registeredItemViews[model.cid];
+      return this;
     },
 
-    renderCollection: function () {
-      var fragment;
+    onRemoveItem: function (itemView) {
+      return this;
+    },
 
-      if (this.listIsSet && this.collection.length) {
+    removeItems: function (models) {
+      models = models || this.collection.models;
+      _.forEach(models, this.removeItem, this);
+      return this;
+    },
+
+    renderCollection: function (filter) {
+      var fragment, models;
+
+      if (this.hasCollectionSet() && this.collection.length) {
+        models = _.isFunction(filter) ? this.collection.filter(_.bind(filter, this)) : this.collection.models;
         fragment = document.createDocumentFragment();
 
-        this.removeItemViews();
+        this.removeItems();
 
-        this.collection.each(function (item) {
-          fragment.appendChild(this.renderItem(item).el);
-        }, this);
+        if (models && models.length) {
+          _.forEach(models, function (model) {
+            var itemView;
 
-        this.$list.html(fragment);
-        this.isFiltered = false;
-        this.collectionIsRendered = true;
+            this.renderItem(model);
+            itemView = this.getItem(model);
+            if (itemView) fragment.appendChild(itemView.el);
+          }, this);
+
+          this.$list.html(fragment);
+        }
+
+        this._isFiltered = _.isFunction(filter);
+        this._collectionIsRendered = true;
         this.onRenderCollection(this.collection);
-        this.trigger('render:collection', this, this.collection);
+        this.trigger('collectionRendered', this, this.collection);
       }
 
       return this;
     },
 
     onRenderCollection: function (collection) {
-
-    },
-
-    render: function () {
-      Zeppelin.View.prototype.render.apply(this, arguments);
-      this.setList();
-      this.renderCollection();
       return this;
     },
 
-    getItemElement: function (comparator) {
-      var $element;
+    context: function () {
+      var context = {};
 
-      if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-
-        this.forEachItemView(function (child) {
-          $element = comparator(child) ? child.$el : undefined;
-          if ($element) return false;
-        });
-
-        return $element;
-      }
-
-      return undefined;
+      if (this.hasCollectionSet()) _.extend(context, this.collection.getPresenters());
+      return context;
     },
 
-    getItemElements: function (comparator) {
-      var $elements = [];
-
-      if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-
-        this.forEachItemView(function (child) {
-          if (comparator(child)) $elements.push(child);
-        });
-      }
-
-      return $elements;
+    shouldRender: function () {
+      if (!this.canRender()) return false;
+      if (!this.hasCollectionSet() && this.collection) return false;
+      if (this.hasCollectionSet() && !this.collection.length) return false;
+      return true;
     },
 
-    filter: function (comparator) {
-      var fragment, filteredModels, filteredCollection = this.collection.clone();
-
-      if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-        filteredModels = filteredCollection.filter(comparator);
-
-        if (this.listIsSet) {
-          fragment = document.createDocumentFragment();
-          filteredCollection.reset(filteredModels);
-
-          this.removeItemViews();
-
-          filteredCollection.each(function (item) {
-            fragment.appendChild(this.renderItem(item).el);
-          }, this);
-
-          this.$list.html(fragment);
-          this.isFiltered = true;
-          this.collectionIsRendered = true;
-          this.onRenderCollection(filteredCollection);
-          this.trigger('render:collection', this, filteredCollection);
-        }
-      }
-
-      return this;
-    },
-
-    forEachItemView: function (callback) {
-      if (!_.isFunction(callback)) callback = this[callback];
-      if (callback) _.forOwn(this._itemViews, _.bind(callback, this));
-      return this;
-    },
-
-    getItemView: function (comparator) {
-      var itemView;
-
-      if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-
-        this.forEachItemView(function (view) {
-          itemView = comparator(view) ? view : undefined;
-          if (itemView) return false;
-        });
-
-        return itemView;
-      }
-
-      return undefined;
-    },
-
-    getItemViewByModel: function (model) {
-      if (!model) return undefined;
-
-      return this.getItemView(function (itemView) {
-        if (itemView.model && itemView.model.cid) {
-          if (model.isNew() || !itemView.model.id) {
-            return itemView.model.cid === model.cid;
-          } else {
-            return itemView.model.get(itemView.model.idAttribute) === model.get(model.idAttribute);
-          }
-        }
-      });
-    },
-
-    unplugItemViews: function (itemViews) {
-      itemViews = itemViews || this._itemViews;
-
-      _.forOwn(itemViews, function (itemView, cid) {
-        itemView.unplug(true);
-      }, this);
-
-      return this;
-    },
-
-    removeItemViews: function (itemViews) {
-      itemViews = itemViews || this._itemViews;
-
-      _.forOwn(itemViews, function (itemView, cid) {
-        itemView.unplug(true);
-        delete this.children[cid];
-      }, this);
-
-      this._itemViews = {};
-
+    render: function (filter) {
+      Zeppelin.View.prototype.render.apply(this);
+      this._ensureList();
+      this.renderCollection(filter);
       return this;
     },
 
     unplug: function () {
-      this.removeItemViews();
+      if (this.hasItemViews()) this.removeItems();
       Zeppelin.View.prototype.unplug.apply(this, arguments);
+      return this;
     }
   });
 

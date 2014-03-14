@@ -1,19 +1,21 @@
 module.exports = Zeppelin.CollectionView.extend({
-  className: 'boards',
-
   name: 'BoardsList',
 
-  template: require('templates/boards'),
+  el: 'div.sidebar',
 
   list: 'ol.boards-list',
+
+  className: 'boards',
+
+  template: require('templates/boards'),
 
   events: {
     'click button[data-action=create]': 'onCreateClick'
   },
 
-  itemView: require('views/board'),
-
   collection: App.Boards,
+
+  itemView: require('views/board'),
 
   onCreateClick: function() {
     this.showForm();
@@ -21,15 +23,15 @@ module.exports = Zeppelin.CollectionView.extend({
   },
 
   showForm: function() {
-    if (this.children.createForm) {
-      this.children.createForm.$el.show();
+    if (this.hasView('createForm')) {
+      this.getView('createForm').$el.show();
     } else {
-      this.addChild(_.createView('create-board', {
+      this.registerView(_.createView('create-board', {
         currentAccount: this.currentAccount
       }), 'createForm');
 
-      this.listenTo(this.children.createForm, 'new:board', this.onNewBoard);
-      this.children.createForm.render();
+      this.listenTo(this.getView('createForm'), 'new:board', this.onNewBoard);
+      this.getView('createForm').render();
     }
 
     return this;
@@ -40,20 +42,14 @@ module.exports = Zeppelin.CollectionView.extend({
     return this;
   },
 
-  onAdd: function(board) {
-    if (!this.isFirstRender) this.appendItem(this.renderItem(board));
-    return this;
-  },
-
-  onRemove: function(board) {
-    var itemView = this.getItemViewByModel(board);
-    if (itemView) itemView.remove();
-    return this;
-  },
-
   selectBoard: function(board) {
-    var boardView = this.getItemViewByModel(board);
-    if (boardView) boardView.select();
+    var view = this.getItem(board);
+    if (view) view.select();
+    return this;
+  },
+
+  onRemoveItem: function(itemView) {
+    if (itemView) itemView.remove();
     return this;
   }
 });

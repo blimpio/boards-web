@@ -2,7 +2,8 @@ module.exports = Zeppelin.Model.extend({
   name: 'User',
 
   defaults: {
-    signup_step: 1
+    signup_step: 1,
+    allow_signup: false
   },
 
   localAttributes: ['signup_step', 'passwordReset'],

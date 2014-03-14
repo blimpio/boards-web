@@ -1,6 +1,8 @@
 module.exports = Zeppelin.View.extend({
   name: 'SigninController',
 
+  el: '#application',
+
   template: require('templates/signin'),
 
   subscriptions: {
@@ -9,14 +11,12 @@ module.exports = Zeppelin.View.extend({
     }
   },
 
-  initialize: function() {
-    document.title = 'Blimp | Signin';
-    this.insert('#application').initChildren();
-    return this;
+  views: {
+    'form': require('views/signin-form')
   },
 
-  initChildren: function() {
-    this.addChild(_.createView('signin-form'), 'form').render();
+  initialize: function() {
+    document.title = 'Blimp | Signin';
     return this;
   }
 });
