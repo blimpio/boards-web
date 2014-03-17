@@ -26,29 +26,12 @@ describe('ForgotPasswordController', function() {
     });
 
     it('should render and insert.', function() {
-      expect(forgotPasswordController.isRendered).to.be.true;
-      expect(forgotPasswordController.isInserted).to.be.true;
+      expect(forgotPasswordController._isRendered).to.be.true;
+      expect(forgotPasswordController._isInserted).to.be.true;
     });
 
     it('should have a form child view.', function() {
-      expect(forgotPasswordController.children.form).to.exist;
-    });
-
-    afterEach(function() {
-      forgotPasswordController.unplug(true);
-    });
-  });
-
-  describe('initChildren()', function() {
-    var forgotPasswordController;
-
-    beforeEach(function() {
-      forgotPasswordController = new ForgotPasswordController();
-    });
-
-    it('should init the forgot password form view.', function() {
-      forgotPasswordController.initChildren();
-      expect(forgotPasswordController.children.form).to.exist;
+      expect(forgotPasswordController.getView('form')).to.exist;
     });
 
     afterEach(function() {

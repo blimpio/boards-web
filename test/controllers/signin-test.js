@@ -26,30 +26,12 @@ describe('SigninController', function() {
     });
 
     it('should render and insert.', function() {
-      expect(signinController.isRendered).to.be.true;
-      expect(signinController.isInserted).to.be.true;
+      expect(signinController._isRendered).to.be.true;
+      expect(signinController._isInserted).to.be.true;
     });
 
     it('should have a form child view.', function() {
-      expect(signinController.children.form).to.exist;
-    });
-
-    afterEach(function() {
-      signinController.unplug(true);
-    });
-  });
-
-  describe('initChildren()', function() {
-    var signinController;
-
-    beforeEach(function() {
-      signinController = new SigninController()
-    });
-
-    it('should init and render the signin form view.', function() {
-      signinController.initChildren();
-      expect(signinController.children.form).to.exist;
-      expect(signinController.children.form.isRendered).to.be.true;
+      expect(signinController.getView('form')).to.exist;
     });
 
     afterEach(function() {

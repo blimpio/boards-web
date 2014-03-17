@@ -29,11 +29,6 @@ describe('ResetPasswordForm', function() {
       expect(resetPasswordForm.bindings).to.exist;
     });
 
-    it('should have a formIsSet property.', function() {
-      expect(resetPasswordForm.formIsSet).to.exist;
-      expect(resetPasswordForm.formIsSet).to.be.true;
-    });
-
     after(function() {
       resetPasswordForm.unplug(true);
     });
@@ -93,7 +88,7 @@ describe('ResetPasswordForm', function() {
     });
 
     it('should display an error message.', function() {
-      resetPasswordForm.onResetPasswordError('error');
+      resetPasswordForm.onResetPasswordError(null, {password:'error'});
       expect(resetPasswordForm.getAttributeErrorElement('password').text()).to.equal('error');
     });
 

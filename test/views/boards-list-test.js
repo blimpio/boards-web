@@ -79,9 +79,8 @@ describe('BoardsList', function() {
 
     it('should show the create board form.', function() {
       boardsList.showForm();
-      expect(boardsList.children.createForm).to.exist;
-      expect(boardsList.children.createForm.isRendered).to.be.true;
-      // expect(boardsList.children.createForm.$el.is(':visible')).to.be.true;
+      expect(boardsList.getView('createForm')).to.exist;
+      expect(boardsList.getView('createForm')._isRendered).to.be.true;
     });
 
     after(function() {
@@ -108,7 +107,7 @@ describe('BoardsList', function() {
     });
   });
 
-  describe('onAdd().', function() {
+  describe('onRemoveItem().', function() {
     var boardsList;
 
     before(function() {
@@ -116,32 +115,12 @@ describe('BoardsList', function() {
       boardsList.insert('div.sidebar');
     });
 
-    it('should append a new itemView to the list element given a model.', function() {
-      var count = boardsList.collection.length;
-      boardsList.onAdd(_.createModel('board'));
-      expect(boardsList.$list.find('li').length).to.equal(count + 1);
-    });
+    it('should remove the given itemView from the list.', function() {
+      var model = _.createModel('board');
 
-    after(function() {
-      boardsList.unplug(true);
-    });
-  });
-
-  describe('onRemove().', function() {
-    var boardsList;
-
-    before(function() {
-      boardsList = new BoardsList();
-      boardsList.insert('div.sidebar');
-    });
-
-    it('should remove an itemView from the list element given a model.', function() {
-      var count = boardsList.collection.length,
-          model = _.createModel('board');
-
-      boardsList.onAdd(model);
-      boardsList.onRemove(model);
-      expect(boardsList.$list.find('li').length).to.equal(count);
+      boardsList.addItem(model);
+      boardsList.onRemoveItem(boardsList.getItem(model));
+      expect(boardsList.$list.find('li').length).to.equal(0);
     });
 
     after(function() {
@@ -161,7 +140,7 @@ describe('BoardsList', function() {
       model = _.createModel('board', {id: 12});
 
       App.Boards.set(model, {silent: true});
-      boardsList.onAdd(model);
+      boardsList.addItem(model);
       boardsList.selectBoard(model);
       expect(App.Boards.current).to.equal(12);
     });

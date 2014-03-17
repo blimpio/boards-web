@@ -17,30 +17,12 @@ describe('SignupController', function() {
     });
 
     it('should render and insert.', function() {
-      expect(signupController.isRendered).to.be.true;
-      expect(signupController.isInserted).to.be.true;
+      expect(signupController._isRendered).to.be.true;
+      expect(signupController._isInserted).to.be.true;
     });
 
     it('should have a form child view.', function() {
-      expect(signupController.children.form).to.exist;
-    });
-
-    afterEach(function() {
-      signupController.unplug(true);
-    });
-  });
-
-  describe('initChildren()', function() {
-    var signupController;
-
-    beforeEach(function() {
-      signupController = new SignupController();
-    });
-
-    it('should init and render the signup form view.', function() {
-      signupController.initChildren();
-      expect(signupController.children.form).to.exist;
-      expect(signupController.children.form.isRendered).to.be.true;
+      expect(signupController.getView('form')).to.exist;
     });
 
     afterEach(function() {

@@ -3,7 +3,7 @@ describe('CardEditForm', function() {
       CardEditForm = require('views/card-edit-form');
 
   before(function() {
-    $('#application').html(require('templates/card')({
+    $('#application').html(require('templates/card-note')({
       name: 'Another note',
       content: 'With some other content...'
     }));

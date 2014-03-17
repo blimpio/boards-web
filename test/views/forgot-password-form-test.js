@@ -29,11 +29,6 @@ describe('ForgotPasswordForm', function() {
       expect(forgotPasswordForm.bindings).to.exist;
     });
 
-    it('should have a formIsSet property.', function() {
-      expect(forgotPasswordForm.formIsSet).to.exist;
-      expect(forgotPasswordForm.formIsSet).to.be.true;
-    });
-
     after(function() {
       forgotPasswordForm.unplug(true);
     });
@@ -92,7 +87,7 @@ describe('ForgotPasswordForm', function() {
     });
 
     it('should display an error message.', function() {
-      forgotPasswordForm.onForgotPasswordError('error');
+      forgotPasswordForm.onForgotPasswordError(null, {email: 'error'});
       expect(forgotPasswordForm.getAttributeErrorElement('email').text()).to.equal('error');
     });
 

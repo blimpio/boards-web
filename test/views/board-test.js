@@ -150,7 +150,7 @@ describe('Board', function() {
 
     it('should init and insert the board actions child view.', function() {
       board.initActions();
-      expect(board.children.actions).to.exist;
+      expect(board.getView('actions')).to.exist;
     });
 
     after(function() {
@@ -263,7 +263,7 @@ describe('Board', function() {
 
     it('should init and insert the board edit form child view.', function() {
       board.initEditForm();
-      expect(board.children.editForm).to.exist;
+      expect(board.getView('editForm')).to.exist;
     });
 
     after(function() {
@@ -462,7 +462,7 @@ describe('Board', function() {
     });
 
     it('should update the board preview if there was changes in the model.', function() {
-      board.onEdited(App.Boards.at(0), {name: 'Changed'});
+      board.onEdited(null, App.Boards.at(0), {name: 'Changed'});
       expect(updateSpy).to.have.called;
       expect(hideEditModeSpy).to.have.called;
     });

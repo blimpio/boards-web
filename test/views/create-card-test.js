@@ -39,10 +39,6 @@ describe('CreateCard', function() {
       expect(createCard.model).to.exist;
     });
 
-    it('should have a subscriptions property.', function() {
-      expect(createCard.subscriptions).to.exist;
-    });
-
     after(function() {
       createCard.unplug(true);
     });
@@ -63,23 +59,6 @@ describe('CreateCard', function() {
     it('should set the card type.', function() {
       createCard.prepareModel();
       expect(createCard.model.get('type')).to.equal('note');
-    });
-
-    after(function() {
-      createCard.unplug(true);
-    });
-  });
-
-  describe('renderCardForm()', function() {
-    var createCard;
-
-    before(function() {
-      createCard = new CreateCard({el: 'form.create-card'});
-    });
-
-    it('should render the create-note template.', function() {
-      createCard.renderCardForm();
-      expect(createCard.isRendered).to.be.true;
     });
 
     after(function() {

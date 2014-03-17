@@ -82,12 +82,19 @@ describe('CardController', function() {
     });
 
     it('should render and insert.', function() {
-      expect(cardController.isRendered).to.be.true;
-      expect(cardController.isInserted).to.be.true;
+      expect(cardController._isRendered).to.be.true;
+      expect(cardController._isInserted).to.be.true;
     });
 
     it('should have a boardSlug property.', function() {
       expect(cardController.boardSlug).to.exist;
+    });
+
+    it('should have child views.', function() {
+      expect(cardController.getView('header')).to.exist;
+      expect(cardController.getView('allBoards')).to.exist;
+      expect(cardController.getView('currentBoard')).to.exist;
+      expect(cardController.getView('currentCard')).to.exist;
     });
 
     afterEach(function() {
@@ -133,26 +140,6 @@ describe('CardController', function() {
     });
   });
 
-  describe('initChildren()', function() {
-    var cardController;
-
-    beforeEach(function() {
-      cardController = new CardController();
-    });
-
-    it('should init and render child views.', function() {
-      cardController.initChildren();
-      expect(cardController.children.header).to.exist;
-      expect(cardController.children.allBoards).to.exist;
-      expect(cardController.children.currentBoard).to.exist;
-      expect(cardController.children.card).to.exist;
-    });
-
-    afterEach(function() {
-      cardController.unplug(true);
-    });
-  });
-
   describe('renderCurrentBoard()', function() {
     var cardController;
 
@@ -162,9 +149,8 @@ describe('CardController', function() {
 
     it('should render the current board.', function() {
       cardController.renderCurrentBoard();
-      expect(document.title).to.equal('Blimp | Designs_');
-      expect(cardController.children.allBoards.isRendered).to.be.true;
-      expect(cardController.children.currentBoard.isRendered).to.be.true;
+      expect(cardController.getView('allBoards')._isRendered).to.be.true;
+      expect(cardController.getView('currentBoard')._isRendered).to.be.true;
     });
 
     afterEach(function() {
@@ -182,8 +168,9 @@ describe('CardController', function() {
 
     it('should render the cards from the current board.', function() {
       cardController.renderCurrentCard();
-      expect(cardController.children.card.isRendered).to.be.true;
-      expect(cardController.children.card.model.id).to.equal(2);
+      expect(document.title).to.equal('Blimp | Another note');
+      expect(cardController.getView('currentCard')._isRendered).to.be.true;
+      expect(cardController.getView('currentCard').model.id).to.equal(2);
     });
 
     afterEach(function() {

@@ -264,7 +264,7 @@ describe('AccountsCollection', function() {
     });
   });
 
-  describe('onUserSignin()', function() {
+  describe('onUserAuth()', function() {
     var accountsCollection;
 
     before(function() {
@@ -273,7 +273,7 @@ describe('AccountsCollection', function() {
 
     it('should reset the collection with the given user accounts.', function() {
       expect(accountsCollection.length).to.equal(0);
-      accountsCollection.onUserSignin({
+      accountsCollection.onUserAuth({
         accounts: [{
           id: 1,
           name: 'ACME Inc',

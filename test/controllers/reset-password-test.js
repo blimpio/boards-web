@@ -25,6 +25,10 @@ describe('ResetPasswordController', function() {
       expect(resetPasswordController.template).to.exist;
     });
 
+    it('should have child views.', function() {
+      expect(resetPasswordController.getView('form')).to.exist;
+    });
+
     afterEach(function() {
       resetPasswordController.unplug(true);
     });
@@ -40,25 +44,8 @@ describe('ResetPasswordController', function() {
     it('should set the password reset data from the url token and render the controller.', function() {
       resetPasswordController.validateToken(JWT_PASSWORD_TOKEN);
       expect(App.User.get('passwordResetData')).to.exist;
-      expect(resetPasswordController.isRendered).to.be.true;
-      expect(resetPasswordController.isInserted).to.be.true;
-    });
-
-    afterEach(function() {
-      resetPasswordController.unplug(true);
-    });
-  });
-
-  describe('initChildren()', function() {
-    var resetPasswordController;
-
-    beforeEach(function() {
-      resetPasswordController = new ResetPasswordController()
-    });
-
-    it('should init the form.', function() {
-      resetPasswordController.initChildren();
-      expect(resetPasswordController.children.form).to.exist;
+      expect(resetPasswordController._isRendered).to.be.true;
+      expect(resetPasswordController._isInserted).to.be.true;
     });
 
     afterEach(function() {

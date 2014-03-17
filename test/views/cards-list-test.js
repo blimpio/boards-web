@@ -33,10 +33,6 @@ describe('CardsList', function() {
       expect(cardsList.template).to.exist;
     });
 
-    it('should have an events property.', function() {
-      expect(cardsList.events).to.exist;
-    });
-
     it('should have an itemView property.', function() {
       expect(cardsList.itemView).to.exist;
     });
@@ -63,7 +59,7 @@ describe('CardsList', function() {
 
     it('should init the createForm child view.', function() {
       cardsList.onRender();
-      expect(cardsList.children.createForm).to.exist;
+      expect(cardsList.getView('createForm')).to.exist;
     });
 
     after(function() {
@@ -79,8 +75,10 @@ describe('CardsList', function() {
     });
 
     it('should add the is-creating class to the view element.', function() {
-      cardsList.showCreateMode();
-      expect(cardsList.$el.hasClass('is-creating')).to.be.true;
+      cardsList.showCreateMode('note');
+      expect(cardsList.$el.hasClass('is-creating-note')).to.be.true;
+      cardsList.showCreateMode('file');
+      expect(cardsList.$el.hasClass('is-creating-file')).to.be.true;
     });
 
     after(function() {
@@ -117,25 +115,6 @@ describe('CardsList', function() {
       cardsList.addCard(_.createModel('card'));
       expect(cardsList.$el.hasClass('is-creating')).to.be.false;
       expect(cardsList.collection.length).to.equal(count + 1);
-    });
-
-    after(function() {
-      cardsList.unplug(true);
-    });
-  });
-
-  describe('onAdd().', function() {
-    var cardsList;
-
-    before(function() {
-      cardsList = new CardsList();
-      cardsList.insert('div.sidebar');
-    });
-
-    it('should append a new itemView to the list element given a model.', function() {
-      var count = cardsList.collection.length;
-      cardsList.onAdd(_.createModel('card'));
-      expect(cardsList.$list.find('li').length).to.equal(count + 1);
     });
 
     after(function() {

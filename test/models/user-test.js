@@ -19,7 +19,10 @@ describe('UserModel', function() {
 
     it('should have a name defaults.', function() {
       expect(userModel.defaults).to.exist;
-      expect(userModel.defaults).to.eql({signup_step: 1});
+      expect(userModel.defaults).to.eql({
+        signup_step: 1,
+        allow_signup: false
+      });
     });
 
     it('should have a name localAttributes.', function() {

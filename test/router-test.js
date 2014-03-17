@@ -72,7 +72,7 @@ describe('Router', function() {
     it('should remove the current controller.', function() {
       router.controller = new Z.View();
       router.beforeRoute();
-      expect(router.controller.isUnplugged).to.be.true;
+      expect(router.controller._isUnplugged).to.be.true;
     });
   });
 
@@ -208,7 +208,7 @@ describe('Router', function() {
     it('should remove the last controller view.', function() {
       router.controller = new Z.View();
       router.removeLastController();
-      expect(router.controller.isUnplugged).to.be.true;
+      expect(router.controller._isUnplugged).to.be.true;
     });
   });
 

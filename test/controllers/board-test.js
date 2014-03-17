@@ -82,12 +82,19 @@ describe('BoardController', function() {
     });
 
     it('should render and insert.', function() {
-      expect(boardController.isRendered).to.be.true;
-      expect(boardController.isInserted).to.be.true;
+      expect(boardController._isRendered).to.be.true;
+      expect(boardController._isInserted).to.be.true;
     });
 
     it('should have a boardSlug property.', function() {
       expect(boardController.boardSlug).to.exist;
+    });
+
+    it('should have child views.', function() {
+      expect(boardController.getView('header')).to.exist;
+      expect(boardController.getView('allBoards')).to.exist;
+      expect(boardController.getView('currentBoard')).to.exist;
+      expect(boardController.getView('cardsList')).to.exist;
     });
 
     afterEach(function() {
@@ -133,26 +140,6 @@ describe('BoardController', function() {
     });
   });
 
-  describe('initChildren()', function() {
-    var boardController;
-
-    beforeEach(function() {
-      boardController = new BoardController();
-    });
-
-    it('should init and render child views.', function() {
-      boardController.initChildren();
-      expect(boardController.children.header).to.exist;
-      expect(boardController.children.allBoards).to.exist;
-      expect(boardController.children.currentBoard).to.exist;
-      expect(boardController.children.cardsList).to.exist;
-    });
-
-    afterEach(function() {
-      boardController.unplug(true);
-    });
-  });
-
   describe('renderCurrentBoard()', function() {
     var boardController;
 
@@ -163,8 +150,8 @@ describe('BoardController', function() {
     it('should render the current board.', function() {
       boardController.renderCurrentBoard();
       expect(document.title).to.equal('Blimp | Designs_');
-      expect(boardController.children.allBoards.isRendered).to.be.true;
-      expect(boardController.children.currentBoard.isRendered).to.be.true;
+      expect(boardController.getView('allBoards')._isRendered).to.be.true;
+      expect(boardController.getView('currentBoard')._isRendered).to.be.true;
     });
 
     afterEach(function() {
@@ -181,14 +168,14 @@ describe('BoardController', function() {
 
     it('should render the current board.', function() {
       boardController.changeCurrentBoard(App.Boards.get(2));
-      expect(boardController.children.allBoards.isRendered).to.be.true;
-      expect(boardController.children.currentBoard.isRendered).to.be.true;
-      expect(boardController.children.currentBoard.model.id).to.equal(2);
+      expect(boardController.getView('allBoards')._isRendered).to.be.true;
+      expect(boardController.getView('currentBoard')._isRendered).to.be.true;
+      expect(boardController.getView('currentBoard').model.id).to.equal(2);
 
       boardController.changeCurrentBoard(App.Boards.get(1));
-      expect(boardController.children.allBoards.isRendered).to.be.true;
-      expect(boardController.children.currentBoard.isRendered).to.be.true;
-      expect(boardController.children.currentBoard.model.id).to.equal(1);
+      expect(boardController.getView('allBoards')._isRendered).to.be.true;
+      expect(boardController.getView('currentBoard')._isRendered).to.be.true;
+      expect(boardController.getView('currentBoard').model.id).to.equal(1);
     });
 
     afterEach(function() {
@@ -205,7 +192,7 @@ describe('BoardController', function() {
 
     it('should render the cards from the current board.', function() {
       boardController.renderCards();
-      expect(_.size(boardController.children.cardsList._itemViews)).to.equal(1);
+      expect(_.size(boardController.getView('cardsList')._registeredItemViews)).to.equal(1);
     });
 
     afterEach(function() {

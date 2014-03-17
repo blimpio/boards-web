@@ -45,8 +45,13 @@ describe('AccountController', function() {
     });
 
     it('should render and insert.', function() {
-      expect(accountController.isRendered).to.be.true;
-      expect(accountController.isInserted).to.be.true;
+      expect(accountController._isRendered).to.be.true;
+      expect(accountController._isInserted).to.be.true;
+    });
+
+    it('should have child views.', function() {
+      expect(accountController.getView('header')).to.exist;
+      expect(accountController.getView('allBoards')).to.exist;
     });
 
     afterEach(function() {
@@ -117,25 +122,6 @@ describe('AccountController', function() {
     });
   });
 
-  describe('initChildren()', function() {
-    var accountController;
-
-    beforeEach(function() {
-      accountController = new AccountController();
-    });
-
-    it('should init and render child views.', function() {
-      accountController.initChildren();
-      expect(accountController.children.header).to.exist;
-      expect(accountController.children.header.isRendered).to.be.true;
-      expect(accountController.children.allBoards).to.exist;
-    });
-
-    afterEach(function() {
-      accountController.unplug(true);
-    });
-  });
-
   describe('onBoardsSync()', function() {
     var accountController;
 
@@ -145,7 +131,7 @@ describe('AccountController', function() {
 
     it('should insert the allBoards child view.', function() {
       accountController.onBoardsSync();
-      expect(accountController.children.allBoards.isInserted).to.be.true;
+      expect(accountController.getView('allBoards')._isInserted).to.be.true;
     });
 
     afterEach(function() {

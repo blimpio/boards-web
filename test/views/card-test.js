@@ -31,10 +31,6 @@ describe('Card', function() {
       expect(card.attributes).to.exist;
     });
 
-    it('should have a template property.', function() {
-      expect(card.template).to.exist;
-    });
-
     it('should have a events property.', function() {
       expect(card.events).to.exist;
     });
@@ -98,7 +94,10 @@ describe('Card', function() {
     });
 
     it('should return the template context.', function() {
-      expect(_.keys(card.context())).to.eql(['name', 'content', 'isDetail']);
+      var context = card.context();
+
+      expect(_.keys(context)).to.not.be.empty;
+      expect(context.isDetail).to.exist;
     });
 
     after(function() {
@@ -158,7 +157,7 @@ describe('Card', function() {
 
     it('should init and insert the card actions child view.', function() {
       card.initActions();
-      expect(card.children.actions).to.exist;
+      expect(card.getView('actions')).to.exist;
     });
 
     after(function() {
@@ -225,7 +224,7 @@ describe('Card', function() {
 
     it('should init and insert the card edit form child view.', function() {
       card.initEditForm();
-      expect(card.children.editForm).to.exist;
+      expect(card.getView('editForm')).to.exist;
     });
 
     after(function() {

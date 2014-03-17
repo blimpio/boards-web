@@ -26,30 +26,12 @@ describe('AccountsController', function() {
     });
 
     it('should render and insert.', function() {
-      expect(accountsController.isRendered).to.be.true;
-      expect(accountsController.isInserted).to.be.true;
+      expect(accountsController._isRendered).to.be.true;
+      expect(accountsController._isInserted).to.be.true;
     });
 
     it('should have a accounts child view.', function() {
-      expect(accountsController.children.accounts).to.exist;
-    });
-
-    afterEach(function() {
-      accountsController.unplug(true);
-    });
-  });
-
-  describe('initChildren()', function() {
-    var accountsController;
-
-    beforeEach(function() {
-      accountsController = new AccountsController();
-    });
-
-    it('should init and render the account list view.', function() {
-      accountsController.initChildren();
-      expect(accountsController.children.accounts).to.exist;
-      expect(accountsController.children.accounts.$el.find('li')).to.not.be.empty;
+      expect(accountsController.getView('accounts')).to.exist;
     });
 
     afterEach(function() {

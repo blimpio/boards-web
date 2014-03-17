@@ -26,21 +26,8 @@ describe('HeaderView', function() {
       expect(headerView.model.name).to.equal('User');
     });
 
-    after(function() {
-      headerView.unplug(true);
-    });
-  });
-
-  describe('initAccountsDropdown()', function() {
-    var headerView;
-
-    before(function() {
-      headerView = new HeaderView();
-    });
-
-    it('should init and render accounts dropdown view.', function() {
-      headerView.initAccountsDropdown();
-      expect(headerView.children.accounts).to.exist;
+    it('should have child views.', function() {
+      expect(headerView.getView('accounts')).to.exist;
     });
 
     after(function() {

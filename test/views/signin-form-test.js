@@ -31,10 +31,6 @@ describe('SigninForm', function() {
       expect(signinForm.template).to.exist;
     });
 
-    it('should have a subscriptions property.', function() {
-      expect(signinForm.subscriptions).to.exist;
-    });
-
     it('should have a model.', function() {
       expect(signinForm.model).to.exist;
       expect(signinForm.model.name).to.equal('User');

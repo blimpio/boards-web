@@ -14,6 +14,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
     });
@@ -48,6 +49,7 @@ describe('SignupForm', function() {
 
   describe('context()', function() {
     var signupForm = new SignupForm({
+      form: null,
       model: _.createModel('user')
     });
 
@@ -68,6 +70,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -98,6 +101,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -120,6 +124,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -145,6 +150,7 @@ describe('SignupForm', function() {
       server.autoRespond = true;
 
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -175,6 +181,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -183,7 +190,7 @@ describe('SignupForm', function() {
 
     it('should display an error message.', function() {
       signupForm.renderStep(1);
-      signupForm.onSignupRequestError('error');
+      signupForm.onSignupRequestError(null, 'error');
       expect(signupForm.getAttributeErrorElement('email').text()).to.equal('error');
     });
 
@@ -198,6 +205,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -221,6 +229,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -244,6 +253,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
     });
@@ -273,6 +283,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -310,6 +321,7 @@ describe('SignupForm', function() {
       server.autoRespond = true;
 
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -350,6 +362,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -358,7 +371,7 @@ describe('SignupForm', function() {
 
     it('should dispplay an error message.', function() {
       signupForm.renderStep(6);
-      signupForm.onSignupDomainsError('error');
+      signupForm.onSignupDomainsError(null, 'error');
       expect(signupForm.getAttributeErrorElement('signup_domains').text()).to.equal('error');
     });
 
@@ -373,6 +386,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -382,7 +396,7 @@ describe('SignupForm', function() {
     it('should redirect to the seventh step.', function() {
       signupForm.renderStep(6);
       signupForm.skipSignupDomains();
-      expect(signupForm.model.get('signup_step')).to.equal(7);
+      expect(signupForm.model.get('signup_step')).to.equal(8);
     });
 
     after(function() {
@@ -396,6 +410,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -435,6 +450,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -459,6 +475,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -485,6 +502,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -576,6 +594,7 @@ describe('SignupForm', function() {
       server.autoRespond = true;
 
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -618,6 +637,7 @@ describe('SignupForm', function() {
 
     before(function() {
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -626,7 +646,7 @@ describe('SignupForm', function() {
 
     it('should display an error message.', function() {
       signupForm.renderStep(8);
-      signupForm.onSignupUsernameError('error');
+      signupForm.onSignupUsernameError(null, 'error');
       expect(signupForm.getAttributeErrorElement('username').text()).to.equal('error');
     });
 
@@ -636,6 +656,45 @@ describe('SignupForm', function() {
     });
   });
 
+  describe('onValidatePasswordError()', function() {
+    var signupForm;
+
+    before(function() {
+      signupForm = new SignupForm({
+        form: null,
+        model: _.createModel('user')
+      });
+
+      signupForm.render();
+    });
+
+    it('should display an error message.', function() {
+      signupForm.model.set({
+        'email': 'name@example.com',
+        'signup_request_token': JWT_SIGNUP_TOKEN,
+        'first_name': 'Elving',
+        'last_name': 'Rodriguez',
+        'full_name': 'Elving Rodriguez',
+        'account_name': 'Blimp',
+        'allow_signup': true,
+        'signup_domains': ['example.com', 'example.net'],
+        'invite_emails': ['elving@example.com', 'elving@example.net'],
+        'username': 'elving',
+        'signup_step': 9
+      });
+
+      signupForm.renderStep(9);
+      signupForm.onValidatePasswordError(null, 'error');
+      expect(signupForm.getAttributeErrorElement('password').text()).to.equal('error');
+    });
+
+    after(function() {
+      signupForm.model.unplug();
+      signupForm.unplug(true);
+    });
+  });
+
+
   describe('validatePassword()', function() {
     var server, signupForm;
 
@@ -644,6 +703,7 @@ describe('SignupForm', function() {
       server.autoRespond = true;
 
       signupForm = new SignupForm({
+        form: null,
         model: _.createModel('user')
       });
 
@@ -677,29 +737,6 @@ describe('SignupForm', function() {
 
     after(function() {
       server.restore();
-      signupForm.model.unplug();
-      signupForm.unplug(true);
-    });
-  });
-
-  describe('onValidatePasswordError()', function() {
-    var signupForm;
-
-    before(function() {
-      signupForm = new SignupForm({
-        model: _.createModel('user')
-      });
-
-      signupForm.render();
-    });
-
-    it('should display an error message.', function() {
-      signupForm.renderStep(9);
-      signupForm.onValidatePasswordError('error');
-      expect(signupForm.getAttributeErrorElement('password').text()).to.equal('error');
-    });
-
-    after(function() {
       signupForm.model.unplug();
       signupForm.unplug(true);
     });
