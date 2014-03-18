@@ -1,17 +1,18 @@
-<div class="accounts-dropdown__current">
-  {{#with currentAccount}}
-    <img src="{{image}}" class="accounts-dropdown__current-image">
-    <span class="accounts-dropdown__current-name">{{name}}</span>
-  {{/with}}
-</div> {{! .accounts-dropdown__current }}
-
-<ol class="accounts-dropdown__list">
-  {{#each accounts}}
-    <li class="accounts-dropdown__list-item">
-      <a class="accounts-dropdown__list-item-link" href="{{url}}" data-route="{{url}}">
-        <img src="{{image}}" class="accounts-dropdown__list-item-image">
-        <span class="accounts-dropdown__list-item-name">{{name}}</span>
-      </a> {{! .accounts-dropdown__list-item-link }}
-    </li> {{! .accounts-dropdown__list-item }}
-  {{/each}}
-</ol> {{! .accounts-dropdown__all }}
+<div class="dropdown">
+  <a data-toggle="dropdown" href="#">
+    {{#with currentAccount}}
+      <img src="{{image}}" class="img-circle" height="22px" width="22px">
+      <span>{{name}}</span>
+    {{/with}}
+  </a> {{! [data-toggle="dropdown"] }}
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+    {{#each accounts}}
+      <li>
+        <a href="{{url}}" data-route="{{url}}">
+          <img src="{{image}}" class="img-circle" height="22px" width="22px">
+          <span>{{name}}</span>
+        </a>
+      </li>
+    {{/each}}
+  </ul> {{! .dropdown-menu }}
+</div> {{! .dropdown }}

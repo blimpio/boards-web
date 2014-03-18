@@ -1,11 +1,17 @@
 <div class="card-preview">
   {{#if isDetail}}
-    <h1 class="card-name">{{name}}</h1>
-    <img class="card-file-preview" src="{{largeThumbnail}}" alt="{{name}}" height="100%" width="100%">
+    <div class="row">
+      <div class="col-md-8">
+        <img class="card-file-preview img-thumbnail" src="{{largeThumbnail}}" alt="{{name}}" height="100%" width="100%">
+      </div> {{! .col-md-8 }}
+      <div class="col-md-4">
+        <h1 class="card-name">{{name}}</h1>
+        <small class="card-date">{{timeago date_created}}</small>
+      </div> {{! .col-md-4 }}
+    </div> {{! .row }}
   {{else}}
     <img class="card-file-preview" src="{{smallThumbnail}}" alt="{{name}}" height="200" width="100%">
     <strong class="card-name">{{name}}</strong>
+    <span class="card-upload-progress">{{upload_progress}}</span>
   {{/if}}
-
-  <span class="card-upload-progress">{{upload_progress}}</span>
 </div> {{! .preview }}

@@ -35,14 +35,6 @@ describe('AccountsDropdown', function() {
       expect(accountsDropdown.collection.name).to.equal('Accounts');
     });
 
-    it('should have an events property.', function() {
-      expect(accountsDropdown.events).to.exist;
-    });
-
-    it('should have an elements property.', function() {
-      expect(accountsDropdown.elements).to.exist;
-    });
-
     after(function() {
       accountsDropdown.unplug(true);
     });
@@ -60,24 +52,6 @@ describe('AccountsDropdown', function() {
       var context = accountsDropdown.context();
       expect(context).to.exist;
       expect(_.keys(context)).to.eql(['accounts', 'currentAccount']);
-    });
-
-    after(function() {
-      accountsDropdown.unplug(true);
-    });
-  });
-
-  describe('toggle()', function() {
-    var accountsDropdown;
-
-    before(function() {
-      accountsDropdown = new AccountsDropdown();
-      accountsDropdown.render();
-    });
-
-    it('should toggle the dropdown element.', function() {
-      accountsDropdown.toggle();
-      expect(accountsDropdown.$('ol.accounts-dropdown__list').is(':visible')).to.be.true;
     });
 
     after(function() {

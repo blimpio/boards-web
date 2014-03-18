@@ -47,24 +47,6 @@ describe('BoardActions', function() {
     });
   });
 
-  describe('onClickAddCard().', function() {
-    var boardActions;
-
-    before(function() {
-      boardActions = new BoardActions({el: '.accounts__list'});
-      boardActions.render();
-    });
-
-    it('should toggle the card type dropdown.', function() {
-      boardActions.onClickAddCard({currentTarget: boardActions.$('[data-action=addCard]')});
-      expect(boardActions.$('.dropdown-content').is(':visible')).to.be.true;
-    });
-
-    after(function() {
-      boardActions.unplug(true);
-    });
-  });
-
   describe('onClickAddNote().', function() {
     var publishSpy, boardActions;
 
@@ -75,7 +57,7 @@ describe('BoardActions', function() {
 
     it('should toggle the card type dropdown.', function() {
       boardActions.onClickAddNote();
-      expect(publishSpy).to.have.been.calledWith('card:creating', 'card');
+      expect(publishSpy).to.have.been.calledWith('card:creating', 'note');
     });
 
     after(function() {

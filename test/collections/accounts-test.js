@@ -155,15 +155,7 @@ describe('AccountsCollection', function() {
     });
 
     it('should return an array of serialized accounts.', function() {
-      expect(accountsCollection.accounts()).to.eql([{
-        url: '/acme-inc/',
-        name: 'ACME Inc',
-        image: '/default/'
-      }, {
-        url: '/blimp/',
-        name: 'Blimp LLC',
-        image: '/default/'
-      }]);
+      expect(_.size(accountsCollection.accounts())).to.equal(2);
     });
 
     after(function() {
@@ -189,11 +181,7 @@ describe('AccountsCollection', function() {
     });
 
     it('should return a serialized account given an id.', function() {
-      expect(accountsCollection.account(4)).to.eql({
-        url: '/blimp/',
-        name: 'Blimp LLC',
-        image: '/default/'
-      });
+      expect(accountsCollection.account(4).name).to.equal('Blimp LLC');
     });
 
     after(function() {
@@ -219,12 +207,8 @@ describe('AccountsCollection', function() {
     });
 
     it('should return a the current account serialized.', function() {
-      accountsCollection.current = 4;
-      expect(accountsCollection.currentAccount()).to.eql({
-        url: '/blimp/',
-        name: 'Blimp LLC',
-        image: '/default/'
-      });
+      accountsCollection.current = 1;
+      expect(accountsCollection.currentAccount().name).to.equal('ACME Inc');
     });
 
     after(function() {

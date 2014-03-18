@@ -2,11 +2,19 @@
   {{partial "card-note-preview" this}}
 </div> {{! .preview }}
 
-<form class="card-edit-form">
-  <input type="text" name="name" value="{{name}}" autofocus>
-  <div data-error="name"></div>
-  <textarea name="content" placeholder="Content">{{content}}</textarea>
-  <div data-error="content"></div>
-  <button data-action="save">Save</button>
-  <button data-action="cancel" type="button">Cancel</button>
-</form> {{! .board-header__form }}
+<div class="row">
+  <form class="card-edit-form col-md-6" role="form">
+    <div class="form-group">
+      <input type="text" name="name" value="{{name}}" class="form-control" autofocus>
+      <div data-error="name" class="help-block"></div>
+    </div> {{! .form-group }}
+    <div class="form-group">
+      <textarea name="content" placeholder="Content" class="form-control">{{content}}</textarea>
+      <div data-error="content" class="help-block"></div>
+    </div> {{! .form-group }}
+    <div class="form-group">
+      <button data-action="save" class="btn btn-default">Save</button>
+      <button data-action="cancel" type="button" class="btn btn-link">Cancel</button>
+    </div> {{! .form-group }}
+  </form> {{! .card-edit-form }}
+</div> {{! .row }}

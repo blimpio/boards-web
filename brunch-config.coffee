@@ -8,9 +8,6 @@ exports.config =
       joinTo:
         'css/app.css': /^(bower_components|vendor|app)/
 
-      order:
-        before: ['bower_components/normalize-css/normalize.css']
-
     templates:
       joinTo: 'js/app.js'
 

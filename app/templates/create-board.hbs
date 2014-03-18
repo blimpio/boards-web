@@ -1,4 +1,8 @@
-<input type="text" name="name" autofocus>
-<div data-error="name"></div>
-<button>Save</button>
-<button type="button" data-action="cancel">Cancel</button>
+<div class="form-group">
+  <input type="text" name="name" class="form-control" autofocus>
+  <div data-error="name" class="help-block"></div>
+</div> {{! .form-group }}
+<div class="form-group">
+  <button class="btn btn-default">Save</button>
+  <button type="button" data-action="cancel" class="btn btn-link">Cancel</button>
+</div> {{! .form-group }}

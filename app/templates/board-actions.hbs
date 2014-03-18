@@ -1,11 +1,20 @@
-<div class="dropdown">
-  <button type="button" data-action="addCard">Add Card</button>
-  <div class="dropdown-content card-types">
-    <button type="button" data-action="addNote">Note</button>
-    <button type="button" data-action="addFile">File</button>
-  </div> {{! .dropdown-content }}
-</div> {{! .dropdown }}
-
-<button type="button" data-action="addCollaborator">Collaborate</button>
-<button type="button" data-action="share">Share</button>
-<button type="button" data-action="search">Search</button>
+<ul class="nav navbar-nav">
+  <li class="dropdown">
+    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle navbar-btn">
+      Add Card <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+      <li><button type="button" data-action="addNote" class="btn btn-link">Note</button></li>
+      <li><button type="button" data-action="addFile" class="btn btn-link">File</button></li>
+    </ul>
+  </li> {{! .dropdown }}
+  <li>
+    <button type="button" data-action="addCollaborator" class="btn btn-link navbar-btn">Collaborate</button>
+  </li>
+  <li>
+    <button type="button" data-action="share" class="btn btn-link navbar-btn">Share</button>
+  </li>
+  <li>
+    <button type="button" data-action="search" class="btn btn-link navbar-btn">Search</button>
+  </li>
+</ul>

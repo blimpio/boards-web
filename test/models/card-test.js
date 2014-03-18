@@ -72,7 +72,7 @@ describe('CardModel', function() {
     });
 
     it('should return the small thumbnail url. (using fallbacks)', function() {
-      expect(cardModel.smallThumbnail()).to.equal('images/generic-file.png');
+      expect(cardModel.smallThumbnail()).to.match(/images\/generic-file.png/);
     });
   });
 
@@ -98,7 +98,7 @@ describe('CardModel', function() {
     });
 
     it('should return the small thumbnail url. (using fallbacks)', function() {
-      expect(cardModel.largeThumbnail()).to.equal('images/generic-file.png');
+      expect(cardModel.largeThumbnail()).to.match(/images\/generic-file.png/);
     });
   });
 

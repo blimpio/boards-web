@@ -35,7 +35,6 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onClickCancel: function() {
-    console.log(this);
     this.publish('board:editing:cancel');
     return this;
   },

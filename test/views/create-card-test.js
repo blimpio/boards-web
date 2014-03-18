@@ -1,5 +1,5 @@
-describe('CreateCard', function() {
-  var CreateCard = require('views/create-card');
+describe('CreateNote', function() {
+  var CreateNote = require('views/create-card');
 
   before(function() {
     $('#application').html(require('templates/cards')());
@@ -15,7 +15,7 @@ describe('CreateCard', function() {
     var createCard;
 
     before(function() {
-      createCard = new CreateCard({el: 'form.create-card'});
+      createCard = new CreateNote({el: 'form.create-note'});
     });
 
     it('should exist.', function() {
@@ -24,7 +24,7 @@ describe('CreateCard', function() {
 
     it('should have a name property.', function() {
       expect(createCard.name).to.exist;
-      expect(createCard.name).to.equal('CreateCard');
+      expect(createCard.name).to.equal('CreateNote');
     });
 
     it('should have a events property.', function() {
@@ -48,7 +48,7 @@ describe('CreateCard', function() {
     var createCard;
 
     before(function() {
-      createCard = new CreateCard({el: 'form.create-card'});
+      createCard = new CreateNote({el: 'form.create-note'});
     });
 
     it('should set the current board id to the view model.', function() {
@@ -70,9 +70,9 @@ describe('CreateCard', function() {
     var createCard, publishSpy, resetSpy;
 
     before(function() {
-      resetSpy = sinon.spy(CreateCard.prototype, 'reset');
-      publishSpy = sinon.spy(CreateCard.prototype, 'publish');
-      createCard = new CreateCard({el: 'form.create-card'});
+      resetSpy = sinon.spy(CreateNote.prototype, 'reset');
+      publishSpy = sinon.spy(CreateNote.prototype, 'publish');
+      createCard = new CreateNote({el: 'form.create-note'});
     });
 
     it('should reset the form.', function() {
@@ -87,8 +87,8 @@ describe('CreateCard', function() {
 
     after(function() {
       createCard.unplug(true);
-      CreateCard.prototype.reset.restore();
-      CreateCard.prototype.publish.restore();
+      CreateNote.prototype.reset.restore();
+      CreateNote.prototype.publish.restore();
     });
   });
 
@@ -96,9 +96,9 @@ describe('CreateCard', function() {
     var createCard;
 
     before(function() {
-      resetSpy = sinon.spy(CreateCard.prototype, 'reset');
-      publishSpy = sinon.spy(CreateCard.prototype, 'publish');
-      createCard = new CreateCard({el: 'form.create-card'});
+      resetSpy = sinon.spy(CreateNote.prototype, 'reset');
+      publishSpy = sinon.spy(CreateNote.prototype, 'publish');
+      createCard = new CreateNote({el: 'form.create-note'});
       createCard.render();
     });
 
@@ -114,8 +114,8 @@ describe('CreateCard', function() {
 
     after(function() {
       createCard.unplug(true);
-      CreateCard.prototype.reset.restore();
-      CreateCard.prototype.publish.restore();
+      CreateNote.prototype.reset.restore();
+      CreateNote.prototype.publish.restore();
     });
   });
 
@@ -123,7 +123,7 @@ describe('CreateCard', function() {
     var createCard;
 
     before(function() {
-      createCard = new CreateCard({el: 'form.create-card'});
+      createCard = new CreateNote({el: 'form.create-note'});
       createCard.render();
     });
 
@@ -144,7 +144,7 @@ describe('CreateCard', function() {
     var createCard;
 
     before(function() {
-      createCard = new CreateCard({el: 'form.create-card'});
+      createCard = new CreateNote({el: 'form.create-note'});
       createCard.render();
     });
 

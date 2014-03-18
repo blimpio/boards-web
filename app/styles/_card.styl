@@ -1,8 +1,4 @@
 .card {
-  background: #fff;
-  border: 1px solid #ddd;
-  padding: 10px;
-
   &.is-editing {
     .card-preview { display: none; }
     .card-edit-form { display: block; }
@@ -20,12 +16,10 @@
     .card-actions-visible { display: inline-block; }
   }
 
-  &[data-type="note"] {
-    .card-name { font-size: 14px; }
-    .card-content { font-size: 12px; }
-  }
-
   &.is-item {
+    background: #fff;
+    border: 1px solid #E6E5E5;
+    border-radius: 3px;
     cursor: pointer;
     margin-bottom: 10px;
     min-height: 150px;
@@ -34,21 +28,40 @@
     -moz-column-break-inside: avoid;
     -moz-page-break-inside: avoid;
     page-break-inside: avoid;
+    padding: 10px;
+  }
+
+  &.is-detail {
+    margin-bottom: 15px;
+
+    .card-name {
+      margin: 0 0 10px;
+      word-break: break-all;
+    }
+  }
+
+  &.is-item[data-type="note"] {
+    .card-name { font-size: 14px; }
+    .card-content { font-size: 12px; }
   }
 
   &.is-item[data-type="file"] {
     padding: 0;
 
     .card-name {
-      border-top: 1px solid #ddd;
+      border-top: 1px solid #E6E5E5;
       display: block;
       padding: 10px;
       text-align: center;
     }
   }
 
-  &.is-detail {
-    margin 10px;
+  &.is-detail[data-type="note"] {
+    .card-content {
+      border: 1px solid #E6E5E5;
+      border-radius: 3px;
+      padding: 10px;
+    }
   }
 }
 
@@ -57,7 +70,13 @@
   margin: 0 auto;
 }
 
-.card-edit-form { display: none; }
+.card-edit-form {
+  display: none;
+
+  [name="content"] {
+    height: 200px;
+  }
+}
 
 .card-actions {
   float: right;

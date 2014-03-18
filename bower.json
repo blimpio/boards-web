@@ -8,8 +8,8 @@
     "lodash": "~2",
     "jquery": "~2",
     "backbone": "~1",
+    "bootstrap": "~3.1.1",
     "handlebars": "~1",
-    "normalize-css": "~3.0.0",
     "blueimp-file-upload": "~9.5.6"
   },
   "overrides": {
@@ -26,6 +26,12 @@
         "jquery": "*",
         "handlebars": "*"
       }
+    },
+    "bootstrap": {
+      "main": [
+        "dist/js/bootstrap.js",
+        "dist/css/bootstrap.css"
+      ]
     },
     "handlebars": {
       "main": "handlebars.runtime.js"

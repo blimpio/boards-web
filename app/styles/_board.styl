@@ -1,6 +1,4 @@
 .board {
-  padding: 10px;
-
   &.is-editing {
     .board-preview { display: none; }
     .board-edit-form { display: block; }
@@ -16,42 +14,20 @@
     }
   }
 
-  &.is-selected { background: #efefef; }
+  &.is-selected {
+    color: #6CC8F9;
+    font-weight: bold;
+  }
 
   &.is-item { cursor: pointer; }
-
-  &.is-detail {
-    .board-preview,
-    .board-edit-form {
-      float: left;
-      margin-right: 10px
-    }
-  }
 }
 
-.board-preview { display: inline-block; }
+.board-name { vertical-align: middle; }
 
-.board-image {
-  border-radius: 30px;
+.board-preview {
   display: inline-block;
-  margin-right: 5px;
-  vertical-align: middle;
-}
-
-.board-name {
-  display: inline-block;
-  font-size: 12px;
-  margin: 0;
-  vertical-align: middle;
+  margin-right: 10px;
 }
 
 .board-edit-form { display: none; }
-
-.board-actions-hover {
-  display: none;
-  float: left;
-}
-
-.board-actions {
-  float: right;
-}
+.board-actions-hover { display: none; }

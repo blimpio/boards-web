@@ -10,7 +10,7 @@ module.exports = Zeppelin.View.extend({
   },
 
   className: function() {
-    var className = 'board clearfix';
+    var className = 'board';
     className += this.isDetail ? ' is-detail' : ' is-item';
     if (this.canEdit) className += ' can-edit';
     return className;
@@ -53,7 +53,7 @@ module.exports = Zeppelin.View.extend({
   },
 
   context: function() {
-    return this.model.getPresenters(['name', 'thumbnail_sm_path']);
+    return this.model.getPresenters(['name', 'image']);
   },
 
   onRender: function() {

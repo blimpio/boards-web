@@ -1,3 +1,7 @@
+_.mixin({'asset': function(path) {
+  return App.STATIC_URL + path;
+}});
+
 _.mixin({'createController': function(name, options) {
   var Collection = require('controllers/' + name);
   return new Collection(options);

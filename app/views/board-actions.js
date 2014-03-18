@@ -6,28 +6,16 @@ module.exports = Zeppelin.View.extend({
   template: require('templates/board-actions'),
 
   events: {
-    'click [data-action=addCard]': 'onClickAddCard',
     'click [data-action=addNote]': 'onClickAddNote',
     'click [data-action=addFile]': 'onClickAddFile'
   },
 
-  elements: {
-    'cardTypesDropdown': 'div.dropdown-content.card-types'
-  },
-
-  onClickAddCard: function(event) {
-    this.$cardTypesDropdown.toggle();
-    return this;
-  },
-
   onClickAddNote: function() {
-    this.$cardTypesDropdown.hide();
-    this.publish('card:creating', 'card');
+    this.publish('card:creating', 'note');
     return this;
   },
 
   onClickAddFile: function() {
-    this.$cardTypesDropdown.hide();
     this.publish('card:creating', 'file');
     return this;
   }

@@ -83,7 +83,7 @@ describe('Board', function() {
     });
 
     it('should return the template context.', function() {
-      expect(_.keys(board.context())).to.eql(['name', 'thumbnail_sm_path']);
+      expect(_.keys(board.context())).to.eql(['name', 'image']);
     });
 
     after(function() {

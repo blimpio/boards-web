@@ -45,11 +45,7 @@ describe('AccountModel', function() {
     });
 
     it('should return the serialized account.', function() {
-      expect(accountModel.serialize()).to.eql({
-        url: '/acme-inc/',
-        name: 'ACME Inc',
-        image: '/default/'
-      });
+      expect(accountModel.serialize().name).to.equal('ACME Inc');
     });
 
     after(function() {

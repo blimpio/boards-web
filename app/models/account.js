@@ -7,7 +7,11 @@ module.exports = Zeppelin.Model.extend({
     return {
       url: '/' + this.get('slug') + '/',
       name: this.get('name'),
-      image: this.get('image_url') ? this.get('image_url') : '/default/'
+      image: this.getImageUrl()
     };
+  },
+
+  getImageUrl: function() {
+    return this.get('image_url') || _.asset('images/no-image.png');
   }
 });

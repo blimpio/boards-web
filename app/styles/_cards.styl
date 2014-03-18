@@ -1,13 +1,13 @@
 .cards {
-  &.is-creating-card {
+  &.is-creating-note {
     .cards-list { display: none; }
-    .create-card { display: block; }
+    .create-note { display: block; }
     .file-uploader-wrapper { display: none; }
   }
 
   &.is-creating-file {
     .cards-list { display: none; }
-    .create-card { display: none; }
+    .create-note { display: none; }
     .file-uploader-wrapper { display: block; }
   }
 }
@@ -21,9 +21,13 @@
   padding: 10px;
 }
 
-.create-card {
+.create-note {
   display: none;
   padding: 10px;
+
+  [name="content"] {
+    height: 200px;
+  }
 }
 
 .file-uploader-wrapper {

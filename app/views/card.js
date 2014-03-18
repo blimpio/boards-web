@@ -64,6 +64,11 @@ module.exports = Zeppelin.View.extend({
     this.setTemplate();
   },
 
+  onRender: function() {
+    if (this.isDetail) this.$el.attr('data-type', this.model.get('type'));
+    return this;
+  },
+
   setTemplate: function() {
     if (this.model.isNote()) {
       this.template = require('templates/card-note');
@@ -81,7 +86,7 @@ module.exports = Zeppelin.View.extend({
   },
 
   initActions: function() {
-    this.registerView(_.createView('card-actions'), 'actions')
+    this.registerView(_.createView('card-actions'), 'actions');
     this.getView('actions').insert('div.sub-header-actions');
     return this;
   },

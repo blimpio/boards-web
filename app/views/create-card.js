@@ -1,7 +1,7 @@
 module.exports = Zeppelin.FormView.extend({
-  name: 'CreateCard',
+  name: 'CreateNote',
 
-  el: 'form.create-card',
+  el: 'form.create-note',
 
   model: require('models/card'),
 

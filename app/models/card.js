@@ -24,7 +24,7 @@ module.exports = Zeppelin.Model.extend({
 
   localAttributes: ['upload_progress'],
 
-  presenters: ['name', 'content', 'smallThumbnail', 'largeThumbnail'],
+  presenters: ['name', 'content', 'smallThumbnail', 'largeThumbnail', 'date_created'],
 
   url: function() {
     var url = '/api/cards/';
@@ -33,12 +33,12 @@ module.exports = Zeppelin.Model.extend({
 
   smallThumbnail: function() {
     return this.get('thumbnail_sm_path') ||
-    this.get('content') || 'images/generic-file.png';
+    this.get('content') || _.asset('images/generic-file.png');
   },
 
   largeThumbnail: function() {
     return this.get('thumbnail_lg_path') ||
-    this.get('content') || 'images/generic-file.png';
+    this.get('content') || _.asset('images/generic-file.png');
   },
 
   isNote: function() {

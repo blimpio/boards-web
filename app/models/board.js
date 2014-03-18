@@ -16,5 +16,9 @@ module.exports = Zeppelin.Model.extend({
   url: function() {
     var url = '/api/boards/';
     return this.isNew() ? url : url + this.id + '/';
+  },
+
+  image: function() {
+    return this.get('thumbnail_sm_path') || _.asset('images/no-image.png');
   }
 });
