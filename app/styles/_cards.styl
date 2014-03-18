@@ -1,7 +1,14 @@
 .cards {
-  &.is-creating {
+  &.is-creating-card {
     .cards-list { display: none; }
     .create-card { display: block; }
+    .file-uploader-wrapper { display: none; }
+  }
+
+  &.is-creating-file {
+    .cards-list { display: none; }
+    .create-card { display: none; }
+    .file-uploader-wrapper { display: block; }
   }
 }
 
@@ -19,3 +26,6 @@
   padding: 10px;
 }
 
+.file-uploader-wrapper {
+  display: none;
+}

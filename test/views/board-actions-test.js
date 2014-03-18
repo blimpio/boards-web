@@ -38,6 +38,10 @@ describe('BoardActions', function() {
       expect(boardActions.events).to.exist;
     });
 
+    it('should have an elements property.', function() {
+      expect(boardActions.elements).to.exist;
+    });
+
     after(function() {
       boardActions.unplug(true);
     });
@@ -71,7 +75,26 @@ describe('BoardActions', function() {
 
     it('should toggle the card type dropdown.', function() {
       boardActions.onClickAddNote();
-      expect(publishSpy).to.have.been.calledWith('card:creating');
+      expect(publishSpy).to.have.been.calledWith('card:creating', 'card');
+    });
+
+    after(function() {
+      boardActions.unplug(true);
+      BoardActions.prototype.publish.restore();
+    });
+  });
+
+  describe('onClickAddFile().', function() {
+    var publishSpy, boardActions;
+
+    before(function() {
+      publishSpy = sinon.spy(BoardActions.prototype, 'publish');
+      boardActions = new BoardActions({el: '.accounts__list'});
+    });
+
+    it('should toggle the card type dropdown.', function() {
+      boardActions.onClickAddFile();
+      expect(publishSpy).to.have.been.calledWith('card:creating', 'file');
     });
 
     after(function() {

@@ -12,22 +12,24 @@ module.exports = Zeppelin.CollectionView.extend({
   itemView: require('views/card'),
 
   views: {
-    createForm: require('views/create-card')
+    createForm: require('views/create-card'),
+    fileUploader: require('views/file-uploader')
   },
 
   subscriptions: {
     'card:creating': 'showCreateMode',
     'card:creating:cancel': 'hideCreateMode',
-    'card:created': 'addCard'
+    'card:uploading': 'hideCreateMode',
+    'card:created': 'addCard',
   },
 
-  showCreateMode: function() {
-    this.$el.addClass('is-creating');
+  showCreateMode: function(type) {
+    this.$el.addClass('is-creating-' + type);
     return this;
   },
 
   hideCreateMode: function() {
-    this.$el.removeClass('is-creating');
+    this.$el.removeClass('is-creating-note is-creating-file');
     return this;
   },
 

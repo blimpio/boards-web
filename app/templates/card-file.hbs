@@ -1,0 +1,11 @@
+<div class="card-preview">
+  {{#if isDetail}}
+    <h1 class="card-name">{{name}}</h1>
+    <img class="card-file-preview" src="{{largeThumbnail}}" alt="{{name}}" height="100%" width="100%">
+  {{else}}
+    <img class="card-file-preview" src="{{smallThumbnail}}" alt="{{name}}" height="200" width="100%">
+    <strong class="card-name">{{name}}</strong>
+  {{/if}}
+
+  <span class="card-upload-progress">{{upload_progress}}</span>
+</div> {{! .preview }}

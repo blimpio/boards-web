@@ -8,7 +8,6 @@ module.exports = Zeppelin.View.extend({
   views: {
     header: require('views/header'),
     allBoards: require('views/boards-list'),
-    cardsList: require('views/cards-list'),
     currentBoard: {
       view: require('views/board'),
       data: {
@@ -20,7 +19,8 @@ module.exports = Zeppelin.View.extend({
       view: require('views/card'),
       data: {
         canEdit: true,
-        isDetail: true
+        isDetail: true,
+        autoRenders: false
       }
     }
   },
@@ -102,8 +102,11 @@ module.exports = Zeppelin.View.extend({
       return this;
     }
 
+    document.title = 'Blimp | ' + card.get('name');
+
     this.getView('currentCard')
       .setModel(card)
+      .setTemplate()
       .insert('div.cards')
       .initActions();
   }

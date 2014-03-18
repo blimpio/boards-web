@@ -26,8 +26,6 @@ module.exports = Zeppelin.View.extend({
     'click': 'onClick'
   },
 
-  template: require('templates/card'),
-
   model: require('models/card'),
 
   elements: {
@@ -38,6 +36,11 @@ module.exports = Zeppelin.View.extend({
   bindings: {
     'edited': {
       callback: 'onEdited'
+    },
+
+    'change:upload_progress': {
+      element: 'span.card-upload-progress',
+      callback: 'onUploadProgress'
     }
   },
 
@@ -52,13 +55,27 @@ module.exports = Zeppelin.View.extend({
   canEdit: false,
 
   context: function() {
-    return _.extend({}, this.model.getPresenters(['name', 'content']), {
+    return _.extend({}, this.model.getPresenters(), {
       isDetail: this.isDetail
     });
   },
 
+  initialize: function() {
+    this.setTemplate();
+  },
+
+  setTemplate: function() {
+    if (this.model.isNote()) {
+      this.template = require('templates/card-note');
+    } else if (this.model.isFile()) {
+      this.template = require('templates/card-file');
+    }
+
+    return this;
+  },
+
   update: function() {
-    var template = require('templates/card-preview');
+    var template = require('templates/card-note-preview');
     this.$preview.html(this.renderTemplate(template));
     return this;
   },
@@ -70,7 +87,10 @@ module.exports = Zeppelin.View.extend({
   },
 
   onClick: function() {
-    if (!this.isDetail) this.publish('card:selected', this.model);
+    if (!this.isDetail && !this.model.isNew()) {
+      this.publish('card:selected', this.model);
+    }
+
     return this;
   },
 
@@ -114,6 +134,12 @@ module.exports = Zeppelin.View.extend({
       this.update();
     }
 
+    return this;
+  },
+
+  onUploadProgress: function($el, model, progress) {
+    $el.text(progress + '%');
+    if (progress === 100) $el.hide();
     return this;
   },
 

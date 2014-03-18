@@ -5,6 +5,8 @@ module.exports = Zeppelin.FormView.extend({
 
   model: require('models/card'),
 
+  template: require('templates/create-note'),
+
   events: {
     'click [data-action=cancel]': 'onClickCancel'
   },
@@ -12,10 +14,6 @@ module.exports = Zeppelin.FormView.extend({
   elements: {
     'nameInput': '[name=name]',
     'contentInput': '[name=content]'
-  },
-
-  subscriptions: {
-    'card:creating': 'renderCardForm'
   },
 
   initialize: function() {
@@ -28,11 +26,6 @@ module.exports = Zeppelin.FormView.extend({
       'board': App.Cache.get('current_board')
     });
 
-    return this;
-  },
-
-  renderCardForm: function() {
-    this.render(require('templates/create-note'));
     return this;
   },
 

@@ -106,6 +106,53 @@ describe('Card', function() {
     });
   });
 
+  describe('setTemplate().', function() {
+    var card;
+
+    before(function() {
+      App.Cards.reset([{
+        'created_by':2,
+        'id':2,
+        'date_created':'2014-02-28T18:25:56.961Z',
+        'date_modified':'2014-02-28T18:25:56.966Z',
+        'name':'Another note',
+        'type':'note',
+        'slug':'another-note',
+        'board':7,
+        'featured':false,
+        'origin_url':'',
+        'content':'With some other content...',
+        'is_shared':false,
+        'thumbnail_sm_path':'',
+        'thumbnail_md_path':'',
+        'thumbnail_lg_path':'',
+        'file_size':null,
+        'file_extension':'',
+        'cards':[]
+      }], {silent: true});
+
+      card = new Card({model: App.Cards.at(0)});
+      card.insert('#application');
+    });
+
+    it('should set the file template if the card is a file.', function() {
+      card.model.set('type', 'file');
+      card.setTemplate();
+      expect(card.template).to.eql(require('templates/card-file'));
+    });
+
+    it('should set the note template if the card is a file.', function() {
+      card.model.set('type', 'note');
+      card.setTemplate();
+      expect(card.template).to.eql(require('templates/card-note'));
+    });
+
+    after(function() {
+      card.unplug(true);
+      App.Cards.reset([], {silent: true});
+    });
+  });
+
   describe('update().', function() {
     var card;
 
@@ -469,6 +516,46 @@ describe('Card', function() {
       App.Cards.reset([], {silent: true});
       Card.prototype.update.restore();
       Card.prototype.hideEditMode.restore();
+    });
+  });
+
+describe('onUploadProgress().', function() {
+    var card;
+
+    before(function() {
+      App.Cards.reset([{
+        'created_by':2,
+        'id':2,
+        'date_created':'2014-02-28T18:25:56.961Z',
+        'date_modified':'2014-02-28T18:25:56.966Z',
+        'name':'Another note',
+        'type':'file',
+        'slug':'another-note',
+        'board':7,
+        'featured':false,
+        'origin_url':'',
+        'content':'With some other content...',
+        'is_shared':false,
+        'thumbnail_sm_path':'',
+        'thumbnail_md_path':'',
+        'thumbnail_lg_path':'',
+        'file_size':null,
+        'file_extension':'',
+        'cards':[]
+      }], {silent: true});
+
+      card = new Card({model: App.Cards.at(0)});
+      card.insert('#application');
+    });
+
+    it('should update the upload rate text..', function() {
+      card.onUploadProgress(card.$('.card-upload-progress'), {}, 21);
+      expect(card.$('.card-upload-progress').text()).to.equal('21%');
+    });
+
+    after(function() {
+      card.unplug(true);
+      App.Cards.reset([], {silent: true});
     });
   });
 

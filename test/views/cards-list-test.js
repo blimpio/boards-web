@@ -45,21 +45,9 @@ describe('CardsList', function() {
       expect(cardsList.subscriptions).to.exist;
     });
 
-    after(function() {
-      cardsList.unplug(true);
-    });
-  });
-
-  describe('onRender()', function() {
-    var cardsList;
-
-    before(function() {
-      cardsList = new CardsList();
-    });
-
-    it('should init the createForm child view.', function() {
-      cardsList.onRender();
+    it('should have child views.', function() {
       expect(cardsList.getView('createForm')).to.exist;
+      expect(cardsList.getView('fileUploader')).to.exist;
     });
 
     after(function() {

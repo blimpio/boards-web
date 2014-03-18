@@ -1,6 +1,6 @@
 .card {
   background: #fff;
-  border: 1px solid #eee;
+  border: 1px solid #ddd;
   padding: 10px;
 
   &.is-editing {
@@ -36,13 +36,28 @@
     page-break-inside: avoid;
   }
 
+  &.is-item[data-type="file"] {
+    padding: 0;
+
+    .card-name {
+      border-top: 1px solid #ddd;
+      display: block;
+      padding: 10px;
+      text-align: center;
+    }
+  }
+
   &.is-detail {
     margin 10px;
   }
 }
 
-.card-edit-form { display: none; }
+.card-file-preview {
+  display block;
+  margin: 0 auto;
+}
 
+.card-edit-form { display: none; }
 
 .card-actions {
   float: right;

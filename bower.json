@@ -3,15 +3,19 @@
   "version": "0.0.1",
   "main": "public/js/app.js",
   "dependencies": {
+    "swag": "~0.5.1",
+    "marked": "0.3.1",
     "lodash": "~2",
     "jquery": "~2",
     "backbone": "~1",
     "handlebars": "~1",
-    "swag": "~0.5.1",
-    "marked": "0.3.1",
-    "normalize-css": "~3.0.0"
+    "normalize-css": "~3.0.0",
+    "blueimp-file-upload": "~9.5.6"
   },
   "overrides": {
+    "marked": {
+      "main": "lib/marked.js"
+    },
     "jquery": {
       "main": "dist/jquery.js"
     },
@@ -26,8 +30,23 @@
     "handlebars": {
       "main": "handlebars.runtime.js"
     },
-    "marked": {
-      "main": "lib/marked.js"
+    "blueimp-file-upload": {
+      "dependencies": {
+        "jquery": "*",
+        "blueimp-load-image": "*",
+        "blueimp-canvas-to-blob": "*"
+      },
+      "main": [
+        "js/vendor/jquery.ui.widget.js",
+        "js/jquery.iframe-transport.js",
+        "js/jquery.fileupload.js",
+        "js/jquery.fileupload-process.js",
+        "js/jquery.fileupload-image.js",
+        "js/jquery.fileupload-audio.js",
+        "js/jquery.fileupload-video.js",
+        "js/jquery.fileupload-validate.js",
+        "js/jquery.fileupload-ui.js"
+      ]
     }
   }
 }

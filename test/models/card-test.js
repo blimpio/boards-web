@@ -49,4 +49,100 @@ describe('CardModel', function() {
       cardModel.unplug();
     });
   });
+
+  describe('smallThumbnail()', function() {
+    var cardModel;
+
+    beforeEach(function() {
+      cardModel = new CardModel();
+    });
+
+    afterEach(function() {
+      cardModel.unplug();
+    });
+
+    it('should return the small thumbnail url.', function() {
+      cardModel.set('thumbnail_sm_path', 'image.png');
+      expect(cardModel.smallThumbnail()).to.equal('image.png');
+    });
+
+    it('should return the small thumbnail url. (using fallbacks)', function() {
+      cardModel.set('content', 'image.gif');
+      expect(cardModel.smallThumbnail()).to.equal('image.gif');
+    });
+
+    it('should return the small thumbnail url. (using fallbacks)', function() {
+      expect(cardModel.smallThumbnail()).to.equal('images/generic-file.png');
+    });
+  });
+
+  describe('largeThumbnail()', function() {
+    var cardModel;
+
+    beforeEach(function() {
+      cardModel = new CardModel();
+    });
+
+    afterEach(function() {
+      cardModel.unplug();
+    });
+
+    it('should return the small thumbnail url.', function() {
+      cardModel.set('thumbnail_lg_path', 'image.png');
+      expect(cardModel.largeThumbnail()).to.equal('image.png');
+    });
+
+    it('should return the small thumbnail url. (using fallbacks)', function() {
+      cardModel.set('content', 'image.gif');
+      expect(cardModel.largeThumbnail()).to.equal('image.gif');
+    });
+
+    it('should return the small thumbnail url. (using fallbacks)', function() {
+      expect(cardModel.largeThumbnail()).to.equal('images/generic-file.png');
+    });
+  });
+
+  describe('isNote()', function() {
+    var cardModel;
+
+    beforeEach(function() {
+      cardModel = new CardModel();
+    });
+
+    afterEach(function() {
+      cardModel.unplug();
+    });
+
+    it('should return false if the card is not a note.', function() {
+      cardModel.set('type', 'file');
+      expect(cardModel.isNote()).to.be.false;
+    });
+
+    it('should return true if the card is not a note.', function() {
+      cardModel.set('type', 'note');
+      expect(cardModel.isNote()).to.be.true;
+    });
+  });
+
+  describe('isFile()', function() {
+    var cardModel;
+
+    beforeEach(function() {
+      cardModel = new CardModel();
+    });
+
+    afterEach(function() {
+      cardModel.unplug();
+    });
+
+    it('should return false if the card is not a note.', function() {
+      cardModel.set('type', 'note');
+      expect(cardModel.isFile()).to.be.false;
+    });
+
+    it('should return true if the card is not a note.', function() {
+      cardModel.set('type', 'file');
+      expect(cardModel.isFile()).to.be.true;
+    });
+  });
 });

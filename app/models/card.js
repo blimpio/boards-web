@@ -1,6 +1,10 @@
 module.exports = Zeppelin.Model.extend({
   name: 'Card',
 
+  defaults: {
+    upload_progress: 0,
+  },
+
   validations: {
     name: {
       isEmpty: false,
@@ -18,8 +22,30 @@ module.exports = Zeppelin.Model.extend({
     }
   },
 
+  localAttributes: ['upload_progress'],
+
+  presenters: ['name', 'content', 'smallThumbnail', 'largeThumbnail'],
+
   url: function() {
     var url = '/api/cards/';
     return this.isNew() ? url : url + this.id + '/';
+  },
+
+  smallThumbnail: function() {
+    return this.get('thumbnail_sm_path') ||
+    this.get('content') || 'images/generic-file.png';
+  },
+
+  largeThumbnail: function() {
+    return this.get('thumbnail_lg_path') ||
+    this.get('content') || 'images/generic-file.png';
+  },
+
+  isNote: function() {
+    return this.get('type') === 'note';
+  },
+
+  isFile: function() {
+    return this.get('type') === 'file';
   }
 });
