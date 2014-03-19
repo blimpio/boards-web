@@ -36,5 +36,12 @@ module.exports = Zeppelin.CollectionView.extend({
   addCard: function(card) {
     this.hideCreateMode().collection.add(card);
     return this;
+  },
+
+  onRenderCollection: function() {
+    this.masonry = new Masonry(this.$list[0], {
+      gutter: 15,
+      itemSelector: '.card'
+    });
   }
 });
