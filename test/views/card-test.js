@@ -55,7 +55,7 @@ describe('Card', function() {
       expect(card.isDetail).to.exist;
     });
 
-    it('should have a isDetail property.', function() {
+    it('should have a canEdit property.', function() {
       expect(card.canEdit).to.exist;
     });
 
@@ -245,7 +245,7 @@ describe('Card', function() {
     it('should not publish a card:selected event if the view is a detail view.', function() {
       card.isDetail = true;
       card.onClick();
-      expect(publishSpy).to.have.not.called;
+      expect(publishSpy).to.have.not.been.called;
     });
 
     it('should publish a card:selected event.', function() {
@@ -313,15 +313,15 @@ describe('Card', function() {
     it('should do nothing if the view cant be edited.', function() {
       card.canEdit = false;
       card.onClickEdit();
-      expect(initEditFormSpy).to.have.not.called;
-      expect(showEditModeSpy).to.have.not.called;
+      expect(initEditFormSpy).to.have.not.been.called;
+      expect(showEditModeSpy).to.have.not.been.called;
     });
 
     it('should call showEditMode().', function() {
       card.canEdit = true;
       card.onClickEdit();
-      expect(initEditFormSpy).to.have.called;
-      expect(showEditModeSpy).to.have.called;
+      expect(initEditFormSpy).to.have.been.called;
+      expect(showEditModeSpy).to.have.been.called;
     });
 
     after(function() {
@@ -407,15 +407,15 @@ describe('Card', function() {
     it('should do nothing if the view cant be edited.', function() {
       card.canEdit = false;
       card.onClickCancel();
-      expect(initEditFormSpy).to.have.not.called;
-      expect(hideEditModeSpy).to.have.not.called;
+      expect(initEditFormSpy).to.have.not.been.called;
+      expect(hideEditModeSpy).to.have.not.been.called;
     });
 
     it('should call hideEditMode().', function() {
       card.canEdit = true;
       card.onClickCancel();
-      expect(initEditFormSpy).to.have.called;
-      expect(hideEditModeSpy).to.have.called;
+      expect(initEditFormSpy).to.have.been.called;
+      expect(hideEditModeSpy).to.have.been.called;
     });
 
     after(function() {
@@ -501,14 +501,14 @@ describe('Card', function() {
 
     it('should do nothing if there are no changes in model.', function() {
       card.onEdited();
-      expect(updateSpy).to.have.not.called;
-      expect(hideEditModeSpy).to.have.not.called;
+      expect(updateSpy).to.have.not.been.called;
+      expect(hideEditModeSpy).to.have.not.been.called;
     });
 
     it('should update the card preview if there was changes in the model.', function() {
-      card.onEdited(App.Cards.at(0), {name: 'Changed'});
-      expect(updateSpy).to.have.called;
-      expect(hideEditModeSpy).to.have.called;
+      card.onEdited(null, App.Cards.at(0), {name: 'Changed'});
+      expect(updateSpy).to.have.been.called;
+      expect(hideEditModeSpy).to.have.been.called;
     });
 
     after(function() {

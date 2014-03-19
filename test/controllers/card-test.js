@@ -1,5 +1,16 @@
 describe('CardController', function() {
-  var CardController = require('controllers/card');
+  var CardController = require('controllers/card'),
+      CommentsCollection = require('collections/comments');
+
+  before(function() {
+    App.Comments.fetchComments = function() {
+      return [];
+    };
+  });
+
+  after(function() {
+    App.Comments.fetchComments = CommentsCollection.prototype.fetchComments;
+  });
 
   beforeEach(function() {
     App.Cache.set('current_account', 1, {silent: true});
@@ -137,6 +148,25 @@ describe('CardController', function() {
     afterEach(function() {
       cardController.unplug(true);
       CardController.prototype.renderCurrentCard.restore();
+    });
+  });
+
+  describe('fetchComments()', function() {
+    var cardController, fetchCommentsSpy;
+
+    beforeEach(function() {
+      fetchCommentsSpy = sinon.spy(App.Comments, 'fetchComments');
+      cardController = new CardController();
+    });
+
+    it('should fetch comments from the current card.', function() {
+      cardController.fetchComments();
+      expect(fetchCommentsSpy).to.have.been.called;
+    });
+
+    afterEach(function() {
+      cardController.unplug(true);
+      App.Comments.fetchComments.restore();
     });
   });
 

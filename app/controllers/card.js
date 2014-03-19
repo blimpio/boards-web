@@ -66,6 +66,11 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
+  fetchComments: function() {
+    App.Comments.fetchComments(App.Cards.current);
+    return this;
+  },
+
   renderCurrentBoard: function() {
     var board;
 
@@ -109,5 +114,9 @@ module.exports = Zeppelin.View.extend({
       .setTemplate()
       .insert('div.cards')
       .initActions();
+
+    if (this.hasView('comments')) this.unregisterView('comments');
+    this.registerView(require('views/comments-list'), 'comments');
+    this.fetchComments();
   }
 });

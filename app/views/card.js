@@ -133,7 +133,7 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
-  onEdited: function(model, changed) {
+  onEdited: function($el, model, changed) {
     if (changed) {
       this.hideEditMode();
       this.update();

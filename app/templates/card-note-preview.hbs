@@ -4,8 +4,11 @@
       <div class="card-content">{{markdown content}}</div>
     </div> {{! .col-md-8 }}
     <div class="col-md-4">
-      <h1 class="card-name">{{name}}</h1>
-      <small class="card-date">{{timeago date_created}}</small>
+      <div class="card-info">
+        <h1 class="card-name">{{name}}</h1>
+        <small class="card-date">{{timeago date_created}}</small>
+      </div> {{! .card-info }}
+      {{partial 'comments' this}}
     </div> {{! .col-md-4 }}
   </div> {{! .row }}
 {{else}}

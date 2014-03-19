@@ -1,0 +1,26 @@
+.comment {
+  border: 1px solid #E6E5E5;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  padding: 5px 10px 10px;
+
+  &:hover {
+    [data-action="edit"] { display: block; }
+  }
+
+  &.is-editing {
+    .comment-preview { display: none; }
+    .comment-edit-form { display: block; }
+  }
+
+  [data-action="edit"] { display: none; }
+}
+
+.comment-info {
+  line-height: 28px;
+  margin-bottom: 10px;
+}
+
+.comment-content { margin: 0; }
+
+.comment-edit-form { display: none; }

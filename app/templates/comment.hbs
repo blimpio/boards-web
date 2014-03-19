@@ -1,0 +1,18 @@
+<div class="comment-preview">
+  {{partial 'comment-preview' this}}
+</div> {{! .comment-preview }}
+<form class="comment-edit-form" role="form">
+  <div class="form-group">
+    <textarea name="content" placeholder="Content" class="form-control">{{content}}</textarea>
+    <div data-error="content" class="help-block"></div>
+  </div> {{! .form-group }}
+  <div class="form-group clearfix">
+    <div class="pull-left">
+      <button data-action="save" class="btn btn-default">Save</button>
+      <button data-action="cancel" type="button" class="btn btn-link">Cancel</button>
+    </div> {{! .pull-left }}
+    <div class="pull-right">
+      <button data-action="delete" type="button" class="btn btn-danger">Delete</button>
+    </div> {{! .pull-right }}
+  </div> {{! .form-group }}
+</form> {{! .comment-edit-form }}

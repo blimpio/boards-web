@@ -1,0 +1,9 @@
+<div class="row">
+  <div class="comment-info col-md-9">
+    <small class="comment-date">{{timeago date_created}}</small>
+  </div> {{! .comment-info }}
+  <div class="col-md-3">
+    <button type="button" data-action="edit" class="btn btn-link btn-sm pull-right">Edit</button>
+  </div>
+</div> {{! .row }}
+<p class="comment-content">{{content}}</p>

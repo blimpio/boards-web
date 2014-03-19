@@ -21,14 +21,12 @@
     border: 1px solid #E6E5E5;
     border-radius: 3px;
     cursor: pointer;
-    margin-bottom: 10px;
-    min-height: 150px;
-    min-width: 250px;
-    -webkit-column-break-inside: avoid;
-    -moz-column-break-inside: avoid;
-    -moz-page-break-inside: avoid;
-    page-break-inside: avoid;
+    float: left;
+    height: 200px;
+    margin-bottom: 15px;
     padding: 10px;
+    overflow: hidden;
+    width: 220px;
   }
 
   &.is-detail {
@@ -47,12 +45,27 @@
 
   &.is-item[data-type="file"] {
     padding: 0;
+    position: relative;
 
     .card-name {
+      background: #FFF;
       border-top: 1px solid #E6E5E5;
+      bottom: 0;
       display: block;
-      padding: 10px;
       text-align: center;
+      padding: 10px;
+      position: absolute;
+      width: 100%;
+    }
+
+    .card-file-preview {
+      background-repeat: no-repeat no-repeat;
+      background-position: 50% 50%;
+      height: 200px;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 220px;
     }
   }
 

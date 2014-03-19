@@ -13,6 +13,7 @@ module.exports = (function() {
   App.Cards = _.createCollection('cards');
   App.Boards = _.createCollection('boards');
   App.Accounts = _.createCollection('accounts');
+  App.Comments = _.createCollection('comments');
 
   App.User.signinFromCache();
   App.Router.start({pushState: true});
