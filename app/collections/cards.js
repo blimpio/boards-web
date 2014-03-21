@@ -9,6 +9,10 @@ module.exports = Zeppelin.Collection.extend({
     'card:selected': 'onCardSelected'
   },
 
+  comparator: function(model) {
+    return -model.get('position');
+  },
+
   setCurrent: function(slug) {
     this.current = slug ? this.findWhere({slug: slug}) : this.first();
     this.current = this.current && this.current.id ? this.current.id : null;
@@ -27,5 +31,17 @@ module.exports = Zeppelin.Collection.extend({
 
   hasCardsFromBoard: function(id) {
     return _.size(this.findWhere({board: id})) > 0;
+  },
+
+  addStack: function(stack) {
+    var model = this.add(stack);
+
+    model.save().done(_.bind(function() {
+      _.forEach(stack.cards, function(id) {
+        this.get(id).set('stack', model.id);
+      }, this);
+    }, this));
+
+    return model;
   }
 });

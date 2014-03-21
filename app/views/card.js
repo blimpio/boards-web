@@ -66,6 +66,19 @@ module.exports = Zeppelin.View.extend({
 
   onRender: function() {
     if (this.isDetail) this.$el.attr('data-type', this.model.get('type'));
+
+    this.$el.data('id', this.model.id);
+
+    this.$el.draggable({
+      revert: true,
+      addClasses: false,
+      containment: 'ol.cards-list'
+    });
+
+    this.$el.droppable({
+      drop: _.bind(this.onDrop, this)
+    });
+
     return this;
   },
 
@@ -91,8 +104,12 @@ module.exports = Zeppelin.View.extend({
     return this;
   },
 
+  isDragging: function() {
+    return this.$el.is('.ui-draggable-dragging');
+  },
+
   onClick: function() {
-    if (!this.isDetail && !this.model.isNew()) {
+    if (!this.isDetail && !this.model.isNew() && !this.isDragging()) {
       this.publish('card:selected', this.model);
     }
 
@@ -145,6 +162,14 @@ module.exports = Zeppelin.View.extend({
   onUploadProgress: function($el, model, progress) {
     $el.text(progress + '%');
     if (progress === 100) $el.hide();
+    return this;
+  },
+
+  onDrop: function(event, ui) {
+    var ids = [ui.helper.data('id'), this.model.id],
+        elements = [ui.helper, this.$el];
+
+    this.publish('new:stack', ids, elements);
     return this;
   },
 

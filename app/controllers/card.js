@@ -14,14 +14,6 @@ module.exports = Zeppelin.View.extend({
         canEdit: true,
         isDetail: true
       }
-    },
-    currentCard: {
-      view: require('views/card'),
-      data: {
-        canEdit: true,
-        isDetail: true,
-        autoRenders: false
-      }
     }
   },
 
@@ -109,14 +101,31 @@ module.exports = Zeppelin.View.extend({
 
     document.title = 'Blimp | ' + card.get('name');
 
-    this.getView('currentCard')
-      .setModel(card)
-      .setTemplate()
-      .insert('div.cards')
-      .initActions();
+    if (card.get('type') === 'stack') {
+      this.registerView(require('views/stack-detail'), {
+        model: card,
+        autoRenders: false
+      }, 'currentCard');
 
-    if (this.hasView('comments')) this.unregisterView('comments');
-    this.registerView(require('views/comments-list'), 'comments');
-    this.fetchComments();
+      this.getView('currentCard')
+        .insert('div.cards')
+        .initActions();
+    } else {
+      this.registerView(require('views/card'), {
+        model: card,
+        canEdit: true,
+        isDetail: true,
+        autoRenders: false
+      }, 'currentCard');
+
+      this.getView('currentCard')
+        .setTemplate()
+        .insert('div.cards')
+        .initActions();
+
+      if (this.hasView('comments')) this.unregisterView('comments');
+      this.registerView(require('views/comments-list'), 'comments');
+      this.fetchComments();
+    }
   }
 });

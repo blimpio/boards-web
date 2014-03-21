@@ -1,4 +1,6 @@
 .card {
+  z-index: 1;
+
   &.is-editing {
     .card-preview { display: none; }
     .card-edit-form { display: block; }
@@ -16,7 +18,7 @@
     .card-actions-visible { display: inline-block; }
   }
 
-  &.is-item {
+  &.is-item, .stack-card-preview {
     background: #fff;
     border: 1px solid #E6E5E5;
     border-radius: 3px;
@@ -38,12 +40,52 @@
     }
   }
 
-  &.is-item[data-type="note"] {
+  &.is-item[data-type="stack"] {
+    height: 200px;
+    width: 455px;
+
+    .stack-card-preview {
+      border-radius: 0;
+      border-left: 0 none;
+      height: 110px;
+      width: 108px;
+
+      &:first-child {
+        border-left: 1px solid #E6E5E5;
+        border-radius: 3px 0 0 3px;
+      }
+
+      &:last-child {
+        border-right: 1px solid #E6E5E5;
+        border-radius: 0 3px 3px 0;
+      }
+
+      &.is-item[data-type="note"] {
+        .card-name { font-size: 11px; }
+        .card-content { font-size: 10px; }
+      }
+
+      &.is-item[data-type="file"] {
+        .card-name { display: none; }
+
+        .card-file-preview {
+          background-size: cover;
+          background-position: 0 0;
+          height: 110px;
+          width: 108px;
+        }
+      }
+    }
+  }
+
+  &.is-item[data-type="note"],
+  .stack-card-preview[data-type="note"] {
     .card-name { font-size: 14px; }
     .card-content { font-size: 12px; }
   }
 
-  &.is-item[data-type="file"] {
+  &.is-item[data-type="file"],
+  .stack-card-preview[data-type="file"] {
     padding: 0;
     position: relative;
 
@@ -69,12 +111,40 @@
     }
   }
 
+  &.is-item.ui-draggable-dragging {
+    opacity: 0.7;
+    z-index: 100;
+  }
+
+  &.is-item[data-type="stack"] {
+    &:hover [data-action="delete"] { display: block; }
+    &:hover [data-action="unstack"] { display: block; }
+
+    [data-action="unstack"],
+    [data-action="delete"] {
+      display: none;
+      left: 10px;
+      position: absolute;
+      top: 10px;
+    }
+
+    [data-action="delete"] {
+      left: auto;
+      right: 10px;
+    }
+  }
+
   &.is-detail[data-type="note"] {
     .card-content {
       border: 1px solid #E6E5E5;
       border-radius: 3px;
       padding: 10px;
     }
+  }
+
+  &.is-detail[data-type="stack"] {
+    .card-name { margin: 0; }
+    .stack-name { font-size: 22px; }
   }
 }
 
@@ -93,4 +163,26 @@
 
 .card-actions {
   float: right;
+}
+
+.stack-info {
+  margin: 5px auto 20px;
+
+  &.is-editing {
+    .card-preview, .stack-name { display: none; }
+    .card-edit-form, .stack-edit-form { display: block; }
+  }
+}
+
+.stack-edit-form { display: none; }
+
+.stack-name,
+.stack-count {
+  display: block;
+  text-align: center;
+}
+
+.stack-name {
+  font-size: 18px;
+  text-align: center;
 }

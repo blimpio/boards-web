@@ -1,8 +1,10 @@
 module.exports = Zeppelin.Model.extend({
   name: 'Comment',
 
-  defaults: {
-    date_created: _.now()
+  defaults: function() {
+    return {
+      date_created: _.now()
+    };
   },
 
   presenters: ['content', 'date_created'],

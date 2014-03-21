@@ -67,11 +67,6 @@ describe('CardModel', function() {
     });
 
     it('should return the small thumbnail url. (using fallbacks)', function() {
-      cardModel.set('content', 'image.gif');
-      expect(cardModel.smallThumbnail()).to.equal('image.gif');
-    });
-
-    it('should return the small thumbnail url. (using fallbacks)', function() {
       expect(cardModel.smallThumbnail()).to.match(/images\/generic-file.png/);
     });
   });
@@ -90,11 +85,6 @@ describe('CardModel', function() {
     it('should return the small thumbnail url.', function() {
       cardModel.set('thumbnail_lg_path', 'image.png');
       expect(cardModel.largeThumbnail()).to.equal('image.png');
-    });
-
-    it('should return the small thumbnail url. (using fallbacks)', function() {
-      cardModel.set('content', 'image.gif');
-      expect(cardModel.largeThumbnail()).to.equal('image.gif');
     });
 
     it('should return the small thumbnail url. (using fallbacks)', function() {

@@ -16,15 +16,16 @@ module.exports = Zeppelin.Model.extend({
       message: 'Every card must be tied to a board.'
     },
 
-    content: {
-      isEmpty: false,
-      message: 'Every card requires some type of content.'
+    content: function(content) {
+      if (this.get('type') !== 'stack' && !content) {
+        return 'Every card requires some type of content.';
+      }
     }
   },
 
   localAttributes: ['upload_progress'],
 
-  presenters: ['name', 'content', 'smallThumbnail', 'largeThumbnail', 'date_created'],
+  presenters: ['type', 'name', 'content', 'smallThumbnail', 'largeThumbnail', 'date_created'],
 
   url: function() {
     var url = '/api/cards/';
@@ -32,13 +33,11 @@ module.exports = Zeppelin.Model.extend({
   },
 
   smallThumbnail: function() {
-    return this.get('thumbnail_sm_path') ||
-    this.get('content') || _.asset('images/generic-file.png');
+    return this.get('thumbnail_sm_path') || _.asset('images/generic-file.png');
   },
 
   largeThumbnail: function() {
-    return this.get('thumbnail_lg_path') ||
-    this.get('content') || _.asset('images/generic-file.png');
+    return this.get('thumbnail_lg_path') || _.asset('images/generic-file.png');
   },
 
   isNote: function() {
@@ -47,5 +46,33 @@ module.exports = Zeppelin.Model.extend({
 
   isFile: function() {
     return this.get('type') === 'file';
+  },
+
+  getCards: function() {
+    return _.map(this.get('cards'), function(id) {
+      return this.collection.get(id).getPresenters();
+    }, this);
+  },
+
+  addCard: function(id) {
+    var cards = this.get('cards');
+    cards.push(id);
+    this.set('cards', cards);
+    this.collection.get(id).set('stack', this.id);
+    this.trigger('change change:cards', this, this.get('cards'));
+    return this;
+  },
+
+  unstack: function() {
+    _.forEach(this.get('cards'), function(card) {
+      this.collection.get(card).unset('stack');
+    }, this);
+
+    this.trigger('destroy', this, this.collection, {});
+
+    return $.ajax({
+      url: '/api/cards/' + this.id + '/unstack/',
+      type: 'PUT'
+    });
   }
 });

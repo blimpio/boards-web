@@ -9,7 +9,13 @@ module.exports = Zeppelin.CollectionView.extend({
 
   collection: App.Cards,
 
-  itemView: require('views/card'),
+  itemView: function(model) {
+    if (model.get('type') === 'stack') {
+      return require('views/stack');
+    } else {
+      return require('views/card');
+    }
+  },
 
   views: {
     createForm: require('views/create-card'),
@@ -21,6 +27,9 @@ module.exports = Zeppelin.CollectionView.extend({
     'card:creating:cancel': 'hideCreateMode',
     'card:uploading': 'hideCreateMode',
     'card:created': 'addCard',
+    'card:append': 'appendCard',
+    'new:stack': 'createStack',
+    'cards:layout': 'arrange'
   },
 
   showCreateMode: function(type) {
@@ -33,15 +42,53 @@ module.exports = Zeppelin.CollectionView.extend({
     return this;
   },
 
+  appendCard: function(card) {
+    this.appendItem(this.collection.get(card));
+    return this;
+  },
+
   addCard: function(card) {
     this.hideCreateMode().collection.add(card);
     return this;
   },
 
-  onRenderCollection: function() {
+  arrange: function() {
     this.masonry = new Masonry(this.$list[0], {
       gutter: 15,
+      isFitWidth: true,
+      columnWidth: 220,
       itemSelector: '.card'
     });
+  },
+
+  onRenderCollection: function() {
+    this.arrange();
+  },
+
+  createStack: function(ids, elements) {
+    var stackModel, stackItem;
+
+    if (!ids) return this;
+
+    stackModel = this.collection.addStack({
+      type: 'stack',
+      name: 'Card Stack',
+      board: App.Cache.get('current_board'),
+      cards: ids
+    }, {silent: true});
+
+    this.renderItem(stackModel);
+    stackItem = this.getItem(stackModel);
+
+    if (elements) {
+      _.last(elements).after(stackItem.el);
+      _.each(elements, function(element) {
+        element.remove();
+      });
+    } else {
+      this.$list.append(stackItem);
+    }
+
+    this.arrange();
   }
 });

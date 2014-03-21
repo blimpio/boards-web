@@ -1,0 +1,39 @@
+{{#if isDetail}}
+  <div class="row">
+    <div class="stack-info col-md-12">
+      <strong class="stack-name">{{name}}</strong>
+      <form class="stack-edit-form" role="form">
+        <div class="form-group">
+          <input type="text" name="name" value="{{name}}" class="form-control" autofocus>
+          <div data-error="name" class="help-block"></div>
+        </div> {{! .form-group }}
+        <div class="form-group">
+          <button data-action="save" class="btn btn-default">Save</button>
+          <button data-action="cancel" type="button" class="btn btn-link">Cancel</button>
+        </div> {{! .form-group }}
+      </form> {{! .stack-edit-form }}
+    </div> {{! .stack-info }}
+  </div> {{! .row }}
+  <div class="row">
+    <ul class="stack-cards list-unstyled col-md-12"></ul>
+  </div> {{! .row }}
+{{else}}
+  <div class="stack-info">
+    <button type="button" class="btn btn-danger btn-xs" data-action="delete">Delete</button>
+    <button type="button" class="btn btn-default btn-xs" data-action="unstack">Unstack</button>
+    <strong class="stack-name">{{name}}</strong>
+    <small class="stack-count">{{count}} cards</small>
+  </div> {{! .stack-info }}
+  <ul class="stack-cards list-unstyled">
+    {{#withFirst cards 4}}
+      <li class="stack-card-preview is-item" data-type="{{type}}">
+        {{#is type "note"}}
+          {{partial "card-note-preview" this}}
+        {{/is}}
+        {{#is type "file"}}
+          {{partial "card-file" this}}
+        {{/is}}
+      </li> {{! .card-preview }}
+    {{/withFirst}}
+  </ul> {{! .stack-cards }}
+{{/if}}

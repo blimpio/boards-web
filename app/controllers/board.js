@@ -21,6 +21,7 @@ module.exports = Zeppelin.View.extend({
   initialize: function(options) {
     _.bindAll(this, ['renderCurrentBoard', 'renderCards']);
     this.boardSlug = options ? options.boardSlug : '';
+    this.$('.cards').empty();
     this.fetchBoards();
     return this;
   },
@@ -104,7 +105,8 @@ module.exports = Zeppelin.View.extend({
 
   renderCards: function() {
     this.getView('cardsList').render(function(card) {
-      return card.get('board') === App.Cache.get('current_board');
+      return card.get('board') === App.Cache.get('current_board') &&
+      !card.has('stack');
     });
   }
 });

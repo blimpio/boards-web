@@ -1683,7 +1683,7 @@
       if (!this.isValidModel(model)) return undefined;
 
       if (_.isFunction(this.itemView) && !Z.Util.isView(this.itemView)) {
-        if (Z.Util.isView(this.itemView())) itemView = this.itemView();
+        if (Z.Util.isView(this.itemView(model))) itemView = this.itemView(model);
       } else if (Z.Util.isView(this.itemView)) {
         itemView = this.itemView;
       }
@@ -1767,7 +1767,7 @@
       if (!itemView) return this;
       this.onRemoveItem(itemView);
       this.unregisterView(itemView.cid);
-      itemView.unplug(true);
+      itemView.remove();
       delete this._registeredItemViews[model.cid];
       return this;
     },
