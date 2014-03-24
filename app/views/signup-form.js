@@ -101,7 +101,15 @@ module.exports = Zeppelin.FormView.extend({
 
   validateFullName: function(event) {
     this.setAttribute('full_name');
-    if (!this.model.validationError) this.model.updateSignupStep(5);
+
+    if (!this.model.validationError) {
+      if (this.model.get('is_invite')) {
+        this.model.updateSignupStep(8);
+      } else {
+        this.model.updateSignupStep(5);
+      }
+    }
+
     return this;
   },
 

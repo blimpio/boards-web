@@ -1,5 +1,5 @@
 <div class="signup__invitation-row">
-  <input type="text" class="signup__invitation-field">
+  <input type="text" class="signup__invitation-field form-control">
   <span class="signup__invitation-at">@</span>
   {{#if signup_domains}}
     <select class="signup__invitation-domains" data-domain-source="true">
@@ -11,5 +11,5 @@
   {{else}}
     {{partial "signup-steps/signup-invitation-domain-input" this}}
   {{/if}}
-  <button type="button" data-action="removeInvitationRow">remove</button>
+  <button type="button" data-action="removeInvitationRow" class="btn btn-default">remove</button>
 </div> {{! .signup__invitation-row }}

@@ -2,11 +2,12 @@ module.exports = Zeppelin.Model.extend({
   name: 'User',
 
   defaults: {
+    is_invite: false,
     signup_step: 1,
     allow_signup: false
   },
 
-  localAttributes: ['signup_step', 'passwordReset'],
+  localAttributes: ['signup_step', 'passwordReset', 'is_invite'],
 
   validations: {
     username: [{
@@ -40,10 +41,11 @@ module.exports = Zeppelin.Model.extend({
       if (!name.split(' ')[1]) return 'Your full name is required to authenticate you.';
     }],
 
-    account_name: [{
-      isEmpty: false,
-      message: 'An account name is required to authenticate you.'
-    }]
+    account_name: function(account) {
+      if (!this.get('is_invite') && !account) {
+        return 'An account name is required to authenticate you.';
+      }
+    }
   },
 
   requestSignup: function(email) {
@@ -79,6 +81,21 @@ module.exports = Zeppelin.Model.extend({
     if (tokenData.email) this.set({
       'email': tokenData.email,
       'signup_request_token': token
+    });
+
+    return this;
+  },
+
+  setEmailFromInviteJWT: function(token) {
+    var tokenData;
+
+    token = token || '';
+    token = token.replace(/^=/, '');
+    tokenData = _.decodeJWT(token);
+
+    if (tokenData.email) this.set({
+      'email': tokenData.email,
+      'invited_user_token': token
     });
 
     return this;

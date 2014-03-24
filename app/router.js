@@ -3,6 +3,7 @@ module.exports = Zeppelin.Router.extend({
     '': 'index',
     'signin/': 'signin',
     'signup/?token:token': 'signupWithToken',
+    'signup/?invite:token': 'signupWithInviteToken',
     'signup/': 'signup',
     'signout/': 'signout',
     'forgot_password/': 'forgotPassword',
@@ -23,6 +24,7 @@ module.exports = Zeppelin.Router.extend({
   validations: {
     'signin/': 'isNotAuthenticated',
     'signup/?token:token': 'isNotAuthenticated',
+    'signup/?invite:token': 'isNotAuthenticated',
     'signup/': 'isNotAuthenticated',
     'forgot_password/': 'isNotAuthenticated',
     'accounts/': 'accountsValidation',
@@ -98,6 +100,11 @@ module.exports = Zeppelin.Router.extend({
   signupWithToken: function(token) {
     this.controller = _.createController('signup');
     this.controller.continueWithToken(token);
+  },
+
+  signupWithInviteToken: function(token) {
+    this.controller = _.createController('signup');
+    this.controller.signupWithInviteToken(token);
   },
 
   signin: function() {
