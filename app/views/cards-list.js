@@ -49,6 +49,7 @@ module.exports = Zeppelin.CollectionView.extend({
 
   addCard: function(card) {
     this.hideCreateMode().collection.add(card);
+    this.arrange();
     return this;
   },
 
