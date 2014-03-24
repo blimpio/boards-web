@@ -135,6 +135,7 @@ module.exports = Zeppelin.Router.extend({
 
   account: function(account) {
     App.Accounts.setCurrent(account);
+    require('lib/sockets');
     this.controller = _.createController('account');
   },
 
@@ -157,6 +158,7 @@ module.exports = Zeppelin.Router.extend({
 
   board: function(account, board) {
     App.Accounts.setCurrent(account);
+    require('lib/sockets');
     this.controller = _.createController('board', {boardSlug: board});
   },
 
@@ -173,6 +175,7 @@ module.exports = Zeppelin.Router.extend({
 
   card: function(account, board, card) {
     App.Accounts.setCurrent(account);
+    require('lib/sockets');
     this.controller = _.createController('card', {
       cardSlug: card,
       boardSlug: board

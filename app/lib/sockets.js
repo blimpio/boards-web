@@ -1,0 +1,27 @@
+module.exports = (function() {
+  var socket = io.connect(App.SOCKETS_URL, {query: 'token=' + App.User.get('token')});
+
+  socket.on('error', function(reason) {
+    console.error('unable to connect websocket server:', reason);
+  });
+
+  socket.on('connect', function() {
+    var userRooms = ['u' + App.User.id, 'a' + App.Accounts.current];
+
+    userRooms.forEach(function(room) {
+      socket.emit('subscribe', room);
+    });
+  });
+
+  socket.on('roomAuth', function(data) {
+    console.error('roomAuth:', data);
+  });
+
+  socket.on('joinedRoom', function(data) {
+    console.log('joinedRoom:', data);
+  });
+
+  socket.on('message', function(response) {
+
+  });
+})();
