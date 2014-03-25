@@ -2,7 +2,7 @@ module.exports = (function() {
   var socket;
 
   try {
-    sockect = io.connect(App.SOCKETS_URL, {query: 'token=' + App.User.get('token')});
+    socket = io.connect(App.SOCKETS_URL, {query: 'token=' + App.User.get('token')});
 
     socket.on('error', function(reason) {
       console.error('unable to connect websocket server:', reason);
