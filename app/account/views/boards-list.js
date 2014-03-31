@@ -5,6 +5,8 @@ module.exports = Zeppelin.CollectionView.extend({
 
   itemView: require('account/views/board'),
 
+  addMethod: 'prepend',
+
   collection: function() {
     return App.Boards;
   },

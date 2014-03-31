@@ -1837,6 +1837,8 @@
 
     listSelector: '',
 
+    addMethod: 'append',
+
     itemView: Zeppelin.ModelView,
 
     manageItems: true,
@@ -2070,9 +2072,17 @@
       return this;
     },
 
-    _onAdd: function (model) {
+    _onAdd: function(model) {
       this.addItem(model);
-      if (this.isRendered()) this.appendItem(this.getView(model.cid));
+
+      if (this.isRendered()) {
+        if (this.addMethod === 'append') {
+          this.appendItem(this.getView(model.cid));
+        } else {
+          this.prependItem(this.getView(model.cid));
+        }
+      }
+
       return this;
     },
 

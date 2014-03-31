@@ -7,6 +7,8 @@ module.exports = Zeppelin.CollectionView.extend({
     'cardsList:layout': 'triggerLayout'
   },
 
+  addMethod: 'prepend',
+
   itemView: function(model) {
     return require('account/views/' + model.get('type'));
   },
@@ -25,7 +27,7 @@ module.exports = Zeppelin.CollectionView.extend({
     this.triggerLayout();
   },
 
-  onAppendItem: function() {
+  onPrependItem: function() {
     if (!this.isFirstCollectionRender()) this.layout();
   },
 

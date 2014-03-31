@@ -141,6 +141,7 @@ module.exports = Zeppelin.View.extend({
   onStop: function() {
     this.s3 = [];
     this.files = [];
+    this.preparePlugin();
     _.restoreNavigation();
   },
 
