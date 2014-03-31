@@ -2040,7 +2040,7 @@
     removeItem: function (model) {
       var view;
 
-      if (Z.Util.isModel(model) || !this.hasView(model.cid)) return this;
+      if (!Z.Util.isModel(model) || !this.hasView(model.cid)) return this;
       view = this.getView(model.cid);
       this.trigger('before:removeItem', this);
       view.unplug(true);
@@ -2088,7 +2088,6 @@
     },
 
     _onRemove: function (model) {
-      this.getView(model.cid).remove();
       this.removeItem(model);
       return this;
     },

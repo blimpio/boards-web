@@ -55,13 +55,12 @@ module.exports = Z.Layout.extend({
   },
 
   showBoards: function() {
-    this.showRegion('createBoardForm');
     this.showRegion('boardsList');
+    this.showRegion('createBoardForm');
   },
 
   onCreateFirstBoardClick: function() {
     this.toggleEmptyBoardsState();
-    this.showBoards();
     this.getRegion('createBoardForm').view.toggleCreateMode();
   },
 

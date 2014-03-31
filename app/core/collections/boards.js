@@ -14,15 +14,32 @@ module.exports = Zeppelin.Collection.extend({
 
   initialize: function() {
     this.on('remove', this.onBoardRemoved, this);
-    this.on('change:is_selected', this.onBoardSelected, this);
+    this.on('change:is_selected', function(board, isSelected) {
+      if (isSelected) this.onBoardSelected(board, isSelected);
+    }, this);
   },
 
   onBoardCreated: function(board) {
-    if (Z.Util.isModel(board)) this.add(board);
+    if (Z.Util.isModel(board)) {
+      this.add(board);
+      if (this.length === 1) {
+        if (board.id) {
+          board.select();
+        } else {
+          board.once('sync', function() {
+            this.select();
+          }, board);
+        }
+      }
+    }
   },
 
   onBoardRemoved: function(board) {
-    this.at(0).select();
+    if (!this.isEmpty()) {
+      this.at(0).select();
+    } else {
+      this.current = null;
+    }
   },
 
   onBoardSelected: function(board, value) {
@@ -30,11 +47,7 @@ module.exports = Zeppelin.Collection.extend({
       return _board.get('is_selected') && _board.cid !== board.cid;
     });
 
-    if (previouslySelected) {
-      previouslySelected.set('is_selected', false, {
-        silent: true
-      }).trigger('deselected');
-    }
+    if (previouslySelected) previouslySelected.deselect();
 
     this.current = board;
     this.trigger('change:current', this.current);

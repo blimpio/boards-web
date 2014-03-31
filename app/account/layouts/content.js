@@ -45,6 +45,12 @@ module.exports = Z.Layout.extend({
     this.getRegion('contentHeader').setView(BoardDetail, {model: board}).show();
   },
 
+  closeBoardDetail: function() {
+    this.getRegion('cardsList').close();
+    this.getRegion('contentHeader').close();
+    this.getElement('cardsWrapper').removeClass('has-no-cards');
+  },
+
   onCreateFirstFileClick: function() {
     this.broadcast('fileUploader:trigger');
   },

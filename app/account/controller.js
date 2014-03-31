@@ -20,10 +20,12 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   listen: function() {
+    this.listenTo(App.Boards, 'add', this.onBoardsChange);
+    this.listenTo(App.Boards, 'remove', this.onBoardsChange);
+    this.listenTo(App.Boards, 'change:current', this.renderBoard);
     this.listenTo(App.Cards, 'add', this.onCardsChange);
     this.listenTo(App.Cards, 'remove', this.onCardsChange);
     this.listenTo(App.Cards, 'change:current', this.renderCard);
-    this.listenTo(App.Boards, 'change:current', this.renderBoard);
   },
 
   fetchAccounts: function() {
@@ -59,11 +61,10 @@ module.exports = Zeppelin.Controller.extend({
   onBoardsFetch: function(response) {
     var currentBoard = App.Boards.where({slug: this.options.board})[0];
 
+    this.getLayout('main').showBoards();
     this.getLayout('main').toggleEmptyBoardsState(App.Boards.isEmpty());
 
     if (!App.Boards.isEmpty()) {
-      this.getLayout('main').showBoards();
-
       if (currentBoard) {
         App.Boards.current = currentBoard;
         App.Cache.saveCurrent('boards', App.Boards.current.attributes);
@@ -82,6 +83,9 @@ module.exports = Zeppelin.Controller.extend({
       }
 
       this.fetchCards(App.Boards.current);
+    } else {
+      if (this.firstLoad) this.listen();
+      this.firstLoad = false;
     }
   },
 
@@ -95,6 +99,16 @@ module.exports = Zeppelin.Controller.extend({
     this.getLayout('content').showBoardDetail(App.Boards.current);
     this.getLayout('content').showCards();
     this.options.card = null;
+  },
+
+  onBoardsChange: function() {
+    if (App.Boards.isEmpty()) {
+      this.getLayout('main').toggleEmptyBoardsState(true);
+      this.getLayout('content').closeBoardDetail();
+      this.broadcast('router:navigate', '/' + App.Accounts.current.get('slug') + '/', {
+        trigger: false
+      });
+    }
   },
 
   fetchCards: function(board) {

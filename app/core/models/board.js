@@ -37,6 +37,11 @@ module.exports = Zeppelin.Model.extend({
     }
   },
 
+  deselect: function() {
+    this.set('is_selected', false).trigger('deselected');
+    this.broadcast('board:deselected', this);
+  },
+
   getUrl: function() {
     var accountSlug = '';
 

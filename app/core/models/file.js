@@ -28,11 +28,11 @@ module.exports = Card.extend({
 
   getSmallPreview: function() {
     return this.get('thumbnail_sm_path') ||
-    'http://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+    'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
   },
 
   getLargePreview: function() {
     return this.get('thumbnail_lg_path') ||
-    'http://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+    'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
   }
 });
