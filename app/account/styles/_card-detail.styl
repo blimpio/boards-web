@@ -6,6 +6,15 @@
   cursor: inherit;
 }
 
+.card.is-detail[data-type="file"] {
+  text-align: center;
+
+  .card-preview {
+    height: auto;
+    width: auto;
+  }
+}
+
 .card.is-detail[data-type="note"] {
   &.is-editing {
     .card-content {

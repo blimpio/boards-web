@@ -25,7 +25,11 @@ $cardGutter = 15px;
     width: ($cardWidth * 2) + $cardGutter;
 
     .card-extension {
-      padding: 205px 205px;
+      padding: 205px 0;
+    }
+
+    .card-preview {
+      background-size: 100% 100%;
     }
   }
 
@@ -92,8 +96,9 @@ $cardGutter = 15px;
   font-weight: 100;
   height: 100%;
   left: 0;
-  padding: 75px 85px;
+  padding: 75px 0;
   position: absolute;
+  text-align: center;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.35);
   top: 0;
   width: 100%;
@@ -101,8 +106,8 @@ $cardGutter = 15px;
 }
 
 .card-preview {
-  background-size: 100% 100%;
-  background-position: center center;
+  background-repeat: no-repeat;
+  background-position: top left;
   border-radius: 3px;
   height: 100%;
   left: 0;
