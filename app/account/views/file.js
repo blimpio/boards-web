@@ -37,11 +37,15 @@ module.exports = Card.extend({
     });
   },
 
+  updateUploadProgress: function(progress) {
+    this.getElement('uploadProgress').text(progress + '%');
+  },
+
   onUploadingStateChange: function(file, isUploading) {
     this.$el.toggleClass('is-uploading', isUploading);
   },
 
   onUploadProgress: function(file, progress) {
-    this.getElement('uploadProgress').text(progress + '%');
+    if (this.isRendered) this.updateUploadProgress(progress);
   }
 });
