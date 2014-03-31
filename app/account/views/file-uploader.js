@@ -53,6 +53,10 @@ module.exports = Zeppelin.View.extend({
   },
 
   preparePlugin: function() {
+    if (this.getElement('uploadForm').data('blueimp-fileupload')) {
+      this.getElement('uploadForm').fileupload('destroy');
+    }
+
     this.getElement('uploadForm').fileupload({
       dataType: 'xml',
       autoUpload: true,
@@ -141,7 +145,7 @@ module.exports = Zeppelin.View.extend({
   onStop: function() {
     this.s3 = [];
     this.files = [];
-    this.preparePlugin();
+    this.render();
     _.restoreNavigation();
   },
 
