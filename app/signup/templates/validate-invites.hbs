@@ -1,0 +1,17 @@
+<div class="page-header">
+  <h3>Send Invitations</h3>
+</div> {{! .page-header }}
+
+<div class="invitations">
+  {{partial "signup/templates/invitation-row" this}}
+  {{partial "signup/templates/invitation-row" this}}
+  {{partial "signup/templates/invitation-row" this}}
+</div> {{! .invitations }}
+
+<button type="button" data-action="addRow" class="btn btn-link">Add invitation</button>
+<div data-error="invite_emails" class="help-block"></div>
+
+<div class="form-group">
+  <button data-action="validate" class="btn btn-default">Next</button>
+  <button type="button" data-action="skip" class="btn btn-link">Skip</button>
+</div> {{! .form-group }}

@@ -1,0 +1,41 @@
+<div class="account-page is-loading">
+  {{partial "core/templates/loader" "Loading App"}}
+  <div class="main">
+    {{partial "core/templates/header"}}
+    <div class="content-wrapper clearfix">
+      {{partial "core/templates/loader" "Fetching Boards"}}
+      <div class="sidebar">
+        <div class="create-board-wrapper"></div>
+        <div class="boards-list-wrapper"></div>
+      </div> {{! .sidebar }}
+      <div class="content">
+        <div class="content-header-wrapper clearfix">
+          <button type="button" class="navbar-toggle pull-left" data-action="toggleSidebar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button> {{! [data-action="toggleSidebar"] }}
+          <div class="content-header"></div>
+        </div> {{! .content-header-wrapper }}
+        <div class="cards-wrapper">
+          <div class="cards-list-wrapper"></div>
+          <div class="card-detail-wrapper row">
+            <div class="card-detail-left col-md-8"></div>
+            <div class="card-detail-right col-md-4">
+              <div class="card-detail-info-wrapper"></div>
+              <div class="create-comment-wrapper"></div>
+              <div class="comments-wrapper"></div>
+            </div> {{! .card-detail-right }}
+          </div> {{! .card-detail-wrapper }}
+          {{partial "core/templates/loader" "Fetching Cards"}}
+          {{partial "account/templates/empty-cards"}}
+        </div> {{! .cards-wrapper }}
+        {{partial "account/templates/empty-boards"}}
+      </div> {{! .content }}
+    </div> {{! .content-wrapper }}
+    <div class="note-modal modal" id="createNoteModal">
+      {{partial "account/templates/create-note-modal"}}
+    </div> {{! .note-modal }}
+    <div class="file-uploader"></div>
+  </div> {{! .main }}
+</div> {{! .account-page }}

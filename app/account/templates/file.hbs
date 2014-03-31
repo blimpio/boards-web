@@ -1,0 +1,15 @@
+<div class="card-actions">
+  <button type="button" class="btn btn-default btn-xs" data-action="highlight">Highlight</button>
+  <button type="button" class="btn btn-danger btn-xs" data-action="delete">Delete</button>
+</div> {{! .card-actions }}
+
+{{#if hasNoPreview}}
+  <div class="card-extension">{{extension}}</div>
+{{/if}}
+
+<div class="card-upload-progress">{{upload_progress}}</div>
+<div class="card-preview" style="background-image:url({{preview}})"></div>
+
+<div class="card-name-wrapper">
+  <span class="card-name">{{name}}</span>
+</div> {{! .card-name-wrapper }}

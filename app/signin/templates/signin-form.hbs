@@ -1,0 +1,16 @@
+<div class="form-group">
+  <label for="usernameInput">Username</label>
+  <input name="username" type="text" id="usernameInput" class="form-control" autofocus>
+  <div data-error="username" class="help-block"></div>
+</div> {{! .form-group }}
+
+<div class="form-group">
+  <label for="passwordInput">Password</label>
+  <input name="password" type="password" id="passwordInput" class="form-control">
+  <div data-error="password" class="help-block"></div>
+</div> {{! .form-group }}
+
+<div class="form-group clearfix">
+  <a href="/forgot_password/" data-route="true" class="pull-right">Forgot your password?</a>
+  <button class="btn btn-success" data-action="signin">Sign in</button>
+</div> {{! .form-group }}

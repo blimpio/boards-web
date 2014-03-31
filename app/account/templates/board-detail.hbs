@@ -1,0 +1,27 @@
+<div class="board-detail-info pull-left">
+  {{board-avatar this}} <strong class="board-name" data-action="edit">{{name}}</strong>
+</div> {{! .board-detail-info }}
+
+<form class="board-detail-edit form-inline pull-left">
+  <div class="form-group">
+    <input name="name" type="text" class="form-control" placeholder="e.g. Design" value="{{name}}" autofocus>
+    <button class="btn btn-default" data-action="save">Done</button>
+    <button type="button" class="btn btn-default" data-action="cancel">Cancel</button>
+    <button type="button" class="btn btn-danger" data-action="delete">Delete</button>
+    <div data-error="name" class="help-block"></div>
+  </div> {{! .form-group }}
+</form> {{! .board-detail-edit }}
+
+<div class="board-detail-action form-inline pull-right">
+  <div class="btn-group">
+    <button type="button" data-toggle="dropdown" class="btn btn-link dropdown-toggle">
+      Add Card <span class="caret"></span>
+    </button> {{! [data-toggle="dropdown"] }}
+    <ul class="dropdown-menu" role="menu">
+      <li><button type="button" data-action="createFile" class="btn btn-link">File</button></li>
+      <li><button type="button" data-action="createNote" class="btn btn-link" data-toggle="modal" data-target="#createNoteModal">Note</button></li>
+    </ul> {{! .dropdown-menu }}
+  </div> {{! .dropdown }}
+  <button type="button" class="btn btn-link">Share</button>
+  <input type="search" class="form-control" placeholder="Search">
+</div> {{! .board-detail-info }}

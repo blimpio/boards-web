@@ -1,0 +1,10 @@
+<div class="page-header">
+  <h3>Account name</h3>
+</div> {{! .page-header }}
+
+<div class="form-group">
+  <input name="account_name" type="text" class="form-control" placeholder="e.g. ACME Inc" value="{{account_name}}" autofocus>
+  <div data-error="account_name" class="help-block"></div>
+  <p>This will show up in menus and headings. It will ususally be your company or organization name but it doesn't have to be formal.</p>
+  <button class="btn btn-default" data-action="validateAccountName">Next</button>
+</div> {{! .form-group }}

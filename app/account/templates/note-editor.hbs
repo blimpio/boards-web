@@ -1,0 +1,28 @@
+<form class="note-editor-form">
+  <div class="note-editor-form-title form-group">
+    <input name="name" type="text" class="form-control" placeholder="Title" value="{{title}}" autofocus>
+    <div data-error="name" class="help-block"></div>
+  </div> {{! .note-editor-form-title }}
+
+  <div class="note-editor-form-content form-group">
+    <textarea name="content" type="text" class="form-control" placeholder="Content">{{content}}</textarea>
+    <div data-error="content" class="help-block"></div>
+  </div> {{! .note-editor-form-content }}
+
+  <div class="note-editor-form-actions form-group clearfix">
+    <div class="pull-left">
+      <button class="btn btn-default" data-action="save">Done</button>
+      <button type="button" class="btn btn-link" data-action="cancel">Cancel</button>
+    </div> {{! .pull-left }}
+    <div class="pull-right">
+      <a href="#" data-action="preview">Preview</a> <span class="text-muted">if you are using markdown.</span>
+    </div> {{! .pull-right }}
+  </div> {{! .note-editor-form-actions }}
+</form>
+
+<div class="note-editor-preview"></div>
+
+<div class="note-editor-preview-actions">
+  <button type="button" class="btn btn-default" data-action="submit">Done</button>
+  <button type="button" class="btn btn-link" data-action="modify">Modify</button>
+</div> {{! .note-editor-preview-actions }}

@@ -1,0 +1,70 @@
+.accounts-sm {
+  .account-name {
+    font-size: 13px;
+  }
+
+  .account-avatar {
+    font-size: 16px;
+    height: 22px;
+    width: 22px;
+  }
+}
+
+.accounts-lg {
+  .account-name {
+    font-size: 22px;
+  }
+
+  .account-avatar {
+    font-size: 30px;
+    height: 42px;
+    width: 42px;
+  }
+}
+
+.account-link {
+  color: #555;
+  display: block;
+
+  &:hover {
+    color: #333;
+    text-decoration: none;
+  }
+}
+
+.account-avatar {
+  border-radius: 50%;
+  display: inline-block;
+  font-size: 23px;
+  font-style: normal;
+  font-weight: 100;
+  height: 32px;
+  margin-right: 5px;
+  text-align: center;
+  width: 32px;
+
+  &[data-color="red"] {
+    background: #FFC3C3;
+    color: #CE6A6A;
+  }
+
+  &[data-color="green"] {
+    background: #D4E4C4;
+    color: #669D2E;
+  }
+
+  &[data-color="orange"] {
+    background: #FFDBB6;
+    color: #BE7000;
+  }
+
+  &[data-color="purple"] {
+    background: #E0D6E9;
+    color: #C480FF;
+  }
+}
+
+.account-name,
+.account-avatar {
+  vertical-align: middle;
+}

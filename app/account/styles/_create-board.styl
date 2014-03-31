@@ -1,0 +1,24 @@
+.create-board-wrapper {
+  padding: 20px 0 0;
+}
+
+.create-board {
+  &.is-creating {
+    .create-board-form {
+      display: block;
+    }
+
+    .create-board-actions {
+      display: none;
+    }
+  }
+
+  .create-board-form,
+  .create-board-actions {
+    margin-bottom: 15px;
+  }
+
+  .create-board-form {
+    display: none;
+  }
+}

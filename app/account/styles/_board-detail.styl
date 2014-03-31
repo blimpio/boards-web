@@ -1,0 +1,40 @@
+.board-detail {
+  cursor: pointer;
+
+  &.is-editing {
+    .board-detail-info {
+      display: none;
+    }
+
+    .board-detail-edit {
+      display: block;
+    }
+  }
+}
+
+.board-detail-info {
+  .board-avatar {
+    height: 42px;
+    width: 42px;
+  }
+
+  .board-name {
+    font-size: 20px;
+    transition: color 0.1s linear;
+
+    &:hover {
+      color: #777;
+    }
+  }
+}
+
+.board-detail-edit {
+  display: none;
+}
+
+.board-detail-edit,
+.board-detail-actions {
+  padding: 5px 0;
+}
+
+

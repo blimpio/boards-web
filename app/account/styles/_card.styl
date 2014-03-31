@@ -1,0 +1,145 @@
+$cardWidth = 222px;
+$cardHeight = 222px;
+$cardGutter = 15px;
+
+.card {
+  background: #F9F9F9;
+  border: 1px solid #F0F0F0;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  height: $cardHeight;
+  margin-bottom: $cardGutter;
+  position: relative;
+  overflow: hidden;
+  width: $cardWidth;
+
+  &:hover {
+    .card-actions {
+      display: block;
+    }
+  }
+
+  &.is-featured {
+    height: ($cardHeight * 2) + $cardGutter;
+    width: ($cardWidth * 2) + $cardGutter;
+
+    .card-extension {
+      padding: 205px 205px;
+    }
+  }
+
+  &.is-uploading {
+    border: 4px dashed #E0E0E0;
+
+    .card-preview,
+    .card-extension {
+      display: none;
+    }
+
+    .card-upload-progress {
+      display: block;
+    }
+  }
+
+  &.is-detail {
+    height: auto;
+    margin: 0;
+    width: 100%;
+
+    .card-preview {
+      height: auto;
+      position: relative;
+      width: 100%;
+    }
+  }
+
+  &[data-type="note"] {
+    background: #FFF;
+  }
+}
+
+.card-content {
+  padding: 10px;
+
+  img {
+    display: none;
+  }
+}
+
+.card-upload-progress {
+  background: #F9F9F9;
+  border: 4px solid #9F9F9F;
+  border-radius: 50%;
+  color: #9B9A9B;
+  display: none;
+  height: 55px;
+  left: 50%;
+  margin: -35px 0 0 -27.5px;
+  padding: 15px 5px;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  width: 55px;
+  z-index: 10;
+}
+
+.card-extension {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  color: #FFF;
+  font-size: 32px;
+  font-weight: 100;
+  height: 100%;
+  left: 0;
+  padding: 75px 85px;
+  position: absolute;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.35);
+  top: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.card-preview {
+  background-size: 100% 100%;
+  background-position: center center;
+  border-radius: 3px;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.card-name-wrapper {
+  background #FFF;
+  border-top: 1px solid #F0F0F0;
+  border-radius: 0 0 2px 2px;
+  bottom: 0;
+  left: 0;
+  padding: 10px;
+  position: absolute;
+  width: 100%
+  z-index: 5;
+}
+
+.card-name {
+  color: #9B9A9B;
+  display: block;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-actions {
+  background: #FFF;
+  border-radius: 3px;
+  display: none;
+  right: 10px;
+  padding: 5px;
+  position: absolute;
+  top: 10px;
+  z-index: 15;
+}

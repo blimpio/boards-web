@@ -1,0 +1,45 @@
+.board {
+  &.is-selected {
+    .board-link {
+      color: #50BEF7;
+    }
+
+    .board-avatar {
+      box-shadow: 0 0 0 2px #50BEF7 inset;
+    }
+  }
+}
+
+.board-link {
+  color: #9B9A9B;
+  display: block;
+  padding: 10px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    color: #50BEF7;
+    text-decoration: none;
+  }
+}
+
+.board-name,
+.board-avatar {
+  vertical-align: middle;
+}
+
+.board-avatar {
+  background: #E5E5E5;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #E5E5E5 inset;
+  display: inline-block;
+  height: 32px;
+  margin-right: 5px;
+  text-align: center;
+  width: 32px;
+}
+
+.board-name {
+  font-size: 13px;
+}

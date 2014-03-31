@@ -1,0 +1,14 @@
+<div class="create-board-actions">
+  <button type="button" data-action="createBoard" class="btn btn-default">Create Board</button>
+</div> {{! .create-board-actions }}
+
+<form class="create-board-form">
+  <div class="form-group">
+    <input name="name" type="text" class="form-control" placeholder="e.g. Design" autofocus>
+    <div data-error="name" class="help-block"></div>
+  </div> {{! .form-group }}
+  <div class="form-group">
+    <button class="btn btn-default" data-action="save">Save</button>
+    <button type="button" class="btn btn-link" data-action="cancel">Cancel</button>
+  </div> {{! .form-group }}
+</form> {{! .crate-board-form }}

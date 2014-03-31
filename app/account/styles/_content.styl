@@ -1,0 +1,99 @@
+.content-wrapper {
+  &.is-loading {
+    .sidebar,
+    .content {
+      display: none;
+    }
+
+    .boards-loading {
+      display: block;
+    }
+  }
+
+  &.has-no-boards,
+  &.boards-full-width {
+    .sidebar {
+      margin-left: -18%;
+    }
+
+    .content {
+      padding-left: 0;
+      width: 100%;
+    }
+
+    .cards-list {
+      max-width: 100%;
+      padding: 0 10px;
+    }
+  }
+
+  &.has-no-boards {
+    .empty-boards {
+      display: block;
+    }
+  }
+}
+
+.cards-wrapper {
+  position: relative;
+
+  &.is-loading {
+    .empty-cards,
+    .cards-list-wrapper,
+    .card-detail-wrapper {
+      display: none;
+    }
+
+    .cards-loading {
+      display: block;
+    }
+  }
+
+  &.has-no-cards {
+    .empty-cards {
+      display: block;
+    }
+
+    .card-detail-wrapper,
+    .card-detail-wrapper {
+      display: none;
+    }
+  }
+}
+
+.sidebar {
+  height: 100%;
+  float: left;
+  width: 15%;
+  z-index: 10;
+}
+
+.content {
+  height: 100%;
+  float: left;
+  padding-left: 15px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 85%;
+}
+
+.empty-cards,
+.empty-boards,
+.cards-loading,
+.boards-loading {
+  display: none;
+  padding-top: 12%;
+}
+
+.empty-cards,
+.empty-boards {
+  text-align: center;
+
+  > .lead {
+    font-size: 32px;
+  }
+}
+
+.empty-cards label {
+  margin: 0 8px;
+}

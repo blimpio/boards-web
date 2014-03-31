@@ -1,0 +1,15 @@
+<div class="file-uploader-dropzone">
+  <p class="file-uploader-dropzone-text lead">Upload to {{board}}</p>
+</div> {{! .file-uploader-dropzone }}
+
+<form class="file-uploader-form" action="" method="POST" enctype="multipart/form-data">
+  <h3>Upload a file from your computer or drop a file here</h3>
+  <input type="hidden" name="key">
+  <input type="hidden" name="AWSAccessKeyId">
+  <input type="hidden" name="acl" value="private">
+  <input type="hidden" name="policy">
+  <input type="hidden" name="signature">
+  <input type="hidden" name="success_action_status" value="200">
+  <input type="hidden" name="Content-Type">
+  <input type="file" name="file" class="file-uploader-input" multiple>
+</form> {{! .file-uploader-form }}

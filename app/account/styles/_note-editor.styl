@@ -1,0 +1,66 @@
+.note-editor {
+  &.is-previewing {
+    .note-editor-form {
+      display: none !important;
+    }
+
+    .note-editor-preview,
+    .note-editor-preview-actions {
+      display: block;
+    }
+  }
+
+  [name="name"] {
+    border: 0 none;
+    border-bottom: 1px solid #E9E9E9;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  [name="content"] {
+    background: transparent;
+    border: 0 none;
+    border-top: 1px solid #E9E9E9;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 350px;
+    resize: none;
+  }
+
+  [data-action="preview"] {
+    color: #428BCA;
+  }
+
+  [data-error] {
+    margin-bottom: 0;
+    padding-left: 12px;
+  }
+}
+
+.note-editor-form-actions {
+  background: #FCFCFC;
+  border-bottom: 1px solid #E9E9E9;
+  padding: 15px;
+
+  .pull-right {
+    padding-top: 7px;
+  }
+}
+
+.note-editor-form-content {
+  background: #FCFCFC;
+}
+
+.note-editor-preview {
+  min-height: 350px;
+}
+
+.note-editor-form-content,
+.note-editor-form-actions {
+  margin-bottom: 0;
+}
+
+.note-editor-preview,
+.note-editor-preview-actions {
+  display: none;
+}

@@ -4,14 +4,16 @@
   "main": "public/js/app.js",
   "dependencies": {
     "swag": "~0.5.1",
-    "marked": "0.3.1",
+    "marked": "~0.3.1",
     "lodash": "~2",
     "jquery": "~2",
-    "masonry": "3.1.5",
+    "freewall": "git@github.com:kombai/freewall.git",
     "backbone": "~1",
     "bootstrap": "~3.1.1",
     "jquery-ui": "~1.10.4",
     "handlebars": "~1",
+    "blueimp-md5": "~1.1.0",
+    "jquery-timeago": "~1.4.0",
     "blueimp-file-upload": "~9.5.6"
   },
   "overrides": {
@@ -28,6 +30,9 @@
         "jquery": "*",
         "handlebars": "*"
       }
+    },
+    "freewall": {
+      "main": "freewall.js"
     },
     "bootstrap": {
       "main": [

@@ -1,0 +1,52 @@
+.card-detail-wrapper {
+  margin-bottom: 15px;
+}
+
+.card.is-detail {
+  cursor: inherit;
+}
+
+.card.is-detail[data-type="note"] {
+  &.is-editing {
+    .card-content {
+      display: none;
+    }
+
+    .note-editor-form {
+      display: block;
+    }
+  }
+
+  .card-content {
+    font-size: 16px;
+    min-height: 350px;
+
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  [name="content"] {
+    min-height: 350px;
+  }
+
+  .note-editor-form {
+    display: none;
+    margin: 15px auto;
+  }
+
+  .note-editor-preview,
+  .note-editor-preview-actions {
+    padding: 10px;
+  }
+
+  .note-editor-preview {
+    padding-bottom: 0;
+
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+}

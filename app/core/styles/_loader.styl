@@ -1,0 +1,34 @@
+@keyframes rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  } 50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+  } 100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+
+.loader {
+  width: 30px;
+  height: 30px;
+  left: 50%;
+  margin: -15px 0 0 -15px;
+  top: 50%;
+  right: 0;
+  opacity: 0.75;
+  text-align: center;
+  position: absolute;
+}
+
+.loader-box {
+  animation: rotateplane 1.2s infinite ease-in-out;
+  background: #ccc;
+  height: 30px;
+  border-radius: 3px;
+  width: 30px;
+}
+
+.loader-text {
+  position: absolute;
+  margin: 5px 0 0 -12px;
+}

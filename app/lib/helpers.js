@@ -2,9 +2,24 @@ _.mixin({'asset': function(path) {
   return App.STATIC_URL + path;
 }});
 
+_.mixin({'preventNavigation': function(message) {
+  if (message) window.onbeforeunload = function() {
+    return message;
+  }
+}});
+
+_.mixin({'restoreNavigation': function(message) {
+  window.onbeforeunload = null;
+}});
+
 _.mixin({'createController': function(name, options) {
   var Collection = require('controllers/' + name);
   return new Collection(options);
+}});
+
+_.mixin({'createLayout': function(name, options) {
+  var Layout = require('layouts/' + name);
+  return new Layout(options);
 }});
 
 _.mixin({'createView': function(name, options) {
@@ -41,6 +56,19 @@ _.mixin({'decodeJWT': function(token) {
   return JSON.parse(atob(token));
 }});
 
+_.mixin({'markdown': function(text) {
+  var parser = marked.setOptions({
+    renderer: new marked.Renderer(),
+    gfm: true,
+    tables: true,
+    breaks: true,
+    sanitize: true,
+    smartypants: true
+  });
+
+  return parser(text);
+}});
+
 $(document).on('click', '[data-route=true]', function(event) {
   if (!event.metaKey) {
     event.preventDefault();
@@ -57,10 +85,51 @@ Handlebars.registerHelper('markdown', function(str) {
 
   parse = marked.setOptions({
     renderer: new marked.Renderer(),
+    gfm: true,
+    tables: true,
     breaks: true,
     sanitize: true,
     smartypants: true
   });
 
   return new Handlebars.SafeString(parse(str));
+});
+
+Handlebars.registerHelper('markdown-preview', function(str) {
+  var parse,
+      renderer = new marked.Renderer();
+
+  str = _.isFunction(str) ? str() : str;
+
+  if (!str) return new Handlebars.SafeString('');
+
+  parse = marked.setOptions({
+    renderer: renderer,
+    gfm: false,
+    tables: false,
+    breaks: false,
+    sanitize: true,
+    smartypants: true
+  });
+
+  return new Handlebars.SafeString(parse(str));
+});
+
+Handlebars.registerHelper('account-avatar', function(account) {
+  var color = ['red', 'green', 'orange', 'purple'][_.random(0, 3)],
+      letter = account.name.charAt(0);
+
+  return new Handlebars.SafeString(
+    '<i class="account-avatar" data-color="' + color +'">'+ letter + '</i>'
+  );
+});
+
+Handlebars.registerHelper('board-avatar', function(board) {
+  if (!board.thumbnail_sm_path) {
+    return new Handlebars.SafeString('<i class="board-avatar"></i>');
+  } else {
+    return new Handlebars.SafeString(
+      '<img class="board-avatar" src="' + board.thumbnail_sm_path + '"/>'
+    );
+  }
 });

@@ -1,0 +1,38 @@
+.account-page {
+  &.is-loading {
+    .main {
+      display: none;
+    }
+
+    .main-loading {
+      display: block;
+    }
+  }
+
+  .main {
+    padding: 0 1.5%;
+    overflow: hidden;
+  }
+
+  .main-loading {
+    display: none;
+  }
+
+  @import '_content'
+  @import '_content-header'
+}
+
+@import '_card'
+@import '_board'
+@import '_comment'
+@import '_cards-list'
+@import '_boards-list'
+@import '_note-editor'
+@import '_card-detail'
+@import '_create-board'
+@import '_board-detail'
+@import '_file-uploader'
+@import '_create-comment'
+@import '_card-detail-info'
+@import '_create-note-modal'
+@import '_card-detail-actions'

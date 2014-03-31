@@ -1,4 +1,3 @@
-Swag.Config.partialsPath = 'templates/';
 Swag.registerHelpers();
 
 $.ajaxSetup({

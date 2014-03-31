@@ -1,4 +1,6 @@
-(function (root, Backbone, _) {
+(function (root, Backbone) {
+  'use strict';
+
   var Zeppelin, Z;
 
   if (typeof exports !== 'undefined') {
@@ -7,44 +9,309 @@
     root.Zeppelin = root.Z = Zeppelin = Z = {};
   }
 
+  Zeppelin.$ = Backbone.$;
+  Zeppelin.extend = Backbone.View.extend;
   Zeppelin.VERSION = '0.0.1-alpha';
 
-  Zeppelin.Util = {};
+  Zeppelin.Util = {
+    Error: function (message) {
+      throw new Error(message);
+    },
 
-  Zeppelin.Util.isView = function (value) {
-    var toString;
+    isView: function (value) {
+      var toString;
 
-    if (!value) return false;
+      if (!value) return false;
 
-    toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
 
-    return toString === '[object View]';
+      return toString === '[object View]';
+    },
+
+    isModel: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Model]';
+    },
+
+    isCollection: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Collection]';
+    },
+
+    isRegion: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Region]';
+    },
+
+    isLayout: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Layout]';
+    },
+
+    isController: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Controller]';
+    },
+
+    isRouter: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Router]';
+    },
+
+    isApplication: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Application]';
+    },
+
+    isStorage: function (value) {
+      var toString;
+
+      if (!value) return false;
+
+      toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+
+      return toString === '[object Storage]';
+    },
+
+    isJqueryObject: function (value) {
+      return value instanceof jQuery;
+    },
+
+    isInDOM: function (element) {
+      if (!_.isElement(element)) {
+        element = Z.Util.isJqueryObject(element) ? element[0] : Z.$(element)[0];
+      }
+
+      return Z.$.contains(document, element);
+    },
+
+    getElementEvents: function (element) {
+      if (!_.isElement(element)) {
+        element = Z.Util.isJqueryObject(element) ? element[0] : Z.$(element)[0];
+      }
+
+      return Z.$._data(element, 'events');
+    },
+
+    getInstance: function (module, options) {
+      return _.isFunction(module) ? new module(options) : module;
+    }
   };
 
+  Zeppelin.Subscriptions = _.extend({
+    subscriptions: {},
 
-  Zeppelin.Util.isModel = function (value) {
-    var toString;
+    hasSubscriptions: function () {
+      return _.size(this._subscriptions) > 0;
+    },
 
-    if (!value) return false;
+    hasSubscription: function (event) {
+      return this._subscriptions[event] !== undefined;
+    },
 
-    toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+    subscribe: function (event, callback) {
+      if (!_.isFunction(callback)) callback = this[callback];
+      this.listenTo(Backbone.Events, event, callback);
+      this._subscriptions[event] = callback;
+      return this;
+    },
 
-    return toString === '[object Model]';
+    subscribeToOnce: function (event, callback) {
+      if (!_.isFunction(callback)) callback = this[callback];
+      this.listenToOnce(Backbone.Events, event, callback);
+      this._subscriptions[event] = callback;
+      return this;
+    },
+
+    addSubscriptions: function (subscriptions) {
+      subscriptions = subscriptions || _.result(this, 'subscriptions');
+
+      _.forOwn(subscriptions, function (callback, event) {
+        this.subscribe(event, callback);
+      }, this);
+
+      return this;
+    },
+
+    broadcast: function () {
+      Backbone.Events.trigger.apply(this, arguments);
+      Backbone.Events.trigger.apply(Backbone.Events, arguments);
+      return this;
+    },
+
+    unsubscribe: function (event) {
+      if (event) {
+        this.stopListening(Backbone.Events, event);
+        delete this._subscriptions[event];
+      } else if (!event) {
+        this.stopListening(Backbone.Events);
+        this._subscriptions = {};
+      }
+
+      return this;
+    },
+
+    request: function (request, data, callback) {
+      var responseChannel = _.uniqueId('resp:' + request);
+
+      if (arguments.length === 2) callback = data;
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (!callback) return this;
+
+      this.subscribeToOnce(responseChannel, callback);
+
+      if (_.isPlainObject(data)) {
+        this.broadcast(request, data, responseChannel);
+      } else {
+        this.broadcast(request, responseChannel);
+      }
+
+      return this;
+    }
+  }, Backbone.Events);
+
+  Zeppelin.Storage = function (options) {
+    options = options || {};
+    _.merge(this, options);
+    this.cid = _.uniqueId('storage');
+    this.type = 'localStorage';
+    this.store = localStorage;
+
+    if (options.type) {
+      if (options.type === 'localStorage') {
+        this.type = 'localStorage';
+        this.store = localStorage;
+      } else if (options.type === 'sessionStorage') {
+        this.type = 'sessionStorage';
+        this.store = sessionStorage;
+      }
+    }
+
+    this.namespace = options.namespace || this.cid;
+    this._subscriptions = {};
+    this.addSubscriptions();
   };
 
-  Zeppelin.Util.isCollection = function (value) {
-    var toString;
+  _.extend(Zeppelin.Storage.prototype, {
+    toString: function () {
+      return '[object Storage]';
+    },
 
-    if (!value) return false;
+    has: function (key) {
+      if (this.get(key)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
 
-    toString = _.isFunction(value) ? value.prototype.toString() : value.toString();
+    length: function () {
+      return _.size(this.getAll());
+    },
 
-    return toString === '[object Collection]';
-  };
+    isEmpty: function () {
+      return this.length() === 0;
+    },
 
-  Zeppelin.Util.is$ = function (value) {
-    return value instanceof jQuery;
-  };
+    set: function (key, value) {
+      var data = this.getAll();
+
+      if (_.isPlainObject(key)) {
+        this.setAll(_.extend(data, key));
+      } else if (_.isString(key)) {
+        data[key] = value;
+        this.setAll(data);
+      }
+
+      return this;
+    },
+
+    setAll: function (data) {
+      this.store.setItem(this.namespace, JSON.stringify(data));
+      return this;
+    },
+
+    get: function (key) {
+      return this.getAll()[key];
+    },
+
+    getAll: function () {
+      return JSON.parse(this.store.getItem(this.namespace)) || {};
+    },
+
+    clear: function (key) {
+      var data = this.getAll();
+
+      if (_.isString(key)) {
+        delete data[key];
+        this.setAll(data);
+      }
+
+      return this;
+    },
+
+    clearAll: function () {
+      this.store.removeItem(this.namespace);
+      return this;
+    },
+
+    unplug: function () {
+      this.trigger('before:unplug', this);
+      this.off();
+      this.stopListening();
+      this._isUnplugged = true;
+      this.trigger('after:unplug', this);
+      this.onUnplug(this);
+      return this;
+    },
+
+    onUnplug: function () {
+      return this;
+    },
+
+    isUnplugged: function () {
+      return this._isUnplugged;
+    }
+  });
+
+  _.extend(Zeppelin.Storage.prototype, Zeppelin.Subscriptions);
+
+  Zeppelin.Storage.extend = Zeppelin.extend;
 
   Zeppelin.Validations = {
     exists: function (value) {
@@ -291,159 +558,657 @@
     }
   };
 
-  Zeppelin.Events = {
-    registerSubscriptions: function (subscriptions) {
-      subscriptions = subscriptions || this.subscriptions;
+  Zeppelin.Bindings = {
+    bindings: {},
 
-      if (_.size(subscriptions)) {
-        _.forOwn(subscriptions, function (callback, eventName) {
-          this.subscribe(eventName, callback);
+    addBinding: function (type, events) {
+      if (!_.isPlainObject(events)) return this;
+
+      if (type === 'self') {
+        this.addSelfBinding(events);
+      } else if (type === 'model') {
+        this.addModelBinding(events);
+      } else if (type === 'collection') {
+        this.addCollectionBinding(events);
+      } else if (type === 'views') {
+        _.forOwn(events, function (_events, name) {
+          this.addViewBinding(name, _events);
+        }, this);
+      } else if (type === 'regions') {
+        _.forOwn(events, function (_events, name) {
+          this.addRegionBinding(name, _events);
         }, this);
       }
 
       return this;
     },
 
-    subscribe: function (eventName, callback) {
-      if (!eventName || !callback) return this;
-      if (!_.isFunction(callback)) callback = this[callback];
-      this.listenTo(Backbone.Events, eventName, callback);
-      this.subscriptions[eventName] = callback;
+    addSelfBinding: function (events) {
+      _.forOwn(events, function (callback, event) {
+        var once = false;
+
+        if (_.isPlainObject(callback)) {
+          once = callback.once || false;
+          callback = callback.callback;
+        }
+
+        if (!_.isFunction(callback)) callback = this[callback];
+
+        if (event && callback) {
+          if (once) {
+            this.once(event, callback);
+          } else {
+            this.on(event, callback);
+          }
+        }
+      }, this);
 
       return this;
     },
 
-    subscribeToOnce: function (eventName, callback) {
-      if (!eventName || !callback) return this;
-      if (!_.isFunction(callback)) callback = this[callback];
-      this.listenToOnce(Backbone.Events, eventName, callback);
-      this.subscriptions[eventName] = callback;
+    addModelBinding: function (events) {
+      _.forOwn(events, function (callback, event) {
+        var once = false;
+
+        if (_.isPlainObject(callback)) {
+          once = callback.once || false;
+          callback = callback.callback;
+        }
+
+        if (!_.isFunction(callback)) callback = this[callback];
+
+        if (event && callback && _.result(this, 'hasModel')) {
+          if (once) {
+            this.listenToOnce(this.model, event, callback);
+          } else {
+            this.listenTo(this.model, event, callback);
+          }
+        }
+      }, this);
 
       return this;
     },
 
-    publish: function () {
-      if (arguments.length) {
-        Backbone.Events.trigger.apply(this, arguments);
-        Backbone.Events.trigger.apply(Backbone.Events, arguments);
-      }
+    addCollectionBinding: function (events) {
+      _.forOwn(events, function (callback, event) {
+        var once = false;
+
+        if (_.isPlainObject(callback)) {
+          once = callback.once || false;
+          callback = callback.callback;
+        }
+
+        if (!_.isFunction(callback)) callback = this[callback];
+
+        if (event && callback && _.result(this, 'hasCollection')) {
+          if (once) {
+            this.listenToOnce(this.collection, event, callback);
+          } else {
+            this.listenTo(this.collection, event, callback);
+          }
+        }
+      }, this);
 
       return this;
     },
 
-    unsubscribe: function (eventName) {
-      if (eventName && this.subscriptions[eventName]) {
-        this.stopListening(Backbone.Events, eventName);
-      } else if (!eventName) {
-        this.stopListening(Backbone.Events);
-        this.subscriptions = {};
-      }
+    addViewBinding: function (name, events) {
+      var view = this.getView ? this.getView(name) : undefined;
+
+      if (!Z.Util.isView(view)) return this;
+
+      _.forOwn(events, function (callback, event) {
+        var once = false;
+
+        if (_.isPlainObject(callback)) {
+          once = callback.once || false;
+          callback = callback.callback;
+        }
+
+        if (!_.isFunction(callback)) callback = this[callback];
+
+        if (event && callback) {
+          if (once) {
+            this.listenToOnce(view, event, callback);
+          } else {
+            this.listenTo(view, event, callback);
+          }
+        }
+      }, this);
+
+      return this;
+    },
+
+    addRegionBinding: function (name, events) {
+      var region = this.getRegion ? this.getRegion(name) : undefined;
+
+      if (!Z.Util.isRegion(region)) return this;
+
+      _.forOwn(events, function (callback, event) {
+        var once = false;
+
+        if (_.isPlainObject(callback)) {
+          once = callback.once || false;
+          callback = callback.callback;
+        }
+
+        if (!_.isFunction(callback)) callback = this[callback];
+
+        if (event && callback) {
+          if (once) {
+            this.listenToOnce(region, event, callback);
+          } else {
+            this.listenTo(region, event, callback);
+          }
+        }
+      }, this);
+
+      return this;
+    },
+
+    addBindings: function (bindings) {
+      bindings = bindings || _.result(this, 'bindings');
+
+      _.forOwn(bindings, function (events, type) {
+        this.addBinding(type, events);
+      }, this);
 
       return this;
     }
   };
 
-  Zeppelin.Storage = function (options) {
-    options = options || {};
+  Zeppelin.Mixin = {};
 
-    this.type = 'localStorage';
-    this.store = localStorage;
+  Zeppelin.Mixin.hasLayouts = {
+    layouts: {},
 
-    if (options.type) {
-      if (options.type === 'localStorage') {
-        this.type = 'localStorage';
-        this.store = localStorage;
-      } else if (options.type === 'sessionStorage') {
-        this.type = 'sessionStorage';
-        this.store = sessionStorage;
+    hasLayouts: function () {
+      return _.size(this._layouts) > 0;
+    },
+
+    hasLayout: function (name) {
+      return this._layouts[name] !== undefined;
+    },
+
+    getLayout: function (name) {
+      return this._layouts[name];
+    },
+
+    getLayoutName: function (layout) {
+      var name;
+
+      if (!Z.Util.isLayout(layout)) return undefined;
+
+      _.forOwn(this._layouts, function (_layouts, name) {
+        if (_layout.cid === layout.cid) {
+          name = name;
+          return false;
+        }
+      });
+
+      return name;
+    },
+
+    addLayout: function (name, layout) {
+      if (!Z.Util.isLayout(layout)) return this;
+      if (this.hasLayout(name)) this.unplugLayout(name, true);
+      this._layouts[name] = Z.Util.getInstance(layout);
+      this._layouts[name].on('after:remove', this._onViewRemoved, this);
+      return this;
+    },
+
+    addLayouts: function (layouts) {
+      layouts = layouts || _.result(this, 'layouts');
+
+      _.forOwn(layouts, function (layout, name) {
+        this.addLayout(name, layout);
+      }, this);
+
+      return this;
+    },
+
+    showLayout: function (name) {
+      if (this.hasLayout(name)) this.getLayout(name).show();
+      return this;
+    },
+
+    showLayouts: function (layouts) {
+      layouts = layouts || _.keys(this._layouts);
+      _.forEach(layouts, this.showLayout, this);
+      return this;
+    },
+
+    closeLayout: function (name) {
+      if (this.hasLayout(name)) this.getLayout(name).close();
+      return this;
+    },
+
+    closeLayouts: function (layouts) {
+      layouts = layouts || _.keys(this._layouts);
+      _.forEach(layouts, this.closeLayout, this);
+      return this;
+    },
+
+    unplugLayout: function (name, deep) {
+      deep = deep || false;
+      if (this.hasLayout(name)) this.getLayout(name).unplug(deep);
+      return this;
+    },
+
+    unplugLayouts: function (layouts, deep) {
+      deep = deep || false;
+      layouts = layouts || _.keys(this._layouts);
+
+      _.forEach(layouts, function (name) {
+        this.unplugLayout(name, deep);
+      }, this);
+
+      return this;
+    },
+
+    removeLayout: function (name) {
+      if (this.hasLayout(name)) {
+        this.getLayout(name).off('after:remove', this._onLayoutRemoved, this).remove();
+        delete this._layouts[name];
       }
-    }
 
-    this.namespace = options.namespace || _.uniqueId('storage');
+      return this;
+    },
+
+    removeLayouts: function (layouts) {
+      layouts = layouts || _.keys(this._layouts);
+      _.forEach(layouts, this.removeLayout, this);
+      return this;
+    },
+
+    forEachLayout: function (callback) {
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (callback) _.forOwn(this._layouts, callback, this);
+      return this;
+    },
+
+    _onLayoutRemoved: function (removed) {
+      var name = this.getLayoutName(removed);
+      if (name) this.removeLayout(name);
+      return this;
+    }
   };
 
-  _.extend(Zeppelin.Storage.prototype, {
-    set: function (key, value) {
-      var data = this.getAll();
+  Zeppelin.Mixin.hasRegions = {
+    regions: {},
 
-      if (_.isPlainObject(key)) {
-        this.setAll(_.extend(data, key));
-      } else if (_.isString(key)) {
-        data[key] = value;
-        this.setAll(data);
+    hasRegions: function () {
+      return _.size(this._regions) > 0;
+    },
+
+    hasRegion: function (name) {
+      return this._regions[name] !== undefined;
+    },
+
+    getRegion: function (name) {
+      return this._regions[name];
+    },
+
+    getRegionName: function (region) {
+      var name;
+
+      if (!Z.Util.isRegion(region)) return undefined;
+
+      _.forOwn(this._regions, function (_regions, name) {
+        if (_region.cid === region.cid) {
+          name = name;
+          return false;
+        }
+      });
+
+      return name;
+    },
+
+    addRegion: function (name, region) {
+      if (!Z.Util.isRegion(region)) return this;
+      if (this.hasRegion(name)) this.unplugRegion(name, true);
+      this._regions[name] = Z.Util.getInstance(region);
+      this._regions[name].on('after:remove', this._onRegionRemoved, this);
+      return this;
+    },
+
+    addRegions: function (regions) {
+      regions = regions || _.result(this, 'regions');
+
+      _.forOwn(regions, function (region, name) {
+        this.addRegion(name, region);
+      }, this);
+
+      return this;
+    },
+
+    showRegion: function (name) {
+      if (this.hasRegion(name)) this.getRegion(name).show();
+      return this;
+    },
+
+    showRegions: function (regions) {
+      regions = regions || _.keys(this._regions);
+      _.forEach(regions, this.showRegion, this);
+      return this;
+    },
+
+    closeRegion: function (name) {
+      if (this.hasRegion(name)) this.getRegion(name).close();
+      return this;
+    },
+
+    closeRegions: function (regions) {
+      regions = regions || _.keys(this._regions);
+      _.forEach(regions, this.closeRegion, this);
+      return this;
+    },
+
+    unplugRegion: function (name, deep) {
+      deep = deep || false;
+      if (this.hasRegion(name)) this.getRegion(name).unplug(deep);
+      return this;
+    },
+
+    unplugRegions: function (regions, deep) {
+      deep = deep || false;
+      regions = regions || _.keys(this._regions);
+
+      _.forEach(regions, function (name) {
+        this.unplugRegion(name, deep);
+      }, this);
+
+      return this;
+    },
+
+    removeRegion: function (name) {
+      if (this.hasRegion(name)) {
+        this.getRegion(name).off('after:remove', this._onRegionRemoved, this).remove();
+        delete this._regions[name];
       }
 
       return this;
     },
 
-    setAll: function (data) {
-      this.store.setItem(this.namespace, JSON.stringify(data));
+    removeRegions: function (layouts) {
+      layouts = layouts || _.keys(this._regions);
+      _.forEach(layouts, this.removeRegion, this);
       return this;
     },
 
-    get: function (key) {
-      return this.getAll()[key];
+    forEachRegion: function (callback) {
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (callback) _.forOwn(this._regions, callback, this);
+      return this;
     },
 
-    getAll: function () {
-      return JSON.parse(this.store.getItem(this.namespace)) || {};
+    _onRegionRemoved: function (removed) {
+      var name = this.getRegionName(removed);
+      if (name) this.removeRegion(name);
+      return this;
+    }
+  };
+
+  Zeppelin.Mixin.hasViews = {
+    views: {},
+
+    hasViews: function () {
+      return _.size(this._views) > 0;
     },
 
-    has: function (key) {
-      if (this.get(key)) {
+    hasView: function (name) {
+      return this._views[name] !== undefined;
+    },
+
+    getView: function (name) {
+      return this._views[name];
+    },
+
+    getViewByCid: function (cid) {
+      return _.find(this._views, function (view) {
+        return view.cid === cid;
+      });
+    },
+
+    getViews: function (comparator) {
+      if (!_.isFunction(comparator)) comparator = function () {
         return true;
-      } else {
-        return false;
-      }
+      };
+
+      return _.filter(this._views, function (view) {
+        return comparator(view) === true;
+      });
     },
 
-    clear: function (key) {
-      var data = this.getAll();
+    getViewName: function (view) {
+      var name;
 
-      if (_.isString(key)) {
-        delete data[key];
-        this.setAll(data);
+      if (!Z.Util.isView(view)) return undefined;
+
+      _.forOwn(this._views, function (_view, name) {
+        if (_view.cid === view.cid) {
+          name = name;
+          return false;
+        }
+      });
+
+      return name;
+    },
+
+    addView: function (name, options) {
+      var view = Z.Util.getInstance(options);
+
+      if (!Z.Util.isView(options) && _.isPlainObject(options)) {
+        view = Z.Util.getInstance(options.view);
+        options = options.options;
+      }
+
+      if (!Z.Util.isView(view)) return this;
+
+      this._views[name] = view;
+      view.on('after:remove', this._onViewRemoved, this);
+      return this;
+    },
+
+    addViews: function (views) {
+      views = views || _.result(this, 'views');
+
+      _.forOwn(views, function (options, name) {
+        this.addView(name, options);
+      }, this);
+
+      return this;
+    },
+
+    unplugView: function (name, deep) {
+      deep = deep || false;
+      if (this.hasView(name)) this.getView(name).unplug(deep);
+      return this;
+    },
+
+    unplugViews: function (views, deep) {
+      deep = deep || false;
+      views = views || _.keys(this._views);
+
+      _.forEach(views, function (name) {
+        this.unplugView(name, deep);
+      }, this);
+
+      return this;
+    },
+
+    removeView: function (name) {
+      if (this.hasView(name)) {
+        this.getView(name).off('after:remove', this._onViewRemoved, this).remove();
+        delete this._views[name];
       }
 
       return this;
     },
 
-    clearAll: function () {
-      this.store.removeItem(this.namespace);
+    removeViews: function (views) {
+      views = views || _.keys(this._views);
+      _.forEach(views, this.removeView, this);
       return this;
     },
 
-    length: function () {
-      return _.size(this.getAll());
+    forEachView: function (callback) {
+      if (!_.isFunction(callback)) callback = this[callback];
+      if (callback) _.forOwn(this._views, callback, this);
+      return this;
     },
 
-    isEmpty: function () {
-      return this.length() === 0;
+    _onViewRemoved: function (removed) {
+      var name = this.getViewName(removed);
+      if (name) this.removeView(name);
+      return this;
     }
-  });
+  };
+
+  Zeppelin.Mixin.hasElements = {
+    elements: {},
+
+    delegateEvent: function (selector, event, callback) {
+      if (arguments.length === 2) {
+        callback = event;
+        event = selector;
+        selector = undefined;
+      }
+
+      if (!event || !callback) return this;
+      event += '.delegateEvents' + this.cid;
+      callback = _.isFunction(callback) ? callback : this[callback];
+
+      if (selector) {
+        this.$el.on(event, selector, _.bind(callback, this));
+      } else {
+        this.$el.on(event, _.bind(callback, this));
+      }
+
+      return this;
+    },
+
+    delegateEvents: function () {
+      return Backbone.View.prototype.delegateEvents.apply(this, arguments);
+    },
+
+    undelegateEvent: function (selector, event) {
+      if (arguments.length === 2) {
+        this.$el.off(event + '.delegateEvents' + this.cid, selector);
+      } else {
+        event = selector;
+        this.$el.off(event + '.delegateEvents' + this.cid);
+      }
+
+      return this;
+    },
+
+    undelegateEvents: function () {
+      return Backbone.View.prototype.undelegateEvents.apply(this, arguments);
+    },
+
+    hasElements: function () {
+      return _.size(this._elements) > 0;
+    },
+
+    hasElement: function (name) {
+      return this._elements[name] !== undefined;
+    },
+
+    getElement: function (name) {
+      return this._elements[name];
+    },
+
+    getSelector: function (name) {
+      return this.elements[name];
+    },
+
+    addElement: function (name, selector) {
+      this._elements[name] = this.$(selector);
+      return this;
+    },
+
+    addElements: function (elements) {
+      elements = elements || _.result(this, 'elements');
+
+      _.forOwn(elements, function (selector, name) {
+        this.addElement(name, selector);
+      }, this);
+
+      return this;
+    },
+
+    removeElement: function (name) {
+      var $el = this.getElement(name);
+
+      if (!$el) return this;
+      $el.off();
+      delete this._elements[name];
+      return this;
+    },
+
+    removeElements: function (elements) {
+      elements = elements || _.keys(this._elements);
+      _.forEach(elements, this.removeElement, this);
+      return this;
+    }
+  };
+
+  Zeppelin.Mixin.hasPartials = {
+    partials: {},
+
+    hasPartials: function () {
+      return _.size(this.partials) > 0;
+    },
+
+    hasPartial: function (selector) {
+      return this.partials[selector] !== undefined;
+    },
+
+    getPartial: function (selector) {
+      return this.partials[selector];
+    },
+
+    addPartial: function (selector, template) {
+      this.partials[selector] = template;
+      return this;
+    },
+
+    addPartials: function (partials) {
+      partials = partials || {};
+
+      _.forOwn(partials, function (template, selector) {
+        this.addPartial(selector, template);
+      }, this);
+
+      return this;
+    },
+
+    renderPartial: function (selector, context) {
+      if (this.hasPartial(selector)) {
+        context = _.isPlainObject(context) ? context : _.result(this, 'context');
+        this.$(selector).html(this.getPartial(selector)(context));
+      }
+
+      return this;
+    }
+  };
 
   Zeppelin.Model = Backbone.Model.extend({
     constructor: function (attributes, options) {
       options = options || {};
-
-      this.name = this.name || _.uniqueId('M');
-      this.isUnplugged = false;
-
-      if (!this.presenters) this.presenters = [];
-      if (!this.validations) this.validations = {};
-      if (!this.subscriptions) this.subscriptions = {};
-      if (!this.localAttributes) this.localAttributes = [];
-
+      this.cacheId = options.cacheId || this.cacheId;
+      this.cacheType = options.cacheType || this.cacheType;
       this._views = [];
-
-      _.union(this.presenters, options.presenters);
-      _.extend(this.validations, options.validations);
-      _.extend(this.subscriptions, options.subscriptions);
-      _.union(this.localAttributes, options.localAttributes);
-
-      this.registerSubscriptions();
+      this._subscriptions = {};
+      this.createCache();
       Backbone.Model.prototype.constructor.apply(this, arguments);
+      this.addSubscriptions();
     },
+
+    cacheId: null,
+
+    cacheType: 'localStorage',
 
     toString: function () {
       return '[object Model]';
@@ -453,44 +1218,34 @@
       return _.size(this.attributes) > 0;
     },
 
+    localAttributes: [],
+
     getLocalAttributes: function () {
-      return this.pick(this.localAttributes);
+      return this.pick(_.result(this, 'localAttributes'));
     },
 
     toJSON: function () {
-      return this.omit(this.localAttributes);
+      return this.omit(_.result(this, 'localAttributes'));
     },
 
-    getPresenter: function (name) {
-      var property = this[name] ? this[name] : name;
+    validations: {},
 
-      if (name === 'name') property = name;
+    hasValidations: function () {
+      return _.size(this.validations) > 0;
+    },
 
-      if (_.isFunction(property)) {
-        return _.bind(property, this);
-      } else {
-        return _.bind(function () {
-          return this.get(property);
-        }, this);
+    hasValidation: function (attributeName) {
+      return this.validations[attributeName] !== undefined;
+    },
+
+    addValidation: function (attributeName, validation) {
+      if (attributeName && validation) {
+        if (_.isArray(validation) || _.isPlainObject(validation) || _.isFunction(validation)) {
+          this.validations[attributeName] = _.isArray(validation) ? validation : [validation];
+        }
       }
 
-      return null;
-    },
-
-    getPresenters: function (names) {
-      var presenters = {};
-
-      names = names || this.presenters;
-
-      _.forEach(names, function (name) {
-        presenters[name] = this.getPresenter(name);
-      }, this);
-
-      return presenters;
-    },
-
-    present: function (name) {
-      return this.getPresenter(name)();
+      return this;
     },
 
     validate: function (attributes) {
@@ -557,87 +1312,52 @@
       }
     },
 
-    registerValidation: function (attributeName, validation) {
-      if (attributeName && validation) {
-        if (_.isArray(validation) || _.isPlainObject(validation) || _.isFunction(validation)) {
-          this.validations[attributeName] = _.isArray(validation) ? validation : [validation];
-        }
-      }
+    createCache: function (id, type) {
+      id = id || this.cacheId;
+      type = type || this.cacheType || 'localStorage';
 
-      return this;
-    },
-
-    hasValidation: function (attributeName) {
-      if (attributeName) {
-        return this.validations[attributeName] !== undefined;
-      } else {
-        return _.size(this.validations) !== 0;
-      }
-    },
-
-    createCache: function (type) {
-      this.cache = new Zeppelin.Storage({
+      if (id) this.cache = new Zeppelin.Storage({
         type: type,
-        namespace: this.name
+        namespace: id
       });
 
       return this;
     },
 
     fetchCache: function () {
-      if (!this.cache) this.createCache();
-      this.set(this.cache.getAll());
+      if (this.cache) this.set(this.cache.getAll());
       return this;
     },
 
     saveCache: function () {
-      if (!this.cache) this.createCache();
-      this.cache.setAll(this.attributes);
+      if (this.cache) this.cache.setAll(this.attributes);
       return this;
     },
 
     destroyCache: function () {
-      if (!this.cache) this.createCache();
-      this.cache.clearAll(this.attributes);
+      if (this.cache) this.cache.clearAll();
       return this;
-    },
-
-    unplug: function () {
-      this.off();
-      this.stopListening();
-      this.clear();
-      this.isUnplugged = true;
-      this.onUnplug();
-      this.trigger('unplug', this);
-      return this;
-    },
-
-    onUnplug: function () {
-
     }
   });
 
-  _.extend(Zeppelin.Model.prototype, Zeppelin.Events);
+  _.extend(Zeppelin.Model.prototype, Zeppelin.Subscriptions);
 
   Zeppelin.Collection = Backbone.Collection.extend({
     constructor: function (models, options) {
       options = options || {};
-
-      this.cid = _.uniqueId('col');
-      this.name = this.name || _.uniqueId('C');
-      this.isUnplugged = false;
-
-      if (!this.presenters) this.presenters = [];
-      if (!this.subscriptions) this.subscriptions = {};
-
+      this.cid = _.uniqueId('collection');
+      this.cacheId = options.cacheId || this.cacheId;
+      this.cacheType = options.cacheType || this.cacheType;
       this._views = [];
-
-      _.union(this.presenters, options.presenters);
-      _.extend(this.subscriptions, options.subscriptions);
-
-      this.registerSubscriptions();
+      this._subscriptions = {};
+      this.createCache();
       Backbone.Collection.prototype.constructor.apply(this, arguments);
+      this.addSubscriptions();
     },
+
+    cacheId: null,
+
+    cacheType: 'localStorage',
 
     toString: function () {
       return '[object Collection]';
@@ -655,122 +1375,57 @@
       });
     },
 
-    getPresenter: function (name) {
-      var property = this[name] ? this[name] : name;
+    createCache: function (id, type) {
+      id = id || this.cacheId;
+      type = type || this.cacheType || 'localStorage';
 
-      if (_.isFunction(property)) {
-        return _.bind(property, this);
-      } else {
-        return _.bind(function () {
-          return property;
-        }, this);
-      }
-
-      return null;
-    },
-
-    getPresenters: function (names) {
-      var presenters = {};
-
-      names = names || this.presenters;
-
-      _.forEach(names, function (name) {
-        presenters[name] = this.getPresenter(name);
-      }, this);
-
-      return presenters;
-    },
-
-    present: function (name) {
-      return this.getPresenter(name)();
-    },
-
-    createCache: function (type) {
-      this.cache = new Zeppelin.Storage({
+      if (id) this.cache = new Zeppelin.Storage({
         type: type,
-        namespace: this.name
+        namespace: id
       });
 
       return this;
     },
 
     fetchCache: function () {
-      if (!this.cache) this.createCache();
-      this.set(this.cache.getAll());
+      if (this.cache) this.set(this.cache.getAll());
       return this;
     },
 
     saveCache: function () {
-      if (!this.cache) this.createCache();
-      this.cache.setAll(this.getAttributes());
+      if (this.cache) this.cache.setAll(this.getAttributes());
       return this;
     },
 
     destroyCache: function () {
-      if (!this.cache) this.createCache();
-      this.cache.clearAll();
+      if (this.cache) this.cache.clearAll();
       return this;
-    },
-
-    unplug: function () {
-      this.off();
-      this.stopListening();
-      this.reset();
-      this.isUnplugged = true;
-      this.onUnplug();
-      this.trigger('unplug', this);
-      return this;
-    },
-
-    onUnplug: function () {
-
     }
   });
 
-  _.extend(Zeppelin.Collection.prototype, Zeppelin.Events);
-
-  var reservedElementNames = ['el', 'container', 'form', 'list'];
+  _.extend(Zeppelin.Collection.prototype, Zeppelin.Subscriptions);
 
   Zeppelin.View = Backbone.View.extend({
     constructor: function (options) {
-      this.cid = _.uniqueId('view');
-      this._configure(options);
-      this.initialize.apply(this, arguments);
-    },
-
-    _configure: function (options) {
       options = options || {};
-
-      this.views = this.views || {};
-      this.bindings = this.bindings || {};
-      this.elements = this.elements || {};
-      this.autoRenders = this.autoRenders || true;
-
-      _.merge(this, options);
-
-      if (!this.name) this.name = this.cid;
-
-      this._isRemoved = false;
+      this.options = _.extend({}, this.options, options);
+      this.cid = _.uniqueId('view');
+      this._elements = {};
+      this._bindings = {};
+      this._subscriptions = {};
+      this._isFisrtRender = true;
       this._isRendered = false;
-      this._isInserted = false;
       this._isUnplugged = false;
-      this._isFirstRender = true;
-
-      this._registeredViews = {};
-      this._registeredBindings = {};
-      this._registeredElements = {};
-
-      this.setModel();
+      this._isRemoved = false;
+      this._configure.call(this, options);
       this._ensureElement();
+      this.initialize.apply(this, arguments);
       this.delegateEvents();
-      this._ensureContainer();
-      this.registerSubscriptions();
-      if (this.autoRenders) this.render();
+      this.addBindings();
+      this.addSubscriptions();
     },
 
-    setElement: function () {
-      Backbone.View.prototype.setElement.apply(this, arguments);
-      if (this.isInDOM()) this._whenInserted();
+    _configure: function () {
       return this;
     },
 
@@ -778,61 +1433,10 @@
       return '[object View]';
     },
 
-    hasModelSet: function () {
-      return Z.Util.isModel(this.model) && this.model.cid ? true : false;
-    },
-
-    setModel: function (model) {
-      model = model || this.model;
-      if (!Z.Util.isModel(model)) return this;
-      if (this.hasModelSet()) this.unsetModel();
-      this.model = _.isFunction(model) ? new model() : model;
-      this.model._views.push(this.cid);
-      this.onSetModel(model);
-      return this;
-    },
-
-    onSetModel: function (model) {
-      return this;
-    },
-
-    unsetModel: function () {
-      if (!this.hasModelSet()) return this;
-      this.unregisterModelBindings();
-      this.model._views.splice(_.indexOf(this.model._views, this.cid), 1);
-      this.onUnsetModel(this.model);
-      delete this.model;
-      return this;
-    },
-
-    onUnsetModel: function (model) {
-      return this;
-    },
-
-    _ensureContainer: function () {
-      this.setContainer(_.result(this, this.container ? 'container' : '$el'));
-      return this;
-    },
-
-    setContainer: function (element) {
-      if (Z.Util.is$(element)) {
-        this.$container = element;
-      } else if ($(element).is(this.$el)) {
-        this.$container = this.$el;
-      } else if (this.$(element)) {
-        this.$container = this.$(element);
-      } else {
-        this.$container = $(element);
-      }
-
-      return this;
-    },
+    template: null,
 
     context: function () {
-      var context = {};
-
-      if (this.hasModelSet()) _.extend(context, this.model.getPresenters());
-      return context;
+      return {};
     },
 
     renderTemplate: function (template, context) {
@@ -853,38 +1457,14 @@
       return output;
     },
 
-    canRender: function () {
-      return this.template ? true : false;
-    },
-
-    shouldRender: function () {
-      if (!this.canRender()) return false;
-      if (!this.hasModelSet() && this.model) return false;
-      if (this.hasModelSet() && !this.model.isPopulated()) return false;
-      return true;
-    },
-
-    isInDOM: function () {
-      return $.contains(document, this.el);
-    },
-
     render: function (template, context) {
-      var output = this.renderTemplate(template, context);
-
-      if (output) this.$container.html(output);
+      this.trigger('before:render', this);
+      this.$el.html(this.renderTemplate(template, context));
       this._isRendered = true;
-      this._isFirstRender = false;
-
-      this.unregisterElements();
-      this.registerElements();
-      this.unregisterViews();
-      this.registerViews();
-      this.unregisterBindings();
-      this.registerBindings();
-
-      this.trigger('rendered', this);
-      this.onRender();
-
+      this.addElements();
+      this.trigger('after:render', this);
+      this.onRender(this);
+      this._isFisrtRender = false;
       return this;
     },
 
@@ -892,417 +1472,25 @@
       return this;
     },
 
-    insert: function (element) {
-      var $el = Z.Util.is$(element) ? element : $(element);
-
-      if (!$el.length) return this;
-      if (this.canRender() && this.shouldRender()) this.render();
-      $el.html(this.el);
-      return this;
+    isFirstRender: function () {
+      return this._isFisrtRender;
     },
 
-    _whenInserted: function () {
-      this._isInserted = true;
-      this.trigger('inserted', this);
-      this.onInsert();
+    isRendered: function () {
+      return this._isRendered;
     },
 
-    onInsert: function () {
-      return this;
-    },
-
-    toHTML: function () {
-      return this.$el.html();
-    },
-
-    hasBindings: function () {
-      return _.size(this._registeredBindings) > 0;
-    },
-
-    registerBinding: function (event, options) {
-      var _options = {};
-
-      if (!_.isString(event) || !_.isPlainObject(options)) return this;
-      if (!options.callback) return this;
-
-      _options.once = options.once || false;
-      _options.delay = options.delay > -1 ? options.delay : 150;
-      _options.element = options.element || this.$el;
-      _options.element = Z.Util.is$(_options.element) ? _options.element : this.$(_options.element);
-      _options.object = options.object;
-
-      if (!_options.object && this.model && this.model.cid) _options.object = this.model;
-
-      if (!_options.object && this.collection && this.collection.cid) _options.object = this.collection;
-
-      if (!_options.object) _options.object = this;
-
-      if (Z.Util.isView(_options.object)) {
-        _options.type = 'view';
-      } else if (Z.Util.isModel(_options.object)) {
-        _options.type = 'model';
-      } else if (Z.Util.isCollection(_options.object)) {
-        _options.type = 'collection';
-      } else {
-        _options.type = '';
-      }
-
-      _options.callback = _.isFunction(options.callback) ? options.callback : this[options.callback];
-
-      if (!_options.callback) return this;
-      _options.callback = _.bind(_options.callback, this);
-      _options.callback = _.partial(_options.callback, _options.element);
-      _options.callback = _.debounce(_options.callback, _options.delay);
-
-      if (_options.object.cid === this.cid) {
-        if (_options.once) {
-          this.once(event, _options.callback, this);
-        } else {
-          this.on(event, _options.callback, this);
-        }
-      } else {
-        if (_options.once) {
-          this.listenToOnce(_options.object, event, _options.callback);
-        } else {
-          this.listenTo(_options.object, event, _options.callback);
-        }
-      }
-
-      this._registeredBindings[event] = _options;
-
-      return this;
-    },
-
-    registerBindings: function (bindings) {
-      bindings = bindings || _.result(this, 'bindings');
-
-      _.forOwn(bindings, function (options, event) {
-        this.registerBinding(event, options);
-      }, this);
-
-      return this;
-    },
-
-    unregisterBinding: function (event) {
-      var binding = this._registeredBindings[event];
-
-      if (!binding) return this;
-
-      if (binding.object.cid === this.cid) {
-        this.off(event, binding.callback, this);
-      } else {
-        this.stopListening(binding.object, event, binding.callback);
-      }
-
-      delete this._registeredBindings[event];
-      return this;
-    },
-
-    unregisterBindings: function (bindings) {
-      bindings = bindings || _.keys(this._registeredBindings);
-      _.forEach(bindings, this.unregisterBinding, this);
-      return this;
-    },
-
-    getModelBindings: function (model) {
-      var bindings = {};
-
-      if (!model && this.hasModelSet()) model = this.model;
-      if (!Z.Util.isModel(model)) return bindings;
-
-      _.forOwn(this._registeredBindings, function (binding, event) {
-        if (binding.object.cid === model.cid) bindings[event] = binding;
-      }, this);
-
-      return bindings;
-    },
-
-    unregisterModelBindings: function () {
-      if (!this.hasModelSet()) return this;
-      this.unregisterBindings(_.keys(this.getModelBindings(this.model)));
-      return this;
-    },
-
-    getViewBindings: function (view) {
-      var bindings = {};
-
-      if (!view) view = this;
-      if (!Z.Util.isView(view)) return bindings;
-
-      _.forOwn(this._registeredBindings, function (binding, event) {
-        if (binding.object.cid === view.cid) bindings[event] = binding;
-      }, this);
-
-      return bindings;
-    },
-
-    unregisterViewBindings: function (view) {
-      if (!Z.Util.isView(view)) return this;
-      this.unregisterBindings(_.keys(this.getViewBindings(view)));
-      return this;
-    },
-
-    _isReservedElementName: function (name) {
-      return _.indexOf(reservedElementNames, name) === -1 ? false : true;
-    },
-
-    getElement: function (name) {
-      return this._isReservedElementName(name) ? undefined : this['$' + name];
-    },
-
-    getSelector: function (name) {
-      var options, selector;
-
-      options = this._registeredElements[name];
-      if (!options) return undefined;
-
-      if (Z.Util.is$(options)) {
-        selector = options.selector;
-      } else if (_.isString(options)) {
-        selector = options;
-      } else if (_.isPlainObject(options) && options.selector) {
-        selector = options.selector;
-      }
-
-      return selector;
-    },
-
-    hasElements: function () {
-      return _.size(this._registeredElements) > 0;
-    },
-
-    registerElement: function (name, options) {
-      var $el, selector;
-
-      if (!name || !options || this._isReservedElementName(name)) return this;
-
-      if (Z.Util.is$(options) && this.$el.find(options)) {
-        $el = options;
-        selector = $el.selector;
-      } else if (_.isString(options)) {
-        $el = this.$el.find(options);
-        selector = options;
-      } else if (_.isPlainObject(options) && options.selector) {
-        $el = this.$el.find(options.selector);
-        selector = options.selector;
-      }
-
-      if (!$el || !$el.length) return false;
-      this['$' + name] = $el;
-
-      if (_.isPlainObject(options) && _.isPlainObject(options.events)) {
-        _.forOwn(options.events, function (callback, event) {
-          this.delegateEvent(selector, event, callback);
-        }, this);
-      }
-
-      this._registeredElements[name] = options;
-
-      return this;
-    },
-
-    registerElements: function (elements) {
-      elements = elements || _.result(this, 'elements');
-
-      _.forOwn(elements, function (options, name) {
-        this.registerElement(name, options);
-      }, this);
-
-      return this;
-    },
-
-    unregisterElement: function (name) {
-      var $el, selector;
-
-      if (this._isReservedElementName(name)) return this;
-      $el = this.getElement(name);
-      selector = this.getSelector(name);
-      if ($el) $el.off();
-      if (selector) this.undelegateEvent(selector, '');
-      delete this['$' + name];
-      delete this._registeredElements[name];
-      return this;
-    },
-
-    unregisterElements: function (elements) {
-      elements = elements || _.keys(this._registeredElements);
-      _.forEach(elements, this.unregisterElement, this);
-      return this;
-    },
-
-    delegateEvent: function (selector, event, callback) {
-      if (arguments.length === 2) {
-        callback = event;
-        event = selector;
-        selector = undefined;
-      }
-
-      if (!event || !callback) return this;
-
-      event += '.delegateEvents' + this.cid;
-      callback = _.isFunction(callback) ? _.bind(callback, this) : _.bind(this[callback], this);
-
-      if (selector) {
-        if (Z.Util.is$(selector)) {
-          selector = selector.selector;
-        } else if (this.getSelector(selector)) {
-          selector = this.getSelector(selector);
-        } else if (_.isString(selector)) {
-          selector = selector;
-        }
-
-        if (selector) this.$el.on(event, selector, callback);
-      } else {
-        this.$el.on(event, callback);
-      }
-
-      return this;
-    },
-
-    undelegateEvent: function (selector, event) {
-      if (arguments.length === 2) {
-        selector = Z.Util.is$(selector) ? selector.selector : selector;
-        this.$el.off(event + '.delegateEvents' + this.cid, selector);
-      } else if (arguments.length === 1) {
-        event = selector;
-        this.$el.off(event + '.delegateEvents' + this.cid);
-      }
-
-      return this;
-    },
-
-    hasView: function (name) {
-      return Z.Util.isView(this.getView(name));
-    },
-
-    hasViews: function () {
-      return _.size(this._registeredViews) > 0;
-    },
-
-    registerView: function (view, data, name) {
-      var options;
-
-      if (_.isPlainObject(view) && !Z.Util.isView(view)) {
-        options = view;
-        view = options.view;
-        name = data;
-        data = options.data || {};
-      }
-
-      if (!Z.Util.isView(view)) return this;
-      if (_.isString(data)) name = data;
-      if (!_.isPlainObject(data)) data = {};
-
-      view = _.isFunction(view) ? new view(data) : view;
-      this._registeredViews[name || view.cid] = view;
-      view.on('removed', this._whenViewRemoved, this);
-      return this;
-    },
-
-    registerViews: function (views) {
-      views = views || _.result(this, 'views');
-
-      _.forOwn(views, function (view, name) {
-        this.registerView(view, name);
-      }, this);
-
-      return this;
-    },
-
-    unregisterView: function (name) {
-      var view;
-
-      if (!_.isString(name)) return this;
-      view = this.getView(name);
-      if (!Z.Util.isView(view)) return this;
-      this.unregisterViewBindings(view);
-      view.off('removed', this._whenViewRemoved, this);
-      delete this._registeredViews[name];
-      return this;
-    },
-
-    unregisterViews: function (views) {
-      views = views || _.keys(this._registeredViews);
-      _.forEach(views, this.unregisterView, this);
-      return this;
-    },
-
-    getView: function (comparator) {
-      var view;
-
-      if (_.isString(comparator)) {
-        view = this._registeredViews[comparator];
-      } else if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-        view = _.find(this._registeredViews, function (view) {
-          return comparator(view) === true;
-        }, this);
-      }
-
-      return view;
-    },
-
-    getViews: function (comparator) {
-      var views = [];
-
-      if (_.isFunction(comparator)) {
-        comparator = _.bind(comparator, this);
-        views = _.filter(this._registeredViews, function (view) {
-          return comparator(view) === true;
-        }, this);
-      }
-
-      return views;
-    },
-
-    forEachView: function (callback) {
-      if (!_.isFunction(callback)) callback = this[callback];
-      if (callback) _.forOwn(this._registeredViews, _.bind(callback, this), this);
-      return this;
-    },
-
-    unplugViews: function (deep) {
-      deep = deep || false;
-
-      this.forEachView(function (view) {
-        view.unplug(deep);
-      });
-
-      return this;
-    },
-
-    _whenViewRemoved: function (view) {
-      var name;
-
-      _.forOwn(this._registeredViews, function (_view, _name) {
-        if (view.cid === _view.cid) {
-          name = _name;
-          return false;
-        }
-      }, this);
-
-      if (name) {
-        view.off('removed', this._whenViewRemoved, this);
-        delete this._registeredViews[name];
-      }
-    },
-
-    unplug: function (deep) {
-      deep = deep || false;
-
+    unplug: function () {
+      this.trigger('before:unplug', this);
       this.off();
       this.stopListening();
+      this.$el.off();
       this.undelegateEvents();
-      this.unregisterElements();
-      this.unregisterBindings();
-      this.unsetModel();
-
-      if (deep) this.unplugViews();
-
+      this.removeElements();
+      this.options = null;
       this._isUnplugged = true;
-      this.trigger('unplugged', this);
-      this.onUnplug();
-
+      this.trigger('after:unplug', this);
+      this.onUnplug(this);
       return this;
     },
 
@@ -1310,12 +1498,17 @@
       return this;
     },
 
+    isUnplugged: function () {
+      return this._isUnplugged;
+    },
+
     remove: function () {
+      this.unplug(true);
+      this.trigger('before:remove', this);
       this.$el.remove();
       this._isRemoved = true;
-      this.trigger('removed', this);
-      this.onRemove();
-      this.unplug(true);
+      this.trigger('after:remove', this);
+      this.onRemove(this);
       return this;
     },
 
@@ -1324,93 +1517,146 @@
     }
   });
 
-  _.extend(Zeppelin.View.prototype, Zeppelin.Events);
+  _.extend(Zeppelin.View.prototype, Zeppelin.Bindings);
+  _.extend(Zeppelin.View.prototype, Zeppelin.Subscriptions);
+  _.extend(Zeppelin.View.prototype, Zeppelin.Mixin.hasPartials);
+  _.extend(Zeppelin.View.prototype, Zeppelin.Mixin.hasElements);
 
-  Zeppelin.FormView = Zeppelin.View.extend({
+  Zeppelin.ModelView = Zeppelin.View.extend({
     _configure: function (options) {
-      options = options || {};
-
-      this.views = this.views || {};
-      this.bindings = this.bindings || {};
-      this.elements = this.elements || {};
-      this.model = this.model || Z.Model;
-      this.autoRenders = this.autoRenders || true;
-
-      _.merge(this, options);
-
-      if (!this.name) this.name = this.cid;
-
-      this._isRemoved = false;
-      this._isRendered = false;
-      this._isInserted = false;
-      this._isUnplugged = false;
-      this._isFirstRender = true;
-
-      this._registeredViews = {};
-      this._registeredBindings = {};
-      this._registeredElements = {};
-
-      this.setModel();
-      this._ensureElement();
-      this.delegateEvents();
-      this._ensureContainer();
-      this._ensureForm();
-      this.registerSubscriptions();
-      if (this.autoRenders) this.render();
+      this.model = options.model || this.model, this._isFirstModel = true;
+      this.setModel(this.model);
     },
 
-    setModel: function () {
-      Zeppelin.View.prototype.setModel.apply(this, arguments);
-      this.listenTo(this.model, 'valid', this.onValid);
-      this.listenTo(this.model, 'invalid', this.onInvalid);
+    model: Z.Model,
+
+    hasModel: function () {
+      return Z.Util.isModel(this.model) && this.model.cid ? true : false;
+    },
+
+    getModel: function () {
+      if (Z.Util.isModel(this.model)) {
+        return this.model;
+      } else if (_.isFunction(this.model)) {
+        return this.model();
+      } else {
+        return Z.Model;
+      }
+    },
+
+    setModel: function (model) {
+      if (this.hasModel() && !this._isFirstModel) this.unsetModel();
+      model = Z.Util.getInstance(model || this.getModel());
+      this.trigger('before:setModel', model);
+      if (!Z.Util.isModel(model)) return this;
+      this.model = model;
+      this.model._views.push(this.cid);
+      this.trigger('after:setModel', model);
+      this.onSetModel(model);
+      this._isFirstModel = false;
+      return this;
+    },
+
+    onSetModel: function (model) {
       return this;
     },
 
     unsetModel: function () {
-      if (!this.hasModelSet()) return this;
-      this.stopListening(this.model, 'valid', this.onValid);
-      this.stopListening(this.model, 'invalid', this.onInvalid);
-      this.unregisterModelBindings();
+      var model;
+
+      if (!this.hasModel()) return this;
+      model = this.model;
+      this.trigger('before:unsetModel', model);
       this.model._views.splice(_.indexOf(this.model._views, this.cid), 1);
-      delete this.model;
+      this.stopListening(model);
+      this.model = null;
+      this.trigger('after:unsetModel', model);
+      this.onUnsetModel(model);
       return this;
     },
 
-    _ensureForm: function () {
-      this.setForm(_.result(this, this.form ? 'form' : '$container'));
+    onUnsetModel: function (model) {
       return this;
     },
+
+    context: function () {
+      return this.model.attributes;
+    },
+
+    unplug: function () {
+      Zeppelin.View.prototype.unplug.apply(this, arguments);
+      this.unsetModel();
+      return this;
+    }
+  });
+
+  Zeppelin.FormView = Zeppelin.ModelView.extend({
+    saveOnSubmit: true,
+
+    formSelector: '',
 
     setForm: function (element) {
+      element = element || _.result(this, 'formSelector');
       if (this.$form) this.$form.off('submit');
+      this.$form = Z.Util.isJqueryObject(element) ? element : this.$(element);
+      if (!this.$form.length) this.$form = this.$el;
+      this.form = this.$form[0];
 
-      if (Z.Util.is$(element)) {
-        this.$form = element;
-      } else if ($(element).is(this.$el)) {
-        this.$form = this.$el;
-      } else if (this.$(element)) {
-        this.$form = this.$(element);
-      } else {
-        this.$form = $(element);
-      }
-
-      if (this.$form.length) {
-        this.$form.on('submit', _.bind(function (event) {
-          this.onSubmit(event);
-        }, this));
-      }
+      if (this.$form.length) this.$form.on('submit', _.bind(function (event) {
+        event.preventDefault();
+        this.submit(event);
+      }, this));
 
       return this;
     },
 
-    onSubmit: function (event) {
-      event.preventDefault();
-      this.setAttributes();
+    setModel: function (model) {
+      if (this.hasModel()) this.unsetModel();
+      model = Z.Util.getInstance(model || this.getModel());
+      this.trigger('before:setModel', model);
+      if (!Z.Util.isModel(model)) return this;
+      this.model = model;
+      this.model._views.push(this.cid);
+      this.listenTo(this.model, 'valid', this.onValid);
+      this.listenTo(this.model, 'invalid', this.onInvalid);
+      this.trigger('after:setModel', model);
+      this.onSetModel(model);
+      return this;
     },
 
     render: function () {
       Zeppelin.View.prototype.render.apply(this, arguments);
-      this._ensureForm();
+      this.setForm();
+      return this;
+    },
+
+    submit: function (event) {
+      event.preventDefault();
+      this.trigger('before:submit');
+      this.setAttributes();
+
+      if (!this.model.validationError) {
+        this.clean();
+        if (this.saveOnSubmit) this.model.save();
+        this.onValidationSuccess(this);
+      } else {
+        this.onValidationError(this.model.validationError);
+      }
+
+      this.trigger('after:submit');
+      this.onSubmit(this);
+      return this;
+    },
+
+    onValidationError: function (error) {
+      return this;
+    },
+
+    onValidationSuccess: function () {
+      return this;
+    },
+
+    onSubmit: function () {
       return this;
     },
 
@@ -1512,7 +1758,7 @@
     onInvalid: function (model, error) {
       _.forOwn(error, function (message, attributeName) {
         this.getAttributeElement(attributeName).addClass(this.errorClass);
-        this.getAttributeErrorElement(attributeName).text(message);
+        this.getAttributeErrorElement(attributeName).show().text(message);
       }, this);
 
       return this;
@@ -1521,363 +1767,712 @@
     onValid: function (model, attributes) {
       _.forOwn(attributes, function (value, attributeName) {
         this.getAttributeElement(attributeName).removeClass(this.errorClass);
-        this.getAttributeErrorElement(attributeName).text('');
+        this.getAttributeErrorElement(attributeName).hide().text('');
       }, this);
 
+      return this;
+    },
+
+    clean: function () {
+      this.$form.find('[name]').removeClass(this.errorClass);
+      this.$form.find('[data-error]').hide().text('');
       return this;
     },
 
     reset: function () {
-      this.$form.find('[name]').removeClass(this.errorClass);
-      this.$form.find('[data-error]').text('');
+      this.clean();
+
+      _.forEach(this.$form.find('[name]'), function (element) {
+        element = $(element);
+        element.val(this.model.get(element.attr('name')));
+      }, this);
+
+      return this;
+    },
+
+    focus: function (attribute) {
+      var $element = this.getAttributeElement(attribute);
+
+      if ($element && $element.length) {
+        $element.focus();
+      } else {
+        this.$form.find('[name]').first().focus();
+      }
+
       return this;
     }
   });
 
-  Zeppelin.CollectionView = Zeppelin.View.extend({
-    _configure: function (options) {
-      options = options || {};
-
-      this.views = this.views || {};
-      this.bindings = this.bindings || {};
-      this.elements = this.elements || {};
-      this.collection = this.collection || Z.Collection;
-      this.autoRenders = this.autoRenders || true;
-      this.reactsToCollection = this.reactsToCollection || true;
-
-      _.merge(this, options);
-
-      if (!this.name) this.name = this.cid;
-
-      this._isRemoved = false;
-      this._isRendered = false;
-      this._isInserted = false;
-      this._isFiltered = false;
-      this._isUnplugged = false;
-      this._isFirstRender = true;
-      this._collectionIsRendered = false;
-
-      this._registeredViews = {};
-      this._registeredBindings = {};
-      this._registeredElements = {};
-      this._registeredItemViews = {};
-
-      this.setCollection();
-      this._ensureElement();
-      this.delegateEvents();
-      this._ensureContainer();
-      this._ensureList();
-      this.registerSubscriptions();
-      if (this.autoRenders) this.render();
+  Zeppelin.CompositeView = Zeppelin.View.extend({
+    _configure: function () {
+      this._views = {};
+      this.addViews();
     },
 
-    itemView: Z.View,
+    unplug: function (deep) {
+      deep = deep || false;
+      if (deep) this.unplugViews(deep);
+      Zeppelin.View.prototype.unplug.apply(this, arguments);
+      return this;
+    },
 
-    hasCollectionSet: function () {
+    remove: function () {
+      this.removeViews();
+      Zeppelin.View.prototype.remove.apply(this, arguments);
+      return this;
+    }
+  });
+
+  _.extend(Zeppelin.CompositeView.prototype, Zeppelin.Mixin.hasViews);
+
+  Zeppelin.CollectionView = Zeppelin.CompositeView.extend({
+    _configure: function (options) {
+      Zeppelin.CompositeView.prototype._configure.apply(this, arguments);
+      this.collection = options.collection || this.collection, this._isFirstCollection = true;
+      this._isFirstCollectionRender = true;
+      this.setCollection(this.collection);
+    },
+
+    collection: Z.Collection,
+
+    listSelector: '',
+
+    itemView: Zeppelin.ModelView,
+
+    manageItems: true,
+
+    emptyTemplate: null,
+
+    loadingTemplate: null,
+
+    hasCollection: function () {
       return Z.Util.isCollection(this.collection) && this.collection.cid ? true : false;
     },
 
+    getCollection: function () {
+      if (Z.Util.isCollection(this.collection)) {
+        return this.collection;
+      } else if (_.isFunction(this.collection)) {
+        return this.collection();
+      } else {
+        return Z.Collection;
+      }
+    },
+
     setCollection: function (collection) {
-      collection = collection || this.collection;
+      if (this.hasCollection() && !this._isFirstCollection) this.unsetCollection();
+      this.trigger('before:setCollection', collection);
+      collection = Z.Util.getInstance(collection || this.getCollection());
       if (!Z.Util.isCollection(collection)) return this;
-      if (this.hasCollectionSet()) this.unsetCollection();
-      this.collection = _.isFunction(collection) ? new collection() : collection;
+      this.collection = collection;
       this.collection._views.push(this.cid);
+      this.trigger('after:setCollection', collection);
+      this.onSetCollection(collection);
 
-      this.listenTo(this.collection, 'add', this.onAdd);
-      this.listenTo(this.collection, 'reset', this.onReset);
-      this.listenTo(this.collection, 'remove', this.onRemove);
-
-      if (this.reactsToCollection) {
-        this.listenTo(this.collection, 'add', this.appendItem);
-        this.listenTo(this.collection, 'reset', this.render);
-        this.listenTo(this.collection, 'remove', this.removeItem);
+      if (this.manageItems) {
+        this.listenTo(this.collection, 'add', this._onAdd);
+        this.listenTo(this.collection, 'reset', this._onReset);
+        this.listenTo(this.collection, 'remove', this._onRemove);
+        this.listenTo(this.collection, 'request', this._onRequest);
       }
 
+      this._isFirstCollection = false;
+      return this;
+    },
+
+    onSetCollection: function (collection) {
       return this;
     },
 
     unsetCollection: function () {
-      if (!this.hasCollectionSet()) return this;
-      this.unregisterCollectionBindings();
-      this.stopListening(this.collection, 'add', this.onAdd);
-      this.stopListening(this.collection, 'reset', this.onReset);
-      this.stopListening(this.collection, 'remove', this.onRemove);
+      var collection;
 
-      if (this.reactsToCollection) {
-        this.stopListening(this.collection, 'add', this.appendItem);
-        this.stopListening(this.collection, 'reset', this.renderCollection);
-        this.stopListening(this.collection, 'remove', this.removeItem);
-      }
-
+      if (!this.hasCollection()) return this;
+      collection = this.collection;
+      this.trigger('before:unsetCollection', collection);
       this.collection._views.splice(_.indexOf(this.collection._views, this.cid), 1);
-      delete this.collection;
+      this.stopListening(collection);
+      this.collection = null;
+      this.trigger('after:unsetCollection', collection);
+      this.onUnsetCollection(collection);
       return this;
     },
 
-    isValidModel: function (model) {
-      var valid = false;
-
-      if (this.hasCollectionSet() && model && model.cid && this.collection.contains(model)) valid = true;
-
-      return valid;
-    },
-
-    getCollectionBindings: function (collection) {
-      var bindings = {};
-
-      if (!collection && this.hasCollectionSet()) collection = this.collection;
-      if (!Z.Util.isCollection(collection)) return bindings;
-
-      _.forOwn(this._registeredBindings, function (binding, event) {
-        if (binding.object.cid === collection.cid) bindings[event] = binding;
-      }, this);
-
-      return bindings;
-    },
-
-    unregisterCollectionBindings: function () {
-      if (!this.hasCollectionSet()) return this;
-      this.unregisterBindings(_.keys(this.getCollectionBindings(this.collection)));
-      return this;
-    },
-
-    onAdd: function (model) {
-      return this;
-    },
-
-    onReset: function (collection) {
-      return this;
-    },
-
-    onRemove: function (model) {
-      return this;
-    },
-
-    _ensureList: function () {
-      this.setList(_.result(this, this.list ? 'list' : '$container'));
+    onUnsetCollection: function (collection) {
       return this;
     },
 
     setList: function (element) {
-      if (Z.Util.is$(element)) {
-        this.$list = element;
-      } else if ($(element).is(this.$el)) {
-        this.$list = this.$el;
-      } else if (this.$(element)) {
-        this.$list = this.$(element);
-      } else {
-        this.$list = $(element);
-      }
-
+      element = element || _.result(this, 'listSelector');
+      this.$list = Z.Util.isJqueryObject(element) ? element : this.$(element);
+      if (!this.$list.length) this.$list = this.$el;
+      this.list = this.$list[0];
       return this;
     },
 
-    hasItemViews: function () {
-      return _.size(this._registeredItemViews) > 0;
+    render: function () {
+      Zeppelin.View.prototype.render.apply(this, arguments);
+      this.setList();
+      if (!this.hasViews() && !this.collection.isEmpty()) this.addItems();
+      this.renderItems();
+      return this;
     },
 
-    createItemView: function (model) {
-      var itemView = Z.View;
+    renderItems: function (views) {
+      var fragment = document.createDocumentFragment();
 
-      if (!this.isValidModel(model)) return undefined;
+      views = views || this.getViews();
+      this.trigger('before:renderItems', this);
 
-      if (_.isFunction(this.itemView) && !Z.Util.isView(this.itemView)) {
-        if (Z.Util.isView(this.itemView(model))) itemView = this.itemView(model);
-      } else if (Z.Util.isView(this.itemView)) {
-        itemView = this.itemView;
+      _.forEach(views, function (view) {
+        fragment.appendChild(view.render().el);
+      }, this);
+
+      if (fragment.children.length) this.$list.html(fragment);
+      this.trigger('after:renderItems', this);
+      this.onRenderItems(views);
+      this._isFirstCollectionRender = false;
+      return this;
+    },
+
+    isFirstCollectionRender: function () {
+      return this._isFirstCollectionRender;
+    },
+
+    onRenderItems: function (views) {
+      return this;
+    },
+
+    filter: function (comparator) {
+      var models;
+
+      if (!_.isFunction(comparator)) return this;
+      this.trigger('before:filter');
+      this.removeItems();
+
+      models = this.collection.filter(function (model) {
+        return comparator(model) === true;
+      });
+
+      if (models.length) {
+        this.addItems(models);
+        this.renderItems();
+      } else {
+        this.$list.empty();
       }
 
-      return new itemView({
-        model: model,
-        autoRenders: true
-      });
+      this.trigger('after:filter');
+      this.onFilter(models);
+      return this;
     },
 
-    getItem: function (model) {
-      var itemView;
+    onFilter: function (models) {
+      return this;
+    },
 
-      if (!model || !model.cid) return undefined;
-      itemView = this.getView(this._registeredItemViews[model.cid]);
-      return itemView;
+    appendItem: function (view) {
+      if (!Z.Util.isView(view)) return this;
+      this.trigger('before:appendItem', this);
+      this.$list.append(view.render().el);
+      this.trigger('after:appendItem', this);
+      this.onAppendItem(view);
+      return this;
+    },
+
+    onAppendItem: function (view) {
+      return this;
+    },
+
+    prependItem: function (view) {
+      if (!Z.Util.isView(view)) return this;
+      this.trigger('before:prependItem', this);
+      this.$list.prepend(view.render().el);
+      this.trigger('after:prependItem', this);
+      this.onPrependItem(view);
+      return this;
+    },
+
+    onPrependItem: function (view) {
+      return this;
+    },
+
+    getItemView: function (model) {
+      if (Z.Util.isView(this.itemView)) {
+        return this.itemView;
+      } else if (_.isFunction(this.itemView)) {
+        return this.itemView(model);
+      } else {
+        return Z.ModelView;
+      }
     },
 
     addItem: function (model) {
-      var itemView;
+      var view;
 
-      if (this.getItem(model)) return this;
-      itemView = this.createItemView(model);
-      if (!itemView) return this;
-      this.onAddItem(itemView);
-      this._registeredItemViews[model.cid] = itemView.cid;
-      this.registerView(itemView);
+      if (!Z.Util.isModel(model)) return this;
+      this.trigger('before:addItem', this);
+
+      view = Z.Util.getInstance(this.getItemView(model), {
+        model: model
+      });
+
+      this.addView(model.cid, view);
+
+      this.trigger('after:addItem', this);
+      this.onAddItem(view);
       return this;
     },
 
-    onAddItem: function (itemView) {
+    onAddItem: function (view) {
       return this;
     },
 
     addItems: function (models) {
-      models = models || this.collections.models;
-      _.forEach(models, this.addItem, this);
-      return this;
-    },
+      models = models || this.collection.models;
 
-    renderItem: function (model) {
-      var itemView = this.getItem(model);
-
-      if (!itemView) this.addItem(model);
-      itemView = this.getItem(model);
-      if (itemView) itemView.render();
-      return this;
-    },
-
-    appendItem: function (model) {
-      var itemView = this.getItem(model);
-
-      if (!itemView) {
+      _.forEach(this.collection.models, function (model) {
         this.addItem(model);
-        itemView = this.getItem(model);
-        if (itemView) this.$list.append(itemView.render().el);
-      } else {
-        this.$list.append(itemView.render().el);
-      }
-
-      return this;
-    },
-
-    prependItem: function (model) {
-      var itemView = this.getItem(model);
-
-      if (!itemView) {
-        this.addItem(model);
-        itemView = this.getItem(model);
-        if (itemView) this.$list.append(itemView.render().el);
-      } else {
-        this.$list.prepend(itemView.render().el);
-      }
+      }, this);
 
       return this;
     },
 
     removeItem: function (model) {
-      var itemView = this.getItem(model);
+      var view;
 
-      if (!itemView) return this;
-      this.onRemoveItem(itemView);
-      this.unregisterView(itemView.cid);
-      itemView.remove();
-      delete this._registeredItemViews[model.cid];
+      if (Z.Util.isModel(model) || !this.hasView(model.cid)) return this;
+      view = this.getView(model.cid);
+      this.trigger('before:removeItem', this);
+      view.unplug(true);
+      this.removeView(model.cid);
+      this.trigger('after:removeItem', this);
+      this.onRemoveItem(view);
       return this;
     },
 
-    onRemoveItem: function (itemView) {
+    onRemoveItem: function (view) {
       return this;
     },
 
     removeItems: function (models) {
       models = models || this.collection.models;
-      _.forEach(models, this.removeItem, this);
+
+      _.forEach(models, function (model) {
+        this.removeItem(model);
+      }, this);
+
       return this;
     },
 
-    renderCollection: function (filter) {
-      var fragment, models;
+    unplug: function () {
+      this.unsetCollection();
+      Zeppelin.View.prototype.unplug.apply(this, arguments);
+      return this;
+    },
 
-      if (this.hasCollectionSet() && this.collection.length) {
-        models = _.isFunction(filter) ? this.collection.filter(_.bind(filter, this)) : this.collection.models;
-        fragment = document.createDocumentFragment();
+    _onAdd: function (model) {
+      this.addItem(model);
+      if (this.isRendered()) this.appendItem(this.getView(model.cid));
+      return this;
+    },
 
-        this.removeItems();
+    _onReset: function () {
+      this.removeViews();
 
-        if (models && models.length) {
-          _.forEach(models, function (model) {
-            var itemView;
+      _.forEach(this.collection.models, function (model) {
+        this.addItem(model);
+      }, this);
 
-            this.renderItem(model);
-            itemView = this.getItem(model);
-            if (itemView) fragment.appendChild(itemView.el);
-          }, this);
+      if (this.isRendered()) this.renderItems();
+      return this;
+    },
 
-          this.$list.html(fragment);
+    _onRemove: function (model) {
+      this.getView(model.cid).remove();
+      this.removeItem(model);
+      return this;
+    },
+
+    _onRequest: function () {
+      if (this.loadingTemplate) this.render(this.loadingTemplate);
+    }
+  });
+
+  Zeppelin.Region = function (options) {
+    options = options || {};
+    this.options = _.extend({}, this.options, options);
+    this.el = options.el || this.el;
+    this.view = options.view || this.view;
+    if (!this.el) Z.Util.Error('Region must have an "el" property.');
+    this.cid = _.uniqueId('region');
+    this._view = this.view;
+    this._isShown = false;
+    this._isUnplugged = false;
+    this._isRemoved = false;
+    this._elements = {};
+    this._subscriptions = {};
+    this.setElement();
+    if (this.view) this.setView(this._view);
+    this.initialize.apply(this, arguments);
+    this.delegateEvents();
+    this.addSubscriptions();
+  };
+
+  _.extend(Zeppelin.Region.prototype, {
+    initialize: function () {
+      return this;
+    },
+
+    toString: function () {
+      return '[object Region]';
+    },
+
+    view: Z.View,
+
+    hasView: function () {
+      return Z.Util.isView(this.view);
+    },
+
+    setElement: function (element) {
+      element = element || _.result(this, 'el');
+      this.$el = Z.Util.isJqueryObject(element) ? element : Z.$(element);
+      if (this.$el.length) this.el = this.$el[0];
+      return this;
+    },
+
+    $: function (selector) {
+      return this.$el.find(selector);
+    },
+
+    setView: function (view, options) {
+      view = view || this._view;
+
+      if (!Z.Util.isView(view)) return this;
+      if (this.hasView() && this.isShown()) this.close();
+      this.view = Z.Util.getInstance(view, options);
+      return this;
+    },
+
+    show: function (view) {
+      if (view) this.setView(view);
+      if (!this.hasView()) this.setView(this._view);
+      this.trigger('before:show', this.view);
+      if (!this.$el) this.setElement();
+      if (this.hasView()) this.$el.html(this.view.render().el);
+      this._isShown = true;
+      this.addElements();
+      this.trigger('after:show', this.view);
+      this.onShow(this.view);
+      return this;
+    },
+
+    onShow: function (view) {
+      return this;
+    },
+
+    isShown: function () {
+      return this._isShown;
+    },
+
+    close: function () {
+      this.trigger('before:close', this.view);
+      if (this.hasView()) this.view.remove();
+      this.view = null;
+      this._isShown = false;
+      this.trigger('after:close', this.view);
+      this.onClose(this.view);
+      return this;
+    },
+
+    onClose: function (view) {
+      return this;
+    },
+
+    unplug: function (deep) {
+      deep = deep || false;
+      if (deep && this.hasView()) this.view.unplug(true);
+      this.trigger('before:unplug', this);
+      this.off();
+      this.stopListening();
+      this.$el.off();
+      this.undelegateEvents();
+      this.removeElements();
+      this._isUnplugged = false;
+      this.trigger('after:unplug', this);
+      this.onUnplug(this);
+    },
+
+    onUnplug: function () {
+      return this;
+    },
+
+    isUnplugged: function () {
+      return this._isUnplugged;
+    },
+
+    remove: function () {
+      this.close();
+      this.unplug(true);
+      this.trigger('before:remove', this);
+      this.$el.remove();
+      this.view = null;
+      this._isRemoved = false;
+      this.trigger('after:remove', this);
+      this.onRemove();
+      return this;
+    },
+
+    onRemove: function () {
+      return this;
+    },
+
+    isRemoved: function () {
+      return this._isRemoved;
+    }
+  });
+
+  _.extend(Zeppelin.Region.prototype, Zeppelin.Subscriptions);
+  _.extend(Zeppelin.Region.prototype, Zeppelin.Mixin.hasElements);
+
+  Zeppelin.Region.extend = Zeppelin.extend;
+
+  Zeppelin.Layout = function (options) {
+    options = options || {};
+    this.options = _.extend({}, this.options, options);
+    this.el = options.el || this.el;
+    this.regions = options.regions || this.regions;
+    if (!this.el) Z.Util.Error('Layout must have an "el" property.');
+    this.cid = _.uniqueId('layout');
+    this._isUnplugged = false;
+    this._isRemoved = false;
+    this._regions = {};
+    this._elements = {};
+    this._subscriptions = {};
+    this.setElement(_.result(this, 'el'));
+    this.initialize.apply(this, arguments);
+    this.delegateEvents();
+    this.addSubscriptions();
+  };
+
+  _.extend(Zeppelin.Layout.prototype, {
+    keepEl: false,
+
+    initialize: function () {
+      return this;
+    },
+
+    toString: function () {
+      return '[object Layout]';
+    },
+
+    setElement: function (element) {
+      element = element || _.result(this, 'el');
+      this.$el = Z.Util.isJqueryObject(element) ? element : Z.$(element);
+
+      if (this.$el.length) {
+        this.el = this.$el[0];
+
+        if (!this.template) {
+          this.addElements();
+          this.addRegions();
+          this.delegateEvents();
         }
-
-        this._isFiltered = _.isFunction(filter);
-        this._collectionIsRendered = true;
-        this.onRenderCollection(this.collection);
-        this.trigger('collectionRendered', this, this.collection);
       }
 
       return this;
     },
 
-    onRenderCollection: function (collection) {
+    $: function (selector) {
+      return this.$el.find(selector);
+    },
+
+    template: null,
+
+    context: function () {
+      return {};
+    },
+
+    renderTemplate: function () {
+      return Z.View.prototype.renderTemplate.apply(this, arguments);
+    },
+
+    render: function (template, context) {
+      this.trigger('before:render', this);
+      if (!this.$el) this.setElement();
+      this.$el.html(this.renderTemplate(template, context));
+      this._isRendered = true;
+      this._isFisrtRendered = false;
+      this.addRegions();
+      this.addElements();
+      this.trigger('after:render', this);
+      this.onRender(this);
       return this;
     },
 
-    context: function () {
-      var context = {};
-
-      if (this.hasCollectionSet()) _.extend(context, this.collection.getPresenters());
-      return context;
+    onRender: function () {
+      return this;
     },
 
-    shouldRender: function () {
-      if (!this.canRender()) return false;
-      if (!this.hasCollectionSet() && this.collection) return false;
-      if (this.hasCollectionSet() && !this.collection.length) return false;
-      return true;
+    unplug: function (deep) {
+      deep = deep || false;
+
+      if (deep) this.unplugRegions(true);
+      this.trigger('before:unplug', this);
+      this.off();
+      this.stopListening();
+      this.$el.off();
+      this.undelegateEvents();
+      this._isUnplugged = true;
+      this.trigger('after:unplug', this);
+      this.onUnplug(this);
     },
 
-    render: function (filter) {
-      Zeppelin.View.prototype.render.apply(this);
-      this._ensureList();
-      this.renderCollection(filter);
+    onUnplug: function () {
+      return this;
+    },
+
+    isUnplugged: function () {
+      return this._isUnplugged;
+    },
+
+    empty: function () {
+      this.close();
+      this.trigger('before:empty', this);
+      this.$el.empty();
+      this._isEmpty = true;
+      this.trigger('after:empty', this);
+      this.onEmpty(this);
+      return this;
+    },
+
+    onEmpty: function () {
+      return this;
+    },
+
+    isEmpty: function () {
+      return this._isEmpty;
+    },
+
+    remove: function () {
+      this.unplug(true);
+      this.removeRegions();
+      this.trigger('before:remove', this);
+      if (!this.keepEl) this.$el.remove();
+      this.removeRegions();
+      this.removeElements();
+      this._isRemoved = true;
+      this.trigger('after:remove', this);
+      this.onRemove();
+      return this;
+    },
+
+    onRemove: function () {
+      return this;
+    },
+
+    isRemoved: function () {
+      return this._isRemoved;
+    }
+  });
+
+  _.extend(Zeppelin.Layout.prototype, Zeppelin.Subscriptions);
+  _.extend(Zeppelin.Layout.prototype, Zeppelin.Mixin.hasRegions);
+  _.extend(Zeppelin.Layout.prototype, Zeppelin.Mixin.hasElements);
+
+  Zeppelin.Layout.extend = Zeppelin.extend;
+
+  Zeppelin.Controller = function (options) {
+    options = options || {};
+    this.options = _.extend({}, this.options, options);
+    this.cid = _.uniqueId('controller');
+    this._isUnplugged = false;
+    this._views = {}
+    this._regions = {}
+    this._layouts = {}
+    this._subscriptions = {};
+    this.setTitle();
+    this.addViews();
+    this.addRegions();
+    this.addLayouts();
+    this.initialize.apply(this, arguments);
+    this.addSubscriptions();
+  };
+
+  _.extend(Zeppelin.Controller.prototype, {
+    toString: function () {
+      return '[object Controller]';
+    },
+
+    initialize: function () {
+      return this;
+    },
+
+    title: '',
+
+    setTitle: function (title) {
+      document.title = title || this.title;
+      return this;
+    },
+
+    hasFocus: function () {
+      return document.hasFocus();
+    },
+
+    scrollTo: function (x, y) {
+      window.scrollTo(x, y);
+      return this;
+    },
+
+    scrollToTop: function () {
+      window.scrollTo(0, 0);
+      return this;
+    },
+
+    scrollToBottom: function () {
+      window.scrollTo(0, $(document).height());
       return this;
     },
 
     unplug: function () {
-      if (this.hasItemViews()) this.removeItems();
-      Zeppelin.View.prototype.unplug.apply(this, arguments);
+      this.trigger('before:unplug', this);
+      this.off();
+      this.stopListening();
+      this.removeViews();
+      this.removeRegions();
+      this.removeLayouts();
+      this._isUnplugged = true;
+      this.trigger('after:unplug', this);
+      this.onUnplug(this);
       return this;
+    },
+
+    onUnplug: function () {
+      return this;
+    },
+
+    isUnplugged: function () {
+      return this._isUnplugged;
     }
   });
 
+  _.extend(Zeppelin.Controller.prototype, Zeppelin.Subscriptions);
+  _.extend(Zeppelin.Controller.prototype, Zeppelin.Mixin.hasViews);
+  _.extend(Zeppelin.Controller.prototype, Zeppelin.Mixin.hasRegions);
+  _.extend(Zeppelin.Controller.prototype, Zeppelin.Mixin.hasLayouts);
+
+  Zeppelin.Controller.extend = Zeppelin.extend;
+
   Zeppelin.Router = Backbone.Router.extend({
     constructor: function (options) {
-      options = options || {};
-
-      this.cid = _.uniqueId('r');
-      this.name = this.name || _.uniqueId('R');
-
-      if (!this.validations) this.validations = {};
-      if (!this.subscriptions) this.subscriptions = {};
-
-      _.extend(this.validations, options.validations);
-      _.extend(this.subscriptions, options.subscriptions);
-
-      this._transformValidations();
-      this.registerSubscriptions();
+      this.cid = _.uniqueId('router');
+      this._isUnplugged = false;
+      this._subscriptions = {};
       Backbone.Router.prototype.constructor.apply(this, arguments);
+      this.addSubscriptions();
     },
 
-    start: function (options) {
-      if (!Backbone.History.started) Backbone.history.start(options);
-      return this;
-    },
-
-    reload: function () {
-      Backbone.history.loadUrl(Backbone.history.fragment);
-    },
-
-    stop: function () {
-      if (Backbone.History.started) Backbone.history.stop();
-      return this;
-    },
-
-    getLocation: function () {
-      return _.pick(window.location, ['hash', 'host', 'hostname', 'href', 'search', 'origin', 'pathname', 'port', 'protocol']);
+    toString: function () {
+      return '[object Router]';
     },
 
     getFragment: function () {
@@ -1906,62 +2501,102 @@
       };
     },
 
-    beforeRoute: function (route) {
-
-    },
-
-    afterRoute: function (route) {
-
-    },
-
-    _transformValidations: function () {
-      this.validations = _.transform(this.validations, function (result, callback, route) {
-        if (!_.isRegExp(route) && !_.isFunction(route)) route = this._routeToRegExp(route).toString();
-        if (!_.isFunction(callback)) callback = this[callback];
-        if (route && callback) result[route] = _.bind(callback, this);
-      }, null, this);
-
-      return this;
-    },
-
-    resgiterValidation: function (route, callback) {
-      if (!_.isRegExp(route) && !_.isFunction(route)) route = this._routeToRegExp(route).toString();
-      if (!_.isFunction(callback)) callback = this[callback];
-      if (route && callback) this.validations[route] = _.bind(callback, this);
-      return this;
-    },
-
-    registerValidations: function (validations) {
-      validations = validations || this.validations;
-
-      _.forOwn(validations, function (callback, route) {
-        this.resgiterValidation(route, callback);
-      }, this);
-
-      return this;
-    },
-
-    validate: function (route) {
-      var validation = this.validations[route.route.toString()];
-      if (validation) return validation(route);
-    },
-
     execute: function () {
-      var route = this.getRoute(),
-          error = this.validate(route);
+      this.trigger('before:route', this);
+      this.beforeRoute.apply(this, arguments);
+      Backbone.Router.prototype.execute.apply(this, arguments);
+      this.trigger('after:route', this);
+      this.afterRoute.apply(this, arguments);
+    },
 
-      if (!_.size(error)) {
-        this.beforeRoute(route);
-        Backbone.Router.prototype.execute.apply(this, arguments);
-        this.afterRoute(route);
-        this.trigger('route:valid', route);
-      } else {
-        this.trigger('route:invalid', route, error);
-      }
+    beforeRoute: function (callback, args) {
+      return this;
+    },
+
+    afterRoute: function (callback, args) {
+      return this;
+    },
+
+    unplug: function () {
+      this.trigger('before:unplug', this);
+      this.off();
+      this.stopListening();
+      this._isUnplugged = true;
+      this.trigger('after:unplug', this);
+      this.onUnplug(this);
+      return this;
+    },
+
+    onUnplug: function () {
+      return this;
+    },
+
+    isUnplugged: function () {
+      return this._isUnplugged;
     }
   });
 
-  _.extend(Zeppelin.Router.prototype, Zeppelin.Events);
+  _.extend(Zeppelin.Router.prototype, Zeppelin.Subscriptions);
+
+  Zeppelin.Application = Zeppelin.Router.extend({
+    constructor: function (options) {
+      options = options || {};
+      this.options = _.extend({}, this.options, options);
+      this.controller = null;
+      Z.Router.prototype.constructor.apply(this, arguments);
+    },
+
+    toString: function () {
+      return '[object Application]';
+    },
+
+    setController: function (controller) {
+      if (!Z.Util.isController(controller)) return this;
+      this.unsetController();
+      this.controller = Z.Util.getInstance(controller);
+      return this;
+    },
+
+    unsetController: function () {
+      if (this.controller) this.controller.unplug();
+      this.controller = null;
+      return this;
+    },
+
+    isCurrentController: function (controller) {
+      if (!Z.Util.isController(controller)) return false;
+      return this.controller.cid === controller.cid;
+    },
+
+    start: function (options) {
+      this.broadcast('app:before:start');
+      if (!Backbone.History.started) Backbone.history.start(options);
+      this.broadcast('app:after:start');
+      this.onStart();
+      return this;
+    },
+
+    onStart: function () {
+      return this;
+    },
+
+    reload: function () {
+      this.broadcast('app:before:reload');
+      Backbone.history.loadUrl(Backbone.history.fragment);
+    },
+
+    stop: function () {
+      this.broadcast('app:before:stop');
+      if (Backbone.History.started) Backbone.history.stop();
+      this.broadcast('app:after:stop');
+      this.onStop();
+      return this;
+    },
+
+    onStop: function () {
+      return this;
+    }
+  });
 
   return Zeppelin;
-})(this, Backbone, _);
+})(this, Backbone);
