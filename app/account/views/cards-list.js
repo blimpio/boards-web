@@ -46,10 +46,6 @@ module.exports = Zeppelin.CollectionView.extend({
     });
 
     this.wall.fitWidth(this.$parent.width());
-  },
-
-  onUnplug: function() {
-    this.wall.destroy();
   }
 });
 
