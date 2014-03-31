@@ -30,7 +30,7 @@ module.exports = Zeppelin.CollectionView.extend({
   },
 
   triggerLayout: function() {
-    _.delay(this.layout, 10);
+    _.delay(this.layout, 1);
   },
 
   layout: function() {
