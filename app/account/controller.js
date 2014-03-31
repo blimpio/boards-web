@@ -23,8 +23,8 @@ module.exports = Zeppelin.Controller.extend({
     this.listenTo(App.Boards, 'add', this.onBoardsChange);
     this.listenTo(App.Boards, 'remove', this.onBoardsChange);
     this.listenTo(App.Boards, 'change:current', this.renderBoard);
-    this.listenTo(App.Cards, 'add', this.onCardsChange);
-    this.listenTo(App.Cards, 'remove', this.onCardsChange);
+    this.listenTo(App.Cards, 'add', this.onCardAdded);
+    this.listenTo(App.Cards, 'remove', this.onCardRemoved);
     this.listenTo(App.Cards, 'change:current', this.renderCard);
   },
 
@@ -90,6 +90,8 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderBoard: function(board) {
+    this.getLayout('content').closeCardDetail();
+    this.getLayout('content').closeBoardDetail();
     this.getLayout('content').showBoardDetail(board);
     this.fetchCards(board);
   },
@@ -105,7 +107,7 @@ module.exports = Zeppelin.Controller.extend({
     if (App.Boards.isEmpty()) {
       this.getLayout('main').toggleEmptyBoardsState(true);
       this.getLayout('content').closeBoardDetail();
-      this.broadcast('router:navigate', '/' + App.Accounts.current.get('slug') + '/', {
+      this.broadcast('router:navigate', App.Accounts.current.getUrl(), {
         trigger: false
       });
     }
@@ -130,11 +132,8 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('main').showFileUploader(App.Boards.current.attributes);
     this.getLayout('main').showCreateNoteModal(App.Boards.current.attributes);
+    this.getLayout('content').getRegion('cardsList').show();
     this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
-
-    if (!App.Cards.isEmpty()) {
-      this.getLayout('content').showCards();
-    }
 
     if (this.options.card) {
       currentCard = App.Cards.where({slug: this.options.card})[0];
@@ -146,7 +145,27 @@ module.exports = Zeppelin.Controller.extend({
     }
   },
 
-  onCardsChange: function() {
+  onCardAdded: function() {
+    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
+  },
+
+  onCardRemoved: function() {
+    if (App.Cards.isEmpty()){
+      if (this.getLayout('content').cardDetailIsShow()) {
+        this.broadcast('router:navigate', App.Boards.current.getUrl(), {
+          trigger: false
+        });
+      }
+
+      this.showCurrentBoard();
+    } else if (this.getLayout('content').cardDetailIsShow()) {
+      this.broadcast('router:navigate', App.Boards.current.getUrl(), {
+        trigger: false
+      });
+
+      this.getLayout('content').showBoardDetail(App.Boards.current);
+    }
+
     this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
   },
 

@@ -60,10 +60,7 @@ module.exports = Z.Layout.extend({
   },
 
   showCards: function() {
-    this.getRegion('cardDetail').close();
-    this.getRegion('cardComments').close();
-    this.getRegion('createComment').close();
-    this.getRegion('cardDetailInfo').close();
+    this.closeCardDetail();
 
     if (!this.getRegion('cardsList').isShown()) {
       this.getRegion('cardsList').show();
@@ -87,5 +84,16 @@ module.exports = Z.Layout.extend({
     this.getRegion('cardDetail').showDetail(card);
     this.getRegion('createComment').setView(CreateComment, {cardId: card.id}).show();
     this.getRegion('cardDetailInfo').setView(CardDetailInfo, {model: card}).show();
+  },
+
+  closeCardDetail: function() {
+    this.getRegion('cardDetail').close();
+    this.getRegion('cardComments').close();
+    this.getRegion('createComment').close();
+    this.getRegion('cardDetailInfo').close();
+  },
+
+  cardDetailIsShow: function() {
+    return this.getRegion('cardDetail').isShown();
   }
 });

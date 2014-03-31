@@ -9,6 +9,7 @@
         <div class="boards-list-wrapper"></div>
       </div> {{! .sidebar }}
       <div class="content">
+        {{partial "account/templates/empty-boards"}}
         <div class="content-header-wrapper clearfix">
           <button type="button" class="navbar-toggle pull-left" data-action="toggleSidebar">
             <span class="icon-bar"></span>
@@ -18,6 +19,8 @@
           <div class="content-header"></div>
         </div> {{! .content-header-wrapper }}
         <div class="cards-wrapper">
+          {{partial "core/templates/loader" "Fetching Cards"}}
+          {{partial "account/templates/empty-cards"}}
           <div class="cards-list-wrapper"></div>
           <div class="card-detail-wrapper row">
             <div class="card-detail-left col-md-8"></div>
@@ -27,10 +30,7 @@
               <div class="comments-wrapper"></div>
             </div> {{! .card-detail-right }}
           </div> {{! .card-detail-wrapper }}
-          {{partial "core/templates/loader" "Fetching Cards"}}
-          {{partial "account/templates/empty-cards"}}
         </div> {{! .cards-wrapper }}
-        {{partial "account/templates/empty-boards"}}
       </div> {{! .content }}
     </div> {{! .content-wrapper }}
     <div class="note-modal modal" id="createNoteModal">
