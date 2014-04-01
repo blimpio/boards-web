@@ -749,10 +749,10 @@
       return name;
     },
 
-    addLayout: function (name, layout) {
+    addLayout: function (name, layout, options) {
       if (!Z.Util.isLayout(layout)) return this;
       if (this.hasLayout(name)) this.unplugLayout(name, true);
-      this._layouts[name] = Z.Util.getInstance(layout);
+      this._layouts[name] = Z.Util.getInstance(layout, options);
       this._layouts[name].on('after:remove', this._onViewRemoved, this);
       return this;
     },
@@ -864,10 +864,10 @@
       return name;
     },
 
-    addRegion: function (name, region) {
+    addRegion: function (name, region, options) {
       if (!Z.Util.isRegion(region)) return this;
       if (this.hasRegion(name)) this.unplugRegion(name, true);
-      this._regions[name] = Z.Util.getInstance(region);
+      this._regions[name] = Z.Util.getInstance(region, options);
       this._regions[name].on('after:remove', this._onRegionRemoved, this);
       return this;
     },
@@ -999,8 +999,7 @@
       var view = Z.Util.getInstance(options);
 
       if (!Z.Util.isView(options) && _.isPlainObject(options)) {
-        view = Z.Util.getInstance(options.view);
-        options = options.options;
+        view = Z.Util.getInstance(options.view, options.options);
       }
 
       if (!Z.Util.isView(view)) return this;
@@ -1544,9 +1543,9 @@
       }
     },
 
-    setModel: function (model) {
+    setModel: function (model, options) {
       if (this.hasModel() && !this._isFirstModel) this.unsetModel();
-      model = Z.Util.getInstance(model || this.getModel());
+      model = Z.Util.getInstance(model || this.getModel(), options);
       this.trigger('before:setModel', model);
       if (!Z.Util.isModel(model)) return this;
       this.model = model;
@@ -1610,9 +1609,9 @@
       return this;
     },
 
-    setModel: function (model) {
+    setModel: function (model, options) {
       if (this.hasModel()) this.unsetModel();
-      model = Z.Util.getInstance(model || this.getModel());
+      model = Z.Util.getInstance(model || this.getModel(), options);
       this.trigger('before:setModel', model);
       if (!Z.Util.isModel(model)) return this;
       this.model = model;
@@ -1861,10 +1860,10 @@
       }
     },
 
-    setCollection: function (collection) {
+    setCollection: function (collection, options) {
       if (this.hasCollection() && !this._isFirstCollection) this.unsetCollection();
       this.trigger('before:setCollection', collection);
-      collection = Z.Util.getInstance(collection || this.getCollection());
+      collection = Z.Util.getInstance(collection || this.getCollection(), options);
       if (!Z.Util.isCollection(collection)) return this;
       this.collection = collection;
       this.collection._views.push(this.cid);
@@ -2072,7 +2071,7 @@
       return this;
     },
 
-    _onAdd: function(model) {
+    _onAdd: function (model) {
       this.addItem(model);
 
       if (this.isRendered()) {
@@ -2123,7 +2122,6 @@
     this.setElement();
     if (this.view) this.setView(this._view);
     this.initialize.apply(this, arguments);
-    this.delegateEvents();
     this.addSubscriptions();
   };
 
@@ -2146,6 +2144,7 @@
       element = element || _.result(this, 'el');
       this.$el = Z.Util.isJqueryObject(element) ? element : Z.$(element);
       if (this.$el.length) this.el = this.$el[0];
+      this.delegateEvents();
       return this;
     },
 
@@ -2259,7 +2258,6 @@
     this._subscriptions = {};
     this.setElement(_.result(this, 'el'));
     this.initialize.apply(this, arguments);
-    this.delegateEvents();
     this.addSubscriptions();
   };
 
@@ -2277,15 +2275,12 @@
     setElement: function (element) {
       element = element || _.result(this, 'el');
       this.$el = Z.Util.isJqueryObject(element) ? element : Z.$(element);
+      if (this.$el.length) this.el = this.$el[0];
+      this.delegateEvents();
 
-      if (this.$el.length) {
-        this.el = this.$el[0];
-
-        if (!this.template) {
-          this.addElements();
-          this.addRegions();
-          this.delegateEvents();
-        }
+      if (!this.template) {
+        this.addRegions();
+        this.addElements();
       }
 
       return this;
@@ -2559,10 +2554,10 @@
       return '[object Application]';
     },
 
-    setController: function (controller) {
+    setController: function (controller, options) {
       if (!Z.Util.isController(controller)) return this;
       this.unsetController();
-      this.controller = Z.Util.getInstance(controller);
+      this.controller = Z.Util.getInstance(controller, options);
       return this;
     },
 
