@@ -58,13 +58,13 @@ module.exports = Zeppelin.View.extend({
     }
 
     this.getElement('uploadForm').fileupload({
-      dataType: 'xml',
-      autoUpload: true,
       add: this.onAdd,
       done: this.onDone,
       stop: this.onStop,
       fail: this.onError,
-      progress: this.onProgress
+      progress: this.onProgress,
+      dataType: 'xml',
+      autoUpload: true
     });
 
     $(document).on('dragover', this.onDrag);
