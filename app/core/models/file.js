@@ -34,5 +34,9 @@ module.exports = Card.extend({
   getLargePreview: function() {
     return this.get('thumbnail_lg_path') ||
     'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+  },
+
+  download: function() {
+    return $.getJSON(this.url() + 'download/');
   }
 });

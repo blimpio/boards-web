@@ -16,7 +16,8 @@ module.exports = Zeppelin.ModelView.extend({
     'click [data-action=back]': 'onClickBack',
     'click [data-action=edit]': 'edit',
     'click [data-action=delete]': 'delete',
-    'click [data-action=highlight]': 'toggleHighlight'
+    'click [data-action=highlight]': 'toggleHighlight',
+    'click [data-action=download]': 'download'
   },
 
   bindings: {
@@ -58,6 +59,12 @@ module.exports = Zeppelin.ModelView.extend({
     if (window.confirm('Are you sure you want to delete card?')) {
       this.model.destroy();
     }
+  },
+
+  download: function() {
+    this.model.download().done(function(data) {
+      window.location.replace(data.download_url);
+    });
   }
 });
 
