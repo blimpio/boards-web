@@ -31,10 +31,11 @@ module.exports = Zeppelin.FormView.extend({
 
   onRequestSignupError: function(error) {
     this.getElement('requestBtn').text('Sign up');
-    this.getAttributeErrorElement('email').text(error);
+    this.getAttributeErrorElement('email').show().text(error);
   },
 
   onRequestSignupSuccess: function() {
+    this.getAttributeErrorElement('email').hide();
     this.model.updateSignupStep('choose-email');
     this.render(this.successTemplate, {
       email: this.model.get('email')

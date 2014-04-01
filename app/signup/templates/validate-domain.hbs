@@ -16,15 +16,15 @@
     <div class="input-group form-group">
       <span class="input-group-addon">@</span>
       <input name="signup_domains" type="text" class="form-control" id="signupInputEmailDomain" placeholder="e.g. domain.com, domain.io" value="{{domain}}" autofocus>
+      <div data-error="signup_domains" class="help-block"></div>
     </div> {{! .input-group }}
-    <div data-error="signup_domains" class="help-block"></div>
     <p class="text-muted">We guessed a domain for you based on your own email address. I you want to allow signup from multiple domains, separate with commas.</p>
   {{else}}
     <div class="input-group form-group">
       <span class="input-group-addon">@</span>
       <input name="signup_domains" type="text" class="form-control" id="signupInputEmailDomain" placeholder="e.g. domain.com, domain.io" value="{{signup_domains}}" autofocus>
+      <div data-error="signup_domains" class="help-block"></div>
     </div> {{! .input-group }}
-    <div data-error="signup_domains" class="help-block"></div>
   {{/if}}
   <button class="btn btn-default" data-action="validate">Next</button>
   <button type="button" class="btn btn-link" data-action="skip">Skip</button>

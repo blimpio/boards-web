@@ -77,13 +77,14 @@ module.exports = Zeppelin.FormView.extend({
       _.forEach(invitations, function(invitation) {
         if (!Z.Validations.isEmail(invitation)) {
           invitationsError = true;
-          $error.text('One or more emails are invalid.');
+          $error.show().text('One or more emails are invalid.');
           return false;
         }
       }, this);
     }
 
     if (!invitationsError) {
+      this.getAttributeErrorElement('invite_emails').hide();
       if (invitations.length) this.model.set('invite_emails', invitations)
       this.model.set('username', this.model.previous('username'));
       this.model.updateSignupStep('validate-username');
@@ -92,6 +93,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   skip: function(event) {
+    this.getAttributeErrorElement('invite_emails').hide();
     this.model.updateSignupStep('validate-username');
     this.broadcast('signup:stepPassed');
   }

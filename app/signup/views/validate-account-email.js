@@ -37,19 +37,23 @@ module.exports = Zeppelin.ModelView.extend({
 
   confirm: function() {
     this.model.set('is_invite').requestInvite();
+    this.getElement('emailError').hide();
     this.getElement('requestBtn').text('Requesting invite...');
   },
 
   request: function() {
     this.model.requestSignup();
+    this.getElement('emailError').hide();
     this.getElement('requestBtn').text('Requesting signup...');
   },
 
   onRequestError: function(error) {
-    this.getElement('emailError').text(error);
+    this.getElement('emailError').show().text(error);
   },
 
   onRequestSuccess: function() {
+    this.getElement('emailError').hide();
+
     if (this.model.get('is_invite')) {
       this.model.updateSignupStep('choose-name');
     } else {

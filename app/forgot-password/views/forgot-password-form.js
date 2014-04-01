@@ -35,10 +35,11 @@ module.exports = Zeppelin.FormView.extend({
 
   onForgotPasswordError: function(error) {
     this.getElement('submitBtn').text('Recover');
-    this.getAttributeErrorElement('email').text(error);
+    this.getAttributeErrorElement('email').show().text(error);
   },
 
   onForgotPasswordSuccess: function() {
+    this.getAttributeErrorElement('email').hide();
     this.render(this.successTemplate);
   }
 });

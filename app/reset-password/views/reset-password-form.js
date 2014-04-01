@@ -35,10 +35,11 @@ module.exports = Zeppelin.FormView.extend({
 
   onResetPasswordError: function(error) {
     this.getElement('submitBtn').text('Reset');
-    this.getAttributeErrorElement('email').text(error);
+    this.getAttributeErrorElement('email').show().text(error);
   },
 
   onResetPasswordSuccess: function() {
+    this.getAttributeErrorElement('email').hide();
     this.render(this.successTemplate);
   }
 });

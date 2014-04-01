@@ -47,7 +47,7 @@ module.exports = Zeppelin.FormView.extend({
       if (!Z.Validations.isDomainName(domain)) {
         hasInvalidDomains = true;
         if (domain) error = domain + ' is not a valid domain name.'
-        this.getAttributeErrorElement('signup_domains').text(error);
+        this.getAttributeErrorElement('signup_domains').show().text(error);
         return false;
       }
 
@@ -58,10 +58,11 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onSignupDomainsError: function(error) {
-    this.getAttributeErrorElement('signup_domains').text(error);
+    this.getAttributeErrorElement('signup_domains').show().text(error);
   },
 
   onSignupDomainsSuccess: function() {
+    this.getAttributeErrorElement('signup_domains').hide();
     this.model.updateSignupStep('validate-invites');
     this.broadcast('signup:stepPassed');
   }

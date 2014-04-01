@@ -29,11 +29,11 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onSignupError: function(error) {
-    this.getAttributeErrorElement('password').text(error);
+    this.getAttributeErrorElement('password').show().text(error);
   },
 
   onSignupSuccess: function() {
-    console.log(arguments);
+    this.getAttributeErrorElement('password').hide();
     this.broadcast('router:navigate', 'accounts/');
   }
 });
