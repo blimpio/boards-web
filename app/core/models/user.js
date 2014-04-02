@@ -8,7 +8,8 @@ module.exports = Zeppelin.Model.extend({
     signup_step: 'request-signup',
     allow_signup: false,
     passwordResetData: {},
-    requesting_account: {}
+    requesting_account: {},
+    account_logo_color: ['red', 'green', 'orange', 'purple'][_.random(0, 3)]
   },
 
   subscriptions: {
@@ -252,6 +253,7 @@ module.exports = Zeppelin.Model.extend({
       .unset('passwordReset')
       .unset('is_invite')
       .unset('requesting_account')
+      .unset('account_logo_color')
       .saveCache();
 
     this.broadcast('user:signup:success', response);

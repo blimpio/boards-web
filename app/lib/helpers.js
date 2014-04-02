@@ -116,7 +116,7 @@ Handlebars.registerHelper('markdown-preview', function(str) {
 });
 
 Handlebars.registerHelper('account-avatar', function(account) {
-  var color = ['red', 'green', 'orange', 'purple'][_.random(0, 3)],
+  var color = account.logo_color,
       letter = account.name.charAt(0);
 
   return new Handlebars.SafeString(
