@@ -7,6 +7,10 @@ module.exports = Zeppelin.Collection.extend({
     'comment:created': 'onCommentCreated'
   },
 
+  comparator: function(board) {
+    return -(new Date(board.get('date_created')).getTime());
+  },
+
   fetchComments: function(cardId) {
     var $d = $.Deferred();
 
