@@ -1,5 +1,6 @@
 var CreateNote = require('account/views/create-note'),
-    FileUploader = require('account/views/file-uploader');
+    FileUploader = require('account/views/file-uploader'),
+    SharingSettings = require('account/views/sharing-settings');
 
 module.exports = Z.Layout.extend({
   el: '#application',
@@ -14,6 +15,7 @@ module.exports = Z.Layout.extend({
     fileUploader: require('account/regions/file-uploader'),
     userDropdown: require('core/regions/user-dropdown'),
     createBoardForm: require('account/regions/create-board'),
+    sharingSettings: require('account/regions/sharing-settings'),
     accountsDropdown: require('core/regions/accounts-dropdown')
   },
 
@@ -59,6 +61,7 @@ module.exports = Z.Layout.extend({
   showBoards: function() {
     this.showRegion('boardsList');
     this.showRegion('createBoardForm');
+    return this;
   },
 
   onCreateFirstBoardClick: function() {
@@ -70,19 +73,33 @@ module.exports = Z.Layout.extend({
     this.getRegion('fileUploader').setView(FileUploader, {
       board: board
     }).show();
+
+    return this;
   },
 
   enableFileUploader: function() {
     this.getRegion('fileUploader').view.enable();
+    return this;
   },
 
   disableFileUploader: function() {
     this.getRegion('fileUploader').view.disable();
+    return this;
   },
 
   showCreateNoteModal: function(board) {
     this.getRegion('createNote').setView(CreateNote, {
       board: board
     }).show();
+
+    return this;
   },
+
+  showSharingSettings: function(board) {
+    this.getRegion('sharingSettings').setView(SharingSettings, {
+      board: board
+    }).show();
+
+    return this;
+  }
 });

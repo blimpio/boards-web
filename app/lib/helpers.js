@@ -115,9 +115,10 @@ Handlebars.registerHelper('markdown-preview', function(str) {
   return new Handlebars.SafeString(parse(str));
 });
 
-Handlebars.registerHelper('account-avatar', function(account) {
-  var color = account.logo_color,
-      letter = account.name.charAt(0);
+
+Handlebars.registerHelper('account-avatar', function(name, color) {
+  var color = color || ['red', 'green', 'orange', 'purple'][_.random(0, 3)],
+      letter = name.charAt(0);
 
   return new Handlebars.SafeString(
     '<i class="account-avatar" data-color="' + color +'">'+ letter + '</i>'
@@ -132,4 +133,12 @@ Handlebars.registerHelper('board-avatar', function(board) {
       '<img class="board-avatar" src="' + board.thumbnail_sm_path + '"/>'
     );
   }
+});
+
+Handlebars.registerHelper('encodeURI', function(value) {
+  return new Handlebars.SafeString(window.encodeURI(value));
+});
+
+Handlebars.registerHelper('encodeURIComponent', function(value) {
+  return new Handlebars.SafeString(window.encodeURIComponent(value));
 });

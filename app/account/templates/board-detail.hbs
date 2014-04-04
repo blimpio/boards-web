@@ -18,10 +18,10 @@
       Add Card <span class="caret"></span>
     </button> {{! [data-toggle="dropdown"] }}
     <ul class="dropdown-menu" role="menu">
-      <li><button type="button" data-action="createFile" class="btn btn-link">File</button></li>
-      <li><button type="button" data-action="createNote" class="btn btn-link" data-toggle="modal" data-target="#createNoteModal">Note</button></li>
+      <li><a href="#" data-action="createFile">File</a></li>
+      <li><a href="#" data-action="createNote" data-toggle="modal" data-target="#createNoteModal">Note</a></li>
     </ul> {{! .dropdown-menu }}
   </div> {{! .dropdown }}
-  <button type="button" class="btn btn-link">Share</button>
+  <button type="button" class="btn btn-link" data-action="share" data-toggle="modal" data-target="#sharingModal">Share</button>
   <input type="search" class="form-control" placeholder="Search">
 </div> {{! .board-detail-info }}

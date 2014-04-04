@@ -1,0 +1,24 @@
+<strong class="sharing-settings-title">Who has access</strong>
+
+<div class="sharing-option public clearfix">
+  <label>
+    <input type="radio" name="is_shared" class="pull-left" value="true" {{#if is_shared}}checked{{/if}}> <p class="sharing-option-text pull-left">Public on the web <br> <small class="text-muted">Anyone on the internet can ﬁnd and view. No sign-in required.</small></p>
+  </label>
+  <div class="sharing-settings-actions">
+    <div class="form-group">
+      <input type="text" class="form-control sharing-settings-url-input" value="{{url}}" readonly>
+    </div> {{! .form-group }}
+    <div class="form-group">
+      <span class="text-muted sharing-settings-actions-text">Share link via:</span>
+      <button type="button" class="btn btn-default sharing-settings-actions-btn" data-action="shareFacebook" data-share="https://www.facebook.com/sharer.php?app_id=854149947934010&sdk=joey&u={{encodeURIComponent url}}&display=popup">Facebook</button>
+      <button type="button" class="btn btn-default sharing-settings-actions-btn" data-action="shareTwitter" data-intent="https://twitter.com/intent/tweet?text=Check%20out%20{{encodeURIComponent name}}%20on%20Blimp%20Boards!">Twitter</button>
+      <a href="mailto:?subject={{name}} on Blimp Boards&body={{url}}" class="btn btn-default sharing-settings-actions-btn" data-action="shareEmail">Email</a>
+    </div> {{! .form-group }}
+  </div> {{! .sharing-settings-actions }}
+</div> {{! .sharing-option }}
+
+<div class="sharing-option collaborators clearfix">
+  <label>
+    <input type="radio" name="is_shared" class="pull-left" {{#unless is_shared}}checked{{/unless}} value="false"> <p class="sharing-option-text pull-left">Speciﬁc people <br> <small class="text-muted">Only the people listed below can access.</small></p>
+  </label>
+</div> {{! .sharing-option }}

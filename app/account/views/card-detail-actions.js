@@ -36,13 +36,16 @@ module.exports = Zeppelin.ModelView.extend({
   onClickBack: function(event) {
     if (!event.metaKey) {
       event.preventDefault();
+
       this.model.set('is_selected', false, {
         silent: true
       }).trigger('deselected');
-      this.broadcast('cardDetail:closed');
+
       this.broadcast('router:navigate', $(event.currentTarget).attr('href'), {
         trigger: false
       });
+
+      this.broadcast('cardDetail:closed');
     }
   },
 

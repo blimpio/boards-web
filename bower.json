@@ -7,6 +7,7 @@
     "marked": "~0.3.1",
     "lodash": "~2",
     "jquery": "~2",
+    "yepnope": "~1.5.4",
     "freewall": "git@github.com:kombai/freewall.git",
     "backbone": "~1",
     "bootstrap": "~3.1.1",
@@ -23,6 +24,9 @@
     },
     "jquery": {
       "main": "dist/jquery.js"
+    },
+    "yepnope": {
+      "main": "yepnope.js"
     },
     "backbone": {
       "main": "backbone.js",

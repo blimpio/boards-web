@@ -1,8 +1,9 @@
 <div class="accounts-dropdown-current dropdown">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
     {{#with current}}
-      {{account-avatar this}} <span class="account-name lead">{{name}}</span>
+      {{account-avatar name logo_color}} <span class="account-name lead">{{name}}</span>
     {{/with}}
+
     {{#if hasMoreAccounts}}<b class="caret"></b>{{/if}}
   </a> {{! [data-toggle="dropdown"] }}
 

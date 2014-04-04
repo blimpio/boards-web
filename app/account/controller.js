@@ -13,7 +13,9 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   initialize: function() {
-    _.bindAll(this, ['onAccountsFetch', 'onBoardsFetch', 'onCardsFetch', 'onCommentsFetch']);
+    _.bindAll(this, ['onAccountsFetch', 'onBoardsFetch',
+    'onCollaboratorsFetch', 'onCardsFetch', 'onCommentsFetch']);
+
     this.getLayout('main').render();
     this.getLayout('content').setElement('div.content').setHeight();
     this.fetchAccounts();
@@ -82,6 +84,10 @@ module.exports = Zeppelin.Controller.extend({
         App.Boards.current.select({navigate: false});
       }
 
+      this.getLayout('main').showFileUploader(App.Boards.current.attributes);
+      this.getLayout('main').showCreateNoteModal(App.Boards.current.attributes);
+      this.getLayout('main').showSharingSettings(App.Boards.current);
+      this.fetchCollaborators(App.Boards.current);
       this.fetchCards(App.Boards.current);
     } else {
       if (this.firstLoad) this.listen();
@@ -90,6 +96,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderBoard: function(board) {
+    this.getLayout('main').showSharingSettings(board);
     this.getLayout('content').closeCardDetail();
     this.getLayout('content').closeBoardDetail();
     this.getLayout('content').showBoardDetail(board);
@@ -113,6 +120,17 @@ module.exports = Zeppelin.Controller.extend({
     }
   },
 
+  fetchCollaborators: function(board) {
+    board = board.id || App.Boards.current.id;
+
+    App.Collaborators.fetch({
+      data: {board: board},
+      reset: true
+    });
+
+    return this;
+  },
+
   fetchCards: function(board) {
     board = board.id || App.Boards.current.id;
 
@@ -130,8 +148,6 @@ module.exports = Zeppelin.Controller.extend({
     if (this.firstLoad) this.listen();
     this.firstLoad = false;
 
-    this.getLayout('main').showFileUploader(App.Boards.current.attributes);
-    this.getLayout('main').showCreateNoteModal(App.Boards.current.attributes);
     this.getLayout('content').getRegion('cardsList').show();
     this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
 
@@ -170,9 +186,17 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderCard: function(card) {
+    var creator = App.Collaborators.getCollaborator(card.get('created_by'));
+
+    creator = {
+      name: creator.getFullName(),
+      avatar: creator.get('gravatar_url')
+    };
+
     this.getLayout('main').disableFileUploader();
-    this.getLayout('content').showCardDetail(card, App.Boards.current);
+    this.getLayout('content').showCardDetail(card, App.Boards.current, creator);
     this.fetchComments(card);
+    return this;
   },
 
   fetchComments: function(card) {
@@ -182,6 +206,10 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCommentsFetch: function(response) {
+    App.Comments.addCreatorsData(App.Collaborators.getCollaborators(
+      _.unique(App.Comments.pluck('created_by'))
+    ));
+
     this.getLayout('content').showRegion('cardComments');
   }
 });

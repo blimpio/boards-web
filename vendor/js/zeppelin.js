@@ -1629,8 +1629,7 @@
       return this;
     },
 
-    submit: function (event) {
-      event.preventDefault();
+    submit: function () {
       this.trigger('before:submit');
       this.setAttributes();
 
@@ -1668,21 +1667,28 @@
     },
 
     getAttributeValue: function (attributeName) {
-      var $attribute, $checked, $selected;
+      var $attribute, $checked, $selected, checkedValue;
 
       $attribute = this.getAttributeElement(attributeName);
 
       if ($attribute) {
         if ($attribute.is(':radio, :checkbox')) {
           $checked = $attribute.filter(':checked');
+          checkedValue = $checked.val();
 
           if ($checked.length) {
             if ($checked.length > 1 && $attribute.is(':checkbox')) {
               return _.compact(_.map($checked, function (check) {
-                return $(check).val();
+                return checkedValue;
               }));
             } else {
-              return $checked.attr('value') ? $checked.val() : true;
+              if ($checked.attr('value')) {
+                if (checkedValue === 'true') checkedValue = true;
+                if (checkedValue === 'false') checkedValue = false;
+                return checkedValue;
+              } else {
+                return true;
+              }
             }
           } else {
             return false;

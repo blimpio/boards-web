@@ -48,7 +48,8 @@ module.exports = Zeppelin.FormView.extend({
     this.delete();
   },
 
-  onCreateFileClick: function() {
+  onCreateFileClick: function(event) {
+    event.preventDefault();
     this.broadcast('fileUploader:trigger');
   },
 

@@ -28,7 +28,8 @@
   }
 
   &.has-no-boards {
-    .empty-boards {
+    .empty-boards,
+    .board-not-found {
       display: block;
     }
   }
@@ -80,13 +81,15 @@
 .empty-cards,
 .empty-boards,
 .cards-loading,
-.boards-loading {
+.boards-loading,
+.board-not-found {
   display: none;
   padding-top: 12%;
 }
 
 .empty-cards,
-.empty-boards {
+.empty-boards,
+.board-not-found {
   text-align: center;
 
   > .lead {

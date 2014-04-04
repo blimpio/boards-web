@@ -50,5 +50,9 @@ module.exports = Zeppelin.Model.extend({
     });
 
     return '/' + accountSlug + '/' + this.get('slug') + '/';
+  },
+
+  getShareUrl: function() {
+    return window.location.href;
   }
 });

@@ -4,6 +4,7 @@ var User = require('core/models/user'),
     Boards = require('core/collections/boards'),
     Accounts = require('core/collections/accounts'),
     Comments = require('core/collections/comments');
+    Collaborators = require('core/collections/collaborators');
 
 module.exports = (function() {
   var Application = Zeppelin.Application.extend({
@@ -46,11 +47,16 @@ module.exports = (function() {
       this.Boards = new Boards();
       this.Accounts = new Accounts();
       this.Comments = new Comments();
+      this.Collaborators = new Collaborators();
 
       this.User.signinFromCache();
     }
   });
 
-  window.App = new Application();
-  App.start({pushState: true});
+  window.App = window.App || {};
+  window.App = _.extend(new Application(), window.App);
+
+  App.start({
+    pushState: true
+  });
 })();

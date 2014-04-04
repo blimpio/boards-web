@@ -42,12 +42,14 @@ module.exports = Z.Layout.extend({
 
   showBoardDetail: function(board) {
     this.getRegion('contentHeader').setView(BoardDetail, {model: board}).show();
+    return this;
   },
 
   closeBoardDetail: function() {
     this.getRegion('cardsList').close();
     this.getRegion('contentHeader').close();
     this.getElement('cardsWrapper').removeClass('has-no-cards');
+    return this;
   },
 
   onCreateFirstFileClick: function() {
@@ -66,6 +68,8 @@ module.exports = Z.Layout.extend({
     } else {
       this.getRegion('cardsList').view.$el.show();
     }
+
+    return this;
   },
 
   showCardDetail: function(card, board, creator) {
@@ -95,6 +99,7 @@ module.exports = Z.Layout.extend({
     this.getRegion('cardComments').close();
     this.getRegion('createComment').close();
     this.getRegion('cardDetailInfo').close();
+    return this;
   },
 
   cardDetailIsShow: function() {
