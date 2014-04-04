@@ -14,7 +14,7 @@ module.exports = Zeppelin.Controller.extend({
 
   initialize: function() {
     _.bindAll(this, ['onAccountsFetch', 'onBoardsFetch',
-    'onCollaboratorsFetch', 'onCardsFetch', 'onCommentsFetch']);
+    'onCardsFetch', 'onCommentsFetch']);
 
     this.getLayout('main').render();
     this.getLayout('content').setElement('div.content').setHeight();
