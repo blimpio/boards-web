@@ -12,6 +12,7 @@ module.exports = Z.Layout.extend({
     createNote: require('account/regions/create-note'),
     boardsList: require('account/regions/boards-list'),
     fileUploader: require('account/regions/file-uploader'),
+    userDropdown: require('core/regions/user-dropdown'),
     createBoardForm: require('account/regions/create-board'),
     accountsDropdown: require('core/regions/accounts-dropdown')
   },
@@ -50,6 +51,7 @@ module.exports = Z.Layout.extend({
 
   showHeader: function() {
     this.toggleLoadingMainState();
+    this.showRegion('userDropdown');
     this.showRegion('accountsDropdown');
     return this;
   },
