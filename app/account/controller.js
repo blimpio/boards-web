@@ -73,12 +73,12 @@ module.exports = Zeppelin.Controller.extend({
     if (!App.Boards.isEmpty()) {
       if (currentBoard) {
         App.Boards.current = currentBoard;
-        App.Cache.saveCurrent('boards', App.Boards.current.attributes);
+        App.Cache.saveCurrent('board', App.Boards.current.attributes);
       } else if (App.Cache.has('board')) {
         App.Boards.current = App.Boards.get(App.Cache.get('board').id);
       } else {
         App.Boards.current = App.Boards.at(0);
-        App.Cache.saveCurrent('boards', App.Boards.current.attributes);
+        App.Cache.saveCurrent('board', App.Boards.current.attributes);
       }
 
       if (!this.options.card) {
