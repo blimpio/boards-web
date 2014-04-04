@@ -1,7 +1,7 @@
 module.exports = Zeppelin.ModelView.extend({
   tagName: 'li',
 
-  className: 'comment',
+  className: 'comment clearfix',
 
   template: require('account/templates/comment'),
 
