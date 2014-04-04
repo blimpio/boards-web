@@ -13,6 +13,7 @@
     "jquery-ui": "~1.10.4",
     "handlebars": "~1",
     "blueimp-md5": "~1.1.0",
+    "60fps-scroll": "0.1.0",
     "jquery-timeago": "~1.4.0",
     "blueimp-file-upload": "~9.5.6"
   },
