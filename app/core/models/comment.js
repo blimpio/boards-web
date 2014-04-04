@@ -1,13 +1,11 @@
 module.exports = Zeppelin.Model.extend({
-  name: 'Comment',
-
   defaults: function() {
     return {
       date_created: _.now()
     };
   },
 
-  localAttributes: ['card'],
+  localAttributes: ['card', 'creator'],
 
   validations: {
     content: {

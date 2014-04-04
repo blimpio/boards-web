@@ -26,7 +26,8 @@ module.exports = Zeppelin.FormView.extend({
 
   context: function() {
     return _.extend({}, this.model.attributes, {
-      time: $.timeago(this.model.get('date_created'))
+      time: $.timeago(this.model.get('date_created')),
+      creator: this.options.creator
     });
   },
 

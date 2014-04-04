@@ -9,17 +9,16 @@ module.exports = Z.Layout.extend({
   regions: {
     cardsList: require('account/regions/cards-list'),
     cardDetail: require('account/regions/card-detail'),
-    cardComments: require('account/regions/card-comments'),
+    cardComments: require('account/regions/comments-list'),
     createComment: require('account/regions/create-comment'),
     contentHeader: require('account/regions/content-header'),
-    cardDetailInfo: require('account/regions/card-detail-info'),
+    cardDetailInfo: require('account/regions/card-detail-info')
   },
 
   events: {
     'click [data-action=createFirstFile]': 'onCreateFirstFileClick',
     'click [data-action=createFirstNote]': 'onCreateFirstNoteClick'
   },
-
 
   elements: {
     cardsWrapper: 'div.cards-wrapper'
@@ -69,7 +68,7 @@ module.exports = Z.Layout.extend({
     }
   },
 
-  showCardDetail: function(card, board) {
+  showCardDetail: function(card, board, creator) {
     if (this.getRegion('cardsList').isShown()) {
       this.getRegion('cardsList').view.$el.hide();
     }
@@ -80,10 +79,15 @@ module.exports = Z.Layout.extend({
       boardName: board.get('name')
     }).show();
 
-
     this.getRegion('cardDetail').showDetail(card);
     this.getRegion('createComment').setView(CreateComment, {cardId: card.id}).show();
-    this.getRegion('cardDetailInfo').setView(CardDetailInfo, {model: card}).show();
+
+    this.getRegion('cardDetailInfo').setView(CardDetailInfo, {
+      model: card,
+      creator: creator
+    }).show();
+
+    return this;
   },
 
   closeCardDetail: function() {

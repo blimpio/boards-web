@@ -1,4 +1,6 @@
-module.exports = Zeppelin.Model.extend({
+var Person = require('core/models/person');
+
+module.exports = Person.extend({
   cacheId: 'User',
 
   defaults: {
