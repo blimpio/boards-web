@@ -7,6 +7,8 @@ module.exports = Zeppelin.CollectionView.extend({
 
   itemView: require('core/views/accounts-dropdown-item'),
 
+  manageItems: false,
+
   collection: function() {
     return App.Accounts;
   },

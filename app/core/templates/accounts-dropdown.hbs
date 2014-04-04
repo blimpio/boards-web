@@ -1,11 +1,17 @@
 <div class="accounts-dropdown-current dropdown">
-  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+  {{#if hasMoreAccounts}}
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      {{#with current}}
+        {{account-avatar name logo_color}} <span class="account-name lead">{{name}}</span>
+      {{/with}}
+
+      <b class="caret"></b>
+    </a> {{! [data-toggle="dropdown"] }}
+  {{else}}
     {{#with current}}
       {{account-avatar name logo_color}} <span class="account-name lead">{{name}}</span>
     {{/with}}
-
-    {{#if hasMoreAccounts}}<b class="caret"></b>{{/if}}
-  </a> {{! [data-toggle="dropdown"] }}
+  {{/if}}
 
   <ol class="accounts-dropdown-list dropdown-menu accounts-sm" role="menu"></ol>
 </div>

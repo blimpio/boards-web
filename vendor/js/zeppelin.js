@@ -1925,6 +1925,13 @@
       return this;
     },
 
+    renderWithFilter: function (comparator) {
+      Zeppelin.View.prototype.render.apply(this);
+      this.setList();
+      this.filter(comparator);
+      return this;
+    },
+
     renderItems: function (views) {
       var fragment = document.createDocumentFragment();
 
@@ -1962,6 +1969,7 @@
       });
 
       if (models.length) {
+        this.removeItems();
         this.addItems(models);
         this.renderItems();
       } else {
@@ -2037,7 +2045,7 @@
     addItems: function (models) {
       models = models || this.collection.models;
 
-      _.forEach(this.collection.models, function (model) {
+      _.forEach(models, function (model) {
         this.addItem(model);
       }, this);
 
@@ -2167,12 +2175,17 @@
       return this;
     },
 
+    renderView: function (view) {
+      this.$el.html(this.view.render().el);
+      return this;
+    },
+
     show: function (view) {
       if (view) this.setView(view);
       if (!this.hasView()) this.setView(this._view);
       this.trigger('before:show', this.view);
       if (!this.$el) this.setElement();
-      if (this.hasView()) this.$el.html(this.view.render().el);
+      if (this.hasView()) this.renderView(this.view);
       this._isShown = true;
       this.addElements();
       this.trigger('after:show', this.view);
