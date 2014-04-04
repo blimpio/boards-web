@@ -84,7 +84,11 @@ module.exports = Z.Layout.extend({
     }).show();
 
     this.getRegion('cardDetail').showDetail(card);
-    this.getRegion('createComment').setView(CreateComment, {cardId: card.id}).show();
+
+    this.getRegion('createComment').setView(CreateComment, {
+      cardId: card.id,
+      creator: creator
+    }).show();
 
     this.getRegion('cardDetailInfo').setView(CardDetailInfo, {
       model: card,

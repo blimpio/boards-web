@@ -12,6 +12,12 @@ module.exports = Zeppelin.FormView.extend({
     'focus textarea.create-comment-input': 'toggleActions'
   },
 
+  context: function() {
+    return {
+      creator: this.options.creator
+    }
+  },
+
   initialize: function() {
     this.prepareModel();
   },
