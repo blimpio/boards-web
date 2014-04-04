@@ -15,6 +15,7 @@ module.exports = Person.extend({
   },
 
   subscriptions: {
+    'user:id': 'respondWithId',
     'user:accounts': 'respondAccounts'
   },
 
@@ -443,7 +444,11 @@ module.exports = Person.extend({
     return this;
   },
 
-  respondAccounts: function(channel) {
+  respondWithAccounts: function(channel) {
     this.broadcast(channel, this.get('accounts'));
+  },
+
+  respondWithId: function(channel) {
+    this.broadcast(channel, this.id);
   }
 });

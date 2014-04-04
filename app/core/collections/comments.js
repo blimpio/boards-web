@@ -1,6 +1,4 @@
 module.exports = Zeppelin.Collection.extend({
-  name: 'Comments',
-
   model: require('core/models/comment'),
 
   subscriptions: {
@@ -25,6 +23,13 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   onCommentCreated: function(comment) {
+    this.request('collaborators:collaborator', comment.get('created_by'), function(creator) {
+      comment.set('creator', {
+        name: creator.getFullName(),
+        avatar: creator.get('gravatar_url')
+      });
+    });
+
     if (Z.Util.isModel(comment)) this.add(comment);
   },
 

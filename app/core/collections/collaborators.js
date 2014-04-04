@@ -3,6 +3,14 @@ module.exports = Zeppelin.Collection.extend({
 
   model: require('core/models/person'),
 
+  subscriptions: {
+    'collaborators:collaborator': 'respondWithCollaborator'
+  },
+
+  respondWithCollaborator: function(id, channel) {
+    this.broadcast(channel, this.getCollaborator(id));
+  },
+
   getCollaborator: function(id) {
     var user = this.find(function(collaborator) {
       return collaborator.has('user') && collaborator.get('user').id === id;
