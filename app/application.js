@@ -15,7 +15,7 @@ module.exports = (function() {
       'signup/?token:token(/)': require('signup/routes/token'),
       'signup/step/:step(/)': require('signup/routes/step'),
       'signup(/)': require('signup/routes/main'),
-      'signout/': 'signout',
+      'signout/': require('core/routes/signout'),
       'forgot_password(/)': require('forgot-password/routes/main'),
       'reset_password/?token:token(/)': require('reset-password/routes/main'),
       'reset_password(/)': require('reset-password/routes/main'),
