@@ -31,9 +31,13 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   fetchAccounts: function() {
-    App.Accounts.fetch({
-      reset: true
-    }).done(this.onAccountsFetch);
+    if (App.Accounts.isEmpty()) {
+      App.Accounts.fetch({
+        reset: true
+      }).done(this.onAccountsFetch);
+    } else {
+      this.onAccountsFetch();
+    }
 
     return this;
   },

@@ -297,7 +297,7 @@ module.exports = Person.extend({
 
   signinFromCache: function() {
     this.fetchCache();
-    if (this.isSignedIn()) this.onSigninSuccess();
+    if (this.isSignedIn()) this.onSigninSuccess(this.attributes);
     return this;
   },
 

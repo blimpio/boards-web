@@ -4,10 +4,15 @@ module.exports = Zeppelin.Collection.extend({
   model: require('core/models/account'),
 
   subscriptions: {
-    'accounts:current': 'sendCurrent'
+    'accounts:current': 'sendCurrent',
+    'user:signin:success': 'populateAccountsFromUser'
   },
 
   sendCurrent: function(channel) {
     this.broadcast(channel, this.current);
+  },
+
+  populateAccountsFromUser: function(user) {
+    if (user.accounts) this.reset(user.accounts);
   }
 });
