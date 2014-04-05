@@ -1,0 +1,15 @@
+<div class="accounts-chooser form-horizontal form-group row">
+  <label for="accountsSettingsChoose" class="col-sm-3 control-label">Choose account</label>
+  <div class="col-sm-9">
+    <select class="accounts-chooser-select form-control" id="accountsSettingsChoose">
+      {{#with currentAccount}}
+        <option value="{{id}}" selected>{{name}}</option>
+      {{/with}}
+      {{#each accounts}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select> {{! .accounts-chooser-select }}
+  </div> {{! .col-sm-9 }}
+</div> {{! .accounts-chooser }}
+
+<div class="account-settings-wrapper"></div>

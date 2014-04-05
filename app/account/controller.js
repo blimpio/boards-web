@@ -4,6 +4,7 @@ module.exports = Zeppelin.Controller.extend({
   layouts: {
     main: require('account/layouts/main'),
     content: require('account/layouts/content')
+    settings: require('settings/layouts/main'),
   },
 
   firstLoad: true,
@@ -18,6 +19,7 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('main').render();
     this.getLayout('content').setElement('div.content').setHeight();
+    this.getLayout('settings').setElement('div#settings').render();
     this.fetchAccounts();
   },
 

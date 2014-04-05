@@ -1,6 +1,8 @@
 var Person = require('core/models/person');
 
 module.exports = Person.extend({
+  url: '/api/users/me/',
+
   cacheId: 'User',
 
   defaults: {

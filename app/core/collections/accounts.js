@@ -14,5 +14,15 @@ module.exports = Zeppelin.Collection.extend({
 
   populateAccountsFromUser: function(user) {
     if (user.accounts) this.reset(user.accounts);
+  },
+
+  getUnselectedAccounts: function() {
+    var accounts = [];
+
+    this.each(function(account) {
+      if (this.current.id !== account.id) accounts.push(account.toJSON());
+    }, this);
+
+    return accounts;
   }
 });
