@@ -1,13 +1,7 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
-    var creatorId;
-
-    this.request('user:id', function(id) {
-      creatorId = id;
-    });
-
     return {
-      created_by: creatorId,
+      created_by: App.User.id,
       date_created: _.now()
     }
   },

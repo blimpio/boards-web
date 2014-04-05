@@ -1942,7 +1942,12 @@
         fragment.appendChild(view.render().el);
       }, this);
 
-      if (fragment.children.length) this.$list.html(fragment);
+      if (fragment.children.length) {
+        this.$list.html(fragment);
+      } else if (this.emptyTemplate) {
+        this.$list.html(this.emptyTemplate());
+      }
+
       this.trigger('after:renderItems', this);
       this.onRenderItems(views);
       this._isFirstCollectionRender = false;
@@ -2270,8 +2275,10 @@
     this.regions = options.regions || this.regions;
     if (!this.el) Z.Util.Error('Layout must have an "el" property.');
     this.cid = _.uniqueId('layout');
-    this._isUnplugged = false;
     this._isRemoved = false;
+    this._isRendered = true;
+    this._isUnplugged = false;
+    this._isFisrtRendered = true;
     this._regions = {};
     this._elements = {};
     this._subscriptions = {};
@@ -2297,7 +2304,7 @@
       if (this.$el.length) this.el = this.$el[0];
       this.delegateEvents();
 
-      if (!this.template) {
+      if (!this.isFirstRender()) {
         this.addRegions();
         this.addElements();
       }
@@ -2336,6 +2343,14 @@
       return this;
     },
 
+    isFirstRender: function () {
+      return this._isFisrtRender;
+    },
+
+    isRendered: function () {
+      return this._isRendered;
+    },
+
     unplug: function (deep) {
       deep = deep || false;
 
@@ -2359,7 +2374,6 @@
     },
 
     empty: function () {
-      this.close();
       this.trigger('before:empty', this);
       this.$el.empty();
       this._isEmpty = true;
@@ -2379,10 +2393,15 @@
     remove: function () {
       this.unplug(true);
       this.removeRegions();
-      this.trigger('before:remove', this);
-      if (!this.keepEl) this.$el.remove();
-      this.removeRegions();
       this.removeElements();
+      this.trigger('before:remove', this);
+
+      if (!this.keepEl) {
+        this.$el.remove();
+      } else {
+        this.empty();
+      }
+
       this._isRemoved = true;
       this.trigger('after:remove', this);
       this.onRemove();

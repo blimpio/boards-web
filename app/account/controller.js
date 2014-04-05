@@ -3,8 +3,9 @@ module.exports = Zeppelin.Controller.extend({
 
   layouts: {
     main: require('account/layouts/main'),
-    content: require('account/layouts/content')
+    content: require('account/layouts/content'),
     settings: require('settings/layouts/main'),
+    comments: require('account/layouts/comments')
   },
 
   firstLoad: true,
@@ -20,6 +21,7 @@ module.exports = Zeppelin.Controller.extend({
     this.getLayout('main').render();
     this.getLayout('content').setElement('div.content').setHeight();
     this.getLayout('settings').setElement('div#settings').render();
+
     this.fetchAccounts();
   },
 
@@ -103,6 +105,7 @@ module.exports = Zeppelin.Controller.extend({
 
   renderBoard: function(board) {
     this.getLayout('main').showSharingSettings(board);
+    this.getLayout('comments').remove();
     this.getLayout('content').closeCardDetail();
     this.getLayout('content').closeBoardDetail();
     this.getLayout('content').showBoardDetail(board);
@@ -112,6 +115,7 @@ module.exports = Zeppelin.Controller.extend({
   showCurrentBoard: function() {
     this.getLayout('main').enableFileUploader();
     this.getLayout('content').showBoardDetail(App.Boards.current);
+    this.getLayout('comments').remove();
     this.getLayout('content').showCards();
     this.options.card = null;
   },
@@ -201,6 +205,14 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('main').disableFileUploader();
     this.getLayout('content').showCardDetail(card, App.Boards.current, creator);
+
+    this.getLayout('comments').options = {
+      card: card,
+      creator: creator
+    };
+
+    this.getLayout('comments').setElement('div#comments-layout').render();
+
     this.fetchComments(card);
     return this;
   },
@@ -216,6 +228,7 @@ module.exports = Zeppelin.Controller.extend({
       _.unique(App.Comments.pluck('created_by'))
     ));
 
-    this.getLayout('content').showRegion('cardComments');
+    this.getLayout('comments').renderCommentForm();
+    this.getLayout('comments').showCollaboratorComments();
   }
 });

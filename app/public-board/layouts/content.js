@@ -8,7 +8,6 @@ module.exports = Z.Layout.extend({
   regions: {
     cardsList: require('public-board/regions/cards-list'),
     cardDetail: require('account/regions/card-detail'),
-    cardComments: require('account/regions/comments-list'),
     contentHeader: require('account/regions/content-header'),
     cardDetailInfo: require('account/regions/card-detail-info')
   },
@@ -86,7 +85,6 @@ module.exports = Z.Layout.extend({
 
   closeCardDetail: function() {
     this.getRegion('cardDetail').close();
-    this.getRegion('cardComments').close();
     this.getRegion('cardDetailInfo').close();
     return this;
   },

@@ -6,7 +6,8 @@ module.exports = Zeppelin.Controller.extend({
 
   layouts: {
     main: require('public-board/layouts/main'),
-    content: require('public-board/layouts/content')
+    content: require('public-board/layouts/content'),
+    comments: require('account/layouts/comments')
   },
 
   firstLoad: true,
@@ -65,6 +66,8 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   showCurrentBoard: function() {
+    this.getLayout('comments').remove();
+    this.getLayout('content').closeCardDetail();
     this.getLayout('content').renderBoardDetail(this.board);
     this.getLayout('content').showCards();
   },
@@ -117,6 +120,8 @@ module.exports = Zeppelin.Controller.extend({
     };
 
     this.getLayout('content').showCardDetail(card, App.Boards.current, creator);
+    this.getLayout('comments').setElement('div#comments-layout').render();
+
     this.fetchComments(card);
     return this;
   },
@@ -132,6 +137,6 @@ module.exports = Zeppelin.Controller.extend({
       _.unique(App.Comments.pluck('created_by'))
     ));
 
-    this.getLayout('content').showRegion('cardComments');
+    this.getLayout('comments').showCollaboratorComments();
   }
 });

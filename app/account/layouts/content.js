@@ -1,5 +1,4 @@
 var BoardDetail = require('account/views/board-detail'),
-    CreateComment = require('account/views/create-comment'),
     CardDetailInfo = require('account/views/card-detail-info'),
     CardDetailActions = require('account/views/card-detail-actions');
 
@@ -9,8 +8,6 @@ module.exports = Z.Layout.extend({
   regions: {
     cardsList: require('account/regions/cards-list'),
     cardDetail: require('account/regions/card-detail'),
-    cardComments: require('account/regions/comments-list'),
-    createComment: require('account/regions/create-comment'),
     contentHeader: require('account/regions/content-header'),
     cardDetailInfo: require('account/regions/card-detail-info')
   },
@@ -46,8 +43,8 @@ module.exports = Z.Layout.extend({
   },
 
   closeBoardDetail: function() {
-    this.getRegion('cardsList').close();
-    this.getRegion('contentHeader').close();
+    this.closeRegion('cardsList');
+    this.closeRegion('contentHeader');
     this.getElement('cardsWrapper').removeClass('has-no-cards');
     return this;
   },
@@ -85,11 +82,6 @@ module.exports = Z.Layout.extend({
 
     this.getRegion('cardDetail').showDetail(card);
 
-    this.getRegion('createComment').setView(CreateComment, {
-      cardId: card.id,
-      creator: creator
-    }).show();
-
     this.getRegion('cardDetailInfo').setView(CardDetailInfo, {
       model: card,
       creator: creator
@@ -99,10 +91,8 @@ module.exports = Z.Layout.extend({
   },
 
   closeCardDetail: function() {
-    this.getRegion('cardDetail').close();
-    this.getRegion('cardComments').close();
-    this.getRegion('createComment').close();
-    this.getRegion('cardDetailInfo').close();
+    this.closeRegion('cardDetail');
+    this.closeRegion('cardDetailInfo');
     return this;
   },
 
