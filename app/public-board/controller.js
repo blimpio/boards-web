@@ -120,6 +120,13 @@ module.exports = Zeppelin.Controller.extend({
     };
 
     this.getLayout('content').showCardDetail(card, App.Boards.current, creator);
+
+    this.getLayout('comments').options = {
+      card: card,
+      creator: creator,
+      isPublicBoard: App.Boards.current.get('is_shared')
+    };
+
     this.getLayout('comments').setElement('div#comments-layout').render();
 
     this.fetchComments(card);
