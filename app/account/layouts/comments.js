@@ -14,7 +14,8 @@ module.exports = Z.Layout.extend({
   },
 
   events: {
-    'click a[data-comments]': 'onCommentsToggleClick'
+    'click a[data-comments]': 'onCommentsToggleClick',
+    'click [data-action=openAccountSettings]': 'openAccountSettings'
   },
 
   elements: {
@@ -74,5 +75,10 @@ module.exports = Z.Layout.extend({
     if (!this.getRegion('publicComments').isShown()) {
       this.renderPublicComments();
     }
+  },
+
+  openAccountSettings: function() {
+    this.broadcast('settings:accounts:open');
+    return this;
   }
 });
