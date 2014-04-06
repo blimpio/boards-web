@@ -208,7 +208,8 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('comments').options = {
       card: card,
-      creator: creator
+      creator: creator,
+      isPublicBoard: App.Boards.current.get('is_shared')
     };
 
     this.getLayout('comments').setElement('div#comments-layout').render();

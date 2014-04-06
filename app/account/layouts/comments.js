@@ -21,6 +21,12 @@ module.exports = Z.Layout.extend({
     currentCommentsType: 'span.current-comments-type'
   },
 
+  context: function() {
+    return {
+      isPublicBoard: this.options.isPublicBoard
+    };
+  },
+
   renderCommentForm: function() {
     this.getRegion('createComment').setView(CreateComment, {
       cardId: this.options.card.id,

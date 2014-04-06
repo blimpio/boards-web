@@ -1,13 +1,17 @@
-<div class="comments-toggler btn-group clearfix">
-  <button type="button" class="btn btn-link dropdown-toggle pull-right" data-toggle="dropdown">
-    <span class="current-comments-type">Comments from collaborators</span>
-    <span class="caret"></span>
-  </button> {{! .dropdown-toggle }}
-  <ul class="dropdown-menu pull-right" role="menu">
-    <li><a href="#" data-comments="public">Comments from public</a></li>
-    <li><a href="#" data-comments="collaborators">Comments from collaborators</a></li>
-  </ul> {{! .dropdown-menu }}
-</div> {{! .comments-toggler }}
+{{#if isPublicBoard}}
+  <div class="comments-toggler btn-group clearfix">
+    <button type="button" class="btn btn-link dropdown-toggle pull-right" data-toggle="dropdown">
+      <span class="current-comments-type">Comments from collaborators</span>
+      <span class="caret"></span>
+    </button> {{! .dropdown-toggle }}
+    <ul class="dropdown-menu pull-right" role="menu">
+      <li><a href="#" data-comments="public">Comments from public</a></li>
+      <li><a href="#" data-comments="collaborators">Comments from collaborators</a></li>
+    </ul> {{! .dropdown-menu }}
+  </div> {{! .comments-toggler }}
+
+  <div class="public-comments-wrapper"></div>
+{{/if}}
 
 <div class="collaborator-comments-wrapper">
   <div class="create-comment-wrapper"></div>
@@ -15,6 +19,4 @@
     <p>Fetching Comments...</p>
   </div>
 </div> {{! .collaborator-comments }}
-
-<div class="public-comments-wrapper"></div>
 
