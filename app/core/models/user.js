@@ -28,7 +28,7 @@ module.exports = Person.extend({
       var isSignin = this.get('is_signin'),
           isCurrentStep = this.get('signup_step') === 'validate-username';
 
-      if (!username && (isCurrentStep || isSignin)) {
+      if (!username && (isCurrentStep || isSignin || this.has('token'))) {
         return 'A username is required to authenticate you.';
       } else if (!Z.Validations.isAlphanumeric(username) && (isCurrentStep || isSignin)) {
         return 'Your username must be an alphanumeric value.';
@@ -39,7 +39,7 @@ module.exports = Person.extend({
       var isCurrentStep = this.get('signup_step') === 'validate-email',
           isRecoveringPass = this.get('is_recovering_password');
 
-      if (!email && (isCurrentStep || isRecoveringPass)) {
+      if (!email && (isCurrentStep || isRecoveringPass || this.has('token'))) {
         return 'An email is required to authenticate you.';
       } else if (!Z.Validations.isEmail(email) && (isCurrentStep || isRecoveringPass)) {
         return 'Provide a valid email.';
@@ -58,6 +58,18 @@ module.exports = Person.extend({
       }
     },
 
+    first_name: function(firstName) {
+      if (!firstName && this.has('token')) {
+        return 'Your first name is required.';
+      }
+    },
+
+    last_name: function(lastName) {
+      if (!lastName && this.has('token')) {
+        return 'Your last name is required.';
+      }
+    },
+
     full_name: function(name) {
       var isCurrentStep = this.get('signup_step') === 'validate-name';
       if ((!name || !name.split(' ')[1]) && isCurrentStep) {
@@ -71,6 +83,12 @@ module.exports = Person.extend({
         return 'An account name is required to authenticate you.';
       }
     }
+  },
+
+  initialize: function() {
+    this.on('sync', function(user, response) {
+      this.cache.set(response);
+    }, this);
   },
 
   requestSignup: function(email) {

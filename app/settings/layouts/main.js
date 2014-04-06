@@ -24,21 +24,64 @@ module.exports = Z.Layout.extend({
   },
 
   events: {
+    'shown.bs.modal #settings-modal': 'listenToAjax',
+    'hidden.bs.modal #settings-modal': 'stopListeningToAjax',
     'click [data-action=showGeneral]': 'showUserSettings',
     'click [data-action=showAccounts]': 'showAccountsSettings',
     'click [data-action=showNotifications]': 'showNotificationsSettings',
     'click [data-action=showPassword]': 'showPasswordSettings',
-    'click [data-action=showAdvanced]': 'showAdvancedSettings'
+    'click [data-action=showAdvanced]': 'showAdvancedSettings',
+    'click [data-action=cancel]': 'hide'
   },
 
   elements: {
     modal: 'div#settings-modal',
+    alert: 'div.settings-alert',
     sectionBtns: 'div.settings-sections button',
     generalBtn: '[data-action=showGeneral]',
     accountsBtn: '[data-action=showAccounts]',
     notificationsBtn: '[data-action=showNotifications]',
     passwordBtn: '[data-action=showPassword]',
     advancedBtn: '[data-action=showAdvanced]'
+  },
+
+  initialize: function() {
+    _.bindAll(this, ['onAjaxSuccess', 'onAjaxError']);
+  },
+
+  hide: function() {
+    this.getElement('modal').modal('hide');
+    return this;
+  },
+
+  listenToAjax: function() {
+    $(document).ajaxError(this.onAjaxError);
+    $(document).ajaxSuccess(this.onAjaxSuccess);
+  },
+
+  stopListeningToAjax: function() {
+    $(document).off('ajaxError');
+    $(document).off('ajaxSuccess');
+  },
+
+  onAjaxSuccess: function() {
+    var $alert = this.getElement('alert');
+
+    $alert.text('Changes saved.').show();
+
+    _.delay(function() {
+      $alert.hide();
+    }, 1500);
+  },
+
+  onAjaxError: function() {
+    var $alert = this.getElement('alert');
+
+    $alert.text('Something went wrong. Please try again.').show();
+
+    _.delay(function() {
+      $alert.hide();
+    }, 1500);
   },
 
   openUserSettings: function() {
@@ -104,5 +147,9 @@ module.exports = Z.Layout.extend({
     this.getElement('advancedBtn').addClass('active');
     this.getRegion('content').setView(AdvancedSettings).show();
     return this;
+  },
+
+  onUnplug: function() {
+    this.stopListeningToAjax();
   }
 });

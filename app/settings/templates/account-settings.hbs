@@ -1,22 +1,25 @@
 <div class="form-group">
   <label for="accountSettingsName" class="col-sm-3 control-label">Name</label>
   <div class="col-sm-9">
-    <input type="text" class="form-control" id="accountSettingsName" value="{{name}}" placeholder="e.g. awesomeInc">
+    <input name="name" type="text" class="form-control" id="accountSettingsName" value="{{name}}" placeholder="e.g. awesomeInc">
+    <div data-error="name" class="help-block"></div>
   </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
 
 <div class="form-group">
   <label for="accountSettingsUrl" class="col-sm-3 control-label">Url slug</label>
   <div class="col-sm-9">
-    <input type="text" class="form-control" id="accountSettingsUrl" value="{{slug}}" placeholder="e.g. awesome-inc">
+    <input name="slug" type="text" class="form-control" id="accountSettingsUrl" value="{{slug}}" placeholder="e.g. awesome-inc">
+    <div data-error="slug" class="help-block"></div>
   </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
 
 <div class="form-group">
   <label for="accountSettingsDisqus" class="col-sm-3 control-label">Disqus shortname</label>
   <div class="col-sm-9">
-    <input type="text" class="form-control" id="accountSettingsDisqus" value="{{disqus_shortname}}" placeholder="e.g. my-shortname">
+    <input name="disqus_shortname" type="text" class="form-control" id="accountSettingsDisqus" value="{{disqus_shortname}}" placeholder="e.g. my-shortname">
     <small class="help-block">This will enable public comments on shared boards, you can open a free account on the <a href="http://disqus.com/" target="_blank">disqus site.</a></small>
+    <div data-error="disqus_shortname" class="help-block"></div>
   </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
 

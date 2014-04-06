@@ -15,7 +15,9 @@ module.exports = Zeppelin.CompositeView.extend({
   },
 
   initialize: function() {
-    this.listenTo(App.Accounts, 'change', 'render');
+    this.listenTo(App.Accounts, 'change', function() {
+      this.render();
+    });
   },
 
   context: function() {

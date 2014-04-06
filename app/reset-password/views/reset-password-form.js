@@ -24,7 +24,7 @@ module.exports = Zeppelin.FormView.extend({
     }
   },
 
-  onAddModel: function() {
+  onSetModel: function() {
     this.model.set('is_recovering_password', true);
   },
 

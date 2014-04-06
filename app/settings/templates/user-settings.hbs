@@ -1,28 +1,32 @@
 <div class="form-group">
   <label for="userSettingsEmail" class="col-sm-3 control-label">Email</label>
   <div class="col-sm-9">
-    <input type="text" class="form-control" id="userSettingsEmail" value="{{email}}" placeholder="e.g. name@example.com">
+    <input name="email" type="text" class="form-control" id="userSettingsEmail" value="{{email}}" placeholder="e.g. name@example.com">
+    <div data-error="email" class="help-block"></div>
   </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
 
 <div class="form-group">
   <label for="userSettingsUsername" class="col-sm-3 control-label">Username</label>
   <div class="col-sm-9">
-    <input type="text" class="form-control" id="userSettingsUsername" value="{{username}}" placeholder="e.g. user123">
+    <input name="username" type="text" class="form-control" id="userSettingsUsername" value="{{username}}" placeholder="e.g. user123">
+    <div data-error="username" class="help-block"></div>
   </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
 
 <div class="form-group">
   <label for="userSettingsFirstName" class="col-sm-3 control-label">First Name</label>
   <div class="col-sm-9">
-    <input type="text" class="form-control" id="userSettingsFirstName" value="{{first_name}}" placeholder="e.g. Name">
+    <input name="first_name" type="text" class="form-control" id="userSettingsFirstName" value="{{first_name}}" placeholder="e.g. Name">
+    <div data-error="first_name" class="help-block"></div>
   </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
 
 <div class="form-group">
   <label for="userSettingsLastName" class="col-sm-3 control-label">Last Name</label>
   <div class="col-sm-9">
-    <input type="text" class="form-control" id="userSettingsLastName" value="{{last_name}}" placeholder="e.g. LastName">
+    <input name="last_name" type="text" class="form-control" id="userSettingsLastName" value="{{last_name}}" placeholder="e.g. LastName">
+    <div data-error="last_name" class="help-block"></div>
   </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
 
