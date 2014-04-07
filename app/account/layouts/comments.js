@@ -39,10 +39,10 @@ module.exports = Z.Layout.extend({
     event.preventDefault();
 
     if ($(event.currentTarget).data('comments') === 'public') {
-      this.getElement('currentCommentsType').text('Commesnts from public');
+      this.getElement('currentCommentsType').text('Comments from public');
       this.showPublicComments();
     } else {
-      this.getElement('currentCommentsType').text('Commesnts from collaborators');
+      this.getElement('currentCommentsType').text('Comments from collaborators');
       this.showCollaboratorComments();
     }
   },
