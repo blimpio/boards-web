@@ -25,8 +25,8 @@ module.exports = Zeppelin.Collection.extend({
   onCommentCreated: function(comment) {
     this.request('collaborators:collaborator', comment.get('created_by'), function(creator) {
       comment.set('creator', {
-        name: creator.getFullName(),
-        avatar: creator.get('gravatar_url')
+        name: creator.getName(),
+        avatar: creator.getAvatar()
       });
     });
 
@@ -37,12 +37,18 @@ module.exports = Zeppelin.Collection.extend({
     if (!creators.length) return this;
 
     this.each(function(comment) {
-      var creator = _.where(creators, {id: comment.get('created_by')})[0];
+      var creator = _.where(creators, {
+        attributes: {
+          user: {
+            id: comment.get('created_by')
+          }
+        }
+      })[0];
 
       if (creator) {
         comment.set('creator', {
-          name: creator.getFullName(),
-          avatar: creator.get('gravatar_url')
+          name: creator.getName(),
+          avatar: creator.getAvatar()
         });
       }
     });

@@ -1,3 +1,3 @@
 module.exports = Z.Region.extend({
-  el: '#sharingModal div.modal-body'
+  el: 'div.share-board-invite'
 });

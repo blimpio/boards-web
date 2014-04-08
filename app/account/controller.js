@@ -5,7 +5,8 @@ module.exports = Zeppelin.Controller.extend({
     main: require('account/layouts/main'),
     content: require('account/layouts/content'),
     settings: require('settings/layouts/main'),
-    comments: require('account/layouts/comments')
+    comments: require('account/layouts/comments'),
+    shareBoard: require('account/layouts/share-board')
   },
 
   firstLoad: true,
@@ -15,23 +16,24 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   initialize: function() {
-    _.bindAll(this, ['onAccountsFetch', 'onBoardsFetch',
+    _.bindAll(this, ['onAccountsFetch', 'onBoardsFetch', 'onCollaboratorsFetch',
     'onCardsFetch', 'onCommentsFetch']);
 
     this.getLayout('main').render();
     this.getLayout('content').setElement('div.content').setHeight();
     this.getLayout('settings').setElement('div#settings').render();
+    this.getLayout('shareBoard').setElement('div#share-board').render();
 
     this.fetchAccounts();
   },
 
   listen: function() {
-    this.listenTo(App.Boards, 'add', this.onBoardsChange);
-    this.listenTo(App.Boards, 'remove', this.onBoardsChange);
-    this.listenTo(App.Boards, 'change:current', this.renderBoard);
     this.listenTo(App.Cards, 'add', this.onCardAdded);
     this.listenTo(App.Cards, 'remove', this.onCardRemoved);
     this.listenTo(App.Cards, 'change:current', this.renderCard);
+    this.listenTo(App.Boards, 'add', this.onBoardsChange);
+    this.listenTo(App.Boards, 'remove', this.onBoardsChange);
+    this.listenTo(App.Boards, 'change:current', this.fetchCollaborators);
   },
 
   fetchAccounts: function() {
@@ -87,16 +89,11 @@ module.exports = Zeppelin.Controller.extend({
 
       if (!this.options.card) {
         App.Boards.current.select();
-        this.getLayout('content').showBoardDetail(App.Boards.current);
       } else {
         App.Boards.current.select({navigate: false});
       }
 
-      this.getLayout('main').showFileUploader(App.Boards.current.attributes);
-      this.getLayout('main').showCreateNoteModal(App.Boards.current.attributes);
-      this.getLayout('main').showSharingSettings(App.Boards.current);
       this.fetchCollaborators(App.Boards.current);
-      this.fetchCards(App.Boards.current);
     } else {
       if (this.firstLoad) this.listen();
       this.firstLoad = false;
@@ -104,19 +101,24 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderBoard: function(board) {
-    this.getLayout('main').showSharingSettings(board);
+    var canEdit = App.Collaborators.current.canEdit();
+
     this.getLayout('comments').remove();
     this.getLayout('content').closeCardDetail();
     this.getLayout('content').closeBoardDetail();
-    this.getLayout('content').showBoardDetail(board);
-    this.fetchCards(board);
+
+    this.getLayout('content').showBoardDetail(board, canEdit);
+    this.getLayout('main').showFileUploader(board.attributes);
+    this.getLayout('main').showCreateNoteModal(board.attributes);
   },
 
   showCurrentBoard: function() {
+    var canEdit = App.Collaborators.current.canEdit();
+
     this.getLayout('main').enableFileUploader();
-    this.getLayout('content').showBoardDetail(App.Boards.current);
+    this.getLayout('content').showBoardDetail(App.Boards.current, canEdit);
     this.getLayout('comments').remove();
-    this.getLayout('content').showCards();
+    this.getLayout('content').showCards(canEdit);
     this.options.card = null;
   },
 
@@ -136,9 +138,16 @@ module.exports = Zeppelin.Controller.extend({
     App.Collaborators.fetch({
       data: {board: board},
       reset: true
-    });
+    }).done(this.onCollaboratorsFetch);
 
     return this;
+  },
+
+  onCollaboratorsFetch: function() {
+    App.Collaborators.current = App.Collaborators.getCollaborator(App.User.id);
+    this.renderBoard(App.Boards.current);
+    this.fetchCards(App.Boards.current);
+    this.getLayout('shareBoard').renderSettings(App.Boards.current);
   },
 
   fetchCards: function(board) {
@@ -153,12 +162,13 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardsFetch: function(response) {
-    var currentCard;
+    var canEdit = App.Collaborators.current.canEdit(),
+        currentCard;
 
     if (this.firstLoad) this.listen();
     this.firstLoad = false;
 
-    this.getLayout('content').getRegion('cardsList').show();
+    this.getLayout('content').getRegion('cardsList').showList(canEdit);
     this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
 
     if (this.options.card) {
@@ -196,19 +206,25 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderCard: function(card) {
-    var creator = App.Collaborators.getCollaborator(card.get('created_by'));
+    var creator = App.Collaborators.getCollaborator(card.get('created_by')),
+        canEdit = App.Collaborators.current.canEdit();
 
     creator = {
-      name: creator.getFullName(),
-      avatar: creator.get('gravatar_url')
+      name: creator.getName(),
+      avatar: creator.getAvatar()
     };
 
     this.getLayout('main').disableFileUploader();
-    this.getLayout('content').showCardDetail(card, App.Boards.current, creator);
+    this.getLayout('content').showCardDetail(card, App.Boards.current, creator, canEdit);
 
     this.getLayout('comments').options = {
       card: card,
+      canEdit: canEdit,
       creator: creator,
+      currentUser: {
+        name: App.User.getFullName(),
+        avatar: App.User.get('gravatar_url')
+      },
       isPublicBoard: App.Boards.current.get('is_shared')
     };
 

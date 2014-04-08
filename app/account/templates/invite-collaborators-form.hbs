@@ -1,0 +1,12 @@
+<strong class="invite-collaborator-title">Invite people</strong>
+
+<div class="invite-collaborator-rows">
+  {{partial "account/templates/invite-collaborator-row"}}
+</div> {{! .invite-collaborator-rows }}
+
+<div class="form-group">
+  <button type="button" class="btn btn-link" data-action="addInvitationRow">Add more</button>
+</div> {{! .form-group }}
+
+<button class="btn btn-default" data-action="send">Send</button>
+<button class="btn btn-link" data-action="cancel">Cancel</button>

@@ -5,7 +5,7 @@ module.exports = Zeppelin.Collection.extend({
 
   subscriptions: {
     'board:created': 'onBoardCreated',
-    'boards:current': 'sendCurrent'
+    'boards:current': 'respondWithCurrentBoard'
   },
 
   comparator: function(board) {
@@ -53,7 +53,7 @@ module.exports = Zeppelin.Collection.extend({
     this.trigger('change:current', this.current);
   },
 
-  sendCurrent: function(channel) {
+  respondWithCurrentBoard: function(channel) {
     this.broadcast(channel, this.current);
   }
 });

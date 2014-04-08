@@ -2,12 +2,12 @@ module.exports = Zeppelin.FormView.extend({
   tagName: 'form',
 
   className: function() {
-    var className = 'sharing-settings-form';
+    var className = 'share-board-toggle-form';
     if (this.model.get('is_shared')) className += ' is-shared';
     return className;
   },
 
-  template: require('account/templates/sharing-settings-form'),
+  template: require('account/templates/share-board-toggle'),
 
   events: {
     'change input[name=is_shared]': 'onChange',
@@ -18,7 +18,7 @@ module.exports = Zeppelin.FormView.extend({
   elements: {
     twitterBtn: '[data-action=shareTwitter]',
     facebookBtn: '[data-action=shareFacebook]',
-    shareUrlInput: 'input.sharing-settings-url-input'
+    shareUrlInput: 'input.share-board-toggle-url-input'
   },
 
   initialize: function() {
@@ -65,11 +65,10 @@ module.exports = Zeppelin.FormView.extend({
       if (winHeight > height) top = Math.round((winHeight / 2) - (height / 2));
       windowOptions += ',width=' + width + ',height=' + height;
       windowOptions += ',left=' + left + ',top=' + top;
-      setTimeout(_.bind(function() {
-        window.open(this.getElement('twitterBtn').data('intent'), 'intent', windowOptions);
-      }, this), 500);
-      if (!this.model.get('is_shared')) this.submit();
+      window.open(this.getElement('twitterBtn').data('intent'), 'intent', windowOptions);
     }
+
+    return this;
   },
 
   loadTwitter: function() {
@@ -87,7 +86,7 @@ module.exports = Zeppelin.FormView.extend({
     _.delay(_.bind(function() {
       this.getElement('twitterBtn').text('Twitter');
       if (!this.twitterLoaded) $d.reject();
-    }, this), 5100);
+    }, this), 5000);
 
     return $d.promise();
   },
@@ -109,8 +108,9 @@ module.exports = Zeppelin.FormView.extend({
       windowOptions += ',width=' + width + ',height=' + height;
       windowOptions += ',left=' + left + ',top=' + top;
       window.open(this.getElement('facebookBtn').data('share'), 'share', windowOptions);
-      if (!this.model.get('is_shared')) this.submit();
     }
+
+    return this;
   },
 
   loadFacebook: function() {
@@ -135,6 +135,7 @@ module.exports = Zeppelin.FormView.extend({
 
   onChange: function(event) {
     this.toggleSharingActions($(event.currentTarget).val() === 'true');
+    this.submit();
   }
 });
 

@@ -31,7 +31,7 @@ module.exports = Z.Layout.extend({
   renderCommentForm: function() {
     this.getRegion('createComment').setView(CreateComment, {
       cardId: this.options.card.id,
-      creator: this.options.creator
+      creator: this.options.currentUser
     }).show();
   },
 
@@ -63,6 +63,10 @@ module.exports = Z.Layout.extend({
   },
 
   renderPublicComments: function() {
+    this.getRegion('publicComments').view.options = {
+      canEdit: this.options.canEdit
+    };
+
     this.showRegion('publicComments');
     return this;
   },

@@ -1,0 +1,37 @@
+.invite-collaborators-form {
+  background: #F0F0F0;
+  border-radius: 3px;
+  padding: 15px;
+
+  [data-action="addInvitationRow"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.invite-collaborator-title {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.invite-collaborator-rows {
+  margin-bottom: -15px;
+}
+
+.invite-collaborator-row {
+  margin-bottom: 15px;
+
+  &:first-child {
+    [data-action="removeCollaborator"] {
+      display: none;
+    }
+  }
+
+  [name="invitee"] {
+    width: 400px;
+  }
+
+  .collaborator-permissions {
+    padding: 0;
+  }
+}

@@ -1695,9 +1695,9 @@
           }
         } else if ($attribute.is('input, textarea')) {
           if ($attribute.length > 1) {
-            return _.compact(_.map($attribute, function (attr) {
+            return _.map($attribute, function (attr) {
               return $(attr).val();
-            }));
+            });
           } else {
             return $attribute.val();
           }
@@ -1706,9 +1706,9 @@
 
           if ($selected.length) {
             if ($selected.length > 1) {
-              return _.compact(_.map($selected, function (option) {
+              return _.map($selected, function (option) {
                 return $(option).val();
-              }));
+              });
             } else {
               return $selected.attr('value') ? $selected.val() : true;
             }
@@ -1942,7 +1942,7 @@
         fragment.appendChild(view.render().el);
       }, this);
 
-      if (fragment.children.length) {
+      if (fragment.childNodes.length) {
         this.$list.html(fragment);
       } else if (this.emptyTemplate) {
         this.$list.html(this.emptyTemplate());

@@ -19,6 +19,7 @@ module.exports = Zeppelin.ModelView.extend({
     var shortname = this.model.get('disqus_shortname');
 
     return {
+      canEdit: this.options.canEdit,
       disqusUrl: '//' + shortname + '.disqus.com/embed.js',
       hasDisqusShortname: shortname
     };

@@ -1,7 +1,7 @@
 module.exports = Zeppelin.Collection.extend({
   url: '/api/boards/collaborators/',
 
-  model: require('core/models/person'),
+  model: require('core/models/collaborator'),
 
   subscriptions: {
     'collaborators:collaborator': 'respondWithCollaborator'
@@ -12,11 +12,9 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   getCollaborator: function(id) {
-    var user = this.find(function(collaborator) {
-      return collaborator.has('user') && collaborator.get('user').id === id;
+    return this.find(function(collaborator) {
+      return collaborator.hasAccount() && collaborator.get('user').id === id;
     });
-
-    return user ? this._prepareModel(user.get('user')) : user;
   },
 
   getCollaborators: function(ids) {
@@ -27,5 +25,11 @@ module.exports = Zeppelin.Collection.extend({
     }, this);
 
     return _.compact(collaborators);
+  },
+
+  invite: function(collaborators) {
+    $.post(this.url, JSON.stringify(collaborators)).done(_.bind(function(response) {
+      this.add(response);
+    }, this));
   }
 });

@@ -1,7 +1,3 @@
-var BoardDetail = require('account/views/board-detail'),
-    CardDetailInfo = require('account/views/card-detail-info'),
-    CardDetailActions = require('account/views/card-detail-actions');
-
 module.exports = Z.Layout.extend({
   el: 'div.content',
 
@@ -37,7 +33,11 @@ module.exports = Z.Layout.extend({
     return this;
   },
 
-  showBoardDetail: function(board) {
+  showBoardDetail: function(board, canEdit) {
+    var BoardDetail = canEdit
+      ? require('account/views/board-detail')
+      : require('public-board/views/board-detail');
+
     this.getRegion('contentHeader').setView(BoardDetail, {model: board}).show();
     return this;
   },
@@ -57,11 +57,11 @@ module.exports = Z.Layout.extend({
     $('#createNoteModal').modal('show');
   },
 
-  showCards: function() {
+  showCards: function(canEdit) {
     this.closeCardDetail();
 
     if (!this.getRegion('cardsList').isShown()) {
-      this.getRegion('cardsList').show();
+      this.getRegion('cardsList').showList(canEdit);
     } else {
       this.getRegion('cardsList').view.$el.show();
     }
@@ -69,7 +69,15 @@ module.exports = Z.Layout.extend({
     return this;
   },
 
-  showCardDetail: function(card, board, creator) {
+  showCardDetail: function(card, board, creator, canEdit) {
+    var CardDetailInfo = canEdit
+      ? require('account/views/card-detail-info')
+      : require('public-board/views/card-detail-info'),
+
+        CardDetailActions = canEdit
+          ? require('account/views/card-detail-actions')
+          : require('public-board/views/card-detail-actions');
+
     if (this.getRegion('cardsList').isShown()) {
       this.getRegion('cardsList').view.$el.hide();
     }

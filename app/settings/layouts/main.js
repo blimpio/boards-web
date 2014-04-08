@@ -36,7 +36,7 @@ module.exports = Z.Layout.extend({
 
   elements: {
     modal: 'div#settings-modal',
-    alert: 'div.settings-alert',
+    alert: 'div.ui-modal-alert',
     sectionBtns: 'div.settings-sections button',
     generalBtn: '[data-action=showGeneral]',
     accountsBtn: '[data-action=showAccounts]',

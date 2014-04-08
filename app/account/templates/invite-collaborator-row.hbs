@@ -1,0 +1,21 @@
+<div class="invite-collaborator-row form-inline">
+  <div class="form-group">
+    <input name="invitee" type="text" class="form-control" placeholder="e.g. name@example.com">
+  </div> {{! .form-group }}
+
+  <div class="form-group">
+    <div class="collaborator-permissions dropdown pull-right" data-permission="read">
+      <a href="#" class="collaborator-permissions-toggle dropdown-toggle" data-toggle="dropdown">
+        <span class="collaborator-permissions-toggle-text">Can view</span> <b class="caret"></b>
+      </a> {{! [data-toggle="dropdown"] }}
+      <ol class="collaborator-permissions-list dropdown-menu" role="menu">
+        <li><button type="button" data-permission="read" class="btn btn-link">Can view</button></li>
+        <li><button type="button" data-permission="write" class="btn btn-link">Can edit</button></li>
+      </ol> {{! .collaborator-permissions-list }}
+    </div> {{! .collaborator-permissions }}
+  </div> {{! .form-group }}
+
+  <div class="form-group">
+    <button type="button" class="close pull-right" data-action="removeCollaborator">&times;</button>
+  </div> {{! .form-group }}
+</div> {{! .invite-collaborator-row }}
