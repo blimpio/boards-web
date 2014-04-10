@@ -13,8 +13,17 @@ module.exports = Collaborators.extend({
   },
 
   rebuildIndex: function(options) {
+    var searchableCollaborators;
+
     options = options || {keys: this.searchableAttributes};
-    this._fuse = new Fuse(_.pluck(this.models, 'attributes'), options);
+
+    this.request('boardCollaborators:collaborators', function(collaborators) {
+      searchableCollaborators = this.filter(function(collaborator) {
+        return _.indexOf(_.pluck(collaborators, 'id'), collaborator.id) === -1;
+      });
+    });
+
+    this._fuse = new Fuse(_.pluck(searchableCollaborators, 'attributes'), options);
     return this;
   },
 
