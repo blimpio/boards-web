@@ -194,20 +194,13 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardRemoved: function() {
-    if (App.Cards.isEmpty()){
-      if (this.getLayout('content').cardDetailIsShow()) {
-        this.broadcast('router:navigate', App.Boards.current.getUrl(), {
-          trigger: false
-        });
-      }
-
-      this.showCurrentBoard();
-    } else if (this.getLayout('content').cardDetailIsShow()) {
+    if (this.getLayout('content').cardDetailIsShow()) {
       this.broadcast('router:navigate', App.Boards.current.getUrl(), {
         trigger: false
       });
 
-      this.getLayout('content').showBoardDetail(App.Boards.current);
+      this.showCurrentBoard();
+      this.broadcast('cardsList:layout');
     }
 
     this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
