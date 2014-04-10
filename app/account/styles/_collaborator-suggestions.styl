@@ -1,0 +1,23 @@
+.collaborator-suggestions {
+  border-bottom: 1px solid #DDDDDD;
+  border-radius: 4px;
+  border-top: 1px solid #DDDDDD;
+  display: none;
+  margin: 10px auto;
+  max-height: 185px;
+  position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  z-index: 1;
+
+  .collaborator-suggestion {
+    &:first-child {
+      border-top: 0 none;
+    }
+
+    &:last-child {
+      border-bottom: 0 none;
+    }
+  }
+}

@@ -4,9 +4,9 @@
   {{partial "account/templates/invite-collaborator-row"}}
 </div> {{! .invite-collaborator-rows }}
 
-<div class="form-group">
-  <button type="button" class="btn btn-link" data-action="addInvitationRow">Add more</button>
-</div> {{! .form-group }}
+<button type="button" class="btn btn-link" data-action="addInvitationRow">Add more</button>
 
-<button class="btn btn-default" data-action="send">Send</button>
-<button class="btn btn-link" data-action="cancel">Cancel</button>
+<div class="invite-collaborator-actions">
+  <button class="btn btn-default" data-action="send">Send</button>
+  <button type="button" class="btn btn-link" data-action="cancel">Cancel</button>
+</div> {{! .invite-collaborator-actions }}

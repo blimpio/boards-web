@@ -4,11 +4,12 @@
   {{/unless}}
 
   {{#if isOwner}}
-    <div class="collaborator-permissions pull-right">Is owner</div>
+    <strong class="collaborator-permissions pull-right">Is owner</strong>
   {{else}}
     <div class="collaborator-permissions dropdown pull-right" data-permission="{{permission}}">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        Can {{#is permission "read"}}view{{else}}edit{{/is}} <b class="caret"></b>
+      <a class="collaborator-permissions-toggle dropdown-toggle" data-toggle="dropdown" href="#">
+        <span class="collaborator-permissions-toggle-text">Can {{#is permission "read"}}view{{else}}edit{{/is}}</span>
+        <b class="caret"></b>
       </a> {{! [data-toggle="dropdown"] }}
       <ol class="collaborator-permissions-list dropdown-menu" role="menu">
         <li><button type="button" data-permission="read" class="btn btn-link">Can view</button></li>

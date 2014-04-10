@@ -17,7 +17,8 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   elements: {
-    permission: 'div.collaborator-permissions'
+    permission: 'div.collaborator-permissions',
+    permissionText: 'span.collaborator-permissions-toggle-text'
   },
 
   context: function() {
@@ -30,17 +31,21 @@ module.exports = Zeppelin.ModelView.extend({
     }
   },
 
-  setPermission: function(permission) {
-    this.getElement('permission').attr('data-permission', permission);
-    this.model.save('permission', permission);
-    return this;
-  },
-
   removeCollaborator: function() {
     if (window.confirm('Are you sure you want to remove this invitation?')) {
       this.model.destroy();
     }
 
+    return this;
+  },
+
+  setPermission: function(permission) {
+    this.getElement('permission').attr('data-permission', permission);
+
+    this.getElement('permissionText')
+      .text('Can ' + (permission === 'write' ? 'edit' : 'view'));
+
+    this.model.save('permission', permission);
     return this;
   },
 

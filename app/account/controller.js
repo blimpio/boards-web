@@ -101,7 +101,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderBoard: function(board) {
-    var canEdit = App.Collaborators.current.canEdit();
+    var canEdit = App.BoardCollaborators.current.canEdit();
 
     this.getLayout('comments').remove();
     this.getLayout('content').closeCardDetail();
@@ -113,7 +113,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   showCurrentBoard: function() {
-    var canEdit = App.Collaborators.current.canEdit();
+    var canEdit = App.BoardCollaborators.current.canEdit();
 
     this.getLayout('main').enableFileUploader();
     this.getLayout('content').showBoardDetail(App.Boards.current, canEdit);
@@ -135,16 +135,24 @@ module.exports = Zeppelin.Controller.extend({
   fetchCollaborators: function(board) {
     board = board.id || App.Boards.current.id;
 
-    App.Collaborators.fetch({
-      data: {board: board},
-      reset: true
-    }).done(this.onCollaboratorsFetch);
+    $.when(
+      App.AccountCollaborators.fetch({
+        reset: true
+      }),
+
+      App.BoardCollaborators.fetch({
+        data: {board: board},
+        reset: true
+      })
+    ).done(this.onCollaboratorsFetch);
 
     return this;
   },
 
   onCollaboratorsFetch: function() {
-    App.Collaborators.current = App.Collaborators.getCollaborator(App.User.id);
+    App.BoardCollaborators.current = App.BoardCollaborators.getCollaborator(App.User.id);
+    App.AccountCollaborators.current = App.AccountCollaborators.getCollaborator(App.User.id);
+
     this.renderBoard(App.Boards.current);
     this.fetchCards(App.Boards.current);
     this.getLayout('shareBoard').renderSettings(App.Boards.current);
@@ -162,7 +170,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardsFetch: function(response) {
-    var canEdit = App.Collaborators.current.canEdit(),
+    var canEdit = App.BoardCollaborators.current.canEdit(),
         currentCard;
 
     if (this.firstLoad) this.listen();
@@ -206,8 +214,8 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderCard: function(card) {
-    var creator = App.Collaborators.getCollaborator(card.get('created_by')),
-        canEdit = App.Collaborators.current.canEdit();
+    var creator = App.BoardCollaborators.getCollaborator(card.get('created_by')),
+        canEdit = App.BoardCollaborators.current.canEdit();
 
     creator = {
       name: creator.getName(),
@@ -241,7 +249,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCommentsFetch: function(response) {
-    App.Comments.addCreatorsData(App.Collaborators.getCollaborators(
+    App.Comments.addCreatorsData(App.BoardCollaborators.getCollaborators(
       _.unique(App.Comments.pluck('created_by'))
     ));
 

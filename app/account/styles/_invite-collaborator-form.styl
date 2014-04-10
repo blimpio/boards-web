@@ -4,14 +4,13 @@
   padding: 15px;
 
   [data-action="addInvitationRow"] {
-    padding-left: 0;
-    padding-right: 0;
+    padding: 5px 0 0 0;
   }
 }
 
 .invite-collaborator-title {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .invite-collaborator-rows {
@@ -20,6 +19,7 @@
 
 .invite-collaborator-row {
   margin-bottom: 15px;
+  position: relative;
 
   &:first-child {
     [data-action="removeCollaborator"] {
@@ -34,4 +34,8 @@
   .collaborator-permissions {
     padding: 0;
   }
+}
+
+.invite-collaborator-actions {
+  margin-top: 15px;
 }

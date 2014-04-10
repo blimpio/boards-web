@@ -18,7 +18,7 @@ module.exports = Z.Layout.extend({
   events: {
     'click [data-action=hide]': 'hide',
     'shown.bs.modal #share-board-modal': 'onShown',
-    'hidden.bs.modal #share-board-modal': 'stopListeningToAjax'
+    'hidden.bs.modal #share-board-modal': 'onHidden'
   },
 
   elements: {
@@ -27,7 +27,7 @@ module.exports = Z.Layout.extend({
   },
 
   initialize: function() {
-    _.bindAll(this, ['onShown', 'onAjaxSuccess', 'onAjaxError']);
+    _.bindAll(this, ['onShown', 'onHidden', 'onAjaxSuccess', 'onAjaxError']);
   },
 
   hide: function() {
@@ -60,6 +60,11 @@ module.exports = Z.Layout.extend({
   onShown: function() {
     this.listenToAjax();
     this.getRegion('toggleForm').view.focusOnShareUrl();
+  },
+
+  onHidden: function() {
+    this.stopListeningToAjax();
+    this.getRegion('inviteForm').view.reset();
   },
 
   onAjaxSuccess: function() {

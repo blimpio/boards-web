@@ -10,7 +10,7 @@ module.exports = Zeppelin.CollectionView.extend({
   },
 
   collection: function() {
-    return App.Collaborators;
+    return App.BoardCollaborators;
   }
 });
 

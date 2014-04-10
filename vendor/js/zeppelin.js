@@ -1880,7 +1880,6 @@
         this.listenTo(this.collection, 'add', this._onAdd);
         this.listenTo(this.collection, 'reset', this._onReset);
         this.listenTo(this.collection, 'remove', this._onRemove);
-        this.listenTo(this.collection, 'request', this._onRequest);
       }
 
       this._isFirstCollection = false;
@@ -2118,10 +2117,6 @@
     _onRemove: function (model) {
       this.removeItem(model);
       return this;
-    },
-
-    _onRequest: function () {
-      if (this.loadingTemplate) this.render(this.loadingTemplate);
     }
   });
 

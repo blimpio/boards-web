@@ -1,14 +1,8 @@
 module.exports = Zeppelin.Collection.extend({
-  url: '/api/boards/collaborators/',
-
   model: require('core/models/collaborator'),
 
-  subscriptions: {
-    'collaborators:collaborator': 'respondWithCollaborator'
-  },
-
-  respondWithCollaborator: function(id, channel) {
-    this.broadcast(channel, this.getCollaborator(id));
+  comparator: function(collaborator) {
+    return collaborator.get('date_created');
   },
 
   getCollaborator: function(id) {
@@ -28,7 +22,7 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   invite: function(collaborators) {
-    $.post(this.url, JSON.stringify(collaborators)).done(_.bind(function(response) {
+    return $.post(this.url, JSON.stringify(collaborators), _.bind(function(response) {
       this.add(response);
     }, this));
   }

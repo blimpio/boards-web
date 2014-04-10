@@ -75,7 +75,7 @@ module.exports = Zeppelin.Controller.extend({
   fetchCollaborators: function(board) {
     board = board || this.board.id;
 
-    App.Collaborators.fetch({
+    App.BoardCollaborators.fetch({
       data: {board: board},
       reset: true
     });
@@ -112,7 +112,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   renderCard: function(card) {
-    var creator = App.Collaborators.getCollaborator(card.get('created_by'));
+    var creator = App.BoardCollaborators.getCollaborator(card.get('created_by'));
 
     creator = {
       name: creator.getFullName(),
@@ -140,7 +140,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCommentsFetch: function(response) {
-    App.Comments.addCreatorsData(App.Collaborators.getCollaborators(
+    App.Comments.addCreatorsData(App.BoardCollaborators.getCollaborators(
       _.unique(App.Comments.pluck('created_by'))
     ));
 

@@ -1,7 +1,7 @@
 <div class="invite-collaborator-row form-inline">
-  <div class="form-group">
+  <div class="invite-collaborator-input-wrapper form-group">
     <input name="invitee" type="text" class="form-control" placeholder="e.g. name@example.com">
-  </div> {{! .form-group }}
+  </div> {{! .invite-collaborator-input-wrapper }}
 
   <div class="form-group">
     <div class="collaborator-permissions dropdown pull-right" data-permission="read">
@@ -18,4 +18,8 @@
   <div class="form-group">
     <button type="button" class="close pull-right" data-action="removeCollaborator">&times;</button>
   </div> {{! .form-group }}
+
+  <div class="collaborator-suggestions list-group">
+    <div class="collaborator-suggestions-list"></div>
+  </div> {{! .collaborator-suggestions }}
 </div> {{! .invite-collaborator-row }}

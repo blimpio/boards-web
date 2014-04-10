@@ -69,6 +69,13 @@ _.mixin({'markdown': function(text) {
   return parser(text);
 }});
 
+_.mixin({'isLetterKey': function(key) {
+  var notAllowed = [8, 9, 13, 16, 17, 18, 19, 20, 27, 33, 34,
+  35, 36, 37, 38, 39, 40, 45, 46];
+
+  return _.indexOf(notAllowed, key) === -1;
+}});
+
 $(document).on('click', '[data-route=true]', function(event) {
   if (!event.metaKey) {
     event.preventDefault();

@@ -1,0 +1,11 @@
+{{#each collaborators}}
+  {{#if user}}
+    <a href="#" class="collaborator-suggestion list-group-item" data-id="{{user.id}}" data-name="{{user.first_name}} {{user.last_name}}">
+      <img src="{{user.gravatar_url}}" class="collaborator-avatar">
+      <span class="collaborator-name">
+        {{user.first_name}} {{user.last_name}} <small class="collaborator-username text-muted">{{user.username}}</small>
+      </span> {{! .collaborator-name }}
+    </a> {{! .collaborator-suggestion }}
+  {{/if}}
+{{/each}}
+
