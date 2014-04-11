@@ -1,5 +1,4 @@
-var signupSteps = ['choose-email', 'validate-name', 'validate-account',
-'validate-domain', 'validate-invites', 'validate-username', 'validate-password'];
+var signupSteps = ['choose-email', 'validate-username', 'validate-password'];
 
 module.exports = Zeppelin.Controller.extend({
   name: 'Signup',

@@ -19,7 +19,7 @@ module.exports = RequestSignupForm.extend({
   },
 
   choose: function() {
-    this.model.updateSignupStep('validate-name');
+    this.model.updateSignupStep('validate-username');
     this.broadcast('signup:stepPassed');
   },
 

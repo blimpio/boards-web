@@ -68,20 +68,6 @@ module.exports = Person.extend({
       if (!lastName && this.has('token')) {
         return 'Your last name is required.';
       }
-    },
-
-    full_name: function(name) {
-      var isCurrentStep = this.get('signup_step') === 'validate-name';
-      if ((!name || !name.split(' ')[1]) && isCurrentStep) {
-        return 'Your full name is required to authenticate you.';
-      }
-    },
-
-    account_name: function(account) {
-      var isCurrentStep = this.get('signup_step') === 'validate-account';
-      if (!this.get('is_invite') && isCurrentStep && !account) {
-        return 'An account name is required to authenticate you.';
-      }
     }
   },
 
