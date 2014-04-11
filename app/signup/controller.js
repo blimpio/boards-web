@@ -57,7 +57,7 @@ module.exports = Zeppelin.Controller.extend({
 
     if (token) {
       App.User.setEmailFromInviteJWT(token);
-      App.User.updateSignupStep('validate-name');
+      App.User.updateSignupStep('validate-username');
       this.renderStep();
     } else {
       this.broadcast('router:navigate', '');
