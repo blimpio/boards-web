@@ -8,6 +8,11 @@ module.exports = Collaborators.extend({
     'boardCollaborators:collaborator': 'respondWithCurrentCollaboratorData'
   },
 
+  setUrl: function(id) {
+    this.url = '/api/boards/' + id + '/collaborators/';
+    return this;
+  },
+
   respondWithCurrentUserData: function(channel) {
     this.broadcast(channel, this.current ? this.current.get('user_data') : null);
   },

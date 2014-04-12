@@ -74,8 +74,9 @@ module.exports = Zeppelin.Controller.extend({
   fetchCollaborators: function(board) {
     board = board || this.board.id;
 
+    App.BoardCollaborators.setUrl(board);
+
     return App.BoardCollaborators.fetch({
-      data: {board: board},
       reset: true,
       success: this.onCollaboratorsFetch
     });
