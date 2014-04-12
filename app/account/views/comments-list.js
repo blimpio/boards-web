@@ -5,10 +5,6 @@ module.exports = Zeppelin.CollectionView.extend({
 
   itemView: require('account/views/comment'),
 
-  loadingTemplate: function() {
-    return 'Fetching comments...';
-  },
-
   emptyTemplate: require('account/templates/empty-comments'),
 
   collection: function() {

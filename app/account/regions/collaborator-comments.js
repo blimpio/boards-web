@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: 'div.collaborator-comments',
+  el: '#collaborator-comments',
 
   view: require('account/views/comments-list'),
 

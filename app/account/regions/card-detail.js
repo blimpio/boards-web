@@ -1,22 +1,16 @@
-var NoteDetail = require('account/views/note-detail'),
-    FileDetail = require('account/views/file-detail');
-
 module.exports = Z.Region.extend({
-  el: 'div.card-detail-left',
+  el: '#card-detail-left',
 
   showDetail: function(card) {
-    var detailView;
+    var DetailView;
 
-    switch (card.get('type')) {
-      case 'note':
-        detailView = NoteDetail;
-        break;
-      case 'file':
-        detailView = FileDetail;
-        break;
+    if (card.get('type') === 'note') {
+      DetailView = require('account/views/note-detail');
+    } else if (card.get('type') === 'file') {
+      DetailView = require('account/views/file-detail');
     }
 
-    if (detailView) this.setView(detailView, {model: card}).show();
+    this.setView(DetailView, {model: card}).show();
     return this;
   }
 });

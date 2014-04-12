@@ -1,7 +1,3 @@
-var ShareToggleForm = require('account/views/share-board-toggle'),
-    CollaboratorsList = require('account/views/edit-collaborators-list'),
-    InviteCollaboratorsForm = require('account/views/invite-collaborators-form');
-
 module.exports = Z.Layout.extend({
   el: '#share-board',
 
@@ -45,16 +41,18 @@ module.exports = Z.Layout.extend({
     $(document).off('ajaxSuccess');
   },
 
-  renderSettings: function(board) {
-    this.getRegion('toggleForm').setView(ShareToggleForm, {
+  showSettings: function(board) {
+    this.getRegion('toggleForm').showForm({
       model: board
-    }).show();
+    });
 
-    this.getRegion('inviteForm').setView(InviteCollaboratorsForm, {
+    this.getRegion('inviteForm').showForm({
       board: board.id
-    }).show();
+    });
 
-    this.getRegion('collaborators').setView(CollaboratorsList).show();
+    if (!this.getRegion('collaborators').isShown()) {
+      this.getRegion('collaborators').show();
+    }
   },
 
   onShown: function() {

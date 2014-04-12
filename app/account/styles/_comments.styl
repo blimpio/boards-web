@@ -8,8 +8,14 @@
   }
 }
 
-.collaborator-comments {
+#collaborator-comments {
+  min-height: 150px;
+
   &.is-loading {
-    text-align: center;
+    background: url('../images/loading-content.gif') no-repeat center center;
+
+    .comments-list {
+      display: none !important;
+    }
   }
 }

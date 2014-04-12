@@ -8,6 +8,11 @@ module.exports = Zeppelin.Collection.extend({
     'user:signin:success': 'populateAccountsFromUser'
   },
 
+  setCurrent: function(slug) {
+    this.current = _.first(this.where({slug: slug}));
+    return this;
+  },
+
   sendCurrent: function(channel) {
     this.broadcast(channel, this.current);
   },

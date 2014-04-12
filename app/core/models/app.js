@@ -15,6 +15,6 @@ module.exports = Zeppelin.Model.extend({
   },
 
   onBoardSelected: function(board) {
-    this.saveCurrent('board', board.attributes);
+    this.saveCurrent('board', board.id);
   }
 });

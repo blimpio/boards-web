@@ -1,26 +1,34 @@
-.account-page {
+#account-page {
+  height: 100%;
+  width: 100%;
+
   &.is-loading {
-    .main {
+    background: url('../images/loading-content.gif') no-repeat center center #FFFFFF;
+
+    #header,
+    #account-page-content {
       display: none;
     }
+  }
+}
 
-    .main-loading {
-      display: block;
+#account-page-content-wrapper {
+  height: 100%;
+  width: 100%;
+
+  &.is-loading {
+    background: url('../images/loading-content.gif') no-repeat center center #FFFFFF;
+
+    #account-page-sidebar,
+    #account-page-content {
+      display: none;
     }
   }
-
-  .main {
-    padding: 0 1.5%;
-    overflow: hidden;
-  }
-
-  .main-loading {
-    display: none;
-  }
-
-  @import '_content'
-  @import '_content-header'
 }
+
+@import '_sidebar'
+@import '_content'
+@import '_content-header'
 
 @import '_card'
 @import '_board'

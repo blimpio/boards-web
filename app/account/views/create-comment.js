@@ -14,7 +14,7 @@ module.exports = Zeppelin.FormView.extend({
 
   context: function() {
     return {
-      creator: this.options.creator
+      creator: this.options.user
     }
   },
 
@@ -28,7 +28,7 @@ module.exports = Zeppelin.FormView.extend({
 
   prepareModel: function() {
     this.setModel(require('core/models/comment'));
-    this.model.set('card', this.options.cardId);
+    this.model.set('card', this.options.card);
     return this;
   },
 

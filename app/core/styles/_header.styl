@@ -1,6 +1,12 @@
-.header {
+#header {
+  background: #FFFFFF;
   border-bottom: 1px solid #EDEDED;
-  padding: 10px 0;
+  left: 0;
+  padding: 15px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
 
   .navigation {
     &.pull-left {
@@ -9,6 +15,12 @@
 
     margin: 0 0 0 15px;
     padding: 6px 0 6px 10px;
+  }
+
+  .navigation-item-link {
+    &.is-selected {
+      color: #000000;
+    }
   }
 
   .navigation-item-text {

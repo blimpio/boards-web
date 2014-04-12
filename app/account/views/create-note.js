@@ -19,7 +19,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   initialize: function() {
-    $('#createNoteModal').on('hide.bs.modal', _.bind(function() {
+    $('#create-note-modal').on('hide.bs.modal', _.bind(function() {
       this.closePreview();
       this.reset();
     }, this));
@@ -36,7 +36,7 @@ module.exports = Zeppelin.FormView.extend({
   close: function() {
     this.closePreview();
     this.reset();
-    $('#createNoteModal').modal('hide');
+    $('#create-note-modal').modal('hide');
   },
 
   preview: function() {
@@ -67,7 +67,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onUnplug: function() {
-    $('#createNoteModal').off('hide.bs.modal');
+    $('#create-note-modal').off('hide.bs.modal');
   }
 });
 

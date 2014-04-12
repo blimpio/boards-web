@@ -1,33 +1,33 @@
-<div class="account-page is-public is-loading">
-  {{partial "core/templates/loader" "Loading App"}}
-  <div class="main">
-    <div class="header clearfix">
-      <div class="current-account pull-left"></div>
-      <div class="user-dropdown-wrapper pull-right"></div>
-    </div> {{! .header }}
-    <div class="content-wrapper boards-full-width clearfix">
-      <div class="sidebar">
-        <div class="create-board-wrapper"></div>
-        <div class="boards-list-wrapper"></div>
-      </div> {{! .sidebar }}
-      <div class="content">
-        <div class="content-header-wrapper clearfix">
-          <div class="content-header"></div>
-        </div> {{! .content-header-wrapper }}
-        {{partial "public-board/templates/board-not-found"}}
-        <div class="cards-wrapper">
-          {{partial "core/templates/loader" "Fetching Cards"}}
-          {{partial "public-board/templates/empty-cards"}}
-          <div class="cards-list-wrapper"></div>
-          <div class="card-detail-wrapper row">
-            <div class="card-detail-left col-md-8"></div>
-            <div class="card-detail-right col-md-4">
-              <div class="card-detail-info-wrapper"></div>
-              <div id="comments-layout"></div>
-            </div> {{! .card-detail-right }}
-          </div> {{! .card-detail-wrapper }}
-        </div> {{! .cards-wrapper }}
-      </div> {{! .content }}
-    </div> {{! .content-wrapper }}
-  </div> {{! .main }}
-</div> {{! .account-page }}
+<div id="account-page" class="is-loading">
+  <div id="header" class="clearfix">
+    <div class="current-account pull-left"></div>
+    <div class="user-dropdown-wrapper pull-right"></div>
+  </div> {{! #header }}
+
+  <div id="account-page-content-wrapper" class="is-loading is-full-width">
+    <div id="account-page-content" class="is-loading">
+      <div id="cards-empty">
+        <h1 class="lead">This board is empty <br> <small>Start by creating a few cards</small></h1>
+        <p class="text-muted">Drop files here</p>
+        <div class="form-inline">
+          <button type="button" data-action="createFirstFile" class="btn btn-default">Choose Files</button>
+          <label>or</label>
+          <button type="button" data-action="createFirstNote" class="btn btn-default">Create Note</button>
+        </div> {{! .form-inline }}
+      </div> {{! .empty-cards }}
+
+      <div id="account-page-header"></div>
+      <div id="cards-list-container"></div>
+
+      <div id="card-detail-container" class="row">
+        <div id="card-detail-left" class="col-md-8"></div>
+        <div id="card-detail-right" class="col-md-4">
+          <div id="card-detail-info-container"></div>
+          <div id="card-detail-comments"></div>
+        </div> {{! .card-detail-right }}
+      </div> {{! #card-detail-container }}
+    </div> {{! #account-page-content }}
+  </div> {{! #account-page-content-wrapper }}
+
+  <div id="settings"></div>
+</div> {{! #account-page }}

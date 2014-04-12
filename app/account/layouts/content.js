@@ -1,11 +1,13 @@
 module.exports = Z.Layout.extend({
-  el: 'div.content',
+  el: '#account-page-content',
 
   regions: {
-    cardsList: require('account/regions/cards-list'),
-    cardDetail: require('account/regions/card-detail'),
-    contentHeader: require('account/regions/content-header'),
-    cardDetailInfo: require('account/regions/card-detail-info')
+    cards: require('account/regions/cards-list'),
+    header: require('account/regions/content-header'),
+    detail: require('account/regions/card-detail'),
+    detailInfo: require('account/regions/card-detail-info'),
+    createNote: require('account/regions/create-note'),
+    fileUploader: require('account/regions/file-uploader')
   },
 
   events: {
@@ -14,38 +16,89 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
-    cardsWrapper: 'div.cards-wrapper'
+    cardDetail: '#card-detail-container'
   },
 
-  setHeight: function() {
-    this.$el.height($(document).height() - 52);
+  toggleLoadingContentState: function() {
+    this.$el.toggleClass('is-loading');
     return this;
   },
 
-  toggleLoadingCardsState: function() {
-    this.getElement('cardsWrapper').toggleClass('is-loading');
+  toggleEmptyCardsState: function(hasNoCards) {
+    this.$el.removeClass('is-loading');
+    this.$el.toggleClass('is-empty', hasNoCards);
     return this;
   },
 
-  toggleEmptyCardsState: function(hasCards) {
-    this.getElement('cardsWrapper').removeClass('is-loading');
-    this.getElement('cardsWrapper').toggleClass('has-no-cards', hasCards);
+  showCards: function(options) {
+    if (this.getRegion('detail').isShown()) {
+      this.closeCard();
+    } else {
+      this.showFileUploader({
+        board: options.board.attributes
+      });
+
+      this.showCreateNoteModal({
+        board: options.board.attributes
+      });
+
+      this.toggleLoadingContentState();
+    }
+
+    this.getRegion('header').showBoard(options.canEdit, {
+      model: options.board
+    });
+
+    if (this.getRegion('cards').isShown()) {
+      this.getRegion('cards').$el.show();
+      if (options.triggerLayout) this.getRegion('cards').view.triggerLayout();
+    } else {
+      this.getRegion('cards').showList(options.canEdit);
+    }
+
     return this;
   },
 
-  showBoardDetail: function(board, canEdit) {
-    var BoardDetail = canEdit
-      ? require('account/views/board-detail')
-      : require('public-board/views/board-detail');
+  showCard: function(options) {
+    if (this.getRegion('cards').isShown()) {
+      this.getRegion('cards').$el.hide();
+    }
 
-    this.getRegion('contentHeader').setView(BoardDetail, {model: board}).show();
+    this.getElement('cardDetail').show();
+
+    this.getRegion('header').showCard(options.canEdit, {
+      model: options.card,
+      boardUrl: options.board.getUrl(),
+      boardName: options.board.get('name')
+    });
+
+    this.getRegion('detail').showDetail(options.card);
+
+    this.getRegion('detailInfo').showDetailInfo({
+      card: options.card,
+      canEdit: options.canEdit
+    });
+
+    this.getRegion('fileUploader').disable();
+
     return this;
   },
 
-  closeBoardDetail: function() {
-    this.closeRegion('cardsList');
-    this.closeRegion('contentHeader');
-    this.getElement('cardsWrapper').removeClass('has-no-cards');
+  closeCard: function() {
+    this.closeRegion('detail');
+    this.closeRegion('detailInfo');
+    this.getElement('cardDetail').hide();
+    this.getRegion('fileUploader').enable();
+    return this;
+  },
+
+  showFileUploader: function(options) {
+    this.getRegion('fileUploader').showUploader(options);
+    return this;
+  },
+
+  showCreateNoteModal: function(options) {
+    this.getRegion('createNote').showModal(options);
     return this;
   },
 
@@ -54,57 +107,6 @@ module.exports = Z.Layout.extend({
   },
 
   onCreateFirstNoteClick: function() {
-    $('#createNoteModal').modal('show');
-  },
-
-  showCards: function(canEdit) {
-    this.closeCardDetail();
-
-    if (!this.getRegion('cardsList').isShown()) {
-      this.getRegion('cardsList').showList(canEdit);
-    } else {
-      this.getRegion('cardsList').view.$el.show();
-    }
-
-    return this;
-  },
-
-  showCardDetail: function(card, board, creator, canEdit) {
-    var CardDetailInfo = canEdit
-      ? require('account/views/card-detail-info')
-      : require('public-board/views/card-detail-info'),
-
-        CardDetailActions = canEdit
-          ? require('account/views/card-detail-actions')
-          : require('public-board/views/card-detail-actions');
-
-    if (this.getRegion('cardsList').isShown()) {
-      this.getRegion('cardsList').view.$el.hide();
-    }
-
-    this.getRegion('contentHeader').setView(CardDetailActions, {
-      model: card,
-      boardUrl: board.getUrl(),
-      boardName: board.get('name')
-    }).show();
-
-    this.getRegion('cardDetail').showDetail(card);
-
-    this.getRegion('cardDetailInfo').setView(CardDetailInfo, {
-      model: card,
-      creator: creator
-    }).show();
-
-    return this;
-  },
-
-  closeCardDetail: function() {
-    this.closeRegion('cardDetail');
-    this.closeRegion('cardDetailInfo');
-    return this;
-  },
-
-  cardDetailIsShow: function() {
-    return this.getRegion('cardDetail').isShown();
+    $('#create-note-modal').modal('show');
   }
 });

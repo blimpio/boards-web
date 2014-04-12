@@ -7,143 +7,167 @@ module.exports = Zeppelin.Controller.extend({
   layouts: {
     main: require('public-board/layouts/main'),
     content: require('public-board/layouts/content'),
-    comments: require('account/layouts/comments')
+    comments: require('account/layouts/comments'),
+    settings: require('settings/layouts/main')
   },
 
   firstLoad: true,
 
   subscriptions: {
-    'cardDetail:closed': 'showCurrentBoard'
+    'cardDetail:closed': 'onCardDetailClose'
   },
 
   initialize: function() {
     _.bindAll(this, ['onAccountFetch', 'onBoardFetch',
-    'onCardsFetch', 'onCommentsFetch']);
+    'onCollaboratorsFetch', 'onCardsFetch', 'onCommentsFetch']);
 
     this.board = new Board({id: App.PUBLIC_BOARD.id});
     this.account = new Account({id: App.PUBLIC_BOARD.account});
 
     this.getLayout('main').render();
-    this.getLayout('content').setElement('div.content').setHeight();
 
-    this.fetchAccount();
-    this.fetchBoard();
+    if (App.User.isSignedIn()) {
+      this.getLayout('settings').setElement('#settings').render();
+    }
+
+    this.fetchAccount(this.account);
   },
 
   listen: function() {
-    this.listenTo(App.Cards, 'change:current', this.renderCard);
+    this.listenTo(App.Cards, 'change:current', this.onCardSelected);
   },
 
   fetchAccount: function(account) {
     account = account || this.account;
-    account.fetch().done(this.onAccountFetch);
-    return this;
+
+    return account.fetch({
+      success: this.onAccountFetch
+    });
   },
 
-  onAccountFetch: function(response) {
+  onAccountFetch: function() {
     App.Accounts.current = this.account;
-    this.getLayout('main').toggleLoadingMainState().renderHeader(this.account);
+
+    if (App.Accounts.current.id) {
+      this.getLayout('main')
+        .renderHeader(this.account)
+        .toggleLoadingContentState();
+
+      this.fetchBoard(this.board);
+    }
   },
 
   fetchBoard: function(board) {
     board = board || this.board;
-    board.fetch().done(this.onBoardFetch);
-    return this;
+
+    return board.fetch({
+      success: this.onBoardFetch
+    });
   },
 
-  onBoardFetch: function(response) {
+  onBoardFetch: function() {
     App.Boards.add(this.board);
     App.Boards.current = this.board;
-
     this.fetchCollaborators(this.board.id);
-    this.fetchCards(this.board.id);
-
-    this.getLayout('main').toggleEmptyBoardState(false);
-
-    if (!this.options.card) {
-      this.getLayout('content').renderBoardDetail(this.board);
-    }
-  },
-
-  showCurrentBoard: function() {
-    this.getLayout('comments').remove();
-    this.getLayout('content').closeCardDetail();
-    this.getLayout('content').renderBoardDetail(this.board);
-    this.getLayout('content').showCards();
   },
 
   fetchCollaborators: function(board) {
     board = board || this.board.id;
 
-    App.BoardCollaborators.fetch({
+    return App.BoardCollaborators.fetch({
       data: {board: board},
-      reset: true
+      reset: true,
+      success: this.onCollaboratorsFetch
     });
+  },
 
-    return this;
+  onCollaboratorsFetch: function() {
+    if (App.User.isSignedIn()) {
+      App.BoardCollaborators.setCurrent(App.User.id);
+    }
+
+    this.fetchCards(this.board.id);
   },
 
   fetchCards: function(board) {
     board = board || this.board.id;
 
-    App.Cards.fetch({
+    return App.Cards.fetch({
       data: {board: board},
-      reset: true
-    }).done(this.onCardsFetch);
-
-    return this;
+      reset: true,
+      success: this.onCardsFetch
+    });
   },
 
-  onCardsFetch: function(response) {
-    if (this.firstLoad) this.listen();
-    this.firstLoad = false;
+  onCardsFetch: function() {
+    if (this.firstLoad) {
+      this.firstLoad = false;
+      this.listen();
+      this.getLayout('content').setElement('#account-page-content');
+      this.getLayout('comments').setElement('#card-detail-comments').render();
+    }
 
-    this.getLayout('content').getRegion('cardsList').show();
-    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
+    this.getLayout('content').showCards({
+      board: this.board,
+      canEdit: false,
+    }).toggleEmptyCardsState(App.Cards.isEmpty());
 
     if (this.options.card) {
-      currentCard = App.Cards.where({slug: this.options.card})[0];
-
-      if (currentCard) {
-        App.Cards.current = currentCard;
-        App.Cards.current.select();
-      }
+      App.Cards.setCurrent(this.options.card);
+      App.Cards.current.select({navigate: false});
     }
   },
 
-  renderCard: function(card) {
-    var creator = App.BoardCollaborators.getCollaborator(card.get('created_by'));
-
-    creator = {
-      name: creator.getFullName(),
-      avatar: creator.get('gravatar_url')
-    };
-
-    this.getLayout('content').showCardDetail(card, App.Boards.current, creator);
-
-    this.getLayout('comments').options = {
+  onCardSelected: function(card) {
+    this.getLayout('content').showCard({
       card: card,
-      creator: creator,
-      isPublicBoard: App.Boards.current.get('is_shared')
-    };
+      board: this.board,
+      canEdit: false
+    });
 
-    this.getLayout('comments').setElement('div#comments-layout').render();
+    this.getLayout('comments').toggleLoadingState();
+    this.fetchComments(App.Cards.current.id);
+  },
 
-    this.fetchComments(card);
-    return this;
+  onCardDetailClose: function() {
+    this.options.card = null;
+
+    this.getLayout('content')
+      .closeCard()
+      .showCards({
+        board: this.board,
+        canEdit: false,
+        triggerLayout: true
+      }).toggleEmptyCardsState(App.Cards.isEmpty());
+  },
+
+  onCardAdded: function() {
+    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
+  },
+
+  onCardRemoved: function() {
+    if (this.getLayout('content').getRegion('detail').isShown()) {
+      this.broadcast('router:navigate', this.board.getUrl(), {
+        trigger: false
+      });
+
+      this.getLayout('content').showCards({
+        board: this.board,
+        canEdit: false,
+        triggerLayout: true
+      });
+    }
+
+    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
   },
 
   fetchComments: function(card) {
-    card = card.id || App.Card.current.id;
+    card = card || App.Card.current.id;
     App.Comments.fetchComments(card).done(this.onCommentsFetch);
     return this;
   },
 
-  onCommentsFetch: function(response) {
-    App.Comments.addCreatorsData(App.BoardCollaborators.getCollaborators(
-      _.unique(App.Comments.pluck('created_by'))
-    ));
-
+  onCommentsFetch: function() {
     this.getLayout('comments').showCollaboratorComments();
   }
 });

@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: 'div.create-board-wrapper',
+  el: '#create-board-container',
 
   view: require('account/views/create-board')
 });

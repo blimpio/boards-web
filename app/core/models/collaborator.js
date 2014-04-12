@@ -19,22 +19,22 @@ module.exports = Person.extend({
       });
     }
 
-    if (board.get('created_by') === this.get('user').id) return true;
+    if (board.get('created_by') === this.get('user')) return true;
 
     return false;
   },
 
   getName: function() {
     if (this.hasAccount()) {
-      return this.get('user').first_name + ' ' + this.get('user').last_name;
+      return this.get('user_data').first_name + ' ' + this.get('user_data').last_name;
     } else {
-      return this.get('invited_user').email;
+      return this.get('user_data').email;
     }
   },
 
   getAvatar: function() {
     if (this.hasAccount()) {
-      return this.get('user').gravatar_url;
+      return this.get('user_data').gravatar_url;
     } else {
       return '';
     }
@@ -42,7 +42,7 @@ module.exports = Person.extend({
 
   getUsername: function() {
     if (this.hasAccount()) {
-      return this.get('user').username;
+      return this.get('user_data').username;
     } else {
       return '';
     }

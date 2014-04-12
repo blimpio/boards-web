@@ -19,6 +19,11 @@ module.exports = Zeppelin.Collection.extend({
     }, this);
   },
 
+  setCurrent: function(slug) {
+    this.current = _.first(this.where({slug: slug}));
+    return this;
+  },
+
   onBoardCreated: function(board) {
     if (Z.Util.isModel(board)) {
       this.add(board);

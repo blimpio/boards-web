@@ -12,24 +12,23 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
-    accountPage: 'div.account-page',
-    currentAccount: 'div.current-account',
-    contentWrapper: 'div.content-wrapper'
+    page: '#account-page',
+    account: 'div.current-account',
+    content: '#account-page-content-wrapper'
   },
 
   toggleLoadingMainState: function() {
-    this.getElement('accountPage').toggleClass('is-loading');
+    this.getElement('page').toggleClass('is-loading');
     return this;
   },
 
-  toggleEmptyBoardState: function(boardExists) {
-    this.getElement('contentWrapper').removeClass('is-loading');
-    this.getElement('contentWrapper').toggleClass('board-not-found', boardExists);
+  toggleLoadingContentState: function() {
+    this.getElement('content').toggleClass('is-loading');
     return this;
   },
 
   renderAccount: function(account) {
-    this.getElement('currentAccount').html(
+    this.getElement('account').html(
       this.renderTemplate(this.currentAccountTemplate, account.attributes)
     );
 
@@ -37,6 +36,7 @@ module.exports = Z.Layout.extend({
   },
 
   renderHeader: function(account) {
+    this.toggleLoadingMainState();
     this.renderAccount(account);
     this.showRegion('userDropdown');
     return this;

@@ -4,10 +4,15 @@ module.exports = Collaborators.extend({
   url: '/api/boards/collaborators/',
 
   subscriptions: {
-    'boardCollaborators:collaborators': 'respondWithCollaborators'
+    'boardCollaborators:current': 'respondWithCurrentUserData',
+    'boardCollaborators:collaborator': 'respondWithCurrentCollaboratorData'
   },
 
-  respondWithCollaborators: function(channel) {
-    this.broadcast(channel, this.toJSON());
+  respondWithCurrentUserData: function(channel) {
+    this.broadcast(channel, this.current ? this.current.get('user_data') : null);
+  },
+
+  respondWithCurrentCollaboratorData: function(channel, id) {
+    this.broadcast(channel, this.getCollaboratorData(id));
   }
 });

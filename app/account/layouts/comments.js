@@ -1,7 +1,7 @@
 var CreateComment = require('account/views/create-comment');
 
 module.exports = Z.Layout.extend({
-  el: 'div.comments-layout',
+  el: '#card-detail-comments',
 
   keepEl: true,
 
@@ -22,33 +22,32 @@ module.exports = Z.Layout.extend({
     currentCommentsType: 'span.current-comments-type'
   },
 
-  context: function() {
-    return {
-      isPublicBoard: this.options.isPublicBoard
-    };
+  toggleLoadingState: function() {
+    this.getRegion('collaboratorComments').toggleLoadingState();
+    return this;
   },
 
-  renderCommentForm: function() {
+  showComments: function(options) {
+    this.getRegion('createComment').showForm({
+      card: options.card,
+      user: options.user
+    });
+
+    this.showCollaboratorComments();
+    return this;
+  },
+
+  showCommentForm: function() {
     this.getRegion('createComment').setView(CreateComment, {
       cardId: this.options.card.id,
       creator: this.options.currentUser
     }).show();
-  },
 
-  onCommentsToggleClick: function(event) {
-    event.preventDefault();
-
-    if ($(event.currentTarget).data('comments') === 'public') {
-      this.getElement('currentCommentsType').text('Comments from public');
-      this.showPublicComments();
-    } else {
-      this.getElement('currentCommentsType').text('Comments from collaborators');
-      this.showCollaboratorComments();
-    }
+    return this;
   },
 
   renderCollaboratorComments: function() {
-    this.getRegion('collaboratorComments').toggleLoadingState().show();
+    this.getRegion('collaboratorComments').show();
     return this;
   },
 
@@ -60,6 +59,9 @@ module.exports = Z.Layout.extend({
     if (!this.getRegion('collaboratorComments').isShown()) {
       this.renderCollaboratorComments();
     }
+
+    this.toggleLoadingState();
+    return this;
   },
 
   renderPublicComments: function() {
@@ -84,5 +86,17 @@ module.exports = Z.Layout.extend({
   openAccountSettings: function() {
     this.broadcast('settings:accounts:open');
     return this;
+  },
+
+  onCommentsToggleClick: function(event) {
+    event.preventDefault();
+
+    if ($(event.currentTarget).data('comments') === 'public') {
+      this.getElement('currentCommentsType').text('Comments from public');
+      this.showPublicComments();
+    } else {
+      this.getElement('currentCommentsType').text('Comments from collaborators');
+      this.showCollaboratorComments();
+    }
   }
 });

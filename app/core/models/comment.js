@@ -1,12 +1,21 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
-    return {
-      created_by: App.User.id,
+    var author;
+
+    this.request('boardCollaborators:current', function(collaborator) {
+      author = collaborator;
+    });
+
+    return author ? {
+      author: author,
+      created_by: author.id,
       date_created: _.now()
-    }
+    } : {
+      date_created: _.now()
+    };
   },
 
-  localAttributes: ['card', 'creator'],
+  localAttributes: ['card', 'author'],
 
   validations: {
     content: {
@@ -20,5 +29,13 @@ module.exports = Zeppelin.Model.extend({
         newUrl = '/api/cards/' + this.get('card') + '/comments/';
 
     return this.isNew() ? newUrl : url;
-  }
+  },
+
+  initialize: function() {
+    if (!this.isNew()) {
+      this.request('boardCollaborators:collaborator', this.get('created_by'), function(author) {
+        this.set('author', author);
+      });
+    }
+  },
 });

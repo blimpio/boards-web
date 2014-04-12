@@ -5,20 +5,20 @@ module.exports = Zeppelin.Collection.extend({
     return collaborator.get('date_created');
   },
 
-  getCollaborator: function(id) {
-    return this.find(function(collaborator) {
-      return collaborator.hasAccount() && collaborator.get('user').id === id;
+  setCurrent: function(id) {
+    this.current = this.find(function(collaborator) {
+      return collaborator.get('user') === id;
     });
+
+    return this;
   },
 
-  getCollaborators: function(ids) {
-    var collaborators = [];
+  getCollaboratorData: function(id) {
+    var collaborator = this.find(function(collaborator) {
+      return collaborator.get('user') === id;
+    });
 
-    _.forEach(ids, function(id) {
-      collaborators.push(this.getCollaborator(id));
-    }, this);
-
-    return _.compact(collaborators);
+    return collaborator ? collaborator.get('user_data') : {};
   },
 
   invite: function(collaborators) {

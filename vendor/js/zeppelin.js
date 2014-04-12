@@ -196,7 +196,7 @@
       this.subscribeToOnce(responseChannel, callback);
 
       if (arguments.length === 3 && data !== undefined) {
-        this.broadcast(request, data, responseChannel);
+        this.broadcast(request, responseChannel, data);
       } else {
         this.broadcast(request, responseChannel);
       }

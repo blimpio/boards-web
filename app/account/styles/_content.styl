@@ -1,102 +1,204 @@
-.content-wrapper {
-  &.is-loading {
-    .sidebar,
-    .content {
+#account-page-content-wrapper {
+  &.is-empty {
+    background: url('../images/empty.png') repeat center center #FFFFFF;
+
+    #boards-empty {
+      display: block !important;
+    }
+
+    #account-page-sidebar,
+    #account-page-content {
+      display: none !important;
+    }
+  }
+
+  &.is-full-width {
+    #account-page-sidebar {
       display: none;
     }
 
-    .boards-loading {
-      display: block;
-    }
-  }
-
-  &.has-no-boards,
-  &.boards-full-width {
-    .sidebar {
-      margin-left: -18%;
+    #account-page-header {
+      padding: 78px 15px 15px 15px;
     }
 
-    .content {
-      padding-left: 0;
-      width: 100%;
-    }
-
-    .cards-list {
-      max-width: 100%;
-      padding: 0 10px;
-    }
-  }
-
-  &.has-no-boards {
-    .empty-boards,
-    .board-not-found {
-      display: block;
+    #cards-list-container,
+    #card-detail-container {
+      padding: 150px 15px 15px 15px;
     }
   }
 }
 
-.cards-wrapper {
-  position: relative;
+#account-page-content {
+  height: 100%;
+  width: 100%;
 
   &.is-loading {
-    .empty-cards,
-    .cards-list-wrapper,
-    .card-detail-wrapper {
-      display: none;
-    }
+    background: url('../images/loading-content.gif') no-repeat center center #FFFFFF;
 
-    .cards-loading {
-      display: block;
+    #account-page-header,
+    #cards-list-container,
+    #card-detail-container {
+      display: none !important;
     }
   }
 
-  &.has-no-cards {
-    .empty-cards {
-      display: block;
+  &.is-empty {
+    background: url('../images/empty.png') repeat 0 70px #FFFFFF;
+
+    #cards-empty {
+      display: block !important;
     }
 
-    .card-detail-wrapper,
-    .card-detail-wrapper {
-      display: none;
+    #account-page-header,
+    #cards-list-container,
+    #card-detail-container {
+      display: none !important;
     }
   }
 }
 
-.sidebar {
+#cards-list-container,
+#card-detail-container {
   height: 100%;
-  float: left;
-  width: 15%;
-  z-index: 10;
+  width: 100%;
 }
 
-.content {
-  height: 100%;
-  float: left;
-  padding-left: 15px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: 85%;
-}
-
-.empty-cards,
-.empty-boards,
-.cards-loading,
-.boards-loading,
-.board-not-found {
+#cards-empty,
+#boards-empty {
   display: none;
-  padding-top: 12%;
-}
-
-.empty-cards,
-.empty-boards,
-.board-not-found {
+  height: 155px;
+  left: 50%;
+  margin: -77px 0 0 -187px;
+  position: absolute;
   text-align: center;
+  top: 50%;
+  width: 375px;
 
-  > .lead {
+  h1 {
     font-size: 32px;
+    margin: 0 auto 25px;
   }
 }
 
-.empty-cards label {
-  margin: 0 8px;
+#cards-empty {
+  height: 185px;
+  margin: -92px 0 0 -40px;
+  width: 280px;
+
+  h1 {
+    margin: 0 auto;
+  }
+
+  p {
+    font-size: 18px;
+    margin: 15px auto 20px;
+  }
+
+  label {
+    margin: 0 8px;
+  }
 }
+
+
+// .content-wrapper {
+//   &.is-loading {
+//     #account-page-sidebar,
+//     .content {
+//       display: none;
+//     }
+
+//     .boards-loading {
+//       display: block;
+//     }
+//   }
+
+//   &.has-no-boards,
+//   &.boards-full-width {
+//     #account-page-sidebar {
+//       margin-left: -18%;
+//     }
+
+//     .content {
+//       padding-left: 0;
+//       width: 100%;
+//     }
+
+//     .cards-list {
+//       max-width: 100%;
+//       padding: 0 10px;
+//     }
+//   }
+
+//   &.has-no-boards {
+//     .empty-boards,
+//     .board-not-found {
+//       display: block;
+//     }
+//   }
+// }
+
+// .cards-wrapper {
+//   position: relative;
+
+//   &.is-loading {
+//     .empty-cards,
+//     .cards-list-wrapper,
+//     .card-detail-wrapper {
+//       display: none;
+//     }
+
+//     .cards-loading {
+//       display: block;
+//     }
+//   }
+
+//   &.has-no-cards {
+//     .empty-cards {
+//       display: block;
+//     }
+
+//     .card-detail-wrapper,
+//     .card-detail-wrapper {
+//       display: none;
+//     }
+//   }
+// }
+
+// #account-page-sidebar {
+//   height: 100%;
+//   float: left;
+//   width: 15%;
+//   z-index: 10;
+// }
+
+// .content {
+//   height: 100%;
+//   float: left;
+//   padding-left: 15px;
+//   overflow-x: hidden;
+//   overflow-y: auto;
+//   width: 85%;
+// }
+
+// .empty-cards,
+// .empty-boards,
+// .cards-loading,
+// .boards-loading,
+// .board-not-found {
+//   display: none;
+//   padding-top: 12%;
+// }
+
+// .empty-cards,
+// .empty-boards,
+// .board-not-found {
+//   text-align: center;
+
+//   > .lead {
+//     font-size: 32px;
+//   }
+// }
+
+// .empty-cards label {
+//   margin: 0 8px;
+// }

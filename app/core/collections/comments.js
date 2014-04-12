@@ -23,13 +23,6 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   onCommentCreated: function(comment) {
-    this.request('collaborators:collaborator', comment.get('created_by'), function(creator) {
-      comment.set('creator', {
-        name: creator.getName(),
-        avatar: creator.getAvatar()
-      });
-    });
-
     if (Z.Util.isModel(comment)) this.add(comment);
   },
 

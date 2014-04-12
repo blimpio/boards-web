@@ -28,7 +28,7 @@ module.exports = Zeppelin.CollectionView.extend({
   },
 
   onPrependItem: function() {
-    if (!this.isFirstCollectionRender()) this.layout();
+    if (!this.isFirstCollectionRender()) this.triggerLayout();
   },
 
   triggerLayout: function() {
@@ -36,6 +36,8 @@ module.exports = Zeppelin.CollectionView.extend({
   },
 
   layout: function() {
+    if (this.collection.isEmpty()) return this;
+
     this.wall.reset({
       delay: 0,
       cellW: 222,
@@ -48,6 +50,8 @@ module.exports = Zeppelin.CollectionView.extend({
     });
 
     this.wall.fitWidth(this.$parent.width());
+
+    return this;
   }
 });
 

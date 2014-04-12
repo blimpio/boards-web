@@ -8,10 +8,17 @@ module.exports = Zeppelin.ModelView.extend({
   template: require('public-board/templates/card-detail-info'),
 
   context: function() {
+    var author,
+        authorId = this.model.get('created_by');
+
+    this.request('boardCollaborators:collaborator', authorId, function(collaborator) {
+      author = collaborator;
+    });
+
     return _.extend({}, this.model.attributes, {
       time: $.timeago(this.model.get('date_created')),
-      creator: this.options.creator
+      author: author
     });
-  }
+  },
 });
 

@@ -27,6 +27,11 @@ module.exports = Zeppelin.Collection.extend({
     this.on('change:is_selected', this.onCardSelected, this);
   },
 
+  setCurrent: function(slug) {
+    this.current = _.first(this.where({slug: slug}));
+    return this;
+  },
+
   onCardCreated: function(card) {
     if (Z.Util.isModel(card)) this.add(card);
   },

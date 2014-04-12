@@ -1,40 +1,44 @@
-<div class="account-page is-loading">
-  {{partial "core/templates/loader" "Loading App"}}
-  <div class="main">
-    {{partial "core/templates/header"}}
-    <div class="content-wrapper clearfix">
-      {{partial "core/templates/loader" "Fetching Boards"}}
-      <div class="sidebar">
-        <div class="create-board-wrapper"></div>
-        <div class="boards-list-wrapper"></div>
-      </div> {{! .sidebar }}
-      <div class="content">
-        <div class="content-header-wrapper clearfix">
-          <button type="button" class="navbar-toggle pull-left" data-action="toggleSidebar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button> {{! [data-action="toggleSidebar"] }}
-          <div class="content-header"></div>
-        </div> {{! .content-header-wrapper }}
-        {{partial "account/templates/empty-boards"}}
-        <div class="cards-wrapper">
-          {{partial "core/templates/loader" "Fetching Cards"}}
-          {{partial "account/templates/empty-cards"}}
-          <div class="cards-list-wrapper"></div>
-          <div class="card-detail-wrapper row">
-            <div class="card-detail-left col-md-8"></div>
-            <div class="card-detail-right col-md-4">
-              <div class="card-detail-info-wrapper"></div>
-              <div id="comments-layout"></div>
-            </div> {{! .card-detail-right }}
-          </div> {{! .card-detail-wrapper }}
-        </div> {{! .cards-wrapper }}
-      </div> {{! .content }}
-    </div> {{! .content-wrapper }}
+<div id="account-page" class="is-loading">
+  {{partial "core/templates/header"}}
+
+  <div id="account-page-content-wrapper" class="is-loading">
+    <div id="boards-empty">
+      <h1 class="lead">You don’t have any boards <br> <small>Start by creating a board</small></h1>
+      <button type="button" data-action="createFirstBoard" class="btn btn-default">Create Board</button>
+    </div> {{! #boards-empty }}
+
+    <div id="account-page-sidebar">
+      <div id="create-board-container"></div>
+      <div id="boards-list-container"></div>
+    </div> {{! #account-page-sidebar }}
+
+    <div id="account-page-content" class="is-loading">
+      <div id="cards-empty">
+        <h1 class="lead">This board is empty <br> <small>Start by creating a few cards</small></h1>
+        <p class="text-muted">Drop files here</p>
+        <div class="form-inline">
+          <button type="button" data-action="createFirstFile" class="btn btn-default">Choose Files</button>
+          <label>or</label>
+          <button type="button" data-action="createFirstNote" class="btn btn-default">Create Note</button>
+        </div> {{! .form-inline }}
+      </div> {{! .empty-cards }}
+
+      <div id="account-page-header"></div>
+      <div id="cards-list-container"></div>
+
+      <div id="card-detail-container" class="row">
+        <div id="card-detail-left" class="col-md-8"></div>
+        <div id="card-detail-right" class="col-md-4">
+          <div id="card-detail-info-container"></div>
+          <div id="card-detail-comments"></div>
+        </div> {{! .card-detail-right }}
+      </div> {{! #card-detail-container }}
+    </div> {{! #account-page-content }}
+
     {{partial "account/templates/create-note-modal"}}
-    <div id="settings"></div>
-    <div id="share-board"></div>
-    <div class="file-uploader"></div>
-  </div> {{! .main }}
-</div> {{! .account-page }}
+    <div id="file-uploader"></div>
+  </div> {{! #account-page-content-wrapper }}
+
+  <div id="settings"></div>
+  <div id="share-board"></div>
+</div> {{! #account-page }}

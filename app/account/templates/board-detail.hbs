@@ -1,3 +1,9 @@
+<button type="button" class="navbar-toggle pull-left" data-action="toggleSidebar">
+  <span class="icon-bar"></span>
+  <span class="icon-bar"></span>
+  <span class="icon-bar"></span>
+</button> {{! [data-action="toggleSidebar"] }}
+
 <div class="board-detail-info pull-left">
   {{board-avatar this}} <strong class="board-name" data-action="edit">{{name}}</strong>
 </div> {{! .board-detail-info }}
@@ -19,7 +25,7 @@
     </button> {{! [data-toggle="dropdown"] }}
     <ul class="dropdown-menu" role="menu">
       <li><a href="#" data-action="createFile">File</a></li>
-      <li><a href="#" data-action="createNote" data-toggle="modal" data-target="#createNoteModal">Note</a></li>
+      <li><a href="#" data-action="createNote" data-toggle="modal" data-target="#create-note-modal">Note</a></li>
     </ul> {{! .dropdown-menu }}
   </div> {{! .dropdown }}
   <button type="button" class="btn btn-link" data-action="share" data-toggle="modal" data-target="#share-board-modal">Share</button>

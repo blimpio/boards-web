@@ -1,6 +1,3 @@
-var CreateNote = require('account/views/create-note'),
-    FileUploader = require('account/views/file-uploader');
-
 module.exports = Z.Layout.extend({
   el: '#application',
 
@@ -9,9 +6,7 @@ module.exports = Z.Layout.extend({
   template: require('account/templates/layout'),
 
   regions: {
-    createNote: require('account/regions/create-note'),
     boardsList: require('account/regions/boards-list'),
-    fileUploader: require('account/regions/file-uploader'),
     userDropdown: require('core/regions/user-dropdown'),
     createBoardForm: require('account/regions/create-board'),
     accountsDropdown: require('core/regions/accounts-dropdown')
@@ -23,28 +18,28 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
-    accountPage: 'div.account-page',
-    contentWrapper: 'div.content-wrapper'
+    page: '#account-page',
+    content: '#account-page-content-wrapper'
   },
 
   toggleLoadingMainState: function() {
-    this.getElement('accountPage').toggleClass('is-loading');
+    this.getElement('page').toggleClass('is-loading');
     return this;
   },
 
-  toggleLoadingBoardsState: function() {
-    this.getElement('contentWrapper').toggleClass('is-loading');
+  toggleLoadingContentState: function() {
+    this.getElement('content').toggleClass('is-loading');
     return this;
   },
 
-  toggleEmptyBoardsState: function(hasBoards) {
-    this.getElement('contentWrapper').removeClass('is-loading');
-    this.getElement('contentWrapper').toggleClass('has-no-boards', hasBoards);
+  toggleEmptyBoardsState: function(hasNoBoards) {
+    this.getElement('content').removeClass('is-loading');
+    this.getElement('content').toggleClass('is-empty', hasNoBoards);
     return this;
   },
 
   toggleBoardsFullWitdhState: function() {
-    this.getElement('contentWrapper').toggleClass('boards-full-width');
+    this.getElement('content').toggleClass('is-full-width');
     this.broadcast('cardsList:layout');
     return this;
   },
@@ -57,6 +52,7 @@ module.exports = Z.Layout.extend({
   },
 
   showBoards: function() {
+    this.toggleLoadingContentState();
     this.showRegion('boardsList');
     this.showRegion('createBoardForm');
     return this;
@@ -65,31 +61,5 @@ module.exports = Z.Layout.extend({
   onCreateFirstBoardClick: function() {
     this.toggleEmptyBoardsState();
     this.getRegion('createBoardForm').view.toggleCreateMode();
-  },
-
-  showFileUploader: function(board) {
-    this.getRegion('fileUploader').setView(FileUploader, {
-      board: board
-    }).show();
-
-    return this;
-  },
-
-  enableFileUploader: function() {
-    this.getRegion('fileUploader').view.enable();
-    return this;
-  },
-
-  disableFileUploader: function() {
-    this.getRegion('fileUploader').view.disable();
-    return this;
-  },
-
-  showCreateNoteModal: function(board) {
-    this.getRegion('createNote').setView(CreateNote, {
-      board: board
-    }).show();
-
-    return this;
   }
 });

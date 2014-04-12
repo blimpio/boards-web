@@ -9,15 +9,6 @@ module.exports = Zeppelin.CollectionView.extend({
 
   collection: function() {
     return App.Boards;
-  },
-
-  onRenderItems: function() {
-    this.setListHeight();
-  },
-
-  setListHeight: function() {
-    this.$list.height($(document).height() - 123);
-    return this;
   }
 });
 
