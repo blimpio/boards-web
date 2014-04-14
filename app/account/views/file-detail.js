@@ -9,12 +9,30 @@ module.exports = Zeppelin.ModelView.extend({
     return className;
   },
 
+  elements: {
+    preview: 'img.card-preview'
+  },
+
   template: require('account/templates/file-detail'),
 
   context: function() {
     return _.extend({}, this.model.attributes, {
       preview: this.model.getLargePreview()
     });
+  },
+
+  initialize: function() {
+    _.bindAll(this, ['onPreviewLoaded']);
+  },
+
+  onRender: function() {
+    this.getElement('preview').load(this.onPreviewLoaded);
+  },
+
+  onPreviewLoaded: function(event) {
+    _.delay(_.bind(function() {
+      this.$el.addClass('has-loaded-preview');
+    }, this), 1);
   }
 });
 

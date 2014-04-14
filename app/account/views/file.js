@@ -17,6 +17,7 @@ module.exports = Card.extend({
   template: require('account/templates/file'),
 
   elements: {
+    previewLoader: 'img.card-preview-loader',
     uploadProgress: 'div.card-upload-progress'
   },
 
@@ -37,8 +38,16 @@ module.exports = Card.extend({
     });
   },
 
+  initialize: function() {
+    _.bindAll(this, ['onPreviewLoaded']);
+  },
+
   updateUploadProgress: function(progress) {
     this.getElement('uploadProgress').text(progress + '%');
+  },
+
+  onRender: function() {
+    this.getElement('previewLoader').load(this.onPreviewLoaded);
   },
 
   onUploadingStateChange: function(file, isUploading) {
@@ -47,5 +56,11 @@ module.exports = Card.extend({
 
   onUploadProgress: function(file, progress) {
     if (this.isRendered) this.updateUploadProgress(progress);
+  },
+
+  onPreviewLoaded: function(event) {
+    _.delay(_.bind(function() {
+      this.$el.addClass('has-loaded-preview');
+    }, this), 1);
   }
 });
