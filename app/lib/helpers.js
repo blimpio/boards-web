@@ -119,7 +119,7 @@ Handlebars.registerHelper('markdown-preview', function(str) {
     smartypants: true
   });
 
-  return new Handlebars.SafeString(parse(str));
+  return new Handlebars.SafeString(parse(str.substring(0, 140)));
 });
 
 
