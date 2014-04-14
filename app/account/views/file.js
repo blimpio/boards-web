@@ -16,9 +16,11 @@ module.exports = Card.extend({
 
   template: require('account/templates/file'),
 
-  elements: {
-    previewLoader: 'img.card-preview-loader',
-    uploadProgress: 'div.card-upload-progress'
+  elements: function() {
+    return _.merge({
+      previewLoader: 'img.card-preview-loader',
+      uploadProgress: 'div.card-upload-progress'
+    }, Card.prototype.elements);
   },
 
   bindings: function() {

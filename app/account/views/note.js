@@ -8,5 +8,28 @@ module.exports = Card.extend({
     };
   },
 
-  template: require('account/templates/note')
+  bindings: function() {
+    return _.merge({
+      model: {
+        'change:content': 'onContentChange'
+      }
+    }, Card.prototype.bindings);
+  },
+
+  elements: function() {
+    return _.merge({
+      content: 'div.card-content'
+    }, Card.prototype.elements);
+  },
+
+  template: require('account/templates/note'),
+
+  updateContent: function(value) {
+    this.getElement('content').html(_.markdown(value, 140));
+    return this;
+  },
+
+  onContentChange: function(note, value) {
+    this.updateContent(value);
+  }
 });

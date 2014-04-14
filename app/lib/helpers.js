@@ -56,7 +56,7 @@ _.mixin({'decodeJWT': function(token) {
   return JSON.parse(atob(token));
 }});
 
-_.mixin({'markdown': function(text) {
+_.mixin({'markdown': function(text, chars) {
   var parser = marked.setOptions({
     renderer: new marked.Renderer(),
     gfm: true,
@@ -65,6 +65,8 @@ _.mixin({'markdown': function(text) {
     sanitize: true,
     smartypants: true
   });
+
+  text = chars ? text.substring(0, chars) : text;
 
   return parser(text);
 }});
@@ -84,22 +86,9 @@ $(document).on('click', '[data-route=true]', function(event) {
 });
 
 Handlebars.registerHelper('markdown', function(str) {
-  var parse;
-
   str = _.isFunction(str) ? str() : str;
-
   if (!str) return new Handlebars.SafeString('');
-
-  parse = marked.setOptions({
-    renderer: new marked.Renderer(),
-    gfm: true,
-    tables: true,
-    breaks: true,
-    sanitize: true,
-    smartypants: true
-  });
-
-  return new Handlebars.SafeString(parse(str));
+  return new Handlebars.SafeString(_.markdown(str, 140));
 });
 
 Handlebars.registerHelper('markdown-preview', function(str) {

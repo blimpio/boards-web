@@ -8,13 +8,18 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   events: {
-    'click' : 'onClick',
+    'click': 'onClick',
     'click [data-action=delete]': 'delete',
     'click [data-action=highlight]': 'toggleHighlight'
   },
 
+  elements: {
+    'name': 'span.card-name'
+  },
+
   bindings: {
     model: {
+      'change:name': 'onNameChange',
       'change:featured': 'onFeaturedChange'
     }
   },
@@ -26,6 +31,11 @@ module.exports = Zeppelin.ModelView.extend({
       this.model.destroy();
       this.broadcast('cardsList:layout');
     }
+  },
+
+  updateName: function(value) {
+    this.getElement('name').text(value);
+    return this;
   },
 
   toggleHighlight: function(event) {
@@ -49,6 +59,10 @@ module.exports = Zeppelin.ModelView.extend({
     this.$el.removeAttr('data-height');
     this.$el.toggleClass('is-featured', isFeatured);
     this.broadcast('cardsList:layout');
+  },
+
+  onNameChange: function(card, value) {
+    this.updateName(value);
   }
 });
 
