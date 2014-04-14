@@ -1992,6 +1992,7 @@
     appendItem: function (view) {
       if (!Z.Util.isView(view)) return this;
       this.trigger('before:appendItem', this);
+      if (this.collection.length === 1) this.$list.empty();
       this.$list.append(view.render().el);
       this.trigger('after:appendItem', this);
       this.onAppendItem(view);
@@ -2005,6 +2006,7 @@
     prependItem: function (view) {
       if (!Z.Util.isView(view)) return this;
       this.trigger('before:prependItem', this);
+      if (this.collection.length === 1) this.$list.empty();
       this.$list.prepend(view.render().el);
       this.trigger('after:prependItem', this);
       this.onPrependItem(view);
