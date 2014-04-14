@@ -92,6 +92,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onBoardSelected: function(board) {
+    this.options.card = null;
     this.getLayout('content').toggleLoadingContentState();
     this.fetchCollaborators(board.id);
   },
