@@ -51,4 +51,12 @@ module.exports = Zeppelin.Model.extend({
       trigger: false
     });
   },
+
+  isNote: function() {
+    return this.get('type') === 'note';
+  },
+
+  isFile: function() {
+    return this.get('type') === 'file';
+  }
 });

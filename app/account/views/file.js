@@ -18,6 +18,7 @@ module.exports = Card.extend({
 
   elements: function() {
     return _.merge({
+      preview: 'div.card-preview',
       previewLoader: 'img.card-preview-loader',
       uploadProgress: 'div.card-upload-progress'
     }, Card.prototype.elements);
@@ -33,12 +34,8 @@ module.exports = Card.extend({
   },
 
   context: function() {
-    var preview = this.model.get('featured')
-      ? this.model.getMediumPreview()
-      : this.model.getSmallPreview();
-
     return _.extend({}, this.model.attributes, {
-      preview: preview,
+      preview: this.model.getPreview(),
       extension: this.model.getExtension(),
       hasNoPreview: this.model.hasNoPreview()
     });
@@ -46,6 +43,16 @@ module.exports = Card.extend({
 
   initialize: function() {
     _.bindAll(this, ['onPreviewLoaded']);
+  },
+
+  toggleHighlight: function(event) {
+    Card.prototype.toggleHighlight.apply(this, arguments);
+
+    this.getElement('preview').css({
+      'background-image': 'url(' + this.model.getPreview() + ')'
+    });
+
+    return this;
   },
 
   updateUploadProgress: function(progress) {

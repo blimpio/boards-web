@@ -41,6 +41,12 @@ module.exports = Card.extend({
     'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
   },
 
+  getPreview: function() {
+    return this.get('featured')
+      ? this.getMediumPreview()
+      : this.getSmallPreview();
+  },
+
   download: function() {
     return $.getJSON(this.url() + 'download/');
   }
