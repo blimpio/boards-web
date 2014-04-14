@@ -12,6 +12,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   events: {
+    'keydown [name=content]': 'onKeydown',
     'click [data-action=cancel]': 'toggleEditMode',
     'click [data-action=submit]': 'submit',
     'click [data-action=modify]': 'closePreview',
@@ -62,6 +63,13 @@ module.exports = Zeppelin.FormView.extend({
     this.$el.removeClass('is-previewing');
     this.focus();
     return this;
+  },
+
+  onKeydown: function(event) {
+    if (event.keyCode === 9) {
+      event.preventDefault();
+      _.insertAtCursor(event.currentTarget, '    ');
+    }
   },
 
   onClickPreview: function(event) {

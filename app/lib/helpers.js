@@ -78,6 +78,33 @@ _.mixin({'isLetterKey': function(key) {
   return _.indexOf(notAllowed, key) === -1;
 }});
 
+_.mixin({'insertAtCursor': function(field, text) {
+  var val, range, caretPos, selStart;
+
+  field = Z.Util.isJqueryObject(field) ? field[0] : field;
+
+  if (document.selection) {
+    range = document.selection.createRange();
+
+    if (!range || range.parentElement() != field) {
+      field.focus();
+      range = field.createTextRange();
+      range.collapse(false);
+    }
+
+    range.text = text;
+    range.collapse(false);
+    range.select();
+  } else {
+    field.focus();
+    val = field.value;
+    selStart = field.selectionStart;
+    caretPos = selStart + text.length;
+    field.value = val.slice(0, selStart) + text + val.slice(field.selectionEnd);
+    field.setSelectionRange(caretPos, caretPos);
+  }
+}});
+
 $(document).on('click', '[data-route=true]', function(event) {
   if (!event.metaKey) {
     event.preventDefault();
