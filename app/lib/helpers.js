@@ -66,8 +66,6 @@ _.mixin({'markdown': function(text, chars) {
     smartypants: true
   });
 
-  console.log(text, chars);
-
   text = _.isNumber(chars) ? text.substring(0, chars) : text;
 
   return parser(text);
