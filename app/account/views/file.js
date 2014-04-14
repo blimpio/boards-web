@@ -31,8 +31,12 @@ module.exports = Card.extend({
   },
 
   context: function() {
+    var preview = this.model.get('featured')
+      ? this.model.getMediumPreview()
+      : this.model.getSmallPreview();
+
     return _.extend({}, this.model.attributes, {
-      preview: this.model.getSmallPreview(),
+      preview: preview,
       extension: this.model.getExtension(),
       hasNoPreview: this.model.hasNoPreview()
     });

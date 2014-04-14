@@ -31,6 +31,11 @@ module.exports = Card.extend({
     'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
   },
 
+  getMediumPreview: function() {
+    return this.get('thumbnail_md_path') ||
+    'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+  },
+
   getLargePreview: function() {
     return this.get('thumbnail_lg_path') ||
     'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
