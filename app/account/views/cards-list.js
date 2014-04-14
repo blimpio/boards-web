@@ -18,12 +18,10 @@ module.exports = Zeppelin.CollectionView.extend({
   },
 
   initialize: function() {
-    this.$parent = $('div.content');
     _.bindAll(this, ['layout']);
   },
 
   onRenderItems: function() {
-    this.wall = new freewall(this.$list);
     this.triggerLayout();
   },
 
@@ -37,19 +35,12 @@ module.exports = Zeppelin.CollectionView.extend({
 
   layout: function() {
     if (this.collection.isEmpty()) return this;
+    if (this.$list.data('masonry')) this.$list.masonry('destroy');
 
-    this.wall.reset({
-      delay: 0,
-      cellW: 222,
-      cellH: 222,
-      animate: false,
-      selector: 'li.card',
-      onResize: _.bind(function() {
-        this.wall.fitWidth();
-      }, this)
+    this.$list.masonry({
+      gutter: 15,
+      itemSelector: 'li.card'
     });
-
-    this.wall.fitWidth(this.$parent.width());
 
     return this;
   }

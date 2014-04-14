@@ -3,13 +3,13 @@ $cardHeight = 222px;
 $cardGutter = 15px;
 
 .card {
-  background: #F9F9F9;
+  background-color: #F9F9F9;
   border: 1px solid #F0F0F0;
   border-radius: 3px;
   cursor: pointer;
   display: inline-block;
   height: $cardHeight;
-  margin: 0 $cardGutter $cardGutter 0;
+  margin-bottom: $cardGutter;
   position: relative;
   overflow: hidden;
   width: $cardWidth;
@@ -21,8 +21,8 @@ $cardGutter = 15px;
   }
 
   &.is-featured {
-    height: ($cardHeight * 2) + $cardGutter;
-    width: ($cardWidth * 2) + $cardGutter;
+    height: $cardHeight * 2;
+    width: $cardWidth * 2;
 
     .card-extension {
       padding: 205px 0;
