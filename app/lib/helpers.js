@@ -66,7 +66,9 @@ _.mixin({'markdown': function(text, chars) {
     smartypants: true
   });
 
-  text = chars ? text.substring(0, chars) : text;
+  console.log(text, chars);
+
+  text = _.isNumber(chars) ? text.substring(0, chars) : text;
 
   return parser(text);
 }});
@@ -88,27 +90,13 @@ $(document).on('click', '[data-route=true]', function(event) {
 Handlebars.registerHelper('markdown', function(str) {
   str = _.isFunction(str) ? str() : str;
   if (!str) return new Handlebars.SafeString('');
-  return new Handlebars.SafeString(_.markdown(str, 140));
+  return new Handlebars.SafeString(_.markdown(str));
 });
 
 Handlebars.registerHelper('markdown-preview', function(str) {
-  var parse,
-      renderer = new marked.Renderer();
-
   str = _.isFunction(str) ? str() : str;
-
   if (!str) return new Handlebars.SafeString('');
-
-  parse = marked.setOptions({
-    renderer: renderer,
-    gfm: false,
-    tables: false,
-    breaks: false,
-    sanitize: true,
-    smartypants: true
-  });
-
-  return new Handlebars.SafeString(parse(str.substring(0, 140)));
+  return new Handlebars.SafeString(_.markdown(str, 140));
 });
 
 
