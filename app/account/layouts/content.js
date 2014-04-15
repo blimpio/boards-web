@@ -59,6 +59,13 @@ module.exports = Z.Layout.extend({
     return this;
   },
 
+  closeCards: function() {
+    this.closeCard();
+    this.getRegion('cards').$el.hide();
+    this.getRegion('header').close();
+    this.$el.removeClass('is-empty is-loading');
+  },
+
   showCard: function(options) {
     if (this.getRegion('cards').isShown()) {
       this.getRegion('cards').$el.hide();

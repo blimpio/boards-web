@@ -87,6 +87,8 @@ module.exports = Zeppelin.Controller.extend({
       if (this.firstLoad) {
         this.firstLoad = false;
         this.listen();
+        this.getLayout('content').setElement('#account-page-content');
+        this.getLayout('comments').setElement('#card-detail-comments').render();
       }
     }
   },
@@ -103,6 +105,7 @@ module.exports = Zeppelin.Controller.extend({
 
   onBoardRemoved: function() {
     if (App.Boards.isEmpty()) {
+      this.getLayout('content').closeCards();
       this.getLayout('main').toggleEmptyBoardsState(true);
       this.broadcast('router:navigate', App.Accounts.current.getUrl(), {
         trigger: false

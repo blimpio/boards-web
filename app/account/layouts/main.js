@@ -19,7 +19,8 @@ module.exports = Z.Layout.extend({
 
   elements: {
     page: '#account-page',
-    content: '#account-page-content-wrapper'
+    content: '#account-page-content',
+    contentWrapper: '#account-page-content-wrapper'
   },
 
   toggleLoadingMainState: function() {
@@ -28,18 +29,19 @@ module.exports = Z.Layout.extend({
   },
 
   toggleLoadingContentState: function() {
-    this.getElement('content').toggleClass('is-loading');
+    this.getElement('contentWrapper').toggleClass('is-loading');
     return this;
   },
 
   toggleEmptyBoardsState: function(hasNoBoards) {
     this.getElement('content').removeClass('is-loading');
-    this.getElement('content').toggleClass('is-empty', hasNoBoards);
+    this.getElement('contentWrapper').removeClass('is-loading');
+    this.getElement('contentWrapper').toggleClass('is-empty', hasNoBoards);
     return this;
   },
 
   toggleBoardsFullWitdhState: function() {
-    this.getElement('content').toggleClass('is-full-width');
+    this.getElement('contentWrapper').toggleClass('is-full-width');
     this.broadcast('cardsList:layout');
     return this;
   },
