@@ -21,7 +21,7 @@ module.exports = Zeppelin.ModelView.extend({
 
   context: function() {
     return _.extend({}, this.model.attributes, {
-      name: this.model.getFullName(),
+      name: this.model.getName(),
       isSignedIn: this.model.isSignedIn()
     });
   },
