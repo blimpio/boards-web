@@ -60,7 +60,11 @@ module.exports = Card.extend({
   },
 
   onRender: function() {
-    this.getElement('previewLoader').load(this.onPreviewLoaded);
+    if (this.getElement('previewLoader')[0].complete) {
+      this.onPreviewLoaded();
+    } else {
+      this.getElement('previewLoader').load(this.onPreviewLoaded);
+    }
   },
 
   onUploadingStateChange: function(file, isUploading) {
@@ -71,7 +75,7 @@ module.exports = Card.extend({
     if (this.isRendered) this.updateUploadProgress(progress);
   },
 
-  onPreviewLoaded: function(event) {
+  onPreviewLoaded: function() {
     _.delay(_.bind(function() {
       this.$el.addClass('has-loaded-preview');
     }, this), 1);
