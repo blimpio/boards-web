@@ -9,6 +9,8 @@ module.exports = Zeppelin.CollectionView.extend({
 
   addMethod: 'prepend',
 
+  layoutTimer: null,
+
   itemView: function(model) {
     return require('account/views/' + model.get('type'));
   },
@@ -21,16 +23,8 @@ module.exports = Zeppelin.CollectionView.extend({
     _.bindAll(this, ['layout']);
   },
 
-  onRenderItems: function() {
-    this.triggerLayout();
-  },
-
-  onPrependItem: function() {
-    if (!this.isFirstCollectionRender()) this.triggerLayout();
-  },
-
   triggerLayout: function() {
-    _.delay(this.layout, 1);
+    this.layoutTimer = _.delay(this.layout, 1);
   },
 
   layout: function() {
@@ -43,6 +37,19 @@ module.exports = Zeppelin.CollectionView.extend({
     });
 
     return this;
+  },
+
+  onRenderItems: function() {
+    this.triggerLayout();
+  },
+
+  onPrependItem: function() {
+    if (!this.isFirstCollectionRender()) this.triggerLayout();
+  },
+
+  onUnplug: function() {
+    clearTimeout(this.layoutTimer);
+    if (this.$list.data('masonry')) this.$list.masonry('destroy');
   }
 });
 
