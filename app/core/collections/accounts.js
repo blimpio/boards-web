@@ -8,6 +8,19 @@ module.exports = Zeppelin.Collection.extend({
     'user:signin:success': 'populateAccountsFromUser'
   },
 
+  parse: function(response) {
+    var currentUser;
+
+    this.request('user:id', function(id) {
+      currentUser = id;
+    });
+
+    return _.filter(response, function(account) {
+      if (account.type === 'personal'
+      && account.created_by === currentUser) return account;
+    }, this);
+  },
+
   setCurrent: function(slug) {
     this.current = _.first(this.where({slug: slug}));
     return this;
