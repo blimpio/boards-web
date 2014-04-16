@@ -49,7 +49,7 @@ module.exports = Z.Layout.extend({
       model: options.board
     });
 
-    if (this.getRegion('cards').isShown()) {
+    if (this.getRegion('cards').isShown() && !options.forceShow) {
       this.getRegion('cards').$el.show();
       if (options.triggerLayout) this.getRegion('cards').view.triggerLayout();
     } else {

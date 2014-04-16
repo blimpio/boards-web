@@ -95,6 +95,7 @@ module.exports = Zeppelin.Controller.extend({
 
   onBoardSelected: function(board) {
     this.options.card = null;
+    this.options.forceCardsShow = true;
     this.getLayout('content').toggleLoadingContentState();
     this.fetchCollaborators(board.id);
   },
@@ -151,12 +152,15 @@ module.exports = Zeppelin.Controller.extend({
     this.getLayout('content').showCards({
       board: App.Boards.current,
       canEdit: App.BoardCollaborators.current.canEdit(),
+      forceShow: this.options.forceCardsShow
     }).toggleEmptyCardsState(App.Cards.isEmpty());
 
     if (this.options.card) {
       App.Cards.setCurrent(this.options.card);
       App.Cards.current.select({navigate: false});
     }
+
+    this.options.forceCardsShow = false;
   },
 
   onCardSelected: function(card) {
