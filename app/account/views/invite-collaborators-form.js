@@ -11,7 +11,7 @@ module.exports = Zeppelin.FormView.extend({
 
   events: function() {
     return {
-      'keyup [name=invitee]': _.debounce(this.onKeyup, 150),
+      'keyup [name=invitee]': _.debounce(this.onKeyup, 200),
       'keydown [name=invitee]': 'onInputKeydown',
       'click [data-action=cancel]': 'reset',
       'click button[data-permission]': 'onChangePermission',
@@ -99,6 +99,12 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
+  searchSuggestions: function(query) {
+    return $.getJSON('/api/autocomplete/users/', {
+      search: query
+    });
+  },
+
   populateSuggestions: function($container, suggestions) {
     $container.find('div.collaborator-suggestions-list')
       .html(this.collaboratorSuggestions({
@@ -132,22 +138,24 @@ module.exports = Zeppelin.FormView.extend({
 
   onKeyup: function(event) {
     var $el = $(event.currentTarget),
+        self = this,
         value = $el.val(),
-        $container = $el.parent().nextAll('div.collaborator-suggestions'),
-        suggestions = [];
+        $container = $el.parent().nextAll('div.collaborator-suggestions');
 
     if (event.keyCode === 40) return;
 
     if (!value || value.match(/@/)) {
       this.hideSuggestions();
     } else {
-      suggestions = App.AccountCollaborators.search($el.val());
-
-      if (suggestions.length) {
-        this.populateSuggestions($container, suggestions);
-      } else {
-        this.hideSuggestions();
-      }
+      this.searchSuggestions(value).done(function(response) {
+        if (response.length) {
+          self.populateSuggestions($container, response);
+        } else {
+          self.hideSuggestions();
+        }
+      }).fail(function() {
+        self.hideSuggestions();
+      });
     }
   },
 
