@@ -3,18 +3,24 @@ var signupSteps = ['choose-email', 'validate-username', 'validate-password'];
 module.exports = Zeppelin.Controller.extend({
   name: 'Signup',
 
-  title: 'Blimp Boards | Signup',
+  title: 'Blimp Boards | Sign up',
 
   layouts: {
     main: require('signup/layouts/main')
   },
 
   subscriptions: {
-    'signup:stepPassed': 'renderStep'
+    'signup:stepPassed': 'renderStep',
+    'user:reject-invite:success': 'onRejectInvite',
+    'user:accept-invite:success': 'onAcceptInvite'
   },
 
   initialize: function() {
-    this.getLayout('main').render().getRegion('form').show();
+    _.bindAll(this, ['onInviteFetchSuccess', 'onInviteFetchFail']);
+  },
+
+  renderLayout: function(hasInvite) {
+    this.getLayout('main').render(hasInvite);
   },
 
   renderStep: function(step) {
@@ -33,7 +39,7 @@ module.exports = Zeppelin.Controller.extend({
         trigger: false
       });
 
-      this.getLayout('main').getRegion('form').show(stepView);
+      this.getLayout('main').showForm(stepView);
     }
   },
 
@@ -52,15 +58,58 @@ module.exports = Zeppelin.Controller.extend({
     }
   },
 
-  signupWithInvite: function(token) {
+  signupWithInvite: function() {
     App.User.set('is_invite', true);
 
-    if (token) {
-      App.User.setEmailFromInviteJWT(token);
+    if (this.options.inviteToken) {
+      App.User.setEmailFromInviteJWT(this.options.inviteToken);
       App.User.updateSignupStep('validate-username');
-      this.renderStep();
+
+      $.getJSON('/api/auth/invitations/' + this.options.inviteToken + '/')
+        .done(this.onInviteFetchSuccess)
+        .fail(this.onInviteFetchFail);
     } else {
       this.broadcast('router:navigate', '');
     }
+  },
+
+  onInviteFetchSuccess: function(response) {
+    var context = _.extend({
+      token: this.options.inviteToken,
+      hasAuth: App.User.isSignedIn()
+    }, response);
+
+    if (response.signup_request_token) {
+      App.User.setEmailFromJWT(response.signup_request_token);
+    }
+
+    if (App.User.isSignedIn()) {
+      this.getLayout('main').toggleInviteFullWidth();
+    } else {
+      this.renderStep();
+    }
+
+    this.getLayout('main')
+      .showInvitation(context)
+      .toggleLoadingMainState();
+  },
+
+  onInviteFetchFail: function() {
+    this.renderStep();
+    this.getLayout('main')
+      .toggleLoadingMainState()
+      .toggleSignupFullWidth();
+  },
+
+  onRejectInvite: function() {
+    if (App.User.isSignedIn()) {
+      this.broadcast('router:navigate', '/accounts/');
+    } else {
+      this.getLayout('main').toggleSignupFullWidth();
+    }
+  },
+
+  onAcceptInvite: function() {
+    this.broadcast('router:navigate', '/accounts/');
   }
 });

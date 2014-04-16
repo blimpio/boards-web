@@ -2,13 +2,15 @@ module.exports = function(token) {
   if (this.User.isSignedIn() && !token) {
     this.navigate('/accounts/', {trigger: true});
   } else if (!token) {
-    this.navigate('', {trigger: true});
+    this.setController(require('signin/controller'));
+    this.controller.renderLayout(false);
+    this.controller.renderForm();
   } else {
-    this.setController(require('signup/controller'), {
+    this.setController(require('signin/controller'), {
       inviteToken: token
     });
 
     this.controller.renderLayout(true);
-    this.controller.signupWithInvite();
+    this.controller.signinWithInvite();
   }
 };

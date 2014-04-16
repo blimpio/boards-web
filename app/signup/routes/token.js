@@ -5,6 +5,7 @@ module.exports = function(token) {
     this.navigate('', {trigger: true});
   } else {
     this.setController(require('signup/controller'));
+    this.controller.renderLayout(false);
     this.controller.continueWithToken(token);
   }
 };

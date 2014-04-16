@@ -1,0 +1,15 @@
+<div class="page-header">
+  <h3>Accepting invitation.</h3>
+</div> {{! .page-header }}
+
+<div class="text-center">
+  <p>{{#if user.first_name}}Hey {{user.first_name}}, by {{else}}By {{/if}} signing in to your <strong>Blimp Boards</strong> account you are accepting an invitation to collaborate on the <strong>{{board_collaborator.board.name}}</strong> board, created by:</p>
+
+  <p><img src="{{created_by.gravatar_url}}" alt="{{created_by.username}}" class="ui-avatar lg"> <br> {{#if created_by.first_name}}<strong>{{created_by.first_name}} {{created_by.last_name}}</strong> <small class="text-muted">({{created_by.username}})</small>{{else}}<strong>{{created_by.username}}</strong>{{/if}}</p>
+
+  <p><small class="text-muted">You can also <a href="/signup/?invite={{token}}" data-route="true">Sign up</a> with a new account to accept this invitation.</small></p>
+
+  <div class="form-group">
+    <button type="button" class="btn btn-default" data-action="reject">Reject</button>
+  </div> {{! .form-group }}
+</div> {{! .text-center }}

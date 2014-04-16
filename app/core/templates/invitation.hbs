@@ -1,0 +1,19 @@
+<div class="page-header">
+  <h3>Accepting invitation.</h3>
+</div> {{! .page-header }}
+
+<div class="text-center">
+  <p>{{#if user.first_name}}{{user.first_name}}, by {{else}}By {{/if}} clicking on the "Accept" button you are accepting an invitation to collaborate on the <strong>{{board_collaborator.board.name}}</strong> board, created by:</p>
+
+  <p><img src="{{created_by.gravatar_url}}" alt="{{created_by.username}}" class="ui-avatar lg"> <br> {{#if created_by.first_name}}<strong>{{created_by.first_name}} {{created_by.last_name}}</strong> <small class="text-muted">({{created_by.username}})</small>{{else}}<strong>{{created_by.username}}</strong>{{/if}}</p>
+
+  <p><small class="text-muted">You can also <a href="/signin/?invite={{token}}" data-route="true">Sign in</a> with an existing account to accept this invitation.</small></p>
+
+  <div class="form-group">
+    {{#if hasAuth}}
+      <button type="button" class="btn btn-success" data-action="accept">Accept</button>
+      <label>or</label>
+    {{/if}}
+    <button type="button" class="btn btn-default" data-action="reject">Reject</button>
+  </div> {{! .form-group }}
+</div> {{! .text-center }}

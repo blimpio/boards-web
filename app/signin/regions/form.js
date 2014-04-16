@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: 'div.signin-form-wrapper',
+  el: '#signin-form-container',
 
   view: require('signin/views/signin-form')
 });

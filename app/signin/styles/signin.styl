@@ -1,4 +1,36 @@
-.signin {
-  padding: 30px;
-  width: 600px;
+#signin {
+  background: #FFFFFF;
+  height: 100%;
+  margin: 150px auto;
+  width: 450px;
+
+  &.row {
+    margin: 25px auto;
+    width: 960px;
+
+    #signin-form-container {
+      margin-top: 25px;
+    }
+  }
+
+  &.user-is-auth {
+    margin: 150px auto;
+    width: 350px;
+
+    > h1,
+    #signin-form-container {
+      display: none;
+    }
+  }
+
+  &.is-loading {
+    background: url('../images/loading-content.gif') no-repeat center center #FFFFFF;
+    margin: 0 auto;
+
+    > h1,
+    #invitation-container,
+    #signin-form-container {
+      display: none;
+    }
+  }
 }

@@ -99,6 +99,46 @@ module.exports = Person.extend({
     return this;
   },
 
+  hasInvitation: function() {
+    return this.get('is_invite') === true || this.has('invited_user_token');
+  },
+
+  rejectInvitation: function(token) {
+    token = token || this.get('invited_user_token');
+
+    return $.ajax({
+      url: '/api/auth/invitations/' + token + '/reject/',
+      method: 'PUT',
+      error: _.bind(function(response) {
+        this.broadcast('user:reject-invite:error', response);
+      }, this),
+      success: _.bind(function(response) {
+        this.set('is_invite', false);
+        this.unset('invited_user_token');
+        this.broadcast('user:reject-invite:success', response);
+        this.saveCache();
+      }, this)
+    });
+  },
+
+  acceptInvitation: function(token) {
+    token = token || this.get('invited_user_token');
+
+    return $.ajax({
+      url: '/api/auth/invitations/' + token + '/accept/',
+      method: 'PUT',
+      error: _.bind(function(response) {
+        this.broadcast('user:accept-invite:error', response);
+      }, this),
+      success: _.bind(function(response) {
+        this.set('is_invite', false);
+        this.unset('invited_user_token');
+        this.broadcast('user:accept-invite:success', response);
+        this.saveCache();
+      }, this)
+    });
+  },
+
   requestInvite: function(email, account) {
     var data = JSON.stringify({
       email: email || this.get('email'),
@@ -125,7 +165,6 @@ module.exports = Person.extend({
     return this;
   },
 
-
   setEmailFromJWT: function(token) {
     var tokenData;
 
@@ -136,7 +175,7 @@ module.exports = Person.extend({
     if (tokenData.email) this.set({
       'email': tokenData.email,
       'signup_request_token': token
-    });
+    }).saveCache();
 
     return this;
   },
@@ -151,7 +190,7 @@ module.exports = Person.extend({
     if (tokenData.email) this.set({
       'email': tokenData.email,
       'invited_user_token': token
-    });
+    }).saveCache();
 
     return this;
   },
@@ -280,12 +319,18 @@ module.exports = Person.extend({
   signin: function(username, password) {
     var credentials = {};
 
+    this.unset('email');
+
     if (username && password) {
       credentials.username = username;
       credentials.password = password;
     } else if (this.get('username') && this.get('password')) {
       credentials.username = this.get('username');
       credentials.password = this.get('password');
+    }
+
+    if (this.has('invited_user_token')) {
+      credentials.invited_user_token = this.get('invited_user_token');
     }
 
     if (!_.size(credentials)) this.onSigninError({

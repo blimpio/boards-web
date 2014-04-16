@@ -5,6 +5,13 @@ module.exports = function(step) {
     this.navigate('', {trigger: true});
   } else {
     this.setController(require('signup/controller'));
-    this.controller.renderStep(step);
+
+    if (this.User.hasInvitation()) {
+      this.controller.renderLayout(true);
+      this.controller.signupWithInvite(this.User.get('invited_user_token'));
+    } else {
+      this.controller.renderLayout(false);
+      this.controller.renderStep();
+    }
   }
 };
