@@ -142,6 +142,8 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardsFetch: function() {
+    var canEdit = App.BoardCollaborators.current.canEdit();
+
     if (this.firstLoad) {
       this.firstLoad = false;
       this.listen();
@@ -151,9 +153,9 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('content').showCards({
       board: App.Boards.current,
-      canEdit: App.BoardCollaborators.current.canEdit(),
+      canEdit: canEdit,
       forceShow: this.options.forceCardsShow
-    }).toggleEmptyCardsState(App.Cards.isEmpty());
+    }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
 
     if (this.options.card) {
       App.Cards.setCurrent(this.options.card);
@@ -175,22 +177,25 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardDetailClose: function() {
+    var canEdit = App.BoardCollaborators.current.canEdit();
     this.options.card = null;
 
     this.getLayout('content')
       .closeCard()
       .showCards({
         board: App.Boards.current,
-        canEdit: App.BoardCollaborators.current.canEdit(),
+        canEdit: canEdit,
         triggerLayout: true
-      }).toggleEmptyCardsState(App.Cards.isEmpty());
+      }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
   },
 
   onCardAdded: function() {
-    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
+    this.getLayout('content').toggleEmptyCardsState(false);
   },
 
   onCardRemoved: function() {
+    var canEdit = App.BoardCollaborators.current.canEdit();
+
     if (this.getLayout('content').getRegion('detail').isShown()) {
       this.broadcast('router:navigate', App.Boards.current.getUrl(), {
         trigger: false
@@ -198,12 +203,12 @@ module.exports = Zeppelin.Controller.extend({
 
       this.getLayout('content').showCards({
         board: App.Boards.current,
-        canEdit: App.BoardCollaborators.current.canEdit(),
+        canEdit: canEdit,
         triggerLayout: true
       });
     }
 
-    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty());
+    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
   },
 
   fetchComments: function(card) {

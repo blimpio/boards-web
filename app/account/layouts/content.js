@@ -24,8 +24,9 @@ module.exports = Z.Layout.extend({
     return this;
   },
 
-  toggleEmptyCardsState: function(hasNoCards) {
+  toggleEmptyCardsState: function(hasNoCards, canEdit) {
     this.$el.removeClass('is-loading');
+    this.$el.toggleClass('can-edit', canEdit);
     this.$el.toggleClass('is-empty', hasNoCards);
     return this;
   },

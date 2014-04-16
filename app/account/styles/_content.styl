@@ -54,6 +54,12 @@
       display: none !important;
     }
   }
+
+  &.can-edit {
+    #cards-empty .edit-control {
+      display: block !important;
+    }
+  }
 }
 
 #cards-list-container,
@@ -76,6 +82,10 @@
   h1 {
     font-size: 32px;
     margin: 0 auto 25px;
+  }
+
+  .edit-control {
+    display: none;
   }
 }
 
