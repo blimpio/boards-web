@@ -24,6 +24,7 @@ module.exports = Z.Layout.extend({
   },
 
   toggleLoadingMainState: function() {
+    this.getElement('contentWrapper').removeClass('is-empty');
     this.getElement('page').toggleClass('is-loading');
     return this;
   },

@@ -20,6 +20,7 @@ module.exports = Z.Layout.extend({
   },
 
   toggleLoadingContentState: function() {
+    this.$el.removeClass('is-empty');
     this.$el.toggleClass('is-loading');
     return this;
   },
