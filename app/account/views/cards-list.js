@@ -9,6 +9,8 @@ module.exports = Zeppelin.CollectionView.extend({
 
   addMethod: 'prepend',
 
+  wall: null,
+
   layoutTimer: null,
 
   itemView: function(model) {
@@ -29,12 +31,23 @@ module.exports = Zeppelin.CollectionView.extend({
 
   layout: function() {
     if (this.collection.isEmpty()) return this;
-    if (this.$list.data('masonry')) this.$list.masonry('destroy');
+    if (!this.wall) this.wall = new freewall(this.$list);
 
-    this.$list.masonry({
-      gutter: 15,
-      itemSelector: 'li.card'
+    this.wall.reset({
+      delay: 0,
+      cellW: 222,
+      cellH: 222,
+      gutterX: 15,
+      gutterY: 15,
+      animate: false,
+      fixSize: 0,
+      selector: 'li.card',
+      onResize: _.bind(function() {
+        this.wall.fitWidth();
+      }, this)
     });
+
+    this.wall.fitWidth();
 
     return this;
   },

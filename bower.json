@@ -9,7 +9,7 @@
     "jquery": "~2",
     "fuse.js": "~1.1.0",
     "yepnope": "~1.5.4",
-    "masonry": "~3.1.5",
+    "freewall": "git@github.com:kombai/freewall.git",
     "backbone": "~1",
     "bootstrap": "~3.1.1",
     "jquery-ui": "~1.10.4",
@@ -28,6 +28,9 @@
     "yepnope": {
       "main": "yepnope.js"
     },
+    "freewall": {
+      "main": "freewall.js"
+    },
     "backbone": {
       "main": "backbone.js",
       "dependencies": {
@@ -35,9 +38,6 @@
         "jquery": "*",
         "handlebars": "*"
       }
-    },
-    "masonry": {
-      "main": "dist/masonry.pkgd.js"
     },
     "bootstrap": {
       "main": [

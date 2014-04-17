@@ -1,13 +1,6 @@
 var Card = require('account/views/card');
 
 module.exports = Card.extend({
-  attributes: function() {
-    return {
-      'title': this.model.get('name'),
-      'data-type': 'file'
-    };
-  },
-
   className: function() {
     var className = Card.prototype.className.apply(this, arguments);
     if (this.model.get('is_uploading')) className += ' is-uploading';

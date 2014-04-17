@@ -1,6 +1,13 @@
 module.exports = Zeppelin.ModelView.extend({
   tagName: 'li',
 
+  attributes: function() {
+    return {
+      'title': this.model.get('name'),
+      'data-type': this.model.get('type')
+    };
+  },
+
   className: function() {
     var className = 'card is-item';
     if (this.model.get('featured')) className += ' is-featured';
