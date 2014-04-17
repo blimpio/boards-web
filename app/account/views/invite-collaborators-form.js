@@ -11,7 +11,7 @@ module.exports = Zeppelin.FormView.extend({
 
   events: function() {
     return {
-      'keyup [name=invitee]': _.debounce(this.onKeyup, 200),
+      'keyup [name=invitee]': _.debounce(this.onKeyup, 500),
       'keydown [name=invitee]': 'onInputKeydown',
       'click [data-action=cancel]': 'reset',
       'click button[data-permission]': 'onChangePermission',
@@ -146,6 +146,7 @@ module.exports = Zeppelin.FormView.extend({
 
     if (!value || value.match(/@/)) {
       this.hideSuggestions();
+      $el.removeClass('is-loading');
     } else {
       this.searchSuggestions(value).done(function(response) {
         if (response.length) {
@@ -153,8 +154,11 @@ module.exports = Zeppelin.FormView.extend({
         } else {
           self.hideSuggestions();
         }
+
+        $el.removeClass('is-loading');
       }).fail(function() {
         self.hideSuggestions();
+        $el.removeClass('is-loading');
       });
     }
   },
@@ -168,6 +172,8 @@ module.exports = Zeppelin.FormView.extend({
       _.delay(function() {
         $suggestions.scrollTop(0);
       }, 50);
+    } else {
+      if (!$el.val().match(/@/)) $el.addClass('is-loading');
     }
   },
 
