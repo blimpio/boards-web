@@ -65,9 +65,12 @@ module.exports = Z.Layout.extend({
     this.getRegion('inviteForm').view.reset();
   },
 
-  onAjaxSuccess: function() {
-    var $alert = this.getElement('alert');
+  onAjaxSuccess: function(event, xhr, settings) {
+    var $alert;
 
+    if (settings.url.match(/\/api\/autocomplete\/users\//)) return false;
+
+    $alert = this.getElement('alert');
     $alert.text('Changes saved.').show();
 
     _.delay(function() {
@@ -76,8 +79,11 @@ module.exports = Z.Layout.extend({
   },
 
   onAjaxError: function() {
-    var $alert = this.getElement('alert');
+    var $alert;
 
+    if (settings.url.match(/\/api\/autocomplete\/users\//)) return false;
+
+    $alert = this.getElement('alert');
     $alert.text('Something went wrong. Please try again.').show();
 
     _.delay(function() {
