@@ -1,4 +1,6 @@
 module.exports = Zeppelin.Controller.extend({
+  name: 'Account',
+
   title: 'Blimp Boards',
 
   layouts: {
@@ -95,6 +97,7 @@ module.exports = Zeppelin.Controller.extend({
 
   onBoardSelected: function(board) {
     this.options.card = null;
+    this.options.board = board.get('slug');
     this.options.forceCardsShow = true;
     this.getLayout('content').toggleLoadingContentState();
     this.fetchCollaborators(board.id);
@@ -111,6 +114,26 @@ module.exports = Zeppelin.Controller.extend({
       this.broadcast('router:navigate', App.Accounts.current.getUrl(), {
         trigger: false
       });
+    }
+  },
+
+  onBoardRoute: function(slug) {
+    var canEdit;
+
+    if (this.options.board === slug) {
+      canEdit = App.BoardCollaborators.current.canEdit();
+      this.options.card = null;
+      this.options.forceCardsShow = false;
+      this.getLayout('content').showCards({
+        board: App.Boards.current,
+        canEdit: canEdit,
+        forceShow: false
+      }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
+    } else {
+      this.options.board = slug;
+      App.Boards.setCurrent(slug);
+      App.Cache.saveCurrent('board', App.Boards.current.id);
+      App.Boards.current.select({navigate: false});
     }
   },
 
@@ -209,6 +232,20 @@ module.exports = Zeppelin.Controller.extend({
     }
 
     this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
+  },
+
+  onCardRoute: function(boardSlug, cardSlug) {
+    if (this.options.board === boardSlug) {
+      this.options.card = cardSlug;
+      App.Cards.setCurrent(cardSlug);
+      App.Cards.current.select({navigate: false});
+    } else {
+      this.options.card = cardSlug;
+      this.options.board = boardSlug;
+      App.Boards.setCurrent(boardSlug);
+      App.Cache.saveCurrent('board', App.Boards.current.id);
+      App.Boards.current.select({navigate: false});
+    }
   },
 
   fetchComments: function(card) {

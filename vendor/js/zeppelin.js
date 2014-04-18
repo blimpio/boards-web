@@ -2446,7 +2446,9 @@
       return this;
     },
 
-    title: '',
+    name: null,
+
+    title: null,
 
     setTitle: function (title) {
       document.title = title || this.title;
@@ -2602,9 +2604,9 @@
       return this;
     },
 
-    isCurrentController: function (controller) {
-      if (!Z.Util.isController(controller)) return false;
-      return this.controller.cid === controller.cid;
+    isCurrentController: function (name) {
+      if (!this.controller) return false;
+      return this.controller.name === name;
     },
 
     start: function (options) {

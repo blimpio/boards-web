@@ -1,5 +1,7 @@
 module.exports = function(account, board, card) {
-  if (App.PUBLIC_BOARD.id && App.PUBLIC_BOARD.account &&
+  if (this.isCurrentController('Account')) {
+    this.controller.onCardRoute(board, card);
+  } else if (App.PUBLIC_BOARD.id && App.PUBLIC_BOARD.account &&
   !App.Accounts.get(App.PUBLIC_BOARD.account)) {
     this.setController(require('public-board/controller'), {
       card: card,

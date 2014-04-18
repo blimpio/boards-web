@@ -67,7 +67,5 @@ module.exports = (function() {
   window.App = window.App || {};
   window.App = _.extend(new Application(), window.App);
 
-  App.start({
-    pushState: true
-  });
+  App.start({pushState: true});
 })();
