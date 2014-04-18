@@ -78,7 +78,7 @@ module.exports = Z.Layout.extend({
     }, 1500);
   },
 
-  onAjaxError: function() {
+  onAjaxError: function(event, xhr, settings) {
     var $alert;
 
     if (settings.url.match(/\/api\/autocomplete\/users\//)) return false;
