@@ -32,13 +32,13 @@ module.exports = Z.Layout.extend({
   },
 
   listenToAjax: function() {
-    $(document).ajaxError(this.onAjaxError);
-    $(document).ajaxSuccess(this.onAjaxSuccess);
+    $(document).on('ajaxError.share', this.onAjaxError);
+    $(document).on('ajaxSuccess.share', this.onAjaxSuccess);
   },
 
   stopListeningToAjax: function() {
-    $(document).off('ajaxError');
-    $(document).off('ajaxSuccess');
+    $(document).off('ajaxError.share');
+    $(document).off('ajaxSuccess.share');
   },
 
   showSettings: function(board) {

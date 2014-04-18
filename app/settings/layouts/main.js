@@ -55,13 +55,13 @@ module.exports = Z.Layout.extend({
   },
 
   listenToAjax: function() {
-    $(document).ajaxError(this.onAjaxError);
-    $(document).ajaxSuccess(this.onAjaxSuccess);
+    $(document).on('ajaxError.settings', this.onAjaxError);
+    $(document).on('ajaxSuccess.settings', this.onAjaxSuccess);
   },
 
   stopListeningToAjax: function() {
-    $(document).off('ajaxError');
-    $(document).off('ajaxSuccess');
+    $(document).off('ajaxError.settings');
+    $(document).off('ajaxSuccess.settings');
   },
 
   onAjaxSuccess: function() {

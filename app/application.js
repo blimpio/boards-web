@@ -53,6 +53,14 @@ module.exports = (function() {
       this.AccountCollaborators = new AccountCollaborators();
 
       this.User.signinFromCache();
+
+      $(document).on('ajaxError.app', _.bind(function(event, xhr, settings) {
+        if (xhr.statusText === 'UNAUTHORIZED' && xhr.status === 401) {
+          window.alert('Your session has expired. Please signin again.');
+          this.User.signout();
+          this.navigate('signin', {trigger: true});
+        }
+      }, this));
     }
   });
 
