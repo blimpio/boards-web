@@ -27,14 +27,12 @@ module.exports = Zeppelin.Collection.extend({
   onBoardCreated: function(board) {
     if (Z.Util.isModel(board)) {
       this.add(board);
-      if (this.length === 1) {
-        if (board.id) {
-          board.select();
-        } else {
-          board.once('sync', function() {
-            this.select();
-          }, board);
-        }
+      if (board.id) {
+        board.select();
+      } else {
+        board.once('sync', function() {
+          this.select();
+        }, board);
       }
     }
   },

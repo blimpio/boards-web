@@ -10,7 +10,7 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   elements: {
-    name: 'strong.board-name'
+    name: 'span.board-name'
   },
 
   bindings: {
