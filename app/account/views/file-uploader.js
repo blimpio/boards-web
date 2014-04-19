@@ -138,7 +138,12 @@ module.exports = Zeppelin.View.extend({
 
   onDone: function(event, data) {
     var file = this.getFileModel(data.files[0]);
-    if (file) file.save({'is_uploading': false});
+
+    if (file) {
+      file.save({'is_uploading': false});
+      this.broadcast('file:uploaded', file.get('content'));
+    }
+
     return this;
   },
 

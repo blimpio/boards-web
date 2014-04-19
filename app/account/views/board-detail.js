@@ -22,6 +22,12 @@ module.exports = Zeppelin.FormView.extend({
     }
   },
 
+  context: function() {
+    return _.extend({
+      avatar: this.model.getAvatar()
+    }, this.model.attributes)
+  },
+
   delete: function() {
     var msg = 'Are you sure you want to delete this board and it\'s cards?';
     if (window.confirm(msg)) this.model.destroy();

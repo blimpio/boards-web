@@ -23,7 +23,8 @@ module.exports = Zeppelin.ModelView.extend({
 
   context: function() {
     return _.extend({}, this.model.attributes, {
-      url: this.model.getUrl()
+      url: this.model.getUrl(),
+      avatar: this.model.getAvatar()
     });
   },
 
