@@ -16,6 +16,7 @@ module.exports = Zeppelin.FormView.extend({
       'click [data-action=cancel]': 'reset',
       'click button[data-permission]': 'onChangePermission',
       'click a.collaborator-suggestion': 'onSuggestionClick',
+      'focus [data-action=showActions]': 'showActions',
       'keydown div.collaborator-suggestions': 'onSuggestionKeydown',
       'click [data-action=addInvitationRow]': 'addInvitationRow',
       'click [data-action=removeCollaborator]': 'onRemoveInvitationRowClick'
@@ -24,6 +25,7 @@ module.exports = Zeppelin.FormView.extend({
 
   elements: {
     sendBtn: '[data-action=send]',
+    actions: 'div.invite-collaborator-actions',
     invitationRows: 'div.invite-collaborator-rows'
   },
 
@@ -76,9 +78,28 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   reset: function() {
+    this.hideActions();
     this.hideSuggestions();
-    this.getElement('invitationRows').children().filter(':not(:first-child)').remove();
     Zeppelin.FormView.prototype.reset.apply(this, arguments);
+    return this;
+  },
+
+  showActions: function() {
+    this.$el.addClass('is-active');
+    this.getElement('actions').find('input[name=invitee]').first().focus();
+    this.broadcast('inviteCollaborators:actions:visible');
+    return this;
+  },
+
+  hideActions: function() {
+    this.$el.removeClass('is-active');
+
+    this.getElement('invitationRows')
+      .find('div.invite-collaborator-row')
+      .not(':first-child')
+        .remove();
+
+    this.broadcast('inviteCollaborators:actions:hidden');
     return this;
   },
 

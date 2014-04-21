@@ -1,4 +1,4 @@
-<div class="share-board-modal modal" id="share-board-modal">
+<div class="share-board-modal modal" id="share-board-modal" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="ui-modal-alert"></div>
@@ -14,6 +14,9 @@
         </div> {{! .share-board-collaborators }}
         <div class="share-board-invite"></div>
       </div> {{! .modal-body }}
+      <div class="modal-footer clearfix">
+        <button type="button" class="btn btn-default pull-left" data-action="submitShareModal">Done</button>
+      </div> {{! .modal-footer }}
     </div> {{! .modal-content }}
   </div> {{! .modal-dialog }}
 </div> {{! #share-board-modal }}

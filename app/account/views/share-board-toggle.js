@@ -135,7 +135,6 @@ module.exports = Zeppelin.FormView.extend({
 
   onChange: function(event) {
     this.toggleSharingActions($(event.currentTarget).val() === 'true');
-    this.submit();
   }
 });
 

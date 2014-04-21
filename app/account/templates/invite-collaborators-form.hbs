@@ -1,12 +1,17 @@
 <strong class="invite-collaborator-title">Invite people</strong>
-
-<div class="invite-collaborator-rows">
-  {{partial "account/templates/invite-collaborator-row"}}
-</div> {{! .invite-collaborator-rows }}
-
-<button type="button" class="btn btn-link" data-action="addInvitationRow">Add more</button>
+<input name="invitee" type="text" class="form-control" data-action="showActions" placeholder="Enter names, useranames or email addresses…">
 
 <div class="invite-collaborator-actions">
-  <button class="btn btn-default" data-action="send">Send</button>
-  <button type="button" class="btn btn-link" data-action="cancel">Cancel</button>
+  <div class="invite-collaborator-rows form-group">
+    {{partial "account/templates/invite-collaborator-row"}}
+  </div> {{! .invite-collaborator-rows }}
+
+  <div class="form-group">
+    <button type="button" class="btn btn-link" data-action="addInvitationRow">Add more</button>
+  </div> {{! .form-group }}
+
+  <div class="form-group">
+    <button class="btn btn-default" data-action="send">Send</button>
+    <button type="button" class="btn btn-link" data-action="cancel">Cancel</button>
+  </div> {{! .form-group }}
 </div> {{! .invite-collaborator-actions }}

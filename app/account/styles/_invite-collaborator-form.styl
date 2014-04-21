@@ -3,9 +3,19 @@
   border-radius: 3px;
   padding: 15px;
 
-  [data-action="addInvitationRow"] {
-    padding: 5px 0 0 0;
+  &.is-active {
+    [data-action="showActions"] {
+      display: none !important;
+    }
+
+    .invite-collaborator-actions {
+      display: block !important;
+    }
   }
+}
+
+[data-action="addInvitationRow"] {
+  padding: 5px 0 0 0;
 }
 
 .invite-collaborator-title {
@@ -41,5 +51,6 @@
 }
 
 .invite-collaborator-actions {
+  display: none;
   margin-top: 15px;
 }
