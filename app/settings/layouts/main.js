@@ -45,6 +45,12 @@ module.exports = Z.Layout.extend({
     advancedBtn: '[data-action=showAdvanced]'
   },
 
+  context: function() {
+    return {
+      hasTeamAccounts: App.Accounts.hasTeamAccounts()
+    }
+  },
+
   initialize: function() {
     _.bindAll(this, ['onAjaxSuccess', 'onAjaxError']);
   },

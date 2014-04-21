@@ -1,4 +1,4 @@
-<div class="settings-modal modal" id="settings-modal">
+<div class="settings-modal modal" id="settings-modal" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="ui-modal-alert"></div>
@@ -9,9 +9,11 @@
           <div class="btn-group">
             <button type="button" class="btn btn-default" data-action="showGeneral">General</button>
           </div> {{! .btn-group }}
-          <div class="btn-group">
-            <button type="button" class="btn btn-default" data-action="showAccounts">Accounts</button>
-          </div> {{! .btn-group }}
+          {{#if hasTeamAccounts}}
+            <div class="btn-group">
+              <button type="button" class="btn btn-default" data-action="showAccounts">Accounts</button>
+            </div> {{! .btn-group }}
+          {{/if}}
           <div class="btn-group">
             <button type="button" class="btn btn-default" data-action="showNotifications">Notiﬁcations</button>
           </div> {{! .btn-group }}

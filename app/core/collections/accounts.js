@@ -42,5 +42,11 @@ module.exports = Zeppelin.Collection.extend({
     }, this);
 
     return accounts;
+  },
+
+  hasTeamAccounts: function() {
+    return this.filter(function(account) {
+      return account.get('type') !== 'personal';
+    }).length > 0;
   }
 });

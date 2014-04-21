@@ -8,7 +8,9 @@
 
     <ul class="dropdown-menu pull-right" role="menu">
       <li><a href="#" data-settings="general">General</a></li>
-      <li><a href="#" data-settings="accounts">Accounts</a></li>
+      {{#if hasTeamAccounts}}
+        <li><a href="#" data-settings="accounts">Accounts</a></li>
+      {{/if}}
       <li><a href="#" data-settings="notifications">Notiﬁcations</a></li>
       <li><a href="#" data-settings="password">Password</a></li>
       <li><a href="#" data-settings="advanced">Advanced</a></li>
