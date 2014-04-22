@@ -180,6 +180,8 @@ module.exports = Zeppelin.Controller.extend({
       forceShow: this.options.forceCardsShow
     }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
 
+    this.getLayout('comments').reset();
+
     if (this.options.card) {
       App.Cards.setCurrent(this.options.card);
       App.Cards.current.select({navigate: false});
@@ -210,6 +212,8 @@ module.exports = Zeppelin.Controller.extend({
         canEdit: canEdit,
         triggerLayout: true
       }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
+
+      this.getLayout('comments').reset();
   },
 
   onCardAdded: function() {
@@ -229,6 +233,8 @@ module.exports = Zeppelin.Controller.extend({
         canEdit: canEdit,
         triggerLayout: true
       });
+
+      this.getLayout('comments').reset();
     }
 
     this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);

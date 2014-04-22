@@ -1,5 +1,8 @@
 module.exports = Z.Region.extend({
-  el: 'div.public-comments-wrapper',
+  el: '#public-comments-container',
 
-  view: require('account/views/public-comments')
+  showComments: function(options) {
+    this.setView(require('account/views/public-comments'), options).show();
+    return this;
+  },
 });

@@ -59,5 +59,9 @@ module.exports = Zeppelin.Model.extend({
   getAvatar: function() {
     return this.get('thumbnail_sm_path') ||
     'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+  },
+
+  isPublic: function() {
+    return this.get('is_shared') === true;
   }
 });

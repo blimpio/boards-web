@@ -19,7 +19,17 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
+    publicComments: '#public-comments-wrapper',
     currentCommentsType: 'span.current-comments-type'
+  },
+
+  reset: function() {
+    this.getElement('currentCommentsType').text('Comments from collaborators');
+    this.togglePublicComments(App.Boards.current.isPublic());
+    this.getRegion('createComment').$el.show();
+    this.getRegion('publicComments').$el.hide();
+    this.getRegion('collaboratorComments').$el.show();
+    return this;
   },
 
   toggleLoadingState: function() {
@@ -33,6 +43,7 @@ module.exports = Z.Layout.extend({
       user: options.user
     });
 
+    this.togglePublicComments(App.Boards.current.isPublic());
     this.showCollaboratorComments();
     return this;
   },
@@ -52,8 +63,8 @@ module.exports = Z.Layout.extend({
   },
 
   showCollaboratorComments: function() {
-    this.getRegion('publicComments').$el.hide();
     this.getRegion('createComment').$el.show();
+    this.getRegion('publicComments').$el.hide();
     this.getRegion('collaboratorComments').$el.show();
 
     if (!this.getRegion('collaboratorComments').isShown()) {
@@ -65,11 +76,10 @@ module.exports = Z.Layout.extend({
   },
 
   renderPublicComments: function() {
-    this.getRegion('publicComments').view.options = {
+    this.getRegion('publicComments').showComments({
       canEdit: this.options.canEdit
-    };
+    });
 
-    this.showRegion('publicComments');
     return this;
   },
 
@@ -81,6 +91,10 @@ module.exports = Z.Layout.extend({
     if (!this.getRegion('publicComments').isShown()) {
       this.renderPublicComments();
     }
+  },
+
+  togglePublicComments: function(isPublicBoard) {
+    this.getElement('publicComments').toggle(isPublicBoard);
   },
 
   openAccountSettings: function() {
