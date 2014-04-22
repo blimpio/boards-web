@@ -1,76 +1,85 @@
 #card-detail-container {
   display: none;
-  margin-bottom: 25px;
   padding: 150px 15px 15px 250px;
   position: relative;
   z-index: 1;
 }
 
-.card.is-detail {
-  cursor: inherit;
+#card-detail-left,
+#card-detail-right {
+  margin-bottom: 25px;
 }
 
-.card.is-detail[data-type="file"] {
-  background: url('../images/loading-item.gif') no-repeat center center #FFFFFF;
-  min-height: 150px;
-  text-align: center;
+.card {
+  &.is-detail {
+    cursor: inherit;
 
-  &.has-loaded-preview {
-    background: #F9F9F9;
+    &[data-type="file"] {
+      background: url('../images/loading-item.gif') no-repeat center center #FFFFFF;
+      min-height: 150px;
+      text-align: center;
 
-    .card-preview {
-      display: inline;
+      &.has-loaded-preview {
+        background: #F9F9F9;
+
+        .card-preview {
+          display: inline;
+        }
+      }
+
+      .card-preview {
+        display: none;
+        height: auto;
+        max-width: 100%;
+        width: auto;
+      }
     }
-  }
 
-  .card-preview {
-    display: none;
-    height: auto;
-    width: auto;
-  }
-}
+    &[data-type="note"] {
+      &.is-editing {
+        .card-content {
+          display: none;
+        }
 
-.card.is-detail[data-type="note"] {
-  &.is-editing {
-    .card-content {
-      display: none;
-    }
+        .note-editor-form {
+          display: block;
+        }
+      }
 
-    .note-editor-form {
-      display: block;
-    }
-  }
+      .card-content {
+        font-size: 16px;
+        min-height: 350px;
 
-  .card-content {
-    font-size: 16px;
-    min-height: 350px;
+        img {
+          display: block;
+          height: auto;
+          max-width: 100%;
+          width: auto;
+        }
+      }
 
-    img {
-      display: block;
-      max-width: 100%;
-    }
-  }
+      [name="content"] {
+        min-height: 350px;
+      }
 
-  [name="content"] {
-    min-height: 350px;
-  }
+      .note-editor-form {
+        display: none;
+        margin: 15px auto;
+      }
 
-  .note-editor-form {
-    display: none;
-    margin: 15px auto;
-  }
+      .note-editor-preview,
+      .note-editor-preview-actions {
+        padding: 10px;
+      }
 
-  .note-editor-preview,
-  .note-editor-preview-actions {
-    padding: 10px;
-  }
+      .note-editor-preview {
+        padding-bottom: 0;
 
-  .note-editor-preview {
-    padding-bottom: 0;
-
-    img {
-      display: block;
-      width: 100%;
+        img {
+          display: block;
+          width: 100%;
+        }
+      }
     }
   }
 }
