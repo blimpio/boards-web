@@ -56,18 +56,6 @@ module.exports = Person.extend({
       } else if (!Z.Validations.isOfMinimumLength(password, 6) && (isCurrentStep || isSignin || isRecoveringPass)) {
         return 'Your password must have a minimun of 6 characters.';
       }
-    },
-
-    first_name: function(firstName) {
-      if (!firstName && this.has('token')) {
-        return 'Your first name is required.';
-      }
-    },
-
-    last_name: function(lastName) {
-      if (!lastName && this.has('token')) {
-        return 'Your last name is required.';
-      }
     }
   },
 

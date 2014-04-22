@@ -48,5 +48,11 @@ module.exports = Zeppelin.Collection.extend({
     return this.filter(function(account) {
       return account.get('type') !== 'personal';
     }).length > 0;
+  },
+
+  getPersonalAccount: function() {
+    return this.find(function(account) {
+      return account.get('type') === 'personal';
+    });
   }
 });

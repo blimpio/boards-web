@@ -31,6 +31,15 @@
 </div> {{! .form-group }}
 
 <div class="form-group">
+  <label for="userSettingsDisqus" class="col-sm-3 control-label">Disqus shortname</label>
+  <div class="col-sm-9">
+    <input name="disqus_shortname" type="text" class="form-control" id="userSettingsDisqus" value="{{disqus_shortname}}" placeholder="e.g. mydisqusshortname">
+    <small class="help-block">This will enable public comments on shared boards, you can open a free account on the <a href="http://disqus.com/" target="_blank">disqus site.</a></small>
+    <div data-error="disqus_shortname" class="help-block"></div>
+  </div> {{! .col-sm-9 }}
+</div> {{! .form-group }}
+
+<div class="form-group">
   <div class="col-sm-12">
     <button class="btn btn-default" data-action="save">Save</button>
     <button type="button" class="btn btn-link" data-action="cancel">Cancel</button>
