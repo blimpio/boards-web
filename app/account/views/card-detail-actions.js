@@ -16,20 +16,30 @@ module.exports = Zeppelin.ModelView.extend({
     'click [data-action=back]': 'onClickBack',
     'click [data-action=edit]': 'edit',
     'click [data-action=delete]': 'delete',
-    'click [data-action=highlight]': 'toggleHighlight',
     'click [data-action=download]': 'download'
-  },
-
-  bindings: {
-    model: {
-      'change:featured': 'onFeaturedChange'
-    }
   },
 
   context: function() {
     return _.extend({}, this.model.attributes, {
       boardUrl: this.options.boardUrl,
-      boardName: this.options.boardName
+      boardName: this.options.boardName,
+      boardAvatar: this.options.boardAvatar
+    });
+  },
+
+  edit: function() {
+    this.broadcast('note:edit');
+  },
+
+  delete: function() {
+    if (window.confirm('Are you sure you want to delete card?')) {
+      this.model.destroy();
+    }
+  },
+
+  download: function() {
+    this.model.download().done(function(data) {
+      window.location.replace(data.download_url);
     });
   },
 
@@ -47,27 +57,6 @@ module.exports = Zeppelin.ModelView.extend({
 
       this.broadcast('cardDetail:closed');
     }
-  },
-
-  edit: function() {
-    this.broadcast('note:edit');
-  },
-
-  toggleHighlight: function() {
-    this.model.save({featured: !this.model.get('featured')});
-    return this;
-  },
-
-  delete: function() {
-    if (window.confirm('Are you sure you want to delete card?')) {
-      this.model.destroy();
-    }
-  },
-
-  download: function() {
-    this.model.download().done(function(data) {
-      window.location.replace(data.download_url);
-    });
   }
 });
 
