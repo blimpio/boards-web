@@ -1,6 +1,8 @@
 module.exports = (function() {
   var socket;
 
+  console.log(this, App);
+
   try {
     socket = io.connect(App.SOCKETS_URL, {query: 'token=' + App.User.get('token')});
 
@@ -25,11 +27,12 @@ module.exports = (function() {
     });
 
     socket.on('message', function(response) {
-      if (response.data_type === 'card' && response.method === 'update') {
-        if (response.data.type === 'file') {
-          App.Cards.get(response.data.id).set(response.data);
-        }
-      }
+      console.log(response);
+      // if (response.data_type === 'card' && response.method === 'update') {
+      //   if (response.data.type === 'file') {
+      //     App.Cards.get(response.data.id).set(response.data);
+      //   }
+      // }
     });
 
   } catch(error) {

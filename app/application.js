@@ -27,8 +27,11 @@ module.exports = (function() {
     },
 
     subscriptions: {
+      'app:loaded': 'onAppLoaded',
       'router:navigate': 'goTo'
     },
+
+    socket: null,
 
     goTo: function(fragment, options) {
       options = options || {
@@ -59,6 +62,49 @@ module.exports = (function() {
           this.navigate('signin', {trigger: true});
         }
       }, this));
+    },
+
+    connectToSocket: function() {
+      var rooms = ['u' + this.User.id, 'a' + this.Boards.current.get('account')];
+
+      try {
+        this.socket = io.connect(this.SOCKETS_URL, {
+          query: 'token=' + this.User.get('token')
+        });
+
+        this.socket.on('error', function(reason) {
+          console.error('unable to connect websocket server:', reason);
+        });
+
+        this.socket.on('connect', _.bind(function() {
+          _.each(rooms, function(room) {
+            this.socket.emit('subscribe', room);
+          }, this);
+        }, this));
+
+        this.socket.on('roomAuth', function(data) {
+          console.error('roomAuth:', data);
+        });
+
+        this.socket.on('joinedRoom', function(data) {
+          console.log('joinedRoom:', data);
+        });
+
+        this.socket.on('message', function(response) {
+          console.log(response);
+          // if (response.data_type === 'card' && response.method === 'update') {
+          //   if (response.data.type === 'file') {
+          //     App.Cards.get(response.data.id).set(response.data);
+          //   }
+          // }
+        });
+      } catch(error) {
+        console.log(error);
+      }
+    },
+
+    onAppLoaded: function() {
+      this.connectToSocket();
     }
   });
 
