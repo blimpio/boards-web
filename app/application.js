@@ -5,7 +5,6 @@ var User = require('core/models/user'),
     Accounts = require('core/collections/accounts'),
     Comments = require('core/collections/comments');
     BoardCollaborators = require('core/collections/board-collaborators');
-    AccountCollaborators = require('core/collections/account-collaborators');
 
 module.exports = (function() {
   var Application = Zeppelin.Application.extend({
@@ -50,7 +49,6 @@ module.exports = (function() {
       this.Accounts = new Accounts();
       this.Comments = new Comments();
       this.BoardCollaborators = new BoardCollaborators();
-      this.AccountCollaborators = new AccountCollaborators();
 
       this.User.signinFromCache();
 
