@@ -54,7 +54,8 @@ module.exports = Z.Layout.extend({
     this.getRegion('header').showCard(false, {
       model: options.card,
       boardUrl: options.board.getUrl(),
-      boardName: options.board.get('name')
+      boardName: options.board.get('name'),
+      boardAvatar: options.board.getAvatar()
     });
 
     this.getRegion('detail').showDetail(options.card);
