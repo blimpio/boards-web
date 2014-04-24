@@ -2,8 +2,9 @@ var User = require('core/models/user'),
     Cache = require('core/models/app'),
     Cards = require('core/collections/cards'),
     Boards = require('core/collections/boards'),
+    Socket = require('lib/socket'),
     Accounts = require('core/collections/accounts'),
-    Comments = require('core/collections/comments');
+    Comments = require('core/collections/comments'),
     BoardCollaborators = require('core/collections/board-collaborators');
 
 module.exports = (function() {
@@ -65,39 +66,20 @@ module.exports = (function() {
     },
 
     connectToSocket: function() {
-      var rooms = ['u' + this.User.id, 'a' + this.Boards.current.get('account')];
+      var rooms = ['u' + this.User.id];
+
+      _.forEach(_.unique(this.Boards.pluck('account')), function(id) {
+        rooms.push('a' + id);
+      }, this);
+
+      this.socket = new Socket({
+        url: this.SOCKETS_URL,
+        query: 'token=' + this.User.get('token'),
+        rooms: rooms
+      });
 
       try {
-        this.socket = io.connect(this.SOCKETS_URL, {
-          query: 'token=' + this.User.get('token')
-        });
-
-        this.socket.on('error', function(reason) {
-          console.error('unable to connect websocket server:', reason);
-        });
-
-        this.socket.on('connect', _.bind(function() {
-          _.each(rooms, function(room) {
-            this.socket.emit('subscribe', room);
-          }, this);
-        }, this));
-
-        this.socket.on('roomAuth', function(data) {
-          console.error('roomAuth:', data);
-        });
-
-        this.socket.on('joinedRoom', function(data) {
-          console.log('joinedRoom:', data);
-        });
-
-        this.socket.on('message', function(response) {
-          console.log(response);
-          // if (response.data_type === 'card' && response.method === 'update') {
-          //   if (response.data.type === 'file') {
-          //     App.Cards.get(response.data.id).set(response.data);
-          //   }
-          // }
-        });
+        this.socket.connect();
       } catch(error) {
         console.log(error);
       }

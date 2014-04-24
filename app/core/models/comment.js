@@ -9,8 +9,11 @@ module.exports = Zeppelin.Model.extend({
     return author ? {
       author: author,
       created_by: author.id,
+      modified_by: author.id,
       date_created: _.now()
     } : {
+      created_by: App.User.id,
+      modified_by: App.User.id,
       date_created: _.now()
     };
   },

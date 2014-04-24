@@ -1,7 +1,11 @@
 module.exports = Zeppelin.Model.extend({
-  defaults: {
-    featured: false,
-    is_selected: false
+  defaults: function() {
+    return {
+      featured: false,
+      created_by: App.User.id,
+      modified_by: App.User.id,
+      is_selected: false
+    };
   },
 
   localAttributes: ['is_selected'],

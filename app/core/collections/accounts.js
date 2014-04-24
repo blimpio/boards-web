@@ -4,8 +4,7 @@ module.exports = Zeppelin.Collection.extend({
   model: require('core/models/account'),
 
   subscriptions: {
-    'accounts:current': 'sendCurrent',
-    'user:signin:success': 'populateAccountsFromUser'
+    'accounts:current': 'sendCurrent'
   },
 
   parse: function(response) {
