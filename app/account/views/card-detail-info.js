@@ -15,7 +15,8 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   elements: {
-    name: 'h1.card-detail-info-name'
+    name: 'h1.card-detail-info-name',
+    nameInput: 'input[name=name]'
   },
 
   bindings: {
@@ -45,6 +46,18 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   updateName: function(name) {
+    var $input = this.getElement('nameInput');
+
+    if ($input.is(':focus')) {
+      $input.on('blur.nameUpdated', function() {
+        $input.off('blur.nameUpdated');
+        if (name !== $input.val() &&
+        this.model.previous('name') === inputVal)  $input.val(name);
+      });
+    } else {
+      $input.val(name);
+    }
+
     this.getElement('name').text(name);
     return this;
   },

@@ -21,7 +21,8 @@ module.exports = Zeppelin.FormView.extend({
 
   elements: {
     content: 'div.card-content',
-    preview: 'div.note-editor-preview'
+    preview: 'div.note-editor-preview',
+    contentInput: 'textarea[name=content]'
   },
 
   bindings: {
@@ -49,6 +50,19 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   updateContent: function(content) {
+    var $input = this.getElement('contentInput'),
+        inputVal = $input.val();
+
+    if ($input.is(':focus')) {
+      $input.on('blur.contentUpdated', function() {
+        $input.off('blur.contentUpdated');
+        if (content !== inputVal &&
+        this.model.previous('content') === inputVal) $input.val(content);
+      });
+    } else {
+      $input.val(content);
+    }
+
     this.getElement('content').html(_.markdown(content));
     return this;
   },
