@@ -34,18 +34,10 @@ module.exports = Zeppelin.Model.extend({
   },
 
   getUrl: function() {
-    var boardSlug = '',
-        accountSlug = '';
+    var board = App.Boards.get(this.get('board'));
 
-    this.request('boards:current', function(board) {
-      if (board) boardSlug = board.get('slug');
-    });
-
-    this.request('accounts:current', function(account) {
-      if (account) accountSlug = account.get('slug');
-    });
-
-    return '/' + accountSlug + '/' + boardSlug + '/' + this.get('slug') + '/';
+    return '/' + App.Accounts.get(board.get('account')).get('slug') +
+    '/' + board.get('slug') + '/' + this.get('slug') + '/';
   },
 
   select: function() {
