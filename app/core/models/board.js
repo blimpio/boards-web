@@ -47,13 +47,8 @@ module.exports = Zeppelin.Model.extend({
   },
 
   getUrl: function() {
-    var accountSlug = '';
-
-    this.request('accounts:current', function(account) {
-      if (account) accountSlug = account.get('slug');
-    });
-
-    return '/' + accountSlug + '/' + this.get('slug') + '/';
+    return '/' + App.Accounts.get(this.get('account')).get('slug') +
+    '/' + this.get('slug') + '/';
   },
 
   getShareUrl: function() {

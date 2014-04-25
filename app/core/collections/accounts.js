@@ -7,19 +7,6 @@ module.exports = Zeppelin.Collection.extend({
     'accounts:current': 'sendCurrent'
   },
 
-  parse: function(response) {
-    var currentUser;
-
-    this.request('user:id', function(id) {
-      currentUser = id;
-    });
-
-    return _.filter(response, function(account) {
-      if (account.type === 'personal'
-      && account.created_by === currentUser) return account;
-    }, this);
-  },
-
   setCurrent: function(slug) {
     this.current = _.first(this.where({slug: slug}));
     return this;
@@ -27,10 +14,6 @@ module.exports = Zeppelin.Collection.extend({
 
   sendCurrent: function(channel) {
     this.broadcast(channel, this.current);
-  },
-
-  populateAccountsFromUser: function(user) {
-    if (user.accounts) this.reset(user.accounts);
   },
 
   getUnselectedAccounts: function() {
@@ -49,9 +32,28 @@ module.exports = Zeppelin.Collection.extend({
     }).length > 0;
   },
 
+  getCurrentAccount: function() {
+    var current = this.current;
+
+    if (current.get('type') === 'personal' &&
+    current.get('created_by') !== App.User.id) {
+      current = this.getPersonalAccount();
+    }
+
+    return current;
+  },
+
   getPersonalAccount: function() {
     return this.find(function(account) {
-      return account.get('type') === 'personal';
+      return account.get('type') === 'personal' &&
+      account.get('created_by') === App.User.id;
     });
+  },
+
+  getDisplayableAccounts: function() {
+    return this.filter(function(account) {
+      return account.id === this.getPersonalAccount().id ||
+      account.get('type') !== 'personal';
+    }, this);
   }
 });

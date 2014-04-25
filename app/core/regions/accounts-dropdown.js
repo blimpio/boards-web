@@ -5,7 +5,8 @@ module.exports = Z.Region.extend({
 
   renderView: function(accountsDropdown) {
     this.$el.html(accountsDropdown.renderWithFilter(function(account) {
-      return account.id !== accountsDropdown.collection.current.id;
+      return account.id === this.collection.getPersonalAccount().id ||
+      account.get('type') !== 'personal';
     }).el);
 
     return this;

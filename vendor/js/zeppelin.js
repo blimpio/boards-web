@@ -1927,7 +1927,7 @@
     renderWithFilter: function (comparator) {
       Zeppelin.View.prototype.render.apply(this);
       this.setList();
-      this.filter(comparator);
+      this.filter(_.bind(comparator, this));
       return this;
     },
 

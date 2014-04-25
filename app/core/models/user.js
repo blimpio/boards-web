@@ -372,7 +372,7 @@ module.exports = Person.extend({
 
   signout: function() {
     this.clear();
-    this.destroyCache();
+    localStorage.clear();
     return this;
   },
 
@@ -477,8 +477,8 @@ module.exports = Person.extend({
 
   getAccounts: function() {
     return _.filter(this.get('accounts'), function(account) {
-      if (account.type === 'personal'
-      && account.created_by === this.id) return account;
+      if (account.type === 'personal' && account.created_by === this.id ||
+      account.type !== 'personal') return account;
     }, this);
   },
 

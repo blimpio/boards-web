@@ -15,8 +15,9 @@ module.exports = Zeppelin.CollectionView.extend({
 
   context: function() {
     return {
-      current: this.collection.current.attributes,
-      hasMoreAccounts: this.collection.length > 1
+      current: this.collection.getCurrentAccount().attributes,
+      accounts: this.collection.getDisplayableAccounts(),
+      hasMoreAccounts: this.collection.getDisplayableAccounts().length > 1
     };
   }
 });
