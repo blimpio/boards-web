@@ -53,7 +53,7 @@ _.extend(Socket.prototype, {
     if (message.data.account &&
     message.data.account !== App.Accounts.current.id) return;
 
-    if ((response.data.type === 'file' && message.method === 'update') ||
+    if ((message.data.type === 'file' && message.method === 'update') ||
     message.data.modified_by !== App.User.id) {
       if (message.data_type === 'board') {
         collection = App.Boards;
