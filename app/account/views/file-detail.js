@@ -13,6 +13,12 @@ module.exports = Zeppelin.ModelView.extend({
     preview: 'img.card-preview'
   },
 
+  bindings: {
+    model: {
+      'change:thumbnail_lg_path': 'updatePreview'
+    }
+  },
+
   template: require('account/templates/file-detail'),
 
   context: function() {
@@ -23,6 +29,11 @@ module.exports = Zeppelin.ModelView.extend({
 
   initialize: function() {
     _.bindAll(this, ['onPreviewLoaded']);
+  },
+
+  updatePreview: function() {
+    this.getElement('preview').attr('src', this.model.get('thumbnail_lg_path'));
+    return this;
   },
 
   onRender: function() {

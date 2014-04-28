@@ -21,7 +21,8 @@ module.exports = Card.extend({
     return _.merge({
       model: {
         'change:is_uploading': 'onUploadingStateChange',
-        'change:upload_progress': 'onUploadProgress'
+        'change:upload_progress': 'onUploadProgress',
+        'change:thumbnail_sm_path': 'updatePreview'
       }
     }, Card.prototype.bindings);
   },
@@ -40,7 +41,11 @@ module.exports = Card.extend({
 
   toggleHighlight: function(event) {
     Card.prototype.toggleHighlight.apply(this, arguments);
+    this.updatePreview();
+    return this;
+  },
 
+  updatePreview: function() {
     this.getElement('preview').css({
       'background-image': 'url(' + this.model.getPreview() + ')'
     });
@@ -50,6 +55,7 @@ module.exports = Card.extend({
 
   updateUploadProgress: function(progress) {
     this.getElement('uploadProgress').text(progress + '%');
+    return this;
   },
 
   onRender: function() {
