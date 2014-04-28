@@ -46,8 +46,9 @@ module.exports = (function() {
       require('lib/config');
       require('lib/helpers');
 
-      this.User = new User();
       this.Cache = new Cache();
+
+      this.User = new User();
       this.Cards = new Cards();
       this.Boards = new Boards();
       this.Accounts = new Accounts();

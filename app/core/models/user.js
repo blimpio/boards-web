@@ -372,7 +372,8 @@ module.exports = Person.extend({
 
   signout: function() {
     this.clear();
-    localStorage.clear();
+    this.destroyCache();
+    this.broadcast('user:signout');
     return this;
   },
 
