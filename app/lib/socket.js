@@ -47,7 +47,14 @@ _.extend(Socket.prototype, {
   onMessage: function(message) {
     var collection;
 
-    if (message.data.modified_by !== App.User.id) {
+    if (message.data.board &&
+    message.data.board !== App.Boards.current.id) return;
+
+    if (message.data.account &&
+    message.data.account !== App.Accounts.current.id) return;
+
+    if ((response.data.type === 'file' && message.method === 'update') ||
+    message.data.modified_by !== App.User.id) {
       if (message.data_type === 'board') {
         collection = App.Boards;
       } else if (message.data_type === 'card') {
