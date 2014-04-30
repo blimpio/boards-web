@@ -21,9 +21,13 @@ module.exports = Zeppelin.Controller.extend({
     _.bindAll(this, ['onAccountsFetch', 'onBoardsFetch',
     'onCollaboratorsFetch', 'onCardsFetch', 'onCommentsFetch']);
 
-    this.getLayout('main').render();
-    this.getLayout('settings').setElement('#settings').render();
-    this.getLayout('shareBoard').setElement('#share-board').render();
+    this.getLayout('main').render({
+      account: this.options.account,
+      boardsSelected: true
+    });
+
+    this.getLayout('settings').setElement('div.settings').render();
+    this.getLayout('shareBoard').setElement('div.share-board').render();
 
     this.fetchAccounts();
   },

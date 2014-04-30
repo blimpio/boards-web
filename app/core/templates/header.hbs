@@ -3,12 +3,12 @@
     <div class="accounts-dropdown-wrapper pull-left"></div>
     <ul class="navigation list-inline pull-left">
       <li class="navigation-item">
-        <a href="/" data-route="true" class="navigation-item-link is-selected">
+        <a href="/{{account}}/" data-route="true" class="navigation-item-link {{#if boardsSelected}}is-selected{{/if}}">
           <strong class="navigation-item-text">Boards</strong>
         </a> {{! .navigation-item-link }}
       </li> {{! .navigation-item }}
       <li class="navigation-item">
-        <a href="activity/" data-route="true" class="navigation-item-link">
+        <a href="/{{account}}/activity/" data-route="true" class="navigation-item-link {{#if activitySelected}}is-selected{{/if}}">
           <strong class="navigation-item-text">Activity</strong>
         </a> {{! .navigation-item-link }}
       </li> {{! .navigation-item }}
