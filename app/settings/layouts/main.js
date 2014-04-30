@@ -5,7 +5,7 @@ var UserSettings = require('settings/views/user-settings'),
     AdvancedSettings = require('settings/views/advanced-settings');
 
 module.exports = Z.Layout.extend({
-  el: '#settings',
+  el: 'div.settings',
 
   keepEl: true,
 

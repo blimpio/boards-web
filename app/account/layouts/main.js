@@ -18,9 +18,9 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
-    page: '#account-page',
-    content: '#account-page-content',
-    contentWrapper: '#account-page-content-wrapper'
+    page: 'div.account-page',
+    content: 'div.account-page-content',
+    contentWrapper: 'div.account-page-content-wrapper'
   },
 
   toggleLoadingMainState: function() {

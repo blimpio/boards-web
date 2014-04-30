@@ -1,5 +1,5 @@
 module.exports = Z.Layout.extend({
-  el: '#account-page-content',
+  el: 'div.account-page-content',
 
   regions: {
     cards: require('account/regions/cards-list'),
@@ -16,7 +16,7 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
-    cardDetail: '#card-detail-container'
+    cardDetail: 'div.card-detail-container'
   },
 
   toggleLoadingContentState: function() {

@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#boards-list-container',
+  el: 'div.account-page-sidebar-list',
 
   view: require('account/views/boards-list'),
 

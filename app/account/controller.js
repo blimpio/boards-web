@@ -93,8 +93,8 @@ module.exports = Zeppelin.Controller.extend({
     } else {
       if (this.firstLoad) {
         this.firstLoad = false;
-        this.getLayout('content').setElement('#account-page-content');
-        this.getLayout('comments').setElement('#card-detail-comments').render();
+        this.getLayout('content').setElement('div.account-page-content');
+        this.getLayout('comments').setElement('div.card-detail-comments').render();
         this.broadcast('app:loaded');
         this.listen();
       }
@@ -176,8 +176,8 @@ module.exports = Zeppelin.Controller.extend({
 
     if (this.firstLoad) {
       this.firstLoad = false;
-      this.getLayout('content').setElement('#account-page-content');
-      this.getLayout('comments').setElement('#card-detail-comments').render();
+      this.getLayout('content').setElement('div.account-page-content');
+      this.getLayout('comments').setElement('div.card-detail-comments').render();
       this.broadcast('app:loaded');
       this.listen();
     }

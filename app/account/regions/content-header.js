@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#account-page-header',
+  el: 'div.account-page-header',
 
   showBoard: function(canEdit, options) {
     var BoardDetail = canEdit

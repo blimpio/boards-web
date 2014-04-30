@@ -5,6 +5,7 @@ var User = require('core/models/user'),
     Socket = require('lib/socket'),
     Accounts = require('core/collections/accounts'),
     Comments = require('core/collections/comments'),
+    Notifications = require('core/collections/notifications'),
     BoardCollaborators = require('core/collections/board-collaborators');
 
 module.exports = (function() {
@@ -22,6 +23,7 @@ module.exports = (function() {
       'reset_password/?token=:token(/)': require('reset-password/routes/main'),
       'reset_password(/)': require('reset-password/routes/main'),
       'accounts(/)': require('accounts/routes/main'),
+      ':account/activity(/)': require('activity/routes/main'),
       ':account(/)': require('account/routes/main'),
       ':account/:board(/)': require('account/routes/board'),
       ':account/:board/:card(/)': require('account/routes/card')
@@ -53,6 +55,7 @@ module.exports = (function() {
       this.Boards = new Boards();
       this.Accounts = new Accounts();
       this.Comments = new Comments();
+      this.Notifications = new Notifications();
       this.BoardCollaborators = new BoardCollaborators();
 
       this.User.signinFromCache();

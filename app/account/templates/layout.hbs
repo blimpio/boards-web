@@ -1,20 +1,19 @@
-<div id="account-page" class="is-loading">
-  {{partial "core/templates/header"}}
+<div class="account-page is-loading">
   {{partial "core/templates/header" this}}
 
-  <div id="account-page-content-wrapper" class="is-loading">
-    <div id="boards-empty">
+  <div class="account-page-content-wrapper is-loading">
+    <div class="boards-empty empty-container">
       <h1 class="lead">You don’t have any boards <br> <small>Start by creating a board</small></h1>
       <button type="button" data-action="createFirstBoard" class="btn btn-default">Create Board</button>
-    </div> {{! #boards-empty }}
+    </div> {{! .boards-empty }}
 
-    <div id="account-page-sidebar">
-      <div id="create-board-container"></div>
-      <div id="boards-list-container"></div>
-    </div> {{! #account-page-sidebar }}
+    <div class="account-page-sidebar">
+      <div class="create-board-container account-page-sidebar-actions"></div>
+      <div class="boards-list-container account-page-sidebar-list"></div>
+    </div> {{! .account-page-sidebar }}
 
-    <div id="account-page-content" class="is-loading">
-      <div id="cards-empty">
+    <div class="account-page-content is-loading">
+      <div class="cards-empty empty-container">
         <h1 class="lead">This board is empty <br> <small class="edit-control">Start by creating a few cards</small></h1>
         <p class="text-muted edit-control">Drop files here</p>
         <div class="form-inline edit-control">
@@ -22,24 +21,24 @@
           <label>or</label>
           <button type="button" data-action="createFirstNote" class="btn btn-default">Create Note</button>
         </div> {{! .form-inline }}
-      </div> {{! #empty-cards }}
+      </div> {{! .empty-cards }}
 
-      <div id="account-page-header"></div>
-      <div id="cards-list-container"></div>
+      <div class="account-page-header"></div>
+      <div class="cards-list-container account-page-content-section"></div>
 
-      <div id="card-detail-container" class="row">
-        <div id="card-detail-left" class="col-md-8"></div>
-        <div id="card-detail-right" class="col-md-4">
-          <div id="card-detail-info-container"></div>
-          <div id="card-detail-comments"></div>
+      <div class="card-detail-container account-page-content-section row">
+        <div class="card-detail-left col-md-8"></div>
+        <div class="card-detail-right col-md-4">
+          <div class="card-detail-info-container"></div>
+          <div class="card-detail-comments"></div>
         </div> {{! .card-detail-right }}
-      </div> {{! #card-detail-container }}
-    </div> {{! #account-page-content }}
+      </div> {{! .card-detail-container }}
+    </div> {{! .account-page-content }}
 
     {{partial "account/templates/create-note-modal"}}
-    <div id="file-uploader"></div>
-  </div> {{! #account-page-content-wrapper }}
+    <div class="file-uploader"></div>
+  </div> {{! .account-page-content-wrapper }}
 
-  <div id="settings"></div>
-  <div id="share-board"></div>
-</div> {{! #account-page }}
+  <div class="settings"></div>
+  <div class="share-board"></div>
+</div> {{! .account-page }}

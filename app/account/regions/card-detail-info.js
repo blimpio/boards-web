@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#card-detail-info-container',
+  el: 'div.card-detail-info-container',
 
   showDetailInfo: function(options) {
     var DetailsInfoView = options.canEdit

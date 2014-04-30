@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#card-detail-left',
+  el: 'div.card-detail-left',
 
   showDetail: function(card) {
     var DetailView;

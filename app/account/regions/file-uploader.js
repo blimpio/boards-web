@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#file-uploader',
+  el: 'div.file-uploader',
 
   showUploader: function(options) {
     this.setView(require('account/views/file-uploader'), options).show();

@@ -1,7 +1,7 @@
 var CreateComment = require('account/views/create-comment');
 
 module.exports = Z.Layout.extend({
-  el: '#card-detail-comments',
+  el: 'div.card-detail-comments',
 
   keepEl: true,
 
@@ -19,7 +19,7 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
-    publicComments: '#public-comments-wrapper',
+    publicComments: 'div.public-comments-wrapper',
     currentCommentsType: 'span.current-comments-type'
   },
 

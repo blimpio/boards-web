@@ -11,7 +11,7 @@ module.exports = Z.Layout.extend({
   },
 
   elements: {
-    page: '#signin'
+    page: 'div.signin'
   },
 
   render: function(hasInvite) {

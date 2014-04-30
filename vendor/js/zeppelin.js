@@ -1441,7 +1441,7 @@
     renderTemplate: function (template, context) {
       var output = '';
 
-      if (arguments.length === 2) {
+      if (template && context) {
         context = _.isPlainObject(context) ? context : _.result(this, 'context');
 
         template = _.isFunction(template) ? template : this.template;

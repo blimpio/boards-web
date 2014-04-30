@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#cards-list-container',
+  el: 'div.cards-list-container',
 
   showList: function(canEdit) {
     var CardsList = canEdit

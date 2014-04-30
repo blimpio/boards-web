@@ -1,5 +1,5 @@
 module.exports = Z.Layout.extend({
-  el: '#share-board',
+  el: 'div.share-board',
 
   keepEl: true,
 

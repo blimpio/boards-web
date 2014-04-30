@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#create-note-container',
+  el: 'div.create-note-container',
 
   showModal: function(options) {
     this.setView(require('account/views/create-note'), options).show();

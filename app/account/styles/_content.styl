@@ -1,43 +1,46 @@
-#account-page-content-wrapper {
+.account-page-content-wrapper {
   &.is-empty {
     background: url('../images/empty.png') repeat center center #FFFFFF;
 
-    #boards-empty {
+    .boards-empty {
       display: block !important;
     }
 
-    #account-page-sidebar,
-    #account-page-content {
+    .account-page-sidebar,
+    .account-page-content {
       display: none !important;
     }
   }
 
   &.is-full-width {
-    #account-page-sidebar {
+    .account-page-sidebar {
       display: none;
     }
 
-    #account-page-header {
+    .account-page-header {
       padding: 78px 15px 15px 15px;
     }
 
-    #cards-list-container,
-    #card-detail-container {
+    .account-page-content-section,
+    .card-detail-container {
       padding: 150px 15px 15px 15px;
+    }
+
+    .cards-empty {
+      margin-left: -140px;
     }
   }
 }
 
-#account-page-content {
+.account-page-content {
   height: 100%;
   width: 100%;
 
   &.is-loading {
     background: url('../images/loading-content.gif') no-repeat center center #FFFFFF;
 
-    #account-page-header,
-    #cards-list-container,
-    #card-detail-container {
+    .account-page-header,
+    .account-page-content-section {
       display: none !important;
     }
   }
@@ -45,31 +48,32 @@
   &.is-empty {
     background: url('../images/empty.png') repeat center center #FFFFFF;
 
-    #cards-empty {
+    .cards-empty {
       display: block !important;
     }
 
-    #cards-list-container,
-    #card-detail-container {
+    .account-page-content-section {
       display: none !important;
     }
   }
 
   &.can-edit {
-    #cards-empty .edit-control {
+    .cards-empty .edit-control {
       display: block !important;
     }
   }
 }
 
-#cards-list-container,
-#card-detail-container {
+.account-page-content-section {
   height: 100%;
+  margin-bottom: 15px;
+  padding: 150px 15px 15px 250px;
+  position: relative;
   width: 100%;
+  z-index: 1;
 }
 
-#cards-empty,
-#boards-empty {
+.empty-container {
   display: none;
   height: 155px;
   left: 50%;
@@ -89,7 +93,7 @@
   }
 }
 
-#cards-empty {
+.cards-empty {
   height: 185px;
   margin: -92px 0 0 -40px;
   width: 280px;

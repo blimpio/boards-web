@@ -1,5 +1,5 @@
 module.exports = Z.Region.extend({
-  el: '#invitation-container',
+  el: 'div.invitation-container',
 
   show: function(options) {
     var InvitationView = require('core/views/invitation');

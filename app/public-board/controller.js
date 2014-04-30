@@ -27,7 +27,7 @@ module.exports = Zeppelin.Controller.extend({
     this.getLayout('main').render();
 
     if (App.User.isSignedIn()) {
-      this.getLayout('settings').setElement('#settings').render();
+      this.getLayout('settings').setElement('div.settings').render();
     }
 
     this.fetchAccount(this.account);
@@ -104,8 +104,8 @@ module.exports = Zeppelin.Controller.extend({
     if (this.firstLoad) {
       this.firstLoad = false;
       this.listen();
-      this.getLayout('content').setElement('#account-page-content');
-      this.getLayout('comments').setElement('#card-detail-comments').render();
+      this.getLayout('content').setElement('div.account-page-content');
+      this.getLayout('comments').setElement('div.card-detail-comments').render();
     }
 
     this.getLayout('content').showCards({

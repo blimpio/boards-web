@@ -1,3 +1,3 @@
 module.exports = Z.Region.extend({
-  el: '#signup-form-container'
+  el: 'div.signup-form-container'
 });
