@@ -83,7 +83,7 @@ module.exports = Zeppelin.Controller.extend({
         App.Cache.saveCurrent('board', App.Boards.current.id);
       }
 
-      this.setTitle('Blimp Boards | ' + App.Boards.current.get('name'));
+      this.setTitle(App.Boards.current.get('name') + ' - Blimp Boards');
       App.Boards.current.select({navigate: this.options.card === undefined});
       this.fetchCollaborators(App.Boards.current.id);
     } else {
@@ -101,7 +101,7 @@ module.exports = Zeppelin.Controller.extend({
     this.options.card = null;
     this.options.board = board.get('slug');
     this.options.forceCardsShow = true;
-    this.setTitle('Blimp Boards | ' + App.Boards.current.get('name'));
+    this.setTitle(App.Boards.current.get('name') + ' - Blimp Boards');
     this.getLayout('content').toggleLoadingContentState();
     this.fetchCollaborators(board.id);
   },
@@ -195,7 +195,7 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardSelected: function(card) {
-    this.setTitle('Blimp Boards | ' + App.Cards.current.get('name'));
+    this.setTitle(App.Cards.current.get('name') + ' - Blimp Boards');
 
     this.getLayout('content').showCard({
       card: card,
@@ -211,7 +211,7 @@ module.exports = Zeppelin.Controller.extend({
     var canEdit = App.BoardCollaborators.current.canEdit();
     this.options.card = null;
 
-    this.setTitle('Blimp Boards | ' + App.Boards.current.get('name'));
+    this.setTitle(App.Boards.current.get('name') + ' - Blimp Boards');
 
     this.getLayout('content')
       .closeCard()

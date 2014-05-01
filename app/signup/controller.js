@@ -3,7 +3,7 @@ var signupSteps = ['choose-email', 'validate-username', 'validate-password'];
 module.exports = Zeppelin.Controller.extend({
   name: 'Signup',
 
-  title: 'Blimp Boards | Sign up',
+  title: 'Sign up - Blimp Boards',
 
   layouts: {
     main: require('signup/layouts/main')

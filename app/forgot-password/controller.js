@@ -1,5 +1,5 @@
 module.exports = Zeppelin.Controller.extend({
-  title: 'Blimp Boards | Sign in.',
+  title: 'Forgot your password - Blimp Boards',
 
   layouts: {
     main: require('forgot-password/layouts/main')

@@ -1,5 +1,5 @@
 module.exports = Zeppelin.Controller.extend({
-  title: 'Blimp Boards | Organize anything, visually.',
+  title: 'Blimp Boards - Organize anything, visually.',
 
   layouts: {
     main: require('home/layouts/main')
