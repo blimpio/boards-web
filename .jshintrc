@@ -13,6 +13,12 @@
   // Define globals exposed by Node.js.
   "node": true,
 
+  "predef": [
+    "Zeppelin",
+    "_",
+    "App"
+  ],
+
   /*
    * ENFORCING OPTIONS
    * =================
@@ -53,5 +59,5 @@
   "maxlen": 80,
 
   // Enforce placing 'use strict' at the top function scope
-  "strict": true
+  "strict": false
 }
