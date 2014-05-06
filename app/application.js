@@ -24,6 +24,7 @@ module.exports = (function() {
       'reset_password(/)': require('reset-password/routes/main'),
       'accounts(/)': require('accounts/routes/main'),
       ':account/activity(/)': require('activity/routes/main'),
+      ':account/activity/:board(/)': require('activity/routes/board'),
       ':account(/)': require('account/routes/main'),
       ':account/:board(/)': require('account/routes/board'),
       ':account/:board/:card(/)': require('account/routes/card')

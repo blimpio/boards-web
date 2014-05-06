@@ -151,3 +151,8 @@ Handlebars.registerHelper('encodeURI', function(value) {
 Handlebars.registerHelper('encodeURIComponent', function(value) {
   return new Handlebars.SafeString(window.encodeURIComponent(value));
 });
+
+Handlebars.registerHelper('to-route', function(url) {
+  url = url ? url.replace(window.location.origin, '') : '';
+  return new Handlebars.SafeString(url);
+});

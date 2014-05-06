@@ -79,14 +79,18 @@ module.exports = Z.Layout.extend({
     return this;
   },
 
+  selectAllActivity: function() {
+    this.$('li.board').removeClass('is-selected');
+    this.getElement('allActivityBtnWrapper').addClass('is-selected');
+  },
+
   onBoardClicked: function() {
     this.getElement('allActivityBtnWrapper').removeClass('is-selected');
   },
 
   onAllActivityClicked: function(event) {
     event.preventDefault();
-    this.$('li.board').removeClass('is-selected');
-    this.getElement('allActivityBtnWrapper').addClass('is-selected');
+    this.selectAllActivity();
     this.broadcast('allActivity:clicked');
   }
 });

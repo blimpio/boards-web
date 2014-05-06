@@ -37,6 +37,7 @@ module.exports = Zeppelin.ModelView.extend({
     if (!event.metaKey) {
       event.preventDefault();
       this.model.select();
+      this.broadcast('board:clicked', this.model);
     }
   },
 

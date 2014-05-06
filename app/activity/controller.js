@@ -34,6 +34,7 @@ module.exports = Zeppelin.Controller.extend({
     }
 
     this.getLayout('main').render();
+    if (!this.options.board) this.getLayout('main').selectAllActivity();
     this.getLayout('header').setElement('div.header');
 
     if (!this.options.comesFromAccountPage) {
@@ -84,7 +85,8 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   fetchNotifications: function(account, board) {
-    account = account || App.Accounts.current.id;
+    board = board || App.Boards.current ? App.Boards.current.id : null;
+    account = account || App.Accounts.current ? App.Accounts.current.id : null;
 
     App.Notifications.url = '/api/accounts/' + account + '/activity/';
 
@@ -127,7 +129,16 @@ module.exports = Zeppelin.Controller.extend({
       .showBoards()
       .toggleEmptyBoardsState(App.Boards.isEmpty());
 
-    this.fetchNotifications();
+    if (!App.Boards.isEmpty()) {
+      if (this.options.board) {
+        App.Boards.setCurrent(this.options.board);
+        App.Cache.saveCurrent('board', App.Boards.current.id);
+        App.Boards.current.select({navigate: false});
+      }
+
+      this.fetchNotifications();
+      this.options.board = null;
+    }
 
     if (this.firstLoad) {
       this.getLayout('content')
@@ -142,10 +153,6 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onBoardSelected: function(board) {
-    console.log('hey');
-    this.options.card = null;
-    this.options.board = board.get('slug');
-    this.options.forceCardsShow = true;
     App.Accounts.setCurrent(App.Accounts.get(board.get('account')).get('slug'));
     App.Cache.saveCurrent('account', App.Accounts.current.id);
     this.setTitle('Blimp Boards | ' + App.Boards.current.get('name') + ' activity');

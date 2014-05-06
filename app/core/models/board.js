@@ -28,14 +28,15 @@ module.exports = Zeppelin.Model.extend({
 
   select: function(options) {
     options = options || {
-      navigate: true
+      navigate: true,
+      location: 'board'
     };
 
     this.set('is_selected', true).trigger('selected');
     this.broadcast('board:selected', this);
 
     if (options.navigate) {
-      this.broadcast('router:navigate', this.getUrl(), {
+      this.broadcast('router:navigate', this.getUrl(options.location), {
         trigger: false
       });
     }
@@ -46,9 +47,18 @@ module.exports = Zeppelin.Model.extend({
     this.broadcast('board:deselected', this);
   },
 
-  getUrl: function() {
-    return '/' + App.Accounts.get(this.get('account')).get('slug') +
-    '/' + this.get('slug') + '/';
+  getUrl: function(type) {
+    var url;
+
+    type = type || 'board';
+
+    if (type === 'board') {
+      url = this.get('html_url');
+    } else if (type === 'activity') {
+      url = this.get('activity_html_url');
+    }
+
+    return url.replace(window.location.origin, '');
   },
 
   getShareUrl: function() {
