@@ -5,33 +5,43 @@ module.exports = Z.Layout.extend({
 
   template: function(context) {
     var template = this.options.comesFromAccountPage
-      ? require('account/templates/layout-content')
-      : require('account/templates/layout');
+      ? require('activity/templates/layout-content')
+      : require('activity/templates/layout');
 
     return template(context);
   },
 
   regions: {
-    boardsList: require('account/regions/boards-list'),
-    createBoardForm: require('account/regions/create-board')
+    boardsList: require('activity/regions/boards-list')
   },
 
   events: {
     'click [data-action=toggleSidebar]': 'toggleBoardsFullWitdhState',
-    'click [data-action=createFirstBoard]': 'onCreateFirstBoardClick'
+    'click [data-action=showAllActivity]': 'onAllActivityClicked'
   },
 
   elements: {
     page: 'div.account-page',
     content: 'div.account-page-content',
-    contentWrapper: 'div.account-page-content-wrapper'
+    sidebarActions: 'div.account-page-sidebar-actions',
+    contentWrapper: 'div.account-page-content-wrapper',
+    allActivityBtnWrapper: 'div.all-activity-btn'
+  },
+
+  subscriptions: {
+    'board:clicked': 'onBoardClicked'
   },
 
   render: function() {
     if (this.options.comesFromAccountPage) {
       this.getElement('content')
-        .addClass('is-loading')
-        .html(this.renderTemplate(this.template));
+        .html(this.renderTemplate(this.template))
+        .addClass('is-loading');
+
+      this.getElement('sidebarActions')
+        .html(this.renderTemplate(require('activity/templates/all-activity-btn')))
+
+      this.addElement('allActivityBtnWrapper', 'div.all-activity-btn');
     } else {
       Z.Layout.prototype.render.apply(this, arguments);
     }
@@ -66,12 +76,17 @@ module.exports = Z.Layout.extend({
   showBoards: function() {
     if (!this.options.comesFromAccountPage) this.toggleLoadingContentState();
     this.showRegion('boardsList');
-    this.showRegion('createBoardForm');
     return this;
   },
 
-  onCreateFirstBoardClick: function() {
-    this.toggleEmptyBoardsState();
-    this.getRegion('createBoardForm').view.toggleCreateMode();
+  onBoardClicked: function() {
+    this.getElement('allActivityBtnWrapper').removeClass('is-selected');
+  },
+
+  onAllActivityClicked: function(event) {
+    event.preventDefault();
+    this.$('li.board').removeClass('is-selected');
+    this.getElement('allActivityBtnWrapper').addClass('is-selected');
+    this.broadcast('allActivity:clicked');
   }
 });

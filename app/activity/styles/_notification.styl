@@ -1,0 +1,52 @@
+.notification {
+  border-bottom: 1px solid #EEEEEE;
+  padding: 15px 0;
+
+  a {
+    &, &:hover {
+      color: #51BEF9;
+    }
+  }
+
+  .user-avatar {
+    margin-top: 15px;
+    margin-right: 10px;
+    vertical-align: top;
+  }
+
+  .card {
+    display: inline-block;
+    float: none;
+    height: 100px;
+    margin: 15px 0 0;
+    width: 100px;
+
+    &:hover {
+      .card-content {
+        color: #555;
+      }
+    }
+
+    .card-name {
+      font-size: 11px;
+    }
+
+    .card-content,
+    .card-name-wrapper {
+      padding: 5px;
+    }
+
+    .card-content {
+      color: #555;
+      font-size: 12px
+    }
+  }
+}
+
+.notification-time {
+  color: #CACACA;
+}
+
+.notification-text {
+  margin: 0;
+}

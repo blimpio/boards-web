@@ -1,6 +1,8 @@
 module.exports = Z.Region.extend({
   el: 'div.accounts-dropdown-wrapper',
 
+  keepEl: true,
+
   view: require('core/views/accounts-dropdown'),
 
   renderView: function(accountsDropdown) {

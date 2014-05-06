@@ -1,0 +1,21 @@
+<div class="notification-data">
+  <span class="notification-time text-muted">{{time}}</span>
+  <p class="notification-text">
+    <span class="notification-actor">{{actor.username}}</span>
+    created a card on board
+    <a href="{{board.html_url}}" class="notification-board">{{board.name}}</a>
+  </p> {{! .notification-text }}
+</div> {{! .notification-data }}
+
+<div class="notification-preview">
+  <img src="{{actor.gravatar_url}}" alt="{{actor.first_name}} {{actor.last_name}}" class="ui-avatar user-avatar md">
+  <div class="card is-item">
+    <a href="{{card.html_url}}" title="{{card.name}}">
+      {{#is card.type "note"}}
+        {{partial "public-board/templates/note" card}}
+      {{else}}
+        {{partial "public-board/templates/file" card}}
+      {{/is}}
+    </a> {{! }}
+  </div> {{! .card }}
+</div> {{! .notification-preview }}

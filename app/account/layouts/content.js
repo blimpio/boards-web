@@ -1,6 +1,8 @@
 module.exports = Z.Layout.extend({
   el: 'div.account-page-content',
 
+  keepEl: true,
+
   regions: {
     cards: require('account/regions/cards-list'),
     header: require('account/regions/content-header'),

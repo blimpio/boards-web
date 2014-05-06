@@ -2150,6 +2150,8 @@
       return '[object Region]';
     },
 
+    keepEl: false,
+
     view: Z.View,
 
     hasView: function () {
@@ -2240,10 +2242,10 @@
     },
 
     remove: function () {
-      this.close();
+      if (!this.keepEl) this.close();
       this.unplug(true);
       this.trigger('before:remove', this);
-      this.$el.remove();
+      if (!this.keepEl) this.$el.remove();
       this.view = null;
       this._isRemoved = false;
       this.trigger('after:remove', this);
@@ -2392,13 +2394,7 @@
       this.removeRegions();
       this.removeElements();
       this.trigger('before:remove', this);
-
-      if (!this.keepEl) {
-        this.$el.remove();
-      } else {
-        this.empty();
-      }
-
+      if (!this.keepEl) this.$el.remove();
       this._isRemoved = true;
       this.trigger('after:remove', this);
       this.onRemove();

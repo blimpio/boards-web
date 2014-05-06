@@ -1,0 +1,22 @@
+<div class="account-page activity-page is-loading">
+  {{partial "core/templates/header" this}}
+
+  <div class="account-page-content-wrapper is-loading">
+    <div class="activity-empty empty-container">
+      <h1 class="lead">You don’t have any activit</h1>
+    </div> {{! .activity-empty }}
+
+    <div class="account-page-sidebar">
+      <div class="account-page-sidebar-actions">
+        {{partial "activity/templates/all-activity-btn"}}
+      </div> {{! .account-page-sidebar-actions }}
+      <div class="boards-list-container account-page-sidebar-list"></div>
+    </div> {{! .account-page-sidebar }}
+
+    <div class="account-page-content is-loading">
+      {{partial "activity/templates/layout-content"}}
+    </div> {{! .account-page-content }}
+  </div> {{! .account-page-content-wrapper }}
+
+  <div class="settings"></div>
+</div> {{! .account-page }}

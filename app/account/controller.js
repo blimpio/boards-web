@@ -4,7 +4,7 @@ module.exports = Zeppelin.Controller.extend({
   title: 'Blimp Boards',
 
   layouts: {
-    main: require('account/layouts/main'),
+    header: require('core/layouts/header'),
     content: require('account/layouts/content'),
     settings: require('settings/layouts/main'),
     comments: require('account/layouts/comments'),
@@ -21,15 +21,33 @@ module.exports = Zeppelin.Controller.extend({
     _.bindAll(this, ['onAccountsFetch', 'onBoardsFetch',
     'onCollaboratorsFetch', 'onCardsFetch', 'onCommentsFetch']);
 
-    this.getLayout('main').render({
-      account: this.options.account,
-      boardsSelected: true
-    });
+    if (this.options.comesFromAccountPage) {
+      this.addLayout('main', require('account/layouts/main'), {
+        comesFromAccountPage: true
+      });
+    } else {
+      this.addLayout('main', require('account/layouts/main'));
+    }
+
+    this.getLayout('main').render();
+    this.getLayout('header').setElement('div.header');
+
+    if (!this.options.comesFromAccountPage) {
+      this.getLayout('main').toggleLoadingMainState();
+      this.getLayout('header').render({
+        account: this.options.account,
+        boardsSelected: true
+      });
+    }
 
     this.getLayout('settings').setElement('div.settings').render();
     this.getLayout('shareBoard').setElement('div.share-board').render();
 
-    this.fetchAccounts();
+    if (this.options.comesFromAccountPage) {
+      this.onBoardsFetch();
+    } else {
+      this.fetchAccounts();
+    }
   },
 
   listen: function() {
@@ -52,10 +70,8 @@ module.exports = Zeppelin.Controller.extend({
     App.Accounts.setCurrent(this.options.account);
 
     if (App.Accounts.current) {
-      this.getLayout('main')
-        .showHeader()
-        .toggleLoadingContentState();
-
+      this.getLayout('header').showRegions();
+      this.getLayout('main').toggleLoadingContentState();
       this.fetchBoards(App.Accounts.current.id);
       App.Cache.saveCurrent('account', App.Accounts.current.id);
     }
