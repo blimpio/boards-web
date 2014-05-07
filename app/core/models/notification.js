@@ -21,7 +21,7 @@ module.exports = Z.Model.extend({
       actor: this.get('actor')
     };
 
-    notification.card.avatar = notification.card.thumbnail_sm_path;
+    notification.card.preview = notification.card.thumbnail_sm_path;
     return notification;
   }
 });

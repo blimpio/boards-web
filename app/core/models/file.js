@@ -27,18 +27,15 @@ module.exports = Card.extend({
   },
 
   getSmallPreview: function() {
-    return this.get('thumbnail_sm_path') ||
-    'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+    return this.get('thumbnail_sm_path');
   },
 
   getMediumPreview: function() {
-    return this.get('thumbnail_md_path') ||
-    'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+    return this.get('thumbnail_md_path');
   },
 
   getLargePreview: function() {
-    return this.get('thumbnail_lg_path') ||
-    'https://gravatar.com/avatar/' + md5(this.get('name')) + '?d=retro&s=225';
+    return this.get('thumbnail_lg_path');
   },
 
   getPreview: function() {

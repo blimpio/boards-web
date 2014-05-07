@@ -24,10 +24,6 @@ $cardGutter = 15px;
     height: ($cardHeight * 2) + $cardGutter;
     width: ($cardWidth * 2) + $cardGutter;
 
-    .card-extension {
-      padding: 205px 0;
-    }
-
     .card-preview {
       background-size: 100% auto;
     }
@@ -36,8 +32,7 @@ $cardGutter = 15px;
   &.is-uploading {
     border: 4px dashed #E0E0E0;
 
-    .card-preview,
-    .card-extension {
+    .card-preview {
       display: none !important;
     }
 
@@ -63,20 +58,13 @@ $cardGutter = 15px;
   }
 
   &[data-type="file"] {
-    background: url('../images/loading-item.gif') no-repeat center center #FFFFFF;
+    background: url('../images/loading-item.gif') no-repeat center 48% #FFFFFF;
 
     &.has-loaded-preview {
       background: #F9F9F9;
 
-      .card-preview,
-      .card-extension {
+      .card-preview {
         display: block;
-      }
-    }
-
-    &.has-preview {
-      .card-extension {
-        display: none !important;
       }
     }
   }
@@ -105,24 +93,6 @@ $cardGutter = 15px;
   top: 50%;
   width: 55px;
   z-index: 10;
-}
-
-.card-extension {
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 3px;
-  color: #FFF;
-  display: none;
-  font-size: 32px;
-  font-weight: 100;
-  height: 100%;
-  left: 0;
-  padding: 75px 0;
-  position: absolute;
-  text-align: center;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.35);
-  top: 0;
-  width: 100%;
-  z-index: 2;
 }
 
 .card-preview {

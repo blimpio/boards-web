@@ -76,8 +76,12 @@ module.exports = Card.extend({
   },
 
   onPreviewLoaded: function() {
+    var $image = this.getElement('previewLoader');
+
     _.delay(_.bind(function() {
-      this.$el.addClass('has-loaded-preview');
+      if ($image[0].complete && $image.attr('src')) {
+        this.$el.addClass('has-loaded-preview');
+      }
     }, this), 1);
   }
 });
