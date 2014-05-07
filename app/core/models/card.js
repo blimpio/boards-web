@@ -34,10 +34,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   getUrl: function() {
-    var board = App.Boards.get(this.get('board'));
-
-    return '/' + App.Accounts.get(board.get('account')).get('slug') +
-    '/' + board.get('slug') + '/' + this.get('slug') + '/';
+    return this.get('html_url').replace(window.location.origin, '');
   },
 
   select: function() {
