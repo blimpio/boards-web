@@ -111,6 +111,7 @@ module.exports = Zeppelin.Controller.extend({
   onAllActivityClicked: function() {
     var myAccount = App.Accounts.getPersonalAccount();
 
+    if (App.Boards.current) App.Boards.current.deselect();
     this.options.board = null;
     App.Boards.current = null;
 
