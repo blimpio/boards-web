@@ -50,7 +50,7 @@ module.exports = Card.extend({
       'background-image': 'url(' + this.model.getPreview() + ')'
     });
 
-    if (!this.model.hasNoPreview()) this.$el.addClass('has-preview');
+    if (!this.model.hasNoPreview()) this.$el.addClass('has-loaded-preview');
     return this;
   },
 
