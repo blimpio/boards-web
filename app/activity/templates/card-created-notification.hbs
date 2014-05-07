@@ -9,7 +9,7 @@
 
 <div class="notification-preview">
   <img src="{{actor.gravatar_url}}" alt="{{actor.first_name}} {{actor.last_name}}" class="ui-avatar user-avatar md">
-  <div class="card is-item" data-type="{{card.type}}">
+  <div class="card is-item has-loaded-preview" data-type="{{card.type}}">
     <a href="{{card.html_url}}" title="{{card.name}}">
       {{#is card.type "note"}}
         {{partial "public-board/templates/note" card}}

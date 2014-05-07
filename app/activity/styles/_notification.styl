@@ -27,8 +27,9 @@
       }
     }
 
-    &[data-type="file"] {
-      background-position: center 42%;
+    &[data-type="file"],
+    &[data-type="file"].has-loaded-preview {
+      background: url('../images/loading-item.gif') no-repeat center 48% #FFFFFF;
     }
 
     .card-name {
