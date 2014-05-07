@@ -36,13 +36,13 @@ describe('CardModel', function() {
     });
 
     it('should return the url (without id).', function() {
-      expect(cardModel.url()).to.equal('/api/cards/');
+      expect(cardModel.url()).to.equal(App.API_URL + '/cards/');
     });
 
     it('should return the url (with id).', function() {
       cardModel.id = 2;
       cardModel.set('id', 2);
-      expect(cardModel.url()).to.equal('/api/cards/2/');
+      expect(cardModel.url()).to.equal(App.API_URL + '/cards/2/');
     });
 
     after(function() {

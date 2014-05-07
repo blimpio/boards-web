@@ -31,7 +31,7 @@ describe('CommentsCollection', function() {
     });
 
     it('should fetch comments given a card id.', function(done) {
-      server.respondWith('GET', '/api/cards/2/comments/', function(req) {
+      server.respondWith('GET', App.API_URL + '/cards/2/comments/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '[]');
         done();
       });

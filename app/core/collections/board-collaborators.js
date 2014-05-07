@@ -1,7 +1,7 @@
 var Collaborators = require('core/collections/collaborators');
 
 module.exports = Collaborators.extend({
-  url: '/api/boards/collaborators/',
+  url: App.API_URL + '/boards/collaborators/',
 
   subscriptions: {
     'boardCollaborators:current': 'respondWithCurrentUserData',
@@ -9,7 +9,7 @@ module.exports = Collaborators.extend({
   },
 
   setUrl: function(id) {
-    this.url = '/api/boards/' + id + '/collaborators/';
+    this.url = App.API_URL + '/boards/' + id + '/collaborators/';
     return this;
   },
 

@@ -28,8 +28,8 @@ module.exports = Zeppelin.Model.extend({
   },
 
   url: function() {
-    var url = '/api/comments/' + this.id + '/',
-        newUrl = '/api/cards/' + this.get('card') + '/comments/';
+    var url = App.API_URL + '/comments/' + this.id + '/',
+        newUrl = App.API_URL + '/cards/' + this.get('card') + '/comments/';
 
     return this.isNew() ? newUrl : url;
   },

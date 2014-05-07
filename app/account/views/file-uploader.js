@@ -106,7 +106,7 @@ module.exports = Zeppelin.View.extend({
     this.files.push(file);
 
     $.ajax({
-      url: '/api/files/uploads/sign/',
+      url: App.API_URL + '/files/uploads/sign/',
       data: {
         name: file.get('name'),
         size: file.get('file_size'),

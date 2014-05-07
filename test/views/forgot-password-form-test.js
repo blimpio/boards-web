@@ -45,7 +45,7 @@ describe('ForgotPasswordForm', function() {
     });
 
     it('should call the forgotPassword method on the user model if the given email is valid.', function(done) {
-      server.respondWith('POST', '/api/auth/forgot_password/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/forgot_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });

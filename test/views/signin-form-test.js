@@ -56,7 +56,7 @@ describe('SigninForm', function() {
     });
 
     it('should call the signin method on the user model if the given username and password are valid.', function(done) {
-      server.respondWith('POST', '/api/auth/signin/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signin/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });

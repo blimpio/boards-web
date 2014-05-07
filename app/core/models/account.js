@@ -7,7 +7,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   url: function() {
-    var url = '/api/accounts/';
+    var url = App.API_URL + '/accounts/';
     return this.isNew() ? url : url + this.id + '/';
   },
 

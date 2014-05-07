@@ -12,7 +12,7 @@ module.exports = Zeppelin.Collection.extend({
   fetchComments: function(cardId) {
     var $d = $.Deferred();
 
-    $.getJSON('/api/cards/' + cardId + '/comments/').done(_.bind(function(comments) {
+    $.getJSON(App.API_URL + '/cards/' + cardId + '/comments/').done(_.bind(function(comments) {
       this.reset(comments);
       $d.resolve(arguments);
     }, this)).fail(function() {

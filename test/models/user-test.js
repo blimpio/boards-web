@@ -54,7 +54,7 @@ describe('UserModel', function() {
     });
 
     it('should make an HTTP request to /api/auth/signup_request/.', function(done) {
-      server.respondWith('POST', '/api/auth/signup_request/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signup_request/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"email": "someuser@example.com"}');
         done();
       });
@@ -185,7 +185,7 @@ describe('UserModel', function() {
     });
 
     it('should make an HTTP request to /api/auth/signup_domains/validate/.', function(done) {
-      server.respondWith('POST', '/api/auth/signup_domains/validate/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signup_domains/validate/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"signup_domains": "[example.com"]}');
         done();
       });
@@ -277,7 +277,7 @@ describe('UserModel', function() {
     });
 
     it('should make an HTTP request to /api/auth/username/validate/.', function(done) {
-      server.respondWith('POST', '/api/auth/username/validate/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/username/validate/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"username": "mctavish"}');
         done();
       });
@@ -347,7 +347,7 @@ describe('UserModel', function() {
     });
 
     it('should make an HTTP request to /api/auth/signup/.', function(done) {
-      server.respondWith('POST', '/api/auth/signup/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signup/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, JSON.stringify({
           email: 'someuser@example.com',
           token: '12345',
@@ -415,7 +415,7 @@ describe('UserModel', function() {
     });
 
     it('should make an HTTP request to /api/auth/signin/.', function(done) {
-      server.respondWith('POST', '/api/auth/signin/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signin/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, JSON.stringify({
           email: 'someuser@example.com',
           token: '12345',
@@ -542,7 +542,7 @@ describe('UserModel', function() {
     });
 
     it('should make an HTTP request to /api/auth/forgot_password/.', function(done) {
-      server.respondWith('POST', '/api/auth/forgot_password/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/forgot_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });
@@ -648,7 +648,7 @@ describe('UserModel', function() {
     });
 
     it('should make an HTTP request to /api/auth/reset_password/.', function(done) {
-      server.respondWith('POST', '/api/auth/reset_password/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/reset_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"token": "12345"}');
         done();
       });

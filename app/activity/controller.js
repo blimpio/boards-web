@@ -86,9 +86,9 @@ module.exports = Zeppelin.Controller.extend({
 
   fetchNotifications: function(account, board) {
     if (account) {
-      App.Notifications.url = '/api/accounts/' + account + '/activity/';
+      App.Notifications.url = App.API_URL + '/accounts/' + account + '/activity/';
     } else if (!App.Notifications.url) {
-      App.Notifications.url = '/api/accounts/' + App.Accounts.current.id + '/activity/';
+      App.Notifications.url = App.API_URL + '/accounts/' + App.Accounts.current.id + '/activity/';
     }
 
     return App.Notifications.fetch({

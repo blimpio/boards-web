@@ -29,7 +29,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   url: function() {
-    var url = '/api/cards/';
+    var url = App.API_URL + '/cards/';
     return this.isNew() ? url : url + this.id + '/';
   },
 

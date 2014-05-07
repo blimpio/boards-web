@@ -121,7 +121,7 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   searchSuggestions: function(query) {
-    return $.getJSON('/api/autocomplete/users/', {
+    return $.getJSON(App.API_URL + '/autocomplete/users/', {
       search: query
     });
   },

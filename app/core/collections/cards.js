@@ -1,5 +1,5 @@
 module.exports = Zeppelin.Collection.extend({
-  url: '/api/cards/',
+  url: App.API_URL + '/cards/',
 
   model: function(attrs, options) {
     var Model;

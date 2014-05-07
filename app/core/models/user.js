@@ -1,7 +1,7 @@
 var Person = require('core/models/person');
 
 module.exports = Person.extend({
-  url: '/api/users/me/',
+  url: App.API_URL + '/users/me/',
 
   cacheId: 'User',
 
@@ -68,7 +68,7 @@ module.exports = Person.extend({
   requestSignup: function(email) {
     email = JSON.stringify({email: email || this.get('email')});
 
-    $.post('/api/auth/signup_request/', email)
+    $.post(App.API_URL + '/auth/signup_request/', email)
       .done(_.bind(this.onRequestSignupSuccess, this))
       .fail(_.bind(this.onRequestSignupError, this));
 
@@ -95,7 +95,7 @@ module.exports = Person.extend({
     token = token || this.get('invited_user_token');
 
     return $.ajax({
-      url: '/api/auth/invitations/' + token + '/reject/',
+      url: App.API_URL + '/auth/invitations/' + token + '/reject/',
       method: 'PUT',
       error: _.bind(function(response) {
         this.broadcast('user:reject-invite:error', response);
@@ -113,7 +113,7 @@ module.exports = Person.extend({
     token = token || this.get('invited_user_token');
 
     return $.ajax({
-      url: '/api/auth/invitations/' + token + '/accept/',
+      url: App.API_URL + '/auth/invitations/' + token + '/accept/',
       method: 'PUT',
       error: _.bind(function(response) {
         this.broadcast('user:accept-invite:error', response);
@@ -133,7 +133,7 @@ module.exports = Person.extend({
       account: account || this.get('requesting_account').id
     });
 
-    $.post('/api/auth/signup_request/invite/', data)
+    $.post(App.API_URL + '/auth/signup_request/invite/', data)
       .done(_.bind(this.onRequestInviteSuccess, this))
       .fail(_.bind(this.onRequestInviteError, this));
 
@@ -198,7 +198,7 @@ module.exports = Person.extend({
     if (!domains) {
       this.onValidateSignupEmailDomainError({signup_domain: ['Provide a valid domain name.']});
     } else {
-      $.post('/api/auth/signup_domains/check/', domains)
+      $.post(App.API_URL + '/auth/signup_domains/check/', domains)
         .done(_.bind(this.onCheckSignupEmailDomainSuccess, this))
         .fail(_.bind(this.onCheckSignupEmailDomainError, this));
     }
@@ -225,7 +225,7 @@ module.exports = Person.extend({
     if (!domains) {
       this.onValidateSignupEmailDomainError({signup_domains: ['Provide a valid domain name.']});
     } else {
-      $.post('/api/auth/signup_domains/validate/', domains)
+      $.post(App.API_URL + '/auth/signup_domains/validate/', domains)
         .done(_.bind(this.onValidateSignupEmailDomainSuccess, this))
         .fail(_.bind(this.onValidateSignupEmailDomainError, this));
     }
@@ -252,7 +252,7 @@ module.exports = Person.extend({
   validateUsername: function(username) {
     username = JSON.stringify({username: username || this.get('username')});
 
-    $.post('/api/auth/username/validate/', username)
+    $.post(App.API_URL + '/auth/username/validate/', username)
       .done(_.bind(this.onValidateUsernameSuccess, this))
       .fail(_.bind(this.onValidateUsernameError, this));
 
@@ -274,7 +274,7 @@ module.exports = Person.extend({
   signup: function(credentials) {
     credentials = JSON.stringify(credentials || this.toJSON());
 
-    $.post('/api/auth/signup/', credentials)
+    $.post(App.API_URL + '/auth/signup/', credentials)
       .done(_.bind(this.onSignupSuccess, this))
       .fail(_.bind(this.onSignupError, this));
 
@@ -328,7 +328,7 @@ module.exports = Person.extend({
 
     credentials = JSON.stringify(credentials);
 
-    $.post('/api/auth/signin/', credentials)
+    $.post(App.API_URL + '/auth/signin/', credentials)
       .done(_.bind(this.onSigninSuccess, this))
       .fail(_.bind(this.onSigninError, this));
 
@@ -380,7 +380,7 @@ module.exports = Person.extend({
   forgotPassword: function(email) {
     email = JSON.stringify({email: email || this.get('email')});
 
-    $.post('/api/auth/forgot_password/', email)
+    $.post(App.API_URL + '/auth/forgot_password/', email)
       .done(_.bind(this.onForgotPasswordSuccess, this))
       .fail(_.bind(this.onForgotPasswordError, this));
 
@@ -442,7 +442,7 @@ module.exports = Person.extend({
     });
 
     if (this.canResetPassword()) {
-      $.post('/api/auth/reset_password/', data)
+      $.post(App.API_URL + '/auth/reset_password/', data)
         .done(_.bind(this.onResetPasswordSuccess, this))
         .fail(_.bind(this.onResetPasswordError, this));
     } else {

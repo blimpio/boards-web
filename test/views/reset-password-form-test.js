@@ -46,7 +46,7 @@ describe('ResetPasswordForm', function() {
     });
 
     it('should call the resetPassword method on the user model if the given password is valid.', function(done) {
-      server.respondWith('POST', '/api/auth/reset_password/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/reset_password/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, 'OK');
         done();
       });

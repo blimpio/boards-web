@@ -28,7 +28,7 @@ module.exports = Zeppelin.Controller.extend({
     if (this.options.inviteToken) {
       App.User.setEmailFromInviteJWT(this.options.inviteToken);
 
-      $.getJSON('/api/auth/invitations/' + this.options.inviteToken + '/')
+      $.getJSON(App.API_URL + '/auth/invitations/' + this.options.inviteToken + '/')
         .done(this.onInviteFetchSuccess)
         .fail(this.onInviteFetchFail);
     } else {

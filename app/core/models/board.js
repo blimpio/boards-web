@@ -10,7 +10,7 @@ module.exports = Zeppelin.Model.extend({
   localAttributes: ['is_selected'],
 
   url: function() {
-    var url = '/api/boards/';
+    var url = App.API_URL + '/boards/';
     return this.isNew() ? url : url + this.id + '/';
   },
 

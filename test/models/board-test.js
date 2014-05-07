@@ -35,13 +35,13 @@ describe('BoardModel', function() {
     });
 
     it('should return the url (without id).', function() {
-      expect(boardModel.url()).to.equal('/api/boards/');
+      expect(boardModel.url()).to.equal(App.API_URL + '/boards/');
     });
 
     it('should return the url (with id).', function() {
       boardModel.id = 2;
       boardModel.set('id', 2);
-      expect(boardModel.url()).to.equal('/api/boards/2/');
+      expect(boardModel.url()).to.equal(App.API_URL + '/boards/2/');
     });
 
     after(function() {

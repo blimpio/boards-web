@@ -2,7 +2,7 @@ var Person = require('core/models/person');
 
 module.exports = Person.extend({
   url: function() {
-    var url = '/api/boards/collaborators/';
+    var url = App.API_URL + '/boards/collaborators/';
     return this.isNew() ? url : url + this.id + '/';
   },
 

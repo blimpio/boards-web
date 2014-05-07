@@ -161,7 +161,7 @@ describe('SignupForm', function() {
       signupForm.renderStep(1);
       signupForm.getAttributeElement('email').val('name@example.com');
 
-      server.respondWith('POST', '/api/auth/signup_request/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signup_request/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"email": "name@example.com"}');
         done();
       });
@@ -329,7 +329,7 @@ describe('SignupForm', function() {
     });
 
     it('should validate the domains entered on the form and render the next step if it\'s validated.', function(done) {
-      server.respondWith('POST', '/api/auth/signup_domains/validate/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signup_domains/validate/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"email": "name@example.com"}');
         done();
       });
@@ -602,7 +602,7 @@ describe('SignupForm', function() {
     });
 
     it('should validate the username entered on the form and render the next step if it\'s validated.', function(done) {
-      server.respondWith('POST', '/api/auth/username/validate/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/username/validate/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"email": "name@example.com"}');
         done();
       });
@@ -711,7 +711,7 @@ describe('SignupForm', function() {
     });
 
     it('should validate the password entered on the form and complete the signup process.', function(done) {
-      server.respondWith('POST', '/api/auth/signup/', function(req) {
+      server.respondWith('POST', App.API_URL + '/auth/signup/', function(req) {
         req.respond(200, {'Content-Type': 'application/json'}, '{"email": "name@example.com"}');
         done();
       });

@@ -1,5 +1,5 @@
 module.exports = Zeppelin.Collection.extend({
-  url: '/api/accounts/',
+  url: App.API_URL + '/accounts/',
 
   model: require('core/models/account'),
 

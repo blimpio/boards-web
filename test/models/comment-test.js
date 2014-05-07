@@ -43,12 +43,12 @@ describe('CommentModel', function() {
 
     it('should return the url (without id).', function() {
       commentModel.set('card', 4);
-      expect(commentModel.url()).to.equal('/api/cards/4/comments/');
+      expect(commentModel.url()).to.equal(App.API_URL + '/cards/4/comments/');
     });
 
     it('should return the url (with id).', function() {
       commentModel.set('id', 2);
-      expect(commentModel.url()).to.equal('/api/comments/2/');
+      expect(commentModel.url()).to.equal(App.API_URL + '/comments/2/');
     });
 
     after(function() {
