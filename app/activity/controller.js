@@ -85,10 +85,11 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   fetchNotifications: function(account, board) {
-    board = board || App.Boards.current ? App.Boards.current.id : null;
-    account = account || App.Accounts.current ? App.Accounts.current.id : null;
-
-    App.Notifications.url = '/api/accounts/' + account + '/activity/';
+    if (account) {
+      App.Notifications.url = '/api/accounts/' + account + '/activity/';
+    } else if (!App.Notifications.url) {
+      App.Notifications.url = '/api/accounts/' + App.Accounts.current.id + '/activity/';
+    }
 
     return App.Notifications.fetch({
       data: board ? {board: board} : void 0,
@@ -108,10 +109,17 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onAllActivityClicked: function() {
+    var myAccount = App.Accounts.getPersonalAccount();
+
+    this.options.board = null;
     App.Boards.current = null;
+
     this.setTitle('Blimp Boards | All Activity');
     this.getLayout('content').toggleLoadingContentState();
-    this.fetchNotifications();
+    this.fetchNotifications(myAccount.id);
+    this.broadcast('router:navigate', myAccount.get('slug') + '/activity/', {
+      navigate: false
+    });
   },
 
   fetchBoards: function(account) {
@@ -134,17 +142,20 @@ module.exports = Zeppelin.Controller.extend({
         App.Boards.setCurrent(this.options.board);
         App.Cache.saveCurrent('board', App.Boards.current.id);
         App.Boards.current.select({navigate: false});
+        this.fetchNotifications(App.Accounts.current.id, App.Boards.current.id);
+      } else {
+        this.fetchNotifications();
+        this.options.board = null;
       }
-
-      this.fetchNotifications();
-      this.options.board = null;
     }
 
     if (this.firstLoad) {
       this.getLayout('content')
         .setElement('div.account-page-content')
         .showNotifications({
-          board: this.allActivityModel
+          board: this.options.board && App.Boards.current
+            ? App.Boards.current
+            : this.allActivityModel
         });
 
       this.broadcast('app:loaded');
@@ -153,11 +164,12 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onBoardSelected: function(board) {
-    App.Accounts.setCurrent(App.Accounts.get(board.get('account')).get('slug'));
-    App.Cache.saveCurrent('account', App.Accounts.current.id);
+    this.options.board = board.get('slug');
+    App.Boards.setCurrent(board.get('slug'));
+    App.Cache.saveCurrent('board', App.Boards.current.id);
     this.setTitle('Blimp Boards | ' + App.Boards.current.get('name') + ' activity');
     this.getLayout('content').toggleLoadingContentState();
-    this.fetchNotifications(App.Accounts.current.id, board.id);
+    this.fetchNotifications(board.get('account'), board.id);
   },
 
   onBoardAdded: function(board) {
