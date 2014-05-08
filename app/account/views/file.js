@@ -13,6 +13,7 @@ module.exports = Card.extend({
     return _.merge({
       preview: 'div.card-preview',
       previewLoader: 'img.card-preview-loader',
+      previewWrapper: 'div.card-preview-wrapper',
       uploadProgress: 'div.card-upload-progress'
     }, Card.prototype.elements);
   },
@@ -22,7 +23,7 @@ module.exports = Card.extend({
       model: {
         'change:is_uploading': 'onUploadingStateChange',
         'change:upload_progress': 'onUploadProgress',
-        'change:thumbnail_sm_path': 'updatePreview'
+        'change:thumbnail_sm_path': 'onUpdatePreview'
       }
     }, Card.prototype.bindings);
   },
@@ -31,7 +32,7 @@ module.exports = Card.extend({
     return _.extend({}, this.model.attributes, {
       preview: this.model.getPreview(),
       extension: this.model.getExtension(),
-      hasNoPreview: this.model.hasNoPreview()
+      hasPreview: this.model.hasPreview()
     });
   },
 
@@ -45,12 +46,20 @@ module.exports = Card.extend({
     return this;
   },
 
+  preloadPreview: function() {
+    if (this.getElement('previewLoader')[0].complete) {
+      this.onPreviewLoaded();
+    } else {
+      this.getElement('previewLoader').one('load', this.onPreviewLoaded);
+    }
+  },
+
   updatePreview: function() {
     this.getElement('preview').css({
       'background-image': 'url(' + this.model.getPreview() + ')'
     });
 
-    if (!this.model.hasNoPreview()) this.$el.addClass('has-loaded-preview');
+    if (this.model.hasPreview()) this.$el.addClass('has-loaded-preview');
     return this;
   },
 
@@ -60,11 +69,7 @@ module.exports = Card.extend({
   },
 
   onRender: function() {
-    if (this.getElement('previewLoader')[0].complete) {
-      this.onPreviewLoaded();
-    } else {
-      this.getElement('previewLoader').load(this.onPreviewLoaded);
-    }
+    if (this.model.hasPreview()) this.preloadPreview();
   },
 
   onUploadingStateChange: function(file, isUploading) {
@@ -76,12 +81,29 @@ module.exports = Card.extend({
   },
 
   onPreviewLoaded: function() {
-    var $image = this.getElement('previewLoader');
+    var $el = this.$el,
+        $image = this.getElement('previewLoader');
 
-    _.delay(_.bind(function() {
+    setTimeout(function() {
       if ($image[0].complete && $image.attr('src')) {
-        this.$el.addClass('has-loaded-preview');
+        $el.addClass('has-loaded-preview');
       }
-    }, this), 1);
+    }, 0);
+  },
+
+  onUpdatePreview: function() {
+    var context = { preview: this.model.getPreview() },
+        template = require('account/templates/file-preview');
+
+    this.getElement('previewWrapper').html(
+      this.renderTemplate(template, context)
+    );
+
+    this.addElements({
+      preview: 'div.card-preview',
+      previewLoader: 'img.card-preview-loader'
+    });
+
+    this.preloadPreview();
   }
 });

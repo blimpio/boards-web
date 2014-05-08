@@ -5,7 +5,10 @@ module.exports = Card.extend({
     return _.extend({
       type: 'file',
       is_uploading: false,
-      upload_progress: 0
+      upload_progress: 0,
+      thumbnail_sm_path: null,
+      thumbnail_md_path: null,
+      thumbnail_lg_path: null
     }, Card.prototype.defaults);
   },
 
@@ -20,10 +23,10 @@ module.exports = Card.extend({
     _.last(this.get('name').split('.'));
   },
 
-  hasNoPreview: function() {
-    return !this.get('thumbnail_sm_path') &&
-    !this.get('thumbnail_md_path') &&
-    !this.get('thumbnail_lg_path');
+  hasPreview: function() {
+    return this.get('thumbnail_sm_path') !== null &&
+    this.get('thumbnail_md_path') !== null &&
+    this.get('thumbnail_lg_path') !== null;
   },
 
   getSmallPreview: function() {

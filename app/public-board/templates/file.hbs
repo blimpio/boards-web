@@ -1,5 +1,8 @@
-<div class="card-preview" style="background-image:url({{preview}})"></div>
-<img src="{{preview}}" class="card-preview-loader">
+<div class="card-preview-wrapper">
+  {{#if hasPreview}}
+    {{partial "account/templates/file-preview" this}}
+  {{/if}}
+</div> {{! .card-preview-wrapper }}
 
 <div class="card-name-wrapper">
   <span class="card-name">{{name}}</span>
