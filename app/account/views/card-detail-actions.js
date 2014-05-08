@@ -1,6 +1,6 @@
 module.exports = Zeppelin.ModelView.extend({
   className: function() {
-    var className = 'card-detail-actions';
+    var className = 'card-detail-actions item-actions';
     if (this.model.get('featured')) className += ' is-featured';
     return className;
   },

@@ -1,13 +1,22 @@
-.user-dropdown{
+.user-dropdown {
   &.signed-out {
     padding: 6px;
   }
 
   .user-name {
-    color: #555;
+    color: #CACACA;
     display: inline-block;
     font-size: 12px;
     margin-right: 5px;
     vertical-align: middle;
+  }
+
+  .user-name:hover,
+  .user-name:focus,
+  .user-name:active,
+  .user-name:visited,
+  .dropdown.open .user-name {
+    color: #555;
+    text-decoration: none;
   }
 }

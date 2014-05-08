@@ -19,15 +19,15 @@
   </div> {{! .form-group }}
 </form> {{! .board-detail-edit }}
 
-<div class="board-detail-action form-inline pull-right">
+<div class="board-detail-action item-actions form-inline pull-right">
   <div class="btn-group">
-    <button type="button" data-toggle="dropdown" class="btn btn-link dropdown-toggle">
+    <button type="button" data-toggle="dropdown" class="btn btn-link dropdown-toggle item-action">
       Add Card <span class="caret"></span>
     </button> {{! [data-toggle="dropdown"] }}
     <ul class="dropdown-menu" role="menu">
-      <li><a href="#" data-action="createFile">File</a></li>
-      <li><a href="#" data-action="createNote" data-toggle="modal" data-target="#create-note-modal">Note</a></li>
+      <li><a class="item-action" href="#" data-action="createFile">File</a></li>
+      <li><a class="item-action" href="#" data-action="createNote" data-toggle="modal" data-target="#create-note-modal">Note</a></li>
     </ul> {{! .dropdown-menu }}
   </div> {{! .dropdown }}
-  <button type="button" class="btn btn-link" data-action="share" data-toggle="modal" data-target="#share-board-modal">Share</button>
+  <button type="button" class="btn btn-link item-action" data-action="share" data-toggle="modal" data-target="#share-board-modal">Share</button>
 </div> {{! .board-detail-info }}

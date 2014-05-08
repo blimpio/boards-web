@@ -52,11 +52,67 @@ input.error,
   background-color: transparent;
   border-radius: 3px;
   cursor: pointer;
-  margin: -2px -6px;
+  margin: 0 -6px;
   padding: 2px 8px;
   transition: backgroud-color 0.3s linear;
 
   &:hover {
     background-color: #F5F5F5;
+  }
+}
+
+input.form-control,
+textarea.form-control {
+  border-color: #EFEFEF;
+  box-shadow: none;
+  placeholder(#CACAD0);
+
+  &:focus {
+    border-color: #CACAD0;
+    box-shadow: none;
+  }
+}
+
+a.btn,
+button.btn {
+  font-size: 12px;
+
+  &.btn-default {
+    background-color: #F2F2F2;
+    border-color: transparent;
+    color: #898989;
+    font-weight: bold;
+
+    &:hover,
+    &:active {
+      background-color: #E5E5E5;
+      box-shadow: none;
+    }
+  }
+
+  &.btn-danger {
+    border-color: transparent;
+    font-weight: bold;
+
+    &:hover,
+    &:active {
+      box-shadow: none;
+    }
+  }
+
+  &.btn-link {
+    color: #50BEF7;
+
+    &:hover {
+      color: #3EB6FF;
+    }
+  }
+
+  &.btn-cancel {
+    color: #4A494A;
+
+    &:hover {
+      color: #555555;
+    }
   }
 }
