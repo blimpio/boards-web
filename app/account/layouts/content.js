@@ -76,6 +76,8 @@ module.exports = Z.Layout.extend({
       this.getRegion('cards').$el.hide();
     }
 
+    $('body').scrollTop(0);
+
     this.getElement('cardDetail').show();
 
     this.getRegion('header').showCard(options.canEdit, {
