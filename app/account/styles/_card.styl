@@ -70,8 +70,20 @@ $cardGutter = 15px;
   }
 }
 
-.card-content {
+.card-content,
+.comment-content {
   padding: 10px;
+
+  a {
+    color: #50BEF7;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: #3EB6FF;
+      text-decoration: underline;
+    }
+  }
 
   img {
     display: none;

@@ -118,12 +118,27 @@ Handlebars.registerHelper('markdown', function(str) {
   return new Handlebars.SafeString(_.markdown(str));
 });
 
-Handlebars.registerHelper('markdown-preview', function(str) {
-  str = _.isFunction(str) ? str() : str;
-  if (!str) return new Handlebars.SafeString('');
-  return new Handlebars.SafeString(_.markdown(str, 140));
-});
+Handlebars.registerHelper('markdown-simple', function(str) {
+  var parser,
+      renderer = new marked.Renderer();
 
+  renderer.image = function(href) {
+    return href;
+  };
+
+  renderer.heading = function(text) {
+    return text;
+  };
+
+  parser = marked.setOptions({
+    breaks: true,
+    sanitize: true,
+    renderer: renderer,
+    smartypants: true
+  });
+
+  return new Handlebars.SafeString(parser(str));
+});
 
 Handlebars.registerHelper('account-avatar', function(name, color) {
   var color = color || ['red', 'green', 'orange', 'purple'][_.random(0, 3)],
