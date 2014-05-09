@@ -7,8 +7,12 @@ module.exports = Zeppelin.FormView.extend({
 
   model: require('core/models/comment'),
 
+  elements: {
+    'commentInput': 'textarea.create-comment-input'
+  },
+
   events: {
-    'click [data-action=cancel]': 'toggleActions',
+    'click [data-action=cancel]': 'onCancel',
     'focus textarea.create-comment-input': 'toggleActions'
   },
 
@@ -24,6 +28,9 @@ module.exports = Zeppelin.FormView.extend({
 
   toggleActions: function() {
     this.$el.toggleClass('is-open');
+    this.getElement('commentInput').css({
+      height: '35px'
+    });
   },
 
   prepareModel: function() {
@@ -32,11 +39,20 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
+  onRender: function() {
+    this.getElement('commentInput').autosize();
+  },
+
+  onCancel: function() {
+    this.reset();
+    this.toggleActions();
+  },
+
   onValidationSuccess: function() {
     this.broadcast('comment:created', this.model);
+    this.reset();
     this.toggleActions();
     this.prepareModel();
-    this.reset();
   }
 });
 
