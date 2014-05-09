@@ -1,0 +1,31 @@
+.markdown {
+  a {
+    color: #50BEF7;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: #3EB6FF;
+      text-decoration: underline;
+    }
+  }
+
+  blockquote {
+    border-left: 2px solid #E0E0E0;
+  }
+
+  img {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    width: auto;
+  }
+
+  & > ul {
+    list-style-type: disc;
+
+    & > li > ul {
+      list-style-type: circle;
+    }
+  }
+}

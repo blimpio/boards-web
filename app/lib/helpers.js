@@ -56,17 +56,15 @@ _.mixin({'decodeJWT': function(token) {
   return JSON.parse(atob(token));
 }});
 
-_.mixin({'markdown': function(text, chars) {
+_.mixin({'markdown': function(text) {
   var parser = marked.setOptions({
-    renderer: new marked.Renderer(),
     gfm: true,
     tables: true,
     breaks: true,
     sanitize: true,
+    renderer: new marked.Renderer(),
     smartypants: true
   });
-
-  text = _.isNumber(chars) ? text.substring(0, chars) : text;
 
   return parser(text);
 }});
@@ -116,28 +114,6 @@ Handlebars.registerHelper('markdown', function(str) {
   str = _.isFunction(str) ? str() : str;
   if (!str) return new Handlebars.SafeString('');
   return new Handlebars.SafeString(_.markdown(str));
-});
-
-Handlebars.registerHelper('markdown-simple', function(str) {
-  var parser,
-      renderer = new marked.Renderer();
-
-  renderer.image = function(href) {
-    return href;
-  };
-
-  renderer.heading = function(text) {
-    return text;
-  };
-
-  parser = marked.setOptions({
-    breaks: true,
-    sanitize: true,
-    renderer: renderer,
-    smartypants: true
-  });
-
-  return new Handlebars.SafeString(parser(str));
 });
 
 Handlebars.registerHelper('account-avatar', function(name, color) {

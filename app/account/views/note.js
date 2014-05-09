@@ -18,7 +18,7 @@ module.exports = Card.extend({
   template: require('account/templates/note'),
 
   updateContent: function(value) {
-    this.getElement('content').html(_.markdown(value, 140));
+    this.getElement('content').html(_.markdown(value));
     return this;
   },
 

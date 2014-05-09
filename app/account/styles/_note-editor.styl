@@ -29,6 +29,14 @@
     resize: none;
   }
 
+  [name="name"],
+  [name="content"] {
+    &:focus,
+    &:active {
+      border-color: #E9E9E9;
+    }
+  }
+
   [data-action="preview"] {
     color: #428BCA;
   }
@@ -55,13 +63,6 @@
 
 .note-editor-preview {
   min-height: 350px;
-
-  img {
-    display: block;
-    height: auto;
-    max-width: 100%;
-    width: auto;
-  }
 }
 
 .note-editor-form-content,
@@ -72,4 +73,8 @@
 .note-editor-preview,
 .note-editor-preview-actions {
   display: none;
+}
+
+.note-editor-preview-test {
+  font-size: 12px;
 }
