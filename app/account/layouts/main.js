@@ -46,13 +46,16 @@ module.exports = Z.Layout.extend({
   },
 
   toggleLoadingContentState: function() {
-    this.getElement('contentWrapper').toggleClass('is-loading');
+    this.getElement('contentWrapper')
+      .removeClass('is-creating-first-board')
+      .toggleClass('is-loading');
+
     return this;
   },
 
   toggleEmptyBoardsState: function(hasNoBoards) {
     this.getElement('content').removeClass('is-loading');
-    this.getElement('contentWrapper').removeClass('is-loading');
+    this.getElement('contentWrapper').removeClass('is-loading is-creating-first-board');
     this.getElement('contentWrapper').toggleClass('is-empty', hasNoBoards);
     return this;
   },
@@ -72,6 +75,7 @@ module.exports = Z.Layout.extend({
 
   onCreateFirstBoardClick: function() {
     this.toggleEmptyBoardsState();
+    this.getElement('contentWrapper').addClass('is-creating-first-board');
     this.getRegion('createBoardForm').view.toggleCreateMode();
   }
 });
