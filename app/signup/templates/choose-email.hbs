@@ -2,7 +2,8 @@
   <h3>Welcome!</h3>
 </div> {{! .page-header }}
 
-<p class="lead">You are about to set up a new team on Blimp Boards. <br> Your invitation was sent to <strong>{{email}}</strong>.</p>
+<p class="lead">You are about to set up a new team on Blimp Boards.</p>
+<p>Your invitation was sent to <strong>{{email}}</strong>.</p>
 
 <div class="form-group choose-block">
   <p>Is this the correct email address?</p>
@@ -10,8 +11,6 @@
 </div> {{! .choose-block }}
 
 <div class="form-group reject-block">
-  <p class="text-muted">If that's not right you can switch to a different address. We'll need to send you a new invite.</p>
-  <div class="request-signup">
-    <button type="button" class="btn btn-default btn-link btn-cancel" data-action="reject">Switch to a different address</button>
-  </div> {{! .request-signup }}
+  <small class="text-muted">If that's not right you can switch to a different address. We'll need to send you a new invite.</small> <br>
+  <button type="button" class="btn btn-link btn-cancel" data-action="reject">Switch to a different address</button>
 </div> {{! .reject-block }}

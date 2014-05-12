@@ -1,7 +1,7 @@
 .signup {
   background: #FFFFFF;
-  height: 100%;
-  margin: 150px auto;
+  margin: 0 auto;
+  padding: 90px 0 15px;
   width: 450px;
 
   &.row {
@@ -10,7 +10,6 @@
   }
 
   &.user-is-auth {
-    margin: 150px auto;
     width: 350px;
 
     > h1,
@@ -31,7 +30,6 @@
   }
 }
 
-@import '_validate-account-email'
 @import '_choose-email'
-@import '_validate-domain'
-@import '_validate-invites'
+@import '_complete-signup'
+@import '_validate-account-email'

@@ -1,0 +1,25 @@
+<div class="page-header">
+  <h3>Complete your sign up</h3>
+</div> {{! .page-header }}
+
+<div class="form-group">
+  <label for="usernameInput">Username</label>
+  <input name="username" id="usernameInput" type="text" class="form-control" autofocus>
+  <div><small data-error="username" class="help-block"></small></div>
+  <small class="text-muted">Your username is how you will appear to other people on your team. Pick something others will recognize.</small>
+</div> {{! .form-group }}
+
+<div class="form-group">
+  <label for="passwordInput">Password</label>
+  <input name="password" id="passwordInput" type="password" class="form-control">
+  <div><small data-error="password" class="help-block"></small></div>
+  <small class="text-muted">Make sure you select a unique and strong password that's easy for you to rememeber but difficult to guess.</small>
+</div> {{! .form-group }}
+
+<div class="form-group">
+  <button class="btn btn-success" data-action="validate">Finish</button>
+</div> {{! .form-group }}
+
+<div class="signup-complete-notice">
+  <p class="text-muted">By clicking finish to create your account and use Blimp Boards you are agreeing to our <a class="ui-blue-link" href="#"> Terms of Service</a> and <a class="ui-blue-link" href="#">Privacy Policy</a>. If you do not agree you cannot use Blimp Boards.</p>
+</div> {{! .signup-complete-notice }}

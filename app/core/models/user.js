@@ -26,7 +26,7 @@ module.exports = Person.extend({
   validations: {
     username: function(username) {
       var isSignin = this.get('is_signin'),
-          isCurrentStep = this.get('signup_step') === 'validate-username';
+          isCurrentStep = this.get('signup_step') === 'complete-signup';
 
       if (!username && (isCurrentStep || isSignin || this.has('token'))) {
         return 'A username is required to authenticate you.';
@@ -48,7 +48,7 @@ module.exports = Person.extend({
 
     password: function(password) {
       var isSignin = this.get('is_signin'),
-          isCurrentStep = this.get('signup_step') === 'validate-password',
+          isCurrentStep = this.get('signup_step') === 'complete-signup',
           isRecoveringPass = this.get('is_recovering_password');
 
       if (!password && (isCurrentStep || isSignin || isRecoveringPass)) {
