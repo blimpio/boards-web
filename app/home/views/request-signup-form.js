@@ -27,33 +27,8 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onValidationSuccess: function() {
-    var domain = this.getAttributeValue('email').split('@')[1];
-    this.model.checkSignupEmailDomain(domain);
     this.getElement('submitBtn').text('Requesting signup...');
-  },
-
-  onCheckDomainError: function(error) {
-    this.getElement('submitBtn').text('Get Started Free');
-    this.getAttributeErrorElement('email').text(error);
-  },
-
-  onCheckDomainSuccess: function(account) {
-    if (account && account.id) {
-      this.model.set({
-        'email': this.getAttributeValue('email'),
-        'signup_step': 'validate-account-email',
-        'requesting_account': account
-      }).saveCache();
-
-      this.broadcast('router:navigate', 'signup/');
-    } else {
-      this.model.set({
-        'email': this.getAttributeValue('email'),
-        'signup_step': 'choose-email'
-      }).saveCache();
-
-      this.model.requestSignup();
-    }
+    this.model.requestSignup();
   },
 
   onRequestSignupError: function(error) {

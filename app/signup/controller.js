@@ -63,7 +63,7 @@ module.exports = Zeppelin.Controller.extend({
 
     if (this.options.inviteToken) {
       App.User.setEmailFromInviteJWT(this.options.inviteToken);
-      App.User.updateSignupStep('validate-username');
+      App.User.updateSignupStep('complete-signup');
 
       $.getJSON(App.API_URL + '/auth/invitations/' + this.options.inviteToken + '/')
         .done(this.onInviteFetchSuccess)
