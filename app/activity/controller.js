@@ -35,7 +35,7 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('main').render();
     if (!this.options.board) this.getLayout('main').selectAllActivity();
-    this.getLayout('header').setElement('div.header');
+    this.getLayout('header').setElement('div.header-container');
 
     if (!this.options.comesFromAccountPage) {
       this.getLayout('main').toggleLoadingMainState();

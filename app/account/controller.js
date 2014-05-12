@@ -30,7 +30,7 @@ module.exports = Zeppelin.Controller.extend({
     }
 
     this.getLayout('main').render();
-    this.getLayout('header').setElement('div.header');
+    this.getLayout('header').setElement('div.header-container');
 
     if (!this.options.comesFromAccountPage) {
       this.getLayout('main').toggleLoadingMainState();

@@ -1,5 +1,5 @@
 module.exports = Z.Layout.extend({
-  el: 'div.header',
+  el: 'div.header-container',
 
   keepEl: true,
 
