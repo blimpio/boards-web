@@ -10,11 +10,13 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   elements: {
+    link: 'a.board-link',
     name: 'span.board-name'
   },
 
   bindings: {
     model: {
+      'sync': 'onSync',
       'selected': 'onSelected',
       'deselected': 'onDeselected',
       'change:name': 'onNameChange'
@@ -31,6 +33,10 @@ module.exports = Zeppelin.ModelView.extend({
   updateName: function(name) {
     this.getElement('name').text(name);
     return this;
+  },
+
+  onSync: function() {
+    this.getElement('link').attr('href', this.model.get('html_url'));
   },
 
   onClick: function(event) {

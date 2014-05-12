@@ -1,9 +1,11 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
     return {
+      html_url: '',
       created_by: App.User.id,
       modified_by: App.User.id,
-      is_selected: false
+      is_selected: false,
+      activity_html_url: ''
     };
   },
 

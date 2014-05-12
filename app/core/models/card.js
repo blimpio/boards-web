@@ -1,6 +1,7 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
     return {
+      html_url: '',
       featured: false,
       created_by: App.User.id,
       modified_by: App.User.id,
