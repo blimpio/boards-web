@@ -1,6 +1,7 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
     return {
+      color: '#E5E5E5',
       html_url: '',
       created_by: App.User.id,
       modified_by: App.User.id,

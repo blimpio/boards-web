@@ -19,14 +19,17 @@ module.exports = Zeppelin.FormView.extend({
 
   bindings: {
     model: {
-      'change:name': 'onNameChange'
+      'change:name': 'onNameChange',
+      'change:thumbnail_sm_path': 'onThumbnailChange'
     }
   },
 
+  partials: {
+    'span.board-thumbnail-partial': require('account/templates/board-preview')
+  },
+
   context: function() {
-    return _.extend({
-      avatar: this.model.getAvatar()
-    }, this.model.attributes)
+    return this.model.attributes;
   },
 
   delete: function() {
@@ -63,6 +66,12 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
+  updateThumbnail: function(thumbnail) {
+    this.renderPartial('span.board-thumbnail-partial', {
+      thumbnail_sm_path: thumbnail
+    });
+  },
+
   onClickDelete: function() {
     this.delete();
   },
@@ -78,6 +87,10 @@ module.exports = Zeppelin.FormView.extend({
 
   onNameChange: function(board, name) {
     this.updateName(name);
+  },
+
+  onThumbnailChange: function(board, thumbnail) {
+    this.updateThumbnail(thumbnail);
   }
 });
 

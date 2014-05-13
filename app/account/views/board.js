@@ -11,7 +11,8 @@ module.exports = Zeppelin.ModelView.extend({
 
   elements: {
     link: 'a.board-link',
-    name: 'span.board-name'
+    name: 'span.board-name',
+    thumb: '.board-avatar'
   },
 
   bindings: {
@@ -19,20 +20,30 @@ module.exports = Zeppelin.ModelView.extend({
       'sync': 'onSync',
       'selected': 'onSelected',
       'deselected': 'onDeselected',
-      'change:name': 'onNameChange'
+      'change:name': 'onNameChange',
+      'change:thumbnail_sm_path': 'onThumbnailChange'
     }
+  },
+
+  partials: {
+    'span.board-thumbnail-partial': require('account/templates/board-preview')
   },
 
   context: function() {
     return _.extend({}, this.model.attributes, {
-      url: this.model.getUrl(),
-      avatar: this.model.getAvatar()
+      url: this.model.getUrl()
     });
   },
 
   updateName: function(name) {
     this.getElement('name').text(name);
     return this;
+  },
+
+  updateThumbnail: function(thumbnail) {
+    this.renderPartial('span.board-thumbnail-partial', {
+      thumbnail_sm_path: thumbnail
+    });
   },
 
   onSync: function() {
@@ -57,6 +68,10 @@ module.exports = Zeppelin.ModelView.extend({
 
   onNameChange: function(board, name) {
     this.updateName(name);
+  },
+
+  onThumbnailChange: function(board, thumbnail) {
+    this.updateThumbnail(thumbnail);
   }
 });
 

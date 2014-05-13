@@ -5,7 +5,9 @@
 </button> {{! [data-action="toggleSidebar"] }}
 
 <div class="board-detail-info pull-left">
-  <img class="board-avatar" src="{{avatar}}">
+  <span class="board-thumbnail-partial">
+    {{partial "account/templates/board-preview" this}}
+  </span> {{! .board-thumbnail-partial }}
   <strong class="board-name ui-editable" data-action="edit">{{name}}</strong>
 </div> {{! .board-detail-info }}
 

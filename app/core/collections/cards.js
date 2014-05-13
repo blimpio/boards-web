@@ -19,12 +19,26 @@ module.exports = Zeppelin.Collection.extend({
     'card:created': 'onCardCreated'
   },
 
+  previewTimer: null,
+
   comparator: function(model) {
     return -model.get('position');
   },
 
   initialize: function() {
+    this.on('remove', this.onRemove, this);
     this.on('change:is_selected', this.onCardSelected, this);
+    this.on('change:thumbnail_sm_path', this.onPreviewChange, this);
+  },
+
+  getNewest: function() {
+    return this.find(function(card) {
+      return card.get('position') === _.max(this.pluck('position'));
+    }, this);
+  },
+
+  isNewest: function(card) {
+    return card.get('position') >= _.max(this.pluck('position'));
   },
 
   setCurrent: function(slug) {
@@ -32,8 +46,32 @@ module.exports = Zeppelin.Collection.extend({
     return this;
   },
 
+  triggerBoardThumbnailChange: function(board, thumbnail) {
+    var self = this;
+
+    clearTimeout(this.previewTimer);
+    this.previewTimer = setTimeout(function() {
+      self.broadcast('cards:new:preview', board, thumbnail);
+    }, 1000);
+  },
+
+  onRemove: function(removed) {
+    var card, board, thumbnail;
+
+    if (!removed.isFile()) return;
+
+    card = this.getNewest(),
+    board = card.get('board'),
+    thumbnail = card.get('thumbnail_sm_path');
+
+    this.triggerBoardThumbnailChange(board, thumbnail);
+  },
+
   onCardCreated: function(card) {
-    if (Z.Util.isModel(card)) this.add(card);
+    if (Z.Util.isModel(card)) {
+      card.set('position', _.max(this.pluck('position')) + 1, {silent: true});
+      this.add(card);
+    }
   },
 
   onCardSelected: function(card, value) {
@@ -51,4 +89,9 @@ module.exports = Zeppelin.Collection.extend({
     this.trigger('change:current', this.current);
   },
 
+  onPreviewChange: function(card, thumbnail) {
+    if (this.isNewest(card)) {
+      this.triggerBoardThumbnailChange(card.get('board'), thumbnail);
+    }
+  }
 });
