@@ -1,4 +1,4 @@
-var RequestSignupForm = require('./request-signup');
+var RequestSignupForm = require('signup/views/request-signup');
 
 module.exports = RequestSignupForm.extend({
   className: 'signup-choose-email',
@@ -11,7 +11,7 @@ module.exports = RequestSignupForm.extend({
   },
 
   partials: {
-    'div.request-signup': require('signup/templates/request-signup')
+    'div.reject-block-partial': require('signup/templates/request-signup')
   },
 
   model: function() {
@@ -24,7 +24,7 @@ module.exports = RequestSignupForm.extend({
   },
 
   reject: function() {
-    this.renderPartial('div.request-signup');
+    this.renderPartial('div.reject-block-partial');
   }
 });
 
