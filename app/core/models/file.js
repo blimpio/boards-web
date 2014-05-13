@@ -45,9 +45,5 @@ module.exports = Card.extend({
     return this.get('featured')
       ? this.getMediumPreview()
       : this.getSmallPreview();
-  },
-
-  download: function() {
-    return $.getJSON(this.url() + 'download/');
   }
 });

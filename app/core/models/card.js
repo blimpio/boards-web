@@ -52,5 +52,9 @@ module.exports = Zeppelin.Model.extend({
 
   isFile: function() {
     return this.get('type') === 'file';
+  },
+
+  download: function() {
+    return $.getJSON(this.url() + 'download/');
   }
 });
