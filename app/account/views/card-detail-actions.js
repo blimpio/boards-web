@@ -23,7 +23,7 @@ module.exports = Zeppelin.ModelView.extend({
     return _.extend({}, this.model.attributes, {
       boardUrl: this.options.boardUrl,
       boardName: this.options.boardName,
-      boardAvatar: this.options.boardAvatar
+      boardPreview: this.options.boardPreview
     });
   },
 

@@ -84,7 +84,10 @@ module.exports = Z.Layout.extend({
       model: options.card,
       boardUrl: options.board.getUrl(),
       boardName: options.board.get('name'),
-      boardAvatar: options.board.getAvatar()
+      boardPreview: {
+        color: options.board.get('color'),
+        thumbnail_sm_path: options.board.get('thumbnail_sm_path')
+      }
     });
 
     this.getRegion('detail').showDetail(options.card);

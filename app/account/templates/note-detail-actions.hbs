@@ -6,7 +6,9 @@
 
 <div class="pull-left">
   <a href="{{boardUrl}}" class="card-detail-actions-back" data-action="back">
-    <img class="card-detail-actions-back-avatar board-avatar" src="{{boardAvatar}}">
+    <span class="board-thumbnail-partial card-detail-actions-back-avatar">
+      {{partial "account/templates/board-preview" boardPreview}}
+    </span> {{! .board-thumbnail-partial }}
     <div class="card-detail-actions-back-text">
       <small class="text-muted">BACK TO</small>
       <strong class="card-detail-actions-board">{{boardName}}</strong>
