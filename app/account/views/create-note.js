@@ -65,7 +65,10 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onValidationSuccess: function() {
-    this.broadcast('card:created', this.model);;
+    this.broadcast('card:created', this.model);
+  },
+
+  onSubmit: function() {
     this.prepareModel();
     this.close();
   },

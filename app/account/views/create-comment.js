@@ -50,6 +50,9 @@ module.exports = Zeppelin.FormView.extend({
 
   onValidationSuccess: function() {
     this.broadcast('comment:created', this.model);
+  },
+
+  onSubmit: function() {
     this.reset();
     this.toggleActions();
     this.prepareModel();
