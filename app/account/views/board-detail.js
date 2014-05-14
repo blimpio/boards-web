@@ -68,6 +68,7 @@ module.exports = Zeppelin.FormView.extend({
 
   updateThumbnail: function(thumbnail) {
     this.renderPartial('span.board-thumbnail-partial', {
+      color: this.model.get('color'),
       thumbnail_sm_path: thumbnail
     });
   },

@@ -42,6 +42,7 @@ module.exports = Zeppelin.ModelView.extend({
 
   updateThumbnail: function(thumbnail) {
     this.renderPartial('span.board-thumbnail-partial', {
+      color: this.model.get('color'),
       thumbnail_sm_path: thumbnail
     });
   },
