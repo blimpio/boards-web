@@ -37,6 +37,15 @@ module.exports = Zeppelin.Collection.extend({
     }, this);
   },
 
+  getNewestFile: function() {
+    var files = this.where({type: 'file'});
+
+    return _.find(files, function(file) {
+      var max = _.max(_.pluck(_.pluck(files, 'attributes'), 'position'));
+      return file.get('position') === max;
+    });
+  },
+
   isNewest: function(card) {
     return card.get('position') >= _.max(this.pluck('position'));
   },
@@ -67,13 +76,15 @@ module.exports = Zeppelin.Collection.extend({
   onRemove: function(removed) {
     var card, board, thumbnail;
 
-    if (!removed.isFile()) return;
+    if (removed.isFile()) {
+      card = this.getNewestFile();
 
-    card = this.getNewest(),
-    board = card.get('board'),
-    thumbnail = card.get('thumbnail_sm_path');
-
-    this.triggerBoardThumbnailChange(board, thumbnail);
+      if (!card) {
+        this.triggerBoardThumbnailChange(removed.get('board'), '');
+      } else {
+        this.triggerBoardThumbnailChange(card.get('board'), card.get('thumbnail_sm_path'));
+      }
+    }
   },
 
   onCardCreated: function(card) {
@@ -99,7 +110,7 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   onPreviewChange: function(card, thumbnail) {
-    if (this.isNewest(card)) {
+    if (this.isNewest(card) && card.isFile()) {
       this.triggerBoardThumbnailChange(card.get('board'), thumbnail);
     }
   }
