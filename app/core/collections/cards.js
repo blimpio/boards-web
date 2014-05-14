@@ -46,6 +46,15 @@ module.exports = Zeppelin.Collection.extend({
     return this;
   },
 
+  setPosition: function(card) {
+    var position = 0;
+        positions = this.pluck('position');
+
+    position = positions.length ? _.max(positions) + 1 : position;
+    card.set('position', position);
+    return this;
+  },
+
   triggerBoardThumbnailChange: function(board, thumbnail) {
     var self = this;
 
@@ -69,7 +78,7 @@ module.exports = Zeppelin.Collection.extend({
 
   onCardCreated: function(card) {
     if (Z.Util.isModel(card)) {
-      card.set('position', _.max(this.pluck('position')) + 1, {silent: true});
+      this.setPosition(card);
       this.add(card);
     }
   },
