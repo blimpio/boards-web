@@ -6,7 +6,10 @@ module.exports = Zeppelin.Model.extend({
       created_by: App.User.id,
       modified_by: App.User.id,
       is_selected: false,
-      activity_html_url: ''
+      activity_html_url: '',
+      thumbnail_lg_path: '',
+      thumbnail_md_path: '',
+      thumbnail_sm_path: ''
     };
   },
 

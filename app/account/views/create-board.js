@@ -33,6 +33,9 @@ module.exports = Zeppelin.FormView.extend({
 
   onValidationSuccess: function() {
     this.broadcast('board:created', this.model);
+  },
+
+  onSubmit: function() {
     this.setModel(require('core/models/board'));
     this.model.set('account', this.options.accountId);
     this.reset();

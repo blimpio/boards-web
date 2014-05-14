@@ -1635,8 +1635,8 @@
 
       if (!this.model.validationError) {
         this.clean();
-        if (this.saveOnSubmit) this.model.save();
         this.onValidationSuccess(this);
+        if (this.saveOnSubmit) this.model.save();
       } else {
         this.onValidationError(this.model.validationError);
       }
@@ -1789,7 +1789,7 @@
 
       _.forEach(this.$form.find('[name]'), function (element) {
         element = $(element);
-        element.val(this.model.get(element.attr('name')));
+        element.val(this.model.get(element.attr('name')) || '');
       }, this);
 
       return this;
