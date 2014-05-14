@@ -57,12 +57,23 @@ _.mixin({'decodeJWT': function(token) {
 }});
 
 _.mixin({'markdown': function(text) {
+  var parser,
+      renderer = new marked.Renderer();
+
+  renderer.link = function(href, title, text) {
+    if (title) {
+      return '<a href="' + href + '" title="' + title + '" target="_blank">' + text + '</a>';
+    } else {
+      return '<a href="' + href + '" target="_blank">' + text + '</a>';
+    }
+  };
+
   var parser = marked.setOptions({
     gfm: true,
     tables: true,
     breaks: true,
     sanitize: true,
-    renderer: new marked.Renderer(),
+    renderer: renderer,
     smartypants: true
   });
 
