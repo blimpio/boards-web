@@ -44,8 +44,8 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onCancel: function() {
-    this.reset();
     this.toggleActions();
+    this.reset();
   },
 
   onValidationSuccess: function() {
@@ -53,9 +53,9 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onSubmit: function() {
-    this.reset();
     this.toggleActions();
     this.prepareModel();
+    this.reset();
   }
 });
 
