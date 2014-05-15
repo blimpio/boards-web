@@ -159,6 +159,7 @@ module.exports = Zeppelin.Controller.extend({
             : this.allActivityModel
         });
 
+      if (this.options.board) this.onBoardSelected(App.Boards.current);
       this.broadcast('app:loaded');
       this.listen();
     }
