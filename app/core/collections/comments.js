@@ -6,7 +6,7 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   comparator: function(board) {
-    return -(new Date(board.get('date_created')).getTime());
+    return new Date(board.get('date_created')).getTime();
   },
 
   fetchComments: function(cardId) {
