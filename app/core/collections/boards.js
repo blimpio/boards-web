@@ -39,15 +39,18 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   onBoardCreated: function(board) {
+    var self = this,
+        lastSelected = this.current;
+
     if (Z.Util.isModel(board)) {
       this.assignColor(board);
       this.add(board);
 
-      if (board.id) {
+      if (!board.isNew()) {
         board.select();
       } else {
         board.once('sync', function() {
-          this.select();
+          if (self.current.cid === lastSelected.cid) this.select();
         }, board);
       }
     }

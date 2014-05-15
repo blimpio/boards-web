@@ -1,7 +1,11 @@
 module.exports = Zeppelin.ModelView.extend({
   tagName: 'li',
 
-  className: 'board',
+  className: function() {
+    var className = 'board';
+    if (this.model.isNew()) className += ' is-being-created'
+    return className;
+},
 
   template: require('account/templates/board'),
 
@@ -17,7 +21,10 @@ module.exports = Zeppelin.ModelView.extend({
 
   bindings: {
     model: {
-      'sync': 'onSync',
+      'sync': {
+        once: true,
+        callback: 'onSync'
+      },
       'selected': 'onSelected',
       'deselected': 'onDeselected',
       'change:name': 'onNameChange',
@@ -48,14 +55,18 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   onSync: function() {
+    this.$el.removeClass('is-being-created');
     this.getElement('link').attr('href', this.model.get('html_url'));
   },
 
   onClick: function(event) {
     if (!event.metaKey) {
       event.preventDefault();
-      this.model.select();
-      this.broadcast('board:clicked', this.model);
+
+      if (!this.model.isNew()) {
+        this.model.select();
+        this.broadcast('board:clicked', this.model);
+      }
     }
   },
 
