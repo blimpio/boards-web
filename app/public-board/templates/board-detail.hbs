@@ -5,6 +5,8 @@
 </button> {{! [data-action="toggleSidebar"] }}
 
 <div class="board-detail-info">
-  <img class="board-avatar" src="{{avatar}}">
-  <strong class="board-name" data-action="edit">{{name}}</strong>
+  <span class="board-thumbnail-partial">
+    {{partial "account/templates/board-preview" this}}
+  </span> {{! .board-thumbnail-partial }}
+  <strong class="board-name">{{name}}</strong>
 </div> {{! .board-detail-info }}
