@@ -18,20 +18,20 @@ module.exports = Z.Layout.extend({
   subscriptions: {
     'settings:user:open': 'openUserSettings',
     'settings:accounts:open': 'openAccountsSettings',
-    'settings:notifications:open': 'openNotificationsSettings',
     'settings:password:open': 'openPasswordSettings',
-    'settings:advanced:open': 'openAdvancedSettings'
+    'settings:advanced:open': 'openAdvancedSettings',
+    'settings:notifications:open': 'openNotificationsSettings'
   },
 
   events: {
+    'click [data-action=cancel]': 'hide',
     'shown.bs.modal #settings-modal': 'listenToAjax',
     'hidden.bs.modal #settings-modal': 'stopListeningToAjax',
     'click [data-action=showGeneral]': 'showUserSettings',
     'click [data-action=showAccounts]': 'showAccountsSettings',
-    'click [data-action=showNotifications]': 'showNotificationsSettings',
     'click [data-action=showPassword]': 'showPasswordSettings',
     'click [data-action=showAdvanced]': 'showAdvancedSettings',
-    'click [data-action=cancel]': 'hide'
+    'click [data-action=showNotifications]': 'showNotificationsSettings'
   },
 
   elements: {

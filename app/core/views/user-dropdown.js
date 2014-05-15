@@ -10,9 +10,9 @@ module.exports = Zeppelin.ModelView.extend({
   events: {
     'click [data-settings=general]': 'onClickGeneral',
     'click [data-settings=accounts]': 'onClickAccounts',
-    'click [data-settings=notifications]': 'onClickNotifications',
     'click [data-settings=password]': 'onClickPassword',
-    'click [data-settings=advanced]': 'onClickAdvanced'
+    'click [data-settings=advanced]': 'onClickAdvanced',
+    'click [data-settings=notifications]': 'onClickNotifications'
   },
 
   model: function() {

@@ -44,6 +44,7 @@ module.exports = Zeppelin.Controller.extend({
     this.getLayout('shareBoard').setElement('div.share-board').render();
 
     if (this.options.comesFromAccountPage) {
+      this.onAccountsFetch();
       this.onBoardsFetch();
     } else {
       this.fetchAccounts();
@@ -71,8 +72,12 @@ module.exports = Zeppelin.Controller.extend({
 
     if (App.Accounts.current) {
       this.getLayout('header').showRegions();
-      this.getLayout('main').toggleLoadingContentState();
-      this.fetchBoards(App.Accounts.current.id);
+
+      if (!this.options.comesFromAccountPage) {
+        this.getLayout('main').toggleLoadingContentState();
+        this.fetchBoards(App.Accounts.current.id);
+      }
+
       App.Cache.saveCurrent('account', App.Accounts.current.id);
     }
   },
