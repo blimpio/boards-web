@@ -68,6 +68,16 @@ _.mixin({'markdown': function(text) {
     }
   };
 
+  renderer.image = function(href, title, text) {
+    href = App.CAMO_URL + '?url=' + href;
+
+    if (title) {
+      return '<img src="' + href + '" title="' + title + '" alt="' + text + '">';
+    } else {
+      return '<img src="' + href + '" alt="' + text + '">';
+    }
+  };
+
   var parser = marked.setOptions({
     gfm: true,
     tables: true,
