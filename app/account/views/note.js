@@ -17,12 +17,12 @@ module.exports = Card.extend({
 
   template: require('account/templates/note'),
 
-  updateContent: function(value) {
-    this.getElement('content').html(_.markdown(value));
+  updateContent: function(content) {
+    this.getElement('content').html(_.markdown(content));
     return this;
   },
 
-  onContentChange: function(note, value) {
-    this.updateContent(value);
+  onContentChange: function(note, content) {
+    this.updateContent(content);
   }
 });

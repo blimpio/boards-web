@@ -1,7 +1,7 @@
 module.exports = Zeppelin.FormView.extend({
   className: 'board-detail clearfix',
 
-  formSelector: 'form.edit-board-form',
+  formSelector: 'form.board-detail-edit',
 
   template: require('account/templates/board-detail'),
 
