@@ -71,7 +71,6 @@ module.exports = Z.Layout.extend({
       this.renderCollaboratorComments();
     }
 
-    this.toggleLoadingState();
     return this;
   },
 

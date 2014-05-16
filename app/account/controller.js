@@ -298,5 +298,7 @@ module.exports = Zeppelin.Controller.extend({
       card: App.Cards.current.id,
       user: App.User.attributes
     });
+
+    this.getLayout('comments').toggleLoadingState();
   }
 });

@@ -170,5 +170,6 @@ module.exports = Zeppelin.Controller.extend({
 
   onCommentsFetch: function() {
     this.getLayout('comments').showCollaboratorComments();
+    this.getLayout('comments').toggleLoadingState();
   }
 });
