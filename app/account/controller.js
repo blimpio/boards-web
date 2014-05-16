@@ -233,7 +233,11 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardDetailClose: function() {
-    var canEdit = App.BoardCollaborators.current.canEdit();
+    var canEdit;
+
+    if ($('div.cards-list-container').is(':visible')) return;
+
+    canEdit = App.BoardCollaborators.current.canEdit();
     this.options.card = null;
 
     this.setTitle(App.Boards.current.get('name') + ' - Blimp Boards');

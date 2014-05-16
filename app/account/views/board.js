@@ -64,6 +64,7 @@ module.exports = Zeppelin.ModelView.extend({
       event.preventDefault();
 
       if (!this.model.isNew()) {
+        if (this.model.get('is_selected')) this.broadcast('cardDetail:closed');
         this.model.select();
         this.broadcast('board:clicked', this.model);
       }
