@@ -1,5 +1,14 @@
 <img src="{{author.gravatar_url}}" alt="avatar" class="comment-creator-avatar ui-avatar">
 
+<form class="comment-edit">
+  <div class="form-group">
+    <textarea name="content" class="form-control edit-comment-input" placeholder="Write a comment...">{{content}}</textarea>
+  </div> {{! .form-group }}
+  <button class="btn btn-default" data-action="save">Done</button>
+  <button type="button" class="btn btn-link btn-cancel" data-action="cancel">Cancel</button>
+  <div data-error="content" class="help-block"></div>
+</form> {{! .comment-edit }}
+
 <div class="comment-content-wrapper">
   <div class="comment-info">
     <span class="comment-creator">{{author.username}}</span>

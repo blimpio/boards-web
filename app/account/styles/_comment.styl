@@ -1,7 +1,20 @@
+.comment {
+  &.is-editing {
+    .comment-content-wrapper {
+      display: none;
+    }
+
+    .comment-edit {
+      display: block;
+    }
+  }
+}
+
 .comment-creator-avatar {
   float: left;
 }
 
+.comment-edit,
 .comment-content-wrapper {
   border: 1px solid #EFEFEF;
   border-radius: 3px;
@@ -17,3 +30,6 @@
   margin: 0;
 }
 
+.comment-edit {
+  display: none;
+}
