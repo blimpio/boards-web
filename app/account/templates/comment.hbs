@@ -4,6 +4,12 @@
   <div class="comment-info">
     <span class="comment-creator">{{author.username}}</span>
     <small class="comment-date text-muted">{{time}}</small>
+    {{#if isMine}}
+      <span class="comments-actions">
+        <button type="button" class="btn btn-default btn-xs" data-action="edit">Edit</button>
+        <button type="button" class="btn btn-danger btn-xs" data-action="delete">Delete</button>
+      </span> {{! .comments-actions }}
+    {{/if}}
   </div> {{! .comment-info }}
 
   <div class="comment-content markdown">{{markdown content}}</div>

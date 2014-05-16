@@ -41,4 +41,8 @@ module.exports = Zeppelin.Model.extend({
       });
     }
   },
+
+  isMine: function() {
+    return this.get('created_by') === App.User.id;
+  }
 });
