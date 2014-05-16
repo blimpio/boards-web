@@ -34,7 +34,7 @@ module.exports = Zeppelin.ModelView.extend({
   delete: function(event) {
     event.stopPropagation();
 
-    if (window.confirm('Are you sure you want to delete card?')) {
+    if (window.confirm('Are you sure you want to delete this card?')) {
       this.model.destroy();
       this.broadcast('cardsList:layout');
     }
