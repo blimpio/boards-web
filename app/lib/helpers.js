@@ -168,3 +168,7 @@ Handlebars.registerHelper('to-route', function(url) {
   url = url ? url.replace(window.location.origin, '') : '';
   return new Handlebars.SafeString(url);
 });
+
+Handlebars.registerHelper('checked', function (value) {
+  return value == true ? ' checked ' : '';
+});
