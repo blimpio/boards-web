@@ -497,5 +497,32 @@ module.exports = Person.extend({
 
   respondWithId: function(channel) {
     this.broadcast(channel, this.id);
+  },
+
+  changePassword: function(currentPassword, newPassword, confirmPassword) {
+    var data = JSON.stringify({
+      current_password: currentPassword,
+      password1: newPassword,
+      password2: confirmPassword
+    });
+
+    $.post(App.API_URL + '/users/me/change_password/', data)
+      .done(_.bind(this.onChangePasswordSuccess, this))
+      .fail(_.bind(this.onChangePasswordError, this));
+
+    return this;
+  },
+
+  onChangePasswordSuccess: function(response) {
+    this.set(response).saveCache();
+    this.broadcast('user:change-password:success', response);
+    return this;
+  },
+
+  onChangePasswordError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    this.broadcast('user:change-password:error', error);
+
+    return this;
   }
 });
