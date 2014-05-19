@@ -12,9 +12,11 @@ module.exports = Card.extend({
   elements: function() {
     return _.merge({
       preview: 'div.card-preview',
+      uploadLoader: 'path.file-loader-fill',
       previewLoader: 'img.card-preview-loader',
       previewWrapper: 'div.card-preview-wrapper',
-      uploadProgress: 'div.card-upload-progress'
+      uploadProgress: 'text.file-loader-text',
+      uploadLoaderBorder: 'path.file-loader-border'
     }, Card.prototype.elements);
   },
 
@@ -64,8 +66,29 @@ module.exports = Card.extend({
   },
 
   updateUploadProgress: function(progress) {
+    this.drawProgress(progress * 3.6);
     this.getElement('uploadProgress').text(progress + '%');
+
+    if (progress > 9) {
+      this.getElement('uploadProgress').attr('x', 70);
+    } else if (progress === 100) {
+      this.getElement('uploadProgress').attr('x', 60);
+    }
+
     return this;
+  },
+
+  drawProgress: function(a) {
+    var r, x, y, mid, anim;
+
+    a %= 360;
+    r = (a * Math.PI / 180);
+    x = Math.sin(r) * 125;
+    y = Math.cos(r) * - 125;
+    mid = (a > 180) ? 1 : 0;
+    anim = 'M 0 0 v -125 A 125 125 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
+    this.getElement('uploadLoader').attr('d', anim);
+    this.getElement('uploadLoaderBorder').attr('d', anim);
   },
 
   onRender: function() {

@@ -3,7 +3,13 @@
   <button type="button" class="btn btn-danger btn-xs" data-action="delete">Delete</button>
 </div> {{! .card-actions }}
 
-<div class="card-upload-progress">{{upload_progress}}</div>
+<div class="card-upload-progress">
+  <svg width="55" height="55" viewbox="0 0 250 250">
+    <path class="file-loader-border" fill="#9F9F9F" transform="translate(125, 125)"/>
+    <path class="file-loader-fill" fill="#F9F9F9" transform="translate(125, 125) scale(.84)"/>
+    <text class="file-loader-text" fill="#9B9A9B" x="80" y="145" font-family="Helvetica Neue', Helvetica, Arial, sans-serif" font-size="60px">0%</text>
+  </svg>
+</div> {{! card-upload-progress }}
 
 <div class="card-preview-wrapper">
   {{#if hasPreview}}
