@@ -87,7 +87,6 @@ module.exports = Card.extend({
     y = Math.cos(r) * - 125;
     mid = (a > 180) ? 1 : 0;
     anim = 'M 0 0 v -125 A 125 125 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
-    this.getElement('uploadLoader').attr('d', anim);
     this.getElement('uploadLoaderBorder').attr('d', anim);
   },
 
