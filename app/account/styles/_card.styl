@@ -32,10 +32,6 @@ $cardGutter = 15px;
   &.is-uploading {
     border: 4px dashed #E0E0E0;
 
-    .card-preview {
-      display: none !important;
-    }
-
     .card-upload-progress {
       display: block;
     }
@@ -108,6 +104,10 @@ $cardGutter = 15px;
   top: 0;
   width: 100%;
   z-index: 1;
+
+  &.is-data-url {
+    background-size: 100% auto;
+  }
 }
 
 .card-preview-loader {

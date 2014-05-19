@@ -45,5 +45,10 @@ module.exports = Card.extend({
     return this.get('featured')
       ? this.getMediumPreview()
       : this.getSmallPreview();
+  },
+
+  previewIsDataUrl: function() {
+    var preview = this.getPreview();
+    return preview && (/data:image\//).test(preview);
   }
 });

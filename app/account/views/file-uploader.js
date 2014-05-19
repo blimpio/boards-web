@@ -64,7 +64,11 @@ module.exports = Zeppelin.View.extend({
       fail: this.onError,
       progress: this.onProgress,
       dataType: 'xml',
-      autoUpload: true
+      autoUpload: true,
+      previewCrop: true,
+      previewMaxWidth: 300,
+      previewMaxHeight: 300,
+      disableImageResize: false
     });
 
     $(document).on('dragover', this.onDrag);
@@ -92,7 +96,8 @@ module.exports = Zeppelin.View.extend({
   },
 
   onAdd: function(event, data) {
-    var file;
+    var file,
+        reader = new FileReader();
 
     _.preventNavigation('You are uploading files. Your progress will be lost.');
 
@@ -102,6 +107,14 @@ module.exports = Zeppelin.View.extend({
       mime_type: data.files[0].type,
       is_uploading: true
     });
+
+    if (data.files[0].type.match(/image.*/)) {
+      reader.onload = function(e) {
+        file.set('thumbnail_sm_path', reader.result);
+      }
+
+      reader.readAsDataURL(data.files[0]);
+    }
 
     this.files.push(file);
 
@@ -140,7 +153,7 @@ module.exports = Zeppelin.View.extend({
     var file = this.getFileModel(data.files[0]);
 
     if (file) {
-      file.save({'is_uploading': false});
+      file.save();
       this.broadcast('file:uploaded', file.get('content'));
     }
 
@@ -162,7 +175,11 @@ module.exports = Zeppelin.View.extend({
     var file = this.getFileModel(data.files[0]),
         progress = parseInt(data.loaded / data.total * 100, 10);
 
-    if (file) file.set('upload_progress', progress);
+    if (file) {
+      if (progress === 100) file.set('is_uploading', false);
+      file.set('upload_progress', progress);
+    }
+
     return this;
   },
 

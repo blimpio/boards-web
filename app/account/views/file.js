@@ -127,6 +127,9 @@ module.exports = Card.extend({
       previewLoader: 'img.card-preview-loader'
     });
 
+    this.getElement('preview')
+      .toggleClass('is-data-url', this.model.previewIsDataUrl());
+
     this.preloadPreview();
   }
 });

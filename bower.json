@@ -49,6 +49,19 @@
     "handlebars": {
       "main": "handlebars.runtime.js"
     },
+    "blueimp-load-image": {
+      "main": "js/load-image.min.js",
+      "dependencies": {
+        "jquery": "*"
+      }
+    },
+    "blueimp-canvas-to-blob": {
+      "main": "js/canvas-to-blob.min.js",
+      "dependencies": {
+        "jquery": "*",
+        "blueimp-load-image": "*"
+      }
+    },
     "blueimp-file-upload": {
       "dependencies": {
         "jquery": "*",
