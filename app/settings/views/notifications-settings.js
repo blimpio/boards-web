@@ -3,6 +3,11 @@ module.exports = Zeppelin.FormView.extend({
 
   className: 'notifications-settings form-horizontal',
 
-  template: require('settings/templates/notifications-settings')
+  template: require('settings/templates/notifications-settings'),
+
+  model: function() {
+    return App.User;
+  }
+
 });
 
