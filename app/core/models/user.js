@@ -516,12 +516,42 @@ module.exports = Person.extend({
   onChangePasswordSuccess: function(response) {
     this.set(response).saveCache();
     this.broadcast('user:change-password:success', response);
+
     return this;
   },
 
   onChangePasswordError: function(error) {
     error = error.responseJSON ? error.responseJSON.error : error;
     this.broadcast('user:change-password:error', error);
+
+    return this;
+  },
+
+  closeAccount: function(currentPassword) {
+    var data = JSON.stringify({
+      current_password: currentPassword
+    });
+
+    $.post(App.API_URL + '/users/me/cancel/', data)
+      .done(_.bind(this.onCloseAccountSuccess, this))
+      .fail(_.bind(this.onCloseAccountError, this));
+
+    return this;
+  },
+
+  onCloseAccountSuccess: function(response) {
+    this.signout()
+
+    this.trigger('user:cancel-account:success', response);
+
+    return this;
+  },
+
+  onCloseAccountError: function(error) {
+    error = error.responseJSON ? error.responseJSON.error : error;
+    error = error.current_password
+    error = error ? error[0] : 'An error ocurred';
+    this.trigger('user:cancel-account:error', error);
 
     return this;
   }

@@ -20,7 +20,8 @@ module.exports = Z.Layout.extend({
     'settings:accounts:open': 'openAccountsSettings',
     'settings:password:open': 'openPasswordSettings',
     'settings:advanced:open': 'openAdvancedSettings',
-    'settings:notifications:open': 'openNotificationsSettings'
+    'settings:notifications:open': 'openNotificationsSettings',
+    'settings:close': 'hide'
   },
 
   events: {

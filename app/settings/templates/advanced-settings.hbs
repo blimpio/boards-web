@@ -1,6 +1,26 @@
-<div class="form-group">
-  <div class="col-sm-offset-2 col-sm-8 text-center">
-    <button type="button" class="btn btn-danger">Cancel your user account</button> <br> <br>
-    <small class="text-muted">This will cancel your user account. After you click the button we will erase your account. This cannot be undonde.</small>
-  </div> {{! .col-sm-offset-2 }}
+<div class="close-account-wrapper">
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-8 text-center">
+      <button type="button" class="btn btn-danger" data-action="close-account">Close your user account</button> <br> <br>
+      <small class="text-muted">This will close your user account. After you click the button you'll be asked for your password to confirm.</small>
+    </div> {{! .col-sm-offset-2 }}
+  </div> {{! .form-group }}
+</div>
+
+<div class="confirm-close-wrapper hide">
+  <div class="form-group">
+  <label for="userPasswordCurrent" class="col-sm-3 control-label">Password</label>
+  <div class="col-sm-9">
+    <input type="password" class="form-control" id="userPasswordCurrent">
+    <div><small data-error="currentPassword" class="help-block"></small></div>
+    <small class="text-muted">Closing your account is irreversible. Enter your current password to confirm you want to permanently close this account.</small>
+  </div> {{! .col-sm-9 }}
 </div> {{! .form-group }}
+  <div class="form-group">
+    <div class="col-sm-12">
+      <button class="btn btn-danger" data-action="confirm-close">Close account</button>
+      <button type="button" class="btn btn-link btn-cancel" data-action="cancel-confirm">Cancel</button>
+    </div> {{! .col-sm-12 }}
+  </div> {{! .form-group }}
+</div>
+
