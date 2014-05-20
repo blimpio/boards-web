@@ -8,7 +8,8 @@ module.exports = Zeppelin.Controller.extend({
     content: require('account/layouts/content'),
     settings: require('settings/layouts/main'),
     comments: require('account/layouts/comments'),
-    shareBoard: require('account/layouts/share-board')
+    shareBoard: require('account/layouts/share-board'),
+    boardCollaborators: require('account/layouts/board-collaborators')
   },
 
   firstLoad: true,
@@ -42,6 +43,7 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('settings').setElement('div.settings').render();
     this.getLayout('shareBoard').setElement('div.share-board').render();
+    this.getLayout('boardCollaborators').setElement('div.board-collaborators').render();
 
     if (this.options.comesFromAccountPage) {
       this.onAccountsFetch();
@@ -179,6 +181,7 @@ module.exports = Zeppelin.Controller.extend({
   onCollaboratorsFetch: function() {
     App.BoardCollaborators.setCurrent(App.User.id);
     this.getLayout('shareBoard').showSettings(App.Boards.current);
+    this.getLayout('boardCollaborators').showSettings(App.Boards.current);
     this.fetchCards(App.Boards.current.id);
   },
 

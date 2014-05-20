@@ -1,27 +1,35 @@
 module.exports = Z.Layout.extend({
-  el: 'div.share-board',
+  el: 'div.board-collaborators',
 
   keepEl: true,
 
-  template: require('account/templates/share-board-layout'),
+  template: require('account/templates/board-collaborators-layout'),
 
   regions: {
-    toggleForm: require('account/regions/share-board-toggle'),
+    inviteForm: require('account/regions/board-collaborators-invite'),
+    collaborators: require('account/regions/board-collaborators')
   },
 
   events: {
     'click [data-action=hide]': 'hide',
-    'shown.bs.modal #share-board-modal': 'onShown',
-    'hidden.bs.modal #share-board-modal': 'onHidden',
-    'click [data-action=submitShareModal]': 'submit'
+    'shown.bs.modal #board-collaborators-modal': 'onShown',
+    'hidden.bs.modal #board-collaborators-modal': 'onHidden',
+    'click [data-action=submitCollaboratorsModal]': 'submit'
   },
 
   elements: {
-    modal: 'div#share-board-modal',
+    modal: 'div#board-collaborators-modal',
     alert: 'div.ui-modal-alert',
     footer: 'div.modal-footer',
-    doneBtn: '[data-action=submitShareModal]'
+    doneBtn: '[data-action=submitCollaboratorsModal]'
   },
+
+  subscriptions: {
+    'inviteCollaborators:actions:hidden': 'showFooter',
+    'inviteCollaborators:actions:visible': 'hideFooter'
+  },
+
+  autocompleteRegex: /\/api\/v[0-9]\/autocomplete\/users\//,
 
   initialize: function() {
     _.bindAll(this, ['onShown', 'onHidden', 'onAjaxSuccess', 'onAjaxError']);
@@ -47,19 +55,23 @@ module.exports = Z.Layout.extend({
   },
 
   listenToAjax: function() {
-    $(document).on('ajaxError.share', this.onAjaxError);
-    $(document).on('ajaxSuccess.share', this.onAjaxSuccess);
+    $(document).on('ajaxError.collaborators', this.onAjaxError);
+    $(document).on('ajaxSuccess.collaborators', this.onAjaxSuccess);
   },
 
   stopListeningToAjax: function() {
-    $(document).off('ajaxError.share');
-    $(document).off('ajaxSuccess.share');
+    $(document).off('ajaxError.collaborators');
+    $(document).off('ajaxSuccess.collaborators');
   },
 
   showSettings: function(board) {
-    this.getRegion('toggleForm').showForm({
-      model: board
+    this.getRegion('inviteForm').showForm({
+      board: board.id
     });
+
+    if (!this.getRegion('collaborators').isShown()) {
+      this.getRegion('collaborators').show();
+    }
   },
 
   showFooter: function() {
@@ -74,19 +86,20 @@ module.exports = Z.Layout.extend({
 
   onShown: function() {
     this.listenToAjax();
-    this.getRegion('toggleForm').focus();
   },
 
   onHidden: function() {
     this.stopListeningToAjax();
     this.off('ajax:success ajax:error');
-    this.getRegion('toggleForm').view.reset();
+    this.getRegion('inviteForm').view.reset();
     this.showFooter();
     this.getElement('doneBtn').text('Done');
   },
 
   onAjaxSuccess: function(event, xhr, settings) {
     var $alert;
+
+    if (settings.url.match(this.autocompleteRegex)) return;
 
     $alert = this.getElement('alert');
     $alert.text('Changes saved.').show();
@@ -100,6 +113,8 @@ module.exports = Z.Layout.extend({
 
   onAjaxError: function(event, xhr, settings) {
     var $alert;
+
+    if (settings.url.match(this.autocompleteRegex)) return;
 
     $alert = this.getElement('alert');
     $alert.text('Something went wrong. Please try again.').show();

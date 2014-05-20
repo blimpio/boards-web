@@ -1,24 +1,16 @@
-<strong class="share-board-toggle-title">Who has access</strong>
+<strong class="board-settings-modal-title">Who has access to this board</strong>
 
 <div class="share-board-toggle-option public clearfix">
   <label>
-    <input type="radio" name="is_shared" class="pull-left" value="true" {{#if is_shared}}checked{{/if}}> <p class="share-board-toggle-option-text pull-left">Public on the web <br> <small class="text-muted">Anyone on the internet can ﬁnd and view. No sign-in required.</small></p>
+    <input type="checkbox" name="is_shared" class="pull-left" value="true" {{#if is_shared}}checked{{/if}}> <p class="share-board-toggle-option-text pull-left">Public on the web <br> <small class="text-muted">Anyone on the internet can ﬁnd and view. No sign-in required.</small></p>
   </label>
   <div class="share-board-toggle-actions">
     <div class="form-group">
       <input type="text" class="form-control share-board-toggle-url-input" value="{{url}}" readonly>
     </div> {{! .form-group }}
-    <div class="form-group">
-      <span class="text-muted share-board-toggle-actions-text">Share link via:</span>
-      <button type="button" class="btn btn-default share-board-toggle-actions-btn" data-action="shareFacebook" data-share="https://www.facebook.com/sharer.php?app_id=854149947934010&sdk=joey&u={{encodeURIComponent url}}&display=popup">Facebook</button>
-      <button type="button" class="btn btn-default share-board-toggle-actions-btn" data-action="shareTwitter" data-intent="https://twitter.com/intent/tweet?text=Check%20out%20{{encodeURIComponent name}}%20on%20Blimp%20Boards!">Twitter</button>
-      <a href="mailto:?subject={{name}} on Blimp Boards&body={{url}}" class="btn btn-default share-board-toggle-actions-btn" data-action="shareEmail">Email</a>
-    </div> {{! .form-group }}
+    <span class="text-muted share-board-toggle-actions-text">Share link via:</span>
+    <button type="button" class="btn btn-default share-board-toggle-actions-btn" data-action="shareFacebook" data-share="https://www.facebook.com/sharer.php?app_id=854149947934010&sdk=joey&u={{encodeURIComponent url}}&display=popup">Facebook</button>
+    <button type="button" class="btn btn-default share-board-toggle-actions-btn" data-action="shareTwitter" data-intent="https://twitter.com/intent/tweet?text=Check%20out%20{{encodeURIComponent name}}%20on%20Blimp%20Boards!">Twitter</button>
+    <a href="mailto:?subject={{name}} on Blimp Boards&body={{url}}" class="btn btn-default share-board-toggle-actions-btn" data-action="shareEmail">Email</a>
   </div> {{! .share-board-toggle-actions }}
-</div> {{! .share-board-toggle-option }}
-
-<div class="share-board-toggle-option collaborators clearfix">
-  <label>
-    <input type="radio" name="is_shared" class="pull-left" {{#unless is_shared}}checked{{/unless}} value="false"> <p class="share-board-toggle-option-text pull-left">Speciﬁc people <br> <small class="text-muted">Only the people listed below can access.</small></p>
-  </label>
 </div> {{! .share-board-toggle-option }}

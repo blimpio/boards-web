@@ -4,5 +4,10 @@ module.exports = Z.Region.extend({
   showForm: function(options) {
     this.setView(require('account/views/share-board-toggle'), options).show();
     return this;
+  },
+
+  focus: function() {
+    this.view.focusOnShareUrl();
+    return this;
   }
 });
