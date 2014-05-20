@@ -2,7 +2,7 @@ module.exports = Zeppelin.Model.extend({
   cacheId: 'App',
 
   subscriptions: {
-    'user:signout': 'onUserSignedout',
+    'user:signout': 'onUserSignedOut',
     'board:selected': 'onBoardSelected'
   },
 
@@ -19,7 +19,7 @@ module.exports = Zeppelin.Model.extend({
     this.saveCurrent('board', board.id);
   },
 
-  onUserSignedout: function() {
+  onUserSignedOut: function() {
     this.clear();
     this.destroyCache();
   }
