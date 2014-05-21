@@ -8,8 +8,8 @@ module.exports = Zeppelin.FormView.extend({
   saveOnSubmit: false,
 
   events: {
-    'click [data-action=close-account]': 'toggleConfirmAccountWrapper',
-    'click [data-action=cancel-confirm]': 'toggleConfirmAccountWrapper',
+    'click [data-action=closeAccount]': 'toggleConfirmAccountWrapper',
+    'click [data-action=cancelConfirm]': 'toggleConfirmAccountWrapper',
   },
 
   elements: {
