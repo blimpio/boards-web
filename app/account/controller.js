@@ -100,16 +100,12 @@ module.exports = Zeppelin.Controller.extend({
       .toggleEmptyBoardsState(App.Boards.isEmpty());
 
     if (!App.Boards.isEmpty()) {
-      console.log('a');
       if (this.options.board) {
-        console.log('a1');
         App.Boards.setCurrent(this.options.board);
         App.Cache.saveCurrent('board', App.Boards.current.id);
       } else if (App.Cache.has('board')) {
-        console.log('a2');
         App.Boards.current = App.Boards.get(App.Cache.get('board'));
       } else {
-        console.log('a3');
         App.Boards.current = App.Boards.at(0);
         App.Cache.saveCurrent('board', App.Boards.current.id);
       }
