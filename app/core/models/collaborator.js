@@ -7,7 +7,7 @@ module.exports = Person.extend({
   },
 
   hasAccount: function() {
-    return this.get('user') !== null;
+    return this.has('user') && this.get('user');
   },
 
   isOwner: function(board) {
@@ -33,11 +33,7 @@ module.exports = Person.extend({
   },
 
   getAvatar: function() {
-    if (this.hasAccount()) {
-      return this.get('user_data').gravatar_url;
-    } else {
-      return '';
-    }
+    return this.has('user_data') ? this.get('user_data').gravatar_url : '';
   },
 
   getUsername: function() {

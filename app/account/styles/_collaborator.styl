@@ -7,6 +7,17 @@
       padding-right: 45px;
     }
   }
+
+  &.is-being-created {
+    background: url('../images/loading-item.gif') no-repeat 99% center;
+    pointer-events: none;
+    opacity: 0.5;
+
+    .collaborator-permissions,
+    [data-action="removeCollaborator"] {
+      display: none;
+    }
+  }
 }
 
 .collaborator-avatar {

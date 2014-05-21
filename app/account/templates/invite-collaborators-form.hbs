@@ -1,17 +1,27 @@
 <strong class="invite-collaborator-title">Invite people</strong>
-<input name="invitee" type="text" class="form-control" data-action="showActions" placeholder="Enter names, useranames or email addresses…">
 
 <div class="invite-collaborator-actions">
-  <div class="invite-collaborator-rows form-group">
-    {{partial "account/templates/invite-collaborator-row"}}
-  </div> {{! .invite-collaborator-rows }}
+  <div class="form-group form-inline">
+    <div class="form-group">
+      <input name="invitee" type="text" class="form-control" placeholder="Enter names, useranames or email addresses…">
+    </div>
+    <div class="form-group">
+      <div class="collaborator-permissions dropdown" data-permission="read">
+        <a href="#" class="collaborator-permissions-toggle dropdown-toggle" data-toggle="dropdown">
+          <span class="collaborator-permissions-toggle-text">Can view</span> <b class="caret"></b>
+        </a> {{! [data-toggle="dropdown"] }}
+        <ol class="collaborator-permissions-list dropdown-menu" role="menu">
+          <li><li><a class="item-action" href="#" data-permission="read">Can view</a></li></li>
+          <li><li><a class="item-action" href="#" data-permission="write">Can edit</a></li></li>
+        </ol> {{! .collaborator-permissions-list }}
+      </div> {{! .collaborator-permissions }}
+    </div>
 
-  <div class="form-group">
-    <button type="button" class="btn btn-link" data-action="addInvitationRow">Add more</button>
+    <div class="collaborator-suggestions list-group">
+      <div class="collaborator-suggestions-list"></div>
+    </div> {{! .collaborator-suggestions }}
   </div> {{! .form-group }}
 
-  <div class="form-group">
-    <button class="btn btn-default" data-action="send">Send</button>
-    <button type="button" class="btn btn-link btn-cancel" data-action="cancel">Cancel</button>
-  </div> {{! .form-group }}
+  <button class="btn btn-default" data-action="add">Add</button>
+  <button type="button" class="btn btn-link btn-cancel" data-action="cancel">Cancel</button>
 </div> {{! .invite-collaborator-actions }}

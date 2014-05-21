@@ -5,28 +5,24 @@ module.exports = Zeppelin.FormView.extend({
 
   template: require('account/templates/invite-collaborators-form'),
 
-  invitationRow: require('account/templates/invite-collaborator-row'),
-
   collaboratorSuggestions: require('account/templates/collaborator-suggestions'),
+
+  suggestions: [],
 
   events: function() {
     return {
       'keyup [name=invitee]': _.debounce(this.onKeyup, 500),
       'keydown [name=invitee]': 'onInputKeydown',
+      'click a[data-permission]': 'onChangePermission',
       'click [data-action=cancel]': 'reset',
-      'click button[data-permission]': 'onChangePermission',
       'click a.collaborator-suggestion': 'onSuggestionClick',
-      'focus [data-action=showActions]': 'showActions',
-      'keydown div.collaborator-suggestions': 'onSuggestionKeydown',
-      'click [data-action=addInvitationRow]': 'addInvitationRow',
-      'click [data-action=removeCollaborator]': 'onRemoveInvitationRowClick'
+      'keydown div.collaborator-suggestions': 'onSuggestionKeydown'
     };
   },
 
   elements: {
-    sendBtn: '[data-action=send]',
-    actions: 'div.invite-collaborator-actions',
-    invitationRows: 'div.invite-collaborator-rows'
+    addBtn: '[data-action=add]',
+    permission: '[data-permission]'
   },
 
   saveOnSubmit: false,
@@ -36,87 +32,49 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   submit: function() {
-    var $rows = this.$('div.invite-collaborator-row'),
-        error = 'One or more emails are not valid.',
+    var error = 'One or more emails are not valid.',
+        $invitee = this.getAttributeElement('invitee'),
         hasError = false,
-        invitations = [];
+        inviteeId = $invitee.data('id'),
+        invitation = {},
+        inviteeData = {},
+        inviteeEmail = $.trim($invitee.val());
 
-    _.forEach($rows, function(row) {
-      var $row = $(row),
-          $input = $row.find('input[name=invitee]'),
-          inputId = $input.data('id'),
-          inputValue = $input.val(),
-          collaborator;
+    if (inviteeId) {
+      inviteeData = _.where(this.suggestions, {id: inviteeId})[0];
 
-      if (inputId) {
-        invitations.push({
-          user: inputId,
+      invitation = {
+        user: inviteeId,
+        board: this.options.board,
+        user_data: inviteeData,
+        permission: this.getElement('permission').data('permission')
+      };
+    } else if (inviteeEmail) {
+      if (Z.Validations.isEmail(inviteeEmail)) {
+        invitation = {
+          email: inviteeEmail,
           board: this.options.board,
-          permission: $row.find('div.collaborator-permissions').data('permission')
-        });
-      } else if (inputValue) {
-        if (Z.Validations.isEmail(inputValue)) {
-          invitations.push({
-            email: inputValue,
-            board: this.options.board,
-            permission: $row.find('div.collaborator-permissions').data('permission')
-          });
-        } else {
-          hasError = true;
-          $input.addClass(this.errorClass);
-        }
+          user_data: {
+            email: inviteeEmail
+          },
+          permission: this.getElement('permission').data('permission')
+        };
+      } else {
+        hasError = true;
+        $invitee.addClass(this.errorClass);
       }
-    }, this);
+    }
 
     if (!hasError) {
       this.reset();
-      this.getElement('sendBtn').text('Sending...');
-      App.BoardCollaborators.invite(invitations).done(_.bind(function() {
-        this.getElement('sendBtn').text('Send');
-      }, this));
+      this.focus();
+      App.BoardCollaborators.invite([invitation]).done();
     }
   },
 
   reset: function() {
-    this.hideActions();
     this.hideSuggestions();
     Zeppelin.FormView.prototype.reset.apply(this, arguments);
-    return this;
-  },
-
-  showActions: function() {
-    this.$el.addClass('is-active');
-    this.getElement('actions').find('input[name=invitee]').first().focus();
-    this.broadcast('inviteCollaborators:actions:visible');
-    return this;
-  },
-
-  hideActions: function() {
-    this.$el.removeClass('is-active');
-
-    this.getElement('invitationRows')
-      .find('div.invite-collaborator-row')
-      .not(':first-child')
-        .remove();
-
-    this.broadcast('inviteCollaborators:actions:hidden');
-    return this;
-  },
-
-  addInvitationRow: function() {
-    this.getElement('invitationRows').append(this.invitationRow());
-    return this;
-  },
-
-  removeInvitationRow: function($row) {
-    if ($row.find('[name="invitee"]').val()) {
-      if (window.confirm('Are you sure you want to remove this invitation?')) {
-        $row.remove();
-      }
-    } else {
-      $row.remove();
-    }
-
     return this;
   },
 
@@ -127,11 +85,12 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   populateSuggestions: function($container, suggestions) {
+    this.suggestions = suggestions;
+
     $container.find('div.collaborator-suggestions-list')
       .html(this.collaboratorSuggestions({
         collaborators: suggestions
-      }))
-    .end().show();
+      })).end().show();
 
     $('body').on('click.collaborator-suggestions', _.bind(function(event) {
       event.stopImmediatePropagation();
@@ -215,29 +174,23 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onSuggestionClick: function(event) {
-    var $el = $(event.currentTarget);
+    var $suggestion = $(event.currentTarget);
 
     event.preventDefault();
 
-    $el.parents('div.invite-collaborator-row')
-      .find('input[name=invitee]')
-      .val($el.data('name'))
-      .data('id', $el.data('id'));
+    this.getAttributeElement('invitee')
+      .val($suggestion.data('name'))
+      .data('id', $suggestion.data('id'));
 
-    this.hideSuggestions();
-  },
-
-  onRemoveInvitationRowClick: function(event) {
-    this.removeInvitationRow(
-      $(event.currentTarget).parents('div.invite-collaborator-row')
-    );
+    this.submit();
   },
 
   onChangePermission: function(event) {
-    var $el = $(event.currentTarget),
-        permission = $el.data('permission');
+    var permission = $(event.currentTarget).data('permission');
 
-    $el.parents('div.collaborator-permissions')
+    event.preventDefault();
+
+    this.getElement('permission')
       .attr('data-permission', permission)
       .find('span.collaborator-permissions-toggle-text')
       .text('Can ' + (permission === 'write' ? 'edit' : 'view'));

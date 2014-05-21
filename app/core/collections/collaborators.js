@@ -22,8 +22,27 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   invite: function(collaborators) {
+    var _collaborators = this.add(collaborators);
+
     return $.post(this.url, JSON.stringify(collaborators), _.bind(function(response) {
-      this.add(response);
+      _.forEach(response, function(collaborator) {
+        var model;
+
+        if (collaborator.user) {
+          model = _.find(_collaborators, function(_collaborator) {
+            return _collaborator.get('user') === collaborator.user;
+          });
+        } else {
+          model = _.find(_collaborators, function(_collaborator) {
+            return _collaborator.get('user_data').email === collaborator.user_data.email;
+          });
+        }
+
+        if (model) {
+          model.set(collaborator, {silent: true});
+          model.trigger('sync', model, collaborator);
+        }
+      });
     }, this));
   }
 });

@@ -1,41 +1,8 @@
 .invite-collaborators-form {
-  background: #F0F0F0;
+  background: #FDFDFD;
   border-radius: 3px;
+  border: 1px solid #EDEDED;
   padding: 15px;
-
-  &.is-active {
-    [data-action="showActions"] {
-      display: none !important;
-    }
-
-    .invite-collaborator-actions {
-      display: block !important;
-    }
-  }
-}
-
-[data-action="addInvitationRow"] {
-  padding: 5px 0 0 0;
-}
-
-.invite-collaborator-title {
-  display: block;
-  margin-bottom: 15px;
-}
-
-.invite-collaborator-rows {
-  margin-bottom: -15px;
-}
-
-.invite-collaborator-row {
-  margin-bottom: 15px;
-  position: relative;
-
-  &:first-child {
-    [data-action="removeCollaborator"] {
-      display: none;
-    }
-  }
 
   [name="invitee"] {
     width: 400px;
@@ -44,13 +11,17 @@
       background: url('../images/loading-item.gif') no-repeat 97% center #FFFFFF;
     }
   }
+}
+
+.invite-collaborator-title {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.invite-collaborator-actions {
+  position: relative;
 
   .collaborator-permissions {
     padding: 0;
   }
-}
-
-.invite-collaborator-actions {
-  display: none;
-  margin-top: 15px;
 }
