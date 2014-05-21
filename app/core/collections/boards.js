@@ -50,7 +50,11 @@ module.exports = Zeppelin.Collection.extend({
         board.select();
       } else {
         board.once('sync', function() {
-          if (self.current.cid === lastSelected.cid) this.select();
+          if (self.current) {
+            if (self.current.cid === lastSelected.cid) this.select();
+          } else {
+            this.select();
+          }
         }, board);
       }
     }
@@ -61,6 +65,7 @@ module.exports = Zeppelin.Collection.extend({
       this.at(0).select();
     } else {
       this.current = null;
+      this.broadcast('boards:empty', this);
     }
   },
 

@@ -2,6 +2,7 @@ module.exports = Zeppelin.Model.extend({
   cacheId: 'App',
 
   subscriptions: {
+    'boards:empty': 'onBoardsEmpty',
     'user:signout': 'onUserSignedOut',
     'board:selected': 'onBoardSelected'
   },
@@ -13,6 +14,15 @@ module.exports = Zeppelin.Model.extend({
   saveCurrent: function(item, data) {
     this.set(item, data).cache.set(item, data);
     return this;
+  },
+
+  removeCurrent: function(item) {
+    this.unset(item).cache.clear(item);
+    return this;
+  },
+
+  onBoardsEmpty: function() {
+    this.removeCurrent('board');
   },
 
   onBoardSelected: function(board) {
