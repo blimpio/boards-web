@@ -20,98 +20,19 @@ $cardGutter = 15px;
     }
   }
 
-  &.is-featured {
-    height: ($cardHeight * 2) + $cardGutter;
-    width: ($cardWidth * 2) + $cardGutter;
-
-    .card-preview {
-      background-size: 100% auto;
-    }
-  }
-
-  &.is-uploading {
-    border: 4px dashed #E0E0E0;
-
-    .card-upload-progress {
-      display: block;
-    }
-  }
-
   &.is-detail {
     height: auto;
     margin: 0;
     width: 100%;
-
-    .card-preview {
-      height: auto;
-      position: relative;
-      width: 100%;
-    }
   }
 
   &[data-type="note"] {
     background: #FFFFFF;
   }
-
-  &[data-type="file"] {
-    background: url('../images/loading-item.gif') no-repeat center 48% #FFFFFF;
-
-    &.has-loaded-preview {
-      background: #F9F9F9;
-
-      .card-preview {
-        display: block;
-      }
-    }
-  }
 }
 
 .card-content {
   padding: 10px;
-}
-
-.card-upload-progress {
-  background: #F9F9F9;
-  border: 4px solid transparent;
-  border-radius: 50%;
-  color: #9B9A9B;
-  display: none;
-  height: 55px;
-  left: 50%;
-  margin: -35px 0 0 -27.5px;
-  position: absolute;
-  text-align: center;
-  top: 50%;
-  width: 55px;
-  z-index: 10;
-
-  & > svg {
-    left: -4px;
-    position: absolute;
-    top: -4px;
-    z-index: 1;
-  }
-}
-
-.card-preview {
-  background-repeat: no-repeat;
-  background-position: 50% 48%;
-  border-radius: 3px;
-  display: none;
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 1;
-
-  &.is-data-url {
-    background-size: 100% auto;
-  }
-}
-
-.card-preview-loader {
-  display: none;
 }
 
 .card-name-wrapper {

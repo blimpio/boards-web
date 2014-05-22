@@ -1,5 +1,9 @@
 _.mixin({'asset': function(path) {
-  return App.STATIC_URL + path;
+  return App.STATIC_URL + (path || '');
+}});
+
+_.mixin({'isDataUrl': function(url) {
+  return /data:image\//.test(url || '');
 }});
 
 _.mixin({'preventNavigation': function(message) {
@@ -129,6 +133,10 @@ $(document).on('click', '[data-route=true]', function(event) {
     event.preventDefault();
     Backbone.Events.trigger('router:navigate', $(this).attr('href'));
   }
+});
+
+Handlebars.registerHelper('asset-url', function(path) {
+  return new Handlebars.SafeString(App.STATIC_URL);
 });
 
 Handlebars.registerHelper('markdown', function(str) {

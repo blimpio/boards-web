@@ -110,7 +110,12 @@ module.exports = Zeppelin.View.extend({
 
     if (data.files[0].type.match(/image.*/)) {
       reader.onload = function(e) {
-        file.set('thumbnail_sm_path', reader.result);
+        file.set({
+          thumbnail_xs_path: reader.result,
+          thumbnail_sm_path: reader.result,
+          thumbnail_md_path: reader.result,
+          thumbnail_lg_path: reader.result
+        });
       }
 
       reader.readAsDataURL(data.files[0]);

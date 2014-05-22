@@ -11,27 +11,6 @@
   &.is-detail {
     cursor: inherit;
 
-    &[data-type="file"] {
-      background: url('../images/loading-item.gif') no-repeat center center #FFFFFF;
-      min-height: 150px;
-      text-align: center;
-
-      &.has-loaded-preview {
-        background: #F9F9F9;
-
-        .card-preview {
-          display: inline;
-        }
-      }
-
-      .card-preview {
-        display: none;
-        height: auto;
-        max-width: 100%;
-        width: auto;
-      }
-    }
-
     &[data-type="note"] {
       &.is-editing {
         .card-content {

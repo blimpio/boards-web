@@ -28,7 +28,7 @@ module.exports = Zeppelin.Collection.extend({
   initialize: function() {
     this.on('remove', this.onRemove, this);
     this.on('change:is_selected', this.onCardSelected, this);
-    this.on('change:thumbnail_sm_path', this.onPreviewChange, this);
+    this.on('change:thumbnail_xs_path', this.onPreviewChange, this);
   },
 
   getNewest: function() {
@@ -82,7 +82,7 @@ module.exports = Zeppelin.Collection.extend({
       if (!card) {
         this.triggerBoardThumbnailChange(removed.get('board'), '');
       } else {
-        this.triggerBoardThumbnailChange(card.get('board'), card.get('thumbnail_sm_path'));
+        this.triggerBoardThumbnailChange(card.get('board'), card.get('thumbnail_xs_path'));
       }
     }
   },

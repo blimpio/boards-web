@@ -1,6 +1,5 @@
 {{#if hasPreview}}
-  <img src="{{preview.image}}" class="card-preview-loader">
-  <div class="card-preview" style="background-image:url({{preview.image}});"></div>
+  <img src="{{preview.image}}" class="card-preview card-preview-loader">
 {{else}}
   <img src="{{asset-url}}images/patterns/{{preview.pattern}}.png" class="card-preview-loader">
   <div class="card-preview-extension">{{preview.extension}}</div>

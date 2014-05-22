@@ -85,6 +85,10 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   onPreviewAvailable: function(board, preview) {
-    this.get(board).save('thumbnail_sm_path', preview);
+    if (_.isDataUrl(preview)) {
+      this.get(board).set('thumbnail_xs_path', preview);
+    } else {
+      this.get(board).get('thumbnail_xs_path', preview);
+    }
   }
 });

@@ -28,7 +28,7 @@ module.exports = Zeppelin.ModelView.extend({
       'selected': 'onSelected',
       'deselected': 'onDeselected',
       'change:name': 'onNameChange',
-      'change:thumbnail_sm_path': 'onThumbnailChange'
+      'change:thumbnail_xs_path': 'onThumbnailChange'
     }
   },
 
@@ -50,7 +50,7 @@ module.exports = Zeppelin.ModelView.extend({
   updateThumbnail: function(thumbnail) {
     this.renderPartial('span.board-thumbnail-partial', {
       color: this.model.get('color'),
-      thumbnail_sm_path: thumbnail
+      thumbnail_xs_path: thumbnail
     });
   },
 

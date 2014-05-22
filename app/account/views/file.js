@@ -3,6 +3,7 @@ var Card = require('account/views/card');
 module.exports = Card.extend({
   className: function() {
     var className = Card.prototype.className.apply(this, arguments);
+    if (this.model.hasPreview()) className += ' has-preview';
     if (this.model.get('is_uploading')) className += ' is-uploading';
     return className;
   },
@@ -33,7 +34,6 @@ module.exports = Card.extend({
   context: function() {
     return _.extend({}, this.model.attributes, {
       preview: this.model.getPreview(),
-      extension: this.model.getExtension(),
       hasPreview: this.model.hasPreview()
     });
   },
@@ -44,8 +44,30 @@ module.exports = Card.extend({
 
   toggleHighlight: function(event) {
     Card.prototype.toggleHighlight.apply(this, arguments);
-    this.updatePreview();
+    if (this.model.hasPreview()) this.setPreview();
     return this;
+  },
+
+  setPreview: function() {
+    var context = {
+          preview: this.model.getPreview() ,
+          hasPreview: this.model.hasPreview()
+        },
+        template = require('account/templates/file-preview');
+
+    this.getElement('previewWrapper').html(
+      this.renderTemplate(template, context)
+    );
+
+    this.addElements({
+      preview: 'div.card-preview',
+      previewLoader: 'img.card-preview-loader'
+    });
+
+    this.getElement('preview')
+      .toggleClass('is-data-url', this.model.previewIsDataUrl());
+
+    this.preloadPreview();
   },
 
   preloadPreview: function() {
@@ -54,15 +76,6 @@ module.exports = Card.extend({
     } else {
       this.getElement('previewLoader').one('load', this.onPreviewLoaded);
     }
-  },
-
-  updatePreview: function() {
-    this.getElement('preview').css({
-      'background-image': 'url(' + this.model.getPreview() + ')'
-    });
-
-    if (this.model.hasPreview()) this.$el.addClass('has-loaded-preview');
-    return this;
   },
 
   updateUploadProgress: function(progress) {
@@ -91,7 +104,7 @@ module.exports = Card.extend({
   },
 
   onRender: function() {
-    if (this.model.hasPreview()) this.preloadPreview();
+    this.preloadPreview();
   },
 
   onUploadingStateChange: function(file, isUploading) {
@@ -114,21 +127,6 @@ module.exports = Card.extend({
   },
 
   onUpdatePreview: function() {
-    var context = { preview: this.model.getPreview() },
-        template = require('account/templates/file-preview');
-
-    this.getElement('previewWrapper').html(
-      this.renderTemplate(template, context)
-    );
-
-    this.addElements({
-      preview: 'div.card-preview',
-      previewLoader: 'img.card-preview-loader'
-    });
-
-    this.getElement('preview')
-      .toggleClass('is-data-url', this.model.previewIsDataUrl());
-
-    this.preloadPreview();
+    this.setPreview();
   }
 });

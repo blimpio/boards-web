@@ -5,17 +5,20 @@ module.exports = Zeppelin.ModelView.extend({
 
   className: function() {
     var className = 'card is-detail';
+    if (this.model.hasPreview()) className += ' has-preview';
     if (this.model.get('featured')) className += ' is-featured';
     return className;
   },
 
   elements: {
-    preview: 'img.card-preview'
+      preview: 'div.card-preview',
+      previewLoader: 'img.card-preview-loader',
+      previewWrapper: 'div.card-preview-wrapper'
   },
 
   bindings: {
     model: {
-      'change:thumbnail_lg_path': 'updatePreview'
+      'change:thumbnail_lg_path': 'onUpdatePreview'
     }
   },
 
@@ -23,7 +26,8 @@ module.exports = Zeppelin.ModelView.extend({
 
   context: function() {
     return _.extend({}, this.model.attributes, {
-      preview: this.model.getLargePreview()
+      preview: this.model.getPreview(true),
+      hasPreview: this.model.hasPreview()
     });
   },
 
@@ -31,19 +35,53 @@ module.exports = Zeppelin.ModelView.extend({
     _.bindAll(this, ['onPreviewLoaded']);
   },
 
-  updatePreview: function() {
-    this.getElement('preview').attr('src', this.model.get('thumbnail_lg_path'));
-    return this;
+  setPreview: function() {
+    var context = {
+          preview: this.model.getPreview(true) ,
+          hasPreview: this.model.hasPreview()
+        },
+        template = require('account/templates/file-detail-preview');
+
+    this.getElement('previewWrapper').html(
+      this.renderTemplate(template, context)
+    );
+
+    this.addElements({
+      preview: 'div.card-preview',
+      previewLoader: 'img.card-preview-loader'
+    });
+
+    this.getElement('preview')
+      .toggleClass('is-data-url', this.model.previewIsDataUrl());
+
+    this.preloadPreview();
+  },
+
+  preloadPreview: function() {
+    if (this.getElement('previewLoader')[0].complete) {
+      this.onPreviewLoaded();
+    } else {
+      this.getElement('previewLoader').one('load', this.onPreviewLoaded);
+    }
   },
 
   onRender: function() {
-    this.getElement('preview').load(this.onPreviewLoaded);
+    this.preloadPreview();
   },
 
-  onPreviewLoaded: function(event) {
-    _.delay(_.bind(function() {
-      this.$el.addClass('has-loaded-preview');
-    }, this), 1);
+  onPreviewLoaded: function() {
+    var $el = this.$el,
+        $image = this.getElement('previewLoader');
+
+    setTimeout(function() {
+      if ($image[0].complete && $image.attr('src')) {
+        $el.addClass('has-loaded-preview');
+      }
+    }, 0);
+  },
+
+  onUpdatePreview: function() {
+    this.setPreview();
   }
 });
 

@@ -1,4 +1,8 @@
-var Card = require('core/models/card');
+var Card = require('core/models/card'),
+    COLORS = ['#fc9a1b', '#f30059', '#12799c', '#f75213', '#8ac5a8', '#1aab26', '#15a58f'],
+    PATTERNS = ['1', '2', '3', '4', '5', '6', '7', '8'],
+    usedColors = [],
+    usedPatterns = [];
 
 module.exports = Card.extend({
   defaults: function() {
@@ -18,9 +22,21 @@ module.exports = Card.extend({
     );
   },
 
+  parse: function(response) {
+    if (!response.thumbnail_xs_path ||
+    !response.thumbnail_sm_path ||
+    !response.thumbnail_md_path ||
+    !response.thumbnail_lg_path && this.hasPreview()) {
+      return _.omit(response, ['thumbnail_xs_path', 'thumbnail_sm_path',
+      'thumbnail_md_path', 'thumbnail_lg_path']);
+    } else {
+      return response;
+    }
+  },
+
   getExtension: function() {
-    return _.last(this.get('mime_type').split('/')) ||
-    _.last(this.get('name').split('.'));
+    return _.last(this.get('name').split('.')) ||
+    _.last(this.get('mime_type').split('/'));
   },
 
   hasPreview: function() {
@@ -41,14 +57,53 @@ module.exports = Card.extend({
     return this.get('thumbnail_lg_path');
   },
 
-  getPreview: function() {
-    return this.get('featured')
-      ? this.getMediumPreview()
-      : this.getSmallPreview();
+  getPreview: function(isDetail) {
+    var color, image, pattern, unusedColors, unusedPatterns;
+
+    isDetail = isDetail || false;
+
+    if (this.hasPreview()) {
+      if (isDetail) {
+        console.log(this.getLargePreview());
+        image = this.getLargePreview();
+      } else {
+        image = this.get('featured')
+          ? this.getMediumPreview()
+          : this.getSmallPreview();
+      }
+
+      return {
+        image: image
+      };
+    } else {
+      unusedColors = _.difference(COLORS, usedColors);
+      unusedPatterns = _.difference(PATTERNS, usedPatterns);
+
+      if (unusedColors.length) {
+        color = unusedColors[_.random(unusedColors.length - 1)]
+        usedColors.push(color);
+      } else {
+        color = COLORS[_.random(COLORS.length - 1)]
+        usedColors = [color];
+      }
+
+      if (unusedPatterns.length) {
+        pattern = unusedPatterns[_.random(unusedPatterns.length - 1)]
+        usedPatterns.push(pattern);
+      } else {
+        pattern = PATTERNS[_.random(PATTERNS.length - 1)]
+        usedPatterns = [pattern];
+      }
+
+      return {
+        color: color,
+        pattern: pattern,
+        extension: this.getExtension()
+      };
+    }
   },
 
-  previewIsDataUrl: function() {
-    var preview = this.getPreview();
-    return preview && (/data:image\//).test(preview);
+  previewIsDataUrl: function(isDetail) {
+    return this.hasPreview() && _.isDataUrl(this.getPreview(isDetail).image);
   }
 });

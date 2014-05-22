@@ -6,10 +6,11 @@ module.exports = Zeppelin.Model.extend({
       created_by: App.User.id,
       modified_by: App.User.id,
       is_selected: false,
-      activity_html_url: '',
-      thumbnail_lg_path: '',
-      thumbnail_md_path: '',
-      thumbnail_sm_path: ''
+      activity_html_url: null,
+      thumbnail_lg_path: null,
+      thumbnail_md_path: null,
+      thumbnail_sm_path: null,
+      thumbnail_xs_path: null
     };
   },
 
@@ -72,7 +73,7 @@ module.exports = Zeppelin.Model.extend({
   },
 
   getAvatar: function() {
-    return this.get('thumbnail_sm_path');
+    return this.get('thumbnail_xs_path');
   },
 
   isPublic: function() {
