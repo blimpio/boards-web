@@ -75,31 +75,48 @@ module.exports = Card.extend({
         image: image
       };
     } else {
-      unusedColors = _.difference(COLORS, usedColors);
-      unusedPatterns = _.difference(PATTERNS, usedPatterns);
-
-      if (unusedColors.length) {
-        color = unusedColors[_.random(unusedColors.length - 1)]
-        usedColors.push(color);
-      } else {
-        color = COLORS[_.random(COLORS.length - 1)]
-        usedColors = [color];
-      }
-
-      if (unusedPatterns.length) {
-        pattern = unusedPatterns[_.random(unusedPatterns.length - 1)]
-        usedPatterns.push(pattern);
-      } else {
-        pattern = PATTERNS[_.random(PATTERNS.length - 1)]
-        usedPatterns = [pattern];
+      if (!this.has('metadata') || !this.get('metadata').pattern) {
+        this.generatePattern();
       }
 
       return {
-        color: color,
-        pattern: pattern,
+        color: this.get('metadata').pattern.color,
+        pattern: this.get('metadata').pattern.shape,
         extension: this.getExtension()
       };
     }
+  },
+
+  generatePattern: function() {
+    unusedColors = _.difference(COLORS, usedColors);
+    unusedPatterns = _.difference(PATTERNS, usedPatterns);
+
+    if (unusedColors.length) {
+      color = unusedColors[_.random(unusedColors.length - 1)]
+      usedColors.push(color);
+    } else {
+      color = COLORS[_.random(COLORS.length - 1)]
+      usedColors = [color];
+    }
+
+    if (unusedPatterns.length) {
+      pattern = unusedPatterns[_.random(unusedPatterns.length - 1)]
+      usedPatterns.push(pattern);
+    } else {
+      pattern = PATTERNS[_.random(PATTERNS.length - 1)]
+      usedPatterns = [pattern];
+    }
+
+    this.save({
+      metadata: {
+        pattern: {
+          color: color,
+          shape: pattern
+        }
+      }
+    });
+
+    return this;
   },
 
   previewIsDataUrl: function(isDetail) {
