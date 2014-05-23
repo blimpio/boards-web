@@ -10,7 +10,8 @@ module.exports = Zeppelin.ModelView.extend({
   template: require('account/templates/board'),
 
   events: {
-    'click a.board-link': 'onClick'
+    'click a.board-link': 'onClick',
+    'click [data-action=delete]': 'onClickDelete'
   },
 
   elements: {
@@ -54,6 +55,11 @@ module.exports = Zeppelin.ModelView.extend({
     });
   },
 
+  delete: function() {
+    var msg = 'Are you sure you want to delete this board and it\'s cards?';
+    if (window.confirm(msg)) this.model.destroy();
+  },
+
   onSync: function() {
     this.$el.removeClass('is-being-created');
     this.getElement('link').attr('href', this.model.get('html_url'));
@@ -85,6 +91,12 @@ module.exports = Zeppelin.ModelView.extend({
 
   onThumbnailChange: function(board, thumbnail) {
     this.updateThumbnail(thumbnail);
+  },
+
+  onClickDelete: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.delete();
   }
 });
 

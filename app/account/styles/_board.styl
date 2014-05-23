@@ -1,4 +1,12 @@
 .board {
+  position: relative;
+
+  &:hover {
+    [data-action="delete"] {
+      display: block;
+    }
+  }
+
   &.is-selected {
     .board-link {
       color: #50BEF7;
@@ -25,6 +33,17 @@
     .board-color {
       background-color: #E5E5E5 !important;
     }
+
+    [data-action="delete"] {
+      display: none !important;
+    }
+  }
+
+  [data-action="delete"] {
+    display: none;
+    position: absolute;
+    top: 15px;
+    right: 0;
   }
 }
 
