@@ -21,16 +21,18 @@
     }
   }
 
-  &.is-featured {
-    height: ($cardHeight * 2) + $cardGutter;
-    width: ($cardWidth * 2) + $cardGutter;
+  &.is-item {
+    &.is-featured {
+      height: ($cardHeight * 2) + $cardGutter;
+      width: ($cardWidth * 2) + $cardGutter;
 
-    .card-preview {
-      background-size: 100% auto;
-    }
+      .card-preview {
+        background-size: 100% auto;
+      }
 
-    .card-preview-extension {
-      padding-top: 168px;
+      .card-preview-extension {
+        padding-top: 168px;
+      }
     }
   }
 

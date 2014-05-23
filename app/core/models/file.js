@@ -64,7 +64,6 @@ module.exports = Card.extend({
 
     if (this.hasPreview()) {
       if (isDetail) {
-        console.log(this.getLargePreview());
         image = this.getLargePreview();
       } else {
         image = this.get('featured')
