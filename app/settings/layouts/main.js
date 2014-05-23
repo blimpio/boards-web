@@ -16,16 +16,15 @@ module.exports = Z.Layout.extend({
   },
 
   subscriptions: {
+    'settings:close': 'hide',
     'settings:user:open': 'openUserSettings',
     'settings:accounts:open': 'openAccountsSettings',
     'settings:password:open': 'openPasswordSettings',
     'settings:advanced:open': 'openAdvancedSettings',
-    'settings:notifications:open': 'openNotificationsSettings',
-    'settings:close': 'hide'
+    'settings:notifications:open': 'openNotificationsSettings'
   },
 
   events: {
-    'click [data-action=cancel]': 'hide',
     'shown.bs.modal #settings-modal': 'listenToAjax',
     'hidden.bs.modal #settings-modal': 'stopListeningToAjax',
     'click [data-action=showGeneral]': 'showUserSettings',
@@ -38,12 +37,12 @@ module.exports = Z.Layout.extend({
   elements: {
     modal: 'div#settings-modal',
     alert: 'div.ui-modal-alert',
-    sectionBtns: 'div.settings-sections button',
     generalBtn: '[data-action=showGeneral]',
     accountsBtn: '[data-action=showAccounts]',
-    notificationsBtn: '[data-action=showNotifications]',
     passwordBtn: '[data-action=showPassword]',
-    advancedBtn: '[data-action=showAdvanced]'
+    advancedBtn: '[data-action=showAdvanced]',
+    sectionBtns: 'div.settings-sections button',
+    notificationsBtn: '[data-action=showNotifications]'
   },
 
   context: function() {

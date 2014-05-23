@@ -1,6 +1,6 @@
 <strong class="board-settings-modal-title">Who has access to this board</strong>
 
-<div class="share-board-toggle-option public clearfix">
+<div class="form-group share-board-toggle-option public clearfix">
   <label>
     <input type="checkbox" name="is_shared" class="pull-left" value="true" {{#if is_shared}}checked{{/if}}> <p class="share-board-toggle-option-text pull-left">Public on the web <br> <small class="text-muted">Anyone on the internet can ﬁnd and view. No sign-in required.</small></p>
   </label>
@@ -14,3 +14,8 @@
     <a href="mailto:?subject={{name}} on Blimp Boards&body={{url}}" class="btn btn-default share-board-toggle-actions-btn" data-action="shareEmail">Email</a>
   </div> {{! .share-board-toggle-actions }}
 </div> {{! .share-board-toggle-option }}
+
+<div class="form-group share-settings-modal-actions settings-modal-actions">
+  <button class="btn btn-default" data-action="save">Save</button>
+  <button type="button" class="btn btn-link btn-cancel" data-action="cancel">Cancel</button>
+</div> {{! .settings-modal-actions }}

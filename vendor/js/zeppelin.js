@@ -1805,6 +1805,16 @@
       }
 
       return this;
+    },
+
+    diff: function() {
+      var changes = {};
+
+      _.forOwn(this.getAttributeValues(), function(value, key) {
+        if (value !== this.model.get(key)) changes[key] = value
+      }, this);
+
+      return changes;
     }
   });
 

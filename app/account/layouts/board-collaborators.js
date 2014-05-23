@@ -19,14 +19,7 @@ module.exports = Z.Layout.extend({
 
   elements: {
     modal: 'div#board-collaborators-modal',
-    alert: 'div.ui-modal-alert',
-    footer: 'div.modal-footer',
-    doneBtn: '[data-action=submitCollaboratorsModal]'
-  },
-
-  subscriptions: {
-    'inviteCollaborators:actions:hidden': 'showFooter',
-    'inviteCollaborators:actions:visible': 'hideFooter'
+    alert: 'div.ui-modal-alert'
   },
 
   autocompleteRegex: /\/api\/v[0-9]\/autocomplete\/users\//,
@@ -36,11 +29,9 @@ module.exports = Z.Layout.extend({
   },
 
   submit: function() {
-    this.getElement('doneBtn').text('Saving changes...');
     this.getRegion('toggleForm').view.submit();
 
     this.once('ajax:error', function() {
-      this.getElement('doneBtn').text('Done');
       this.off('ajax:success');
     }, this);
 
@@ -74,16 +65,6 @@ module.exports = Z.Layout.extend({
     }
   },
 
-  showFooter: function() {
-    this.getElement('footer').show();
-    return this;
-  },
-
-  hideFooter: function() {
-    this.getElement('footer').hide();
-    return this;
-  },
-
   onShown: function() {
     this.listenToAjax();
   },
@@ -92,8 +73,6 @@ module.exports = Z.Layout.extend({
     this.stopListeningToAjax();
     this.off('ajax:success ajax:error');
     this.getRegion('inviteForm').view.reset();
-    this.showFooter();
-    this.getElement('doneBtn').text('Done');
   },
 
   onAjaxSuccess: function(event, xhr, settings) {

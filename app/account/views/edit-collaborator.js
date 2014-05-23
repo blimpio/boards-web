@@ -51,12 +51,11 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   setPermission: function(permission) {
+    this.model.save('permission', permission);
     this.getElement('permission').attr('data-permission', permission);
-
     this.getElement('permissionText')
       .text('Can ' + (permission === 'write' ? 'edit' : 'view'));
 
-    this.model.save('permission', permission);
     return this;
   },
 

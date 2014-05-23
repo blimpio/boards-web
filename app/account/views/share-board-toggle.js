@@ -10,15 +10,24 @@ module.exports = Zeppelin.FormView.extend({
   template: require('account/templates/share-board-toggle'),
 
   events: {
+    'click [data-action=cancel]': 'onCancel',
     'change input[name=is_shared]': 'onChange',
     'click [data-action=shareTwitter]': 'shareViaTwitter',
     'click [data-action=shareFacebook]': 'shareViaFacebook'
   },
 
   elements: {
+    actions: 'div.settings-modal-actions',
+    saveBtn: 'button[data-action=save]',
     twitterBtn: '[data-action=shareTwitter]',
     facebookBtn: '[data-action=shareFacebook]',
     shareUrlInput: 'input.share-board-toggle-url-input'
+  },
+
+  bindings: {
+    model: {
+      'sync': 'onSync'
+    }
   },
 
   initialize: function() {
@@ -135,6 +144,31 @@ module.exports = Zeppelin.FormView.extend({
 
   onChange: function(event) {
     this.toggleSharingActions($(event.currentTarget).prop('checked'));
+
+    if (_.size(this.diff())) {
+      this.getElement('actions').show();
+    } else {
+      this.getElement('actions').hide();
+    }
+  },
+
+  onValidationSuccess: function() {
+    this.getElement('saveBtn').text('Saving changes...');
+  },
+
+  onSync: function() {
+    var self = this;
+
+    this.getElement('saveBtn').text('Save');
+
+    _.delay(function() {
+      self.getElement('actions').hide();
+    }, 200);
+  },
+
+  onCancel: function() {
+    this.reset();
+    this.getElement('actions').hide();
   }
 });
 
