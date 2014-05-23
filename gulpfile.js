@@ -95,7 +95,7 @@ gulp.task('deploy:images', function() {
 
   git.short(function (hash) {
     gulp.src([
-      'public/images/*'
+      'public/images/**'
     ], {read: false})
     .pipe(imagemin())
     .pipe(s3(aws, {uploadPath: '/' + hash + '/images/'}))
