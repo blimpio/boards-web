@@ -58,8 +58,6 @@ module.exports = Card.extend({
   },
 
   getPreview: function(isDetail) {
-    var color, image, pattern, unusedColors, unusedPatterns;
-
     isDetail = isDetail || false;
 
     if (this.hasPreview()) {
@@ -88,6 +86,8 @@ module.exports = Card.extend({
   },
 
   generatePattern: function() {
+    var data, color, image, pattern, unusedColors, unusedPatterns;
+
     unusedColors = _.difference(COLORS, usedColors);
     unusedPatterns = _.difference(PATTERNS, usedPatterns);
 
@@ -107,14 +107,20 @@ module.exports = Card.extend({
       usedPatterns = [pattern];
     }
 
-    this.save({
+    data = {
       metadata: {
         pattern: {
           color: color,
           shape: pattern
         }
       }
-    });
+    };
+
+    if (this.isNew()) {
+      this.set(data);
+    } else {
+      this.save(data);
+    }
 
     return this;
   },
