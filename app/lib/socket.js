@@ -61,6 +61,8 @@ _.extend(Socket.prototype, {
         collection = App.Cards;
       } else if (message.data_type === 'comment') {
         collection = App.Comments;
+      } else {
+        return;
       }
 
       if (message.method === 'create') {
