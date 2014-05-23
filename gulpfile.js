@@ -3,9 +3,12 @@ var Q = require('q'),
     git = require('git-rev'),
     gulp = require('gulp'),
     karma = require('gulp-karma'),
+    gutil = require('gulp-util'),
     brunch = require('brunch'),
     imagemin = require('gulp-imagemin'),
-    runSequence = require('run-sequence');
+    runSequence = require('run-sequence'),
+    environment = process.env.ENV || 'staging',
+    aws = require('./aws-config')[environment];
 
 gulp.task('build:dev', function() {
   var deferred = Q.defer();
@@ -55,8 +58,7 @@ gulp.task('test:prod', ['build:prod'], function() {
 });
 
 gulp.task('deploy:js', function() {
-  var aws = require('./aws-config'),
-      deferred = Q.defer();
+  var deferred = Q.defer();
 
   git.short(function (hash) {
     gulp.src([
@@ -73,8 +75,7 @@ gulp.task('deploy:js', function() {
 
 
 gulp.task('deploy:css', function() {
-  var aws = require('./aws-config'),
-      deferred = Q.defer();
+  var deferred = Q.defer();
 
   git.short(function (hash) {
     gulp.src([
@@ -90,8 +91,7 @@ gulp.task('deploy:css', function() {
 });
 
 gulp.task('deploy:images', function() {
-  var aws = require('./aws-config'),
-      deferred = Q.defer();
+  var deferred = Q.defer();
 
   git.short(function (hash) {
     gulp.src([
@@ -107,6 +107,19 @@ gulp.task('deploy:images', function() {
   return deferred.promise;
 });
 
+gulp.task('deploy:summary', function() {
+  var deferred = Q.defer();
+
+  git.short(function(hash) {
+    gutil.log('Environment:', gutil.colors.magenta(environment));
+    gutil.log('Git hash:', gutil.colors.magenta(hash));
+    gutil.log('Deploying to AWS bucket:', gutil.colors.magenta(aws.bucket));
+    deferred.resolve();
+  });
+
+  return deferred.promise;
+});
+
 gulp.task('deploy', function(cb) {
-  runSequence('build:prod', 'deploy:js', 'deploy:css', 'deploy:images', cb);
+  runSequence('deploy:summary', 'build:prod', 'deploy:js', 'deploy:css', 'deploy:images', cb);
 });
