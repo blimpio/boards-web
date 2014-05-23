@@ -112,8 +112,8 @@ gulp.task('deploy:summary', function() {
 
   git.short(function(hash) {
     gutil.log('Environment:', gutil.colors.magenta(environment));
-    gutil.log('Git hash:', gutil.colors.magenta(hash));
     gutil.log('Deploying to AWS bucket:', gutil.colors.magenta(aws.bucket));
+    gutil.log('BOARDS_WEB_CLIENT_VERSION=' + gutil.colors.magenta(hash));
     deferred.resolve();
   });
 
