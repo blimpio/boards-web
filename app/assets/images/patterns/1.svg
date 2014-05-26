@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="110px" height="117px" viewBox="0 0 110 117" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.2 (7799) - http://www.bohemiancoding.com/sketch -->
+    <title>p01</title>
+    <description>Created with Sketch.</description>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Group" sketch:type="MSLayerGroup" fill="#000000" fill-opacity="0.1">
+            <path d="M26,111 C40.3594035,111 52,99.3594035 52,85 C52,70.6405965 40.3594035,59 26,59 C11.6405965,59 0,70.6405965 0,85 C0,99.3594035 11.6405965,111 26,111 Z M26,104 C36.4934102,104 45,95.4934102 45,85 C45,74.5065898 36.4934102,66 26,66 C15.5065898,66 7,74.5065898 7,85 C7,95.4934102 15.5065898,104 26,104 Z" id="Oval-15" sketch:type="MSShapeGroup"></path>
+            <circle id="Oval-17" sketch:type="MSShapeGroup" cx="26" cy="85" r="12"></circle>
+            <path d="M26,45 C36.4934102,45 45,36.4934102 45,26 C45,15.5065898 36.4934102,7 26,7 C15.5065898,7 7,15.5065898 7,26 C7,36.4934102 15.5065898,45 26,45 Z M26,38 C32.627417,38 38,32.627417 38,26 C38,19.372583 32.627417,14 26,14 C19.372583,14 14,19.372583 14,26 C14,32.627417 19.372583,38 26,38 Z" id="Oval-19" sketch:type="MSShapeGroup"></path>
+            <path d="M78,52 C92.3594035,52 104,40.3594035 104,26 C104,11.6405965 92.3594035,0 78,0 C63.6405965,0 52,11.6405965 52,26 C52,40.3594035 63.6405965,52 78,52 Z M78,45 C88.4934102,45 97,36.4934102 97,26 C97,15.5065898 88.4934102,7 78,7 C67.5065898,7 59,15.5065898 59,26 C59,36.4934102 67.5065898,45 78,45 Z" id="Oval-15" sketch:type="MSShapeGroup"></path>
+            <circle id="Oval-17" sketch:type="MSShapeGroup" cx="78" cy="26" r="12"></circle>
+            <path d="M78,104 C88.4934102,104 97,95.4934102 97,85 C97,74.5065898 88.4934102,66 78,66 C67.5065898,66 59,74.5065898 59,85 C59,95.4934102 67.5065898,104 78,104 Z M78,97 C84.627417,97 90,91.627417 90,85 C90,78.372583 84.627417,73 78,73 C71.372583,73 66,78.372583 66,85 C66,91.627417 71.372583,97 78,97 Z" id="Oval-19" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>
