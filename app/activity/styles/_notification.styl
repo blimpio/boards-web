@@ -27,8 +27,7 @@
       }
     }
 
-    &[data-type="file"],
-    &[data-type="file"].has-loaded-preview {
+    &[data-type="file"] {
       background: url('../images/loading.gif') no-repeat center 40% #FFFFFF;
       background-size: 16px;
     }
@@ -46,6 +45,15 @@
     .card-content p {
       color: #555;
       font-size: 12px
+    }
+
+    .card-preview {
+      height: 72px;
+    }
+
+    .card-preview-extension {
+      font-size: 24px;
+      padding: 24px;
     }
   }
 }

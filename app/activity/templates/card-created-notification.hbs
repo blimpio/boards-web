@@ -9,13 +9,5 @@
 
 <div class="notification-preview">
   <img src="{{actor.gravatar_url}}" alt="{{actor.first_name}} {{actor.last_name}}" class="ui-avatar user-avatar md">
-  <div class="card is-item has-loaded-preview" data-type="{{card.type}}">
-    <a class="notification-preview-link" href="{{to-route card.html_url}}" title="{{card.name}}" data-route="true">
-      {{#is card.type "note"}}
-        {{partial "public-board/templates/note" card}}
-      {{else}}
-        {{partial "public-board/templates/file" card}}
-      {{/is}}
-    </a> {{! .notification-preview-link }}
-  </div> {{! .card }}
+  <span class="notification-preview-card"></span>
 </div> {{! .notification-preview }}
