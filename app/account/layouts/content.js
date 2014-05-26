@@ -86,7 +86,7 @@ module.exports = Z.Layout.extend({
       boardName: options.board.get('name'),
       boardPreview: {
         color: options.board.get('color'),
-        thumbnail_sm_path: options.board.get('thumbnail_sm_path')
+        thumbnail_xs_path: options.board.get('thumbnail_xs_path')
       }
     });
 
