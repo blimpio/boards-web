@@ -1,13 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="606px" height="133px" viewBox="0 0 606 133" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.0.2 (7799) - http://www.bohemiancoding.com/sketch -->
-    <title>p08</title>
-    <description>Created with Sketch.</description>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="p08-+-Rectangle-17-+-Rectangle-17" sketch:type="MSLayerGroup" fill="#000000">
-            <path d="M151.5,66.3013699 C75.75,66.3013699 0,33.1506849 0,33.1506849 L0,76.8493151 C0,76.8493151 75.75,110 151.5,110 C227.25,110 303,76.8493151 303,76.8493151 L303,33.1506849 C303,33.1506849 227.25,66.3013699 151.5,66.3013699 Z" id="Rectangle-17" fill-opacity="0.1" sketch:type="MSShapeGroup"></path>
-            <path d="M454.5,33 C378.75,33 303,-0.150684932 303,-0.150684932 L303,43.5479452 C303,43.5479452 378.75,76.6986301 454.5,76.6986301 C530.25,76.6986301 606,43.5479452 606,43.5479452 L606,-0.150684932 C606,-0.150684932 530.25,33 454.5,33 Z" id="Rectangle-17" fill-opacity="0.100000001" sketch:type="MSShapeGroup" transform="translate(454.500000, 38.349315) scale(1, -1) translate(-454.500000, -38.349315) "></path>
-        </g>
-    </g>
-</svg>
+<svg width="606" height="133" viewBox="0 0 606 133" xmlns="http://www.w3.org/2000/svg"><g fill="#000" fill-opacity=".1" fill-rule="evenodd"><path d="M151.5 66.301c-75.75 0-151.5-33.151-151.5-33.151v43.699s75.75 33.151 151.5 33.151 151.5-33.151 151.5-33.151v-43.699s-75.75 33.151-151.5 33.151zM454.5 43.698c-75.75 0-151.5 33.151-151.5 33.151v-43.699s75.75-33.151 151.5-33.151 151.5 33.151 151.5 33.151v43.699s-75.75-33.151-151.5-33.151z"/></g></svg>
