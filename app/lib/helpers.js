@@ -2,10 +2,6 @@ _.mixin({'asset': function(path) {
   return App.STATIC_URL + (path || '');
 }});
 
-_.mixin({'isDataUrl': function(url) {
-  return /data:image\//.test(url || '');
-}});
-
 _.mixin({'preventNavigation': function(message) {
   if (message) window.onbeforeunload = function() {
     return message;

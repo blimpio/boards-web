@@ -123,9 +123,5 @@ module.exports = Card.extend({
     }
 
     return this;
-  },
-
-  previewIsDataUrl: function(isDetail) {
-    return this.hasPreview() && _.isDataUrl(this.getPreview(isDetail).image);
   }
 });
