@@ -25,7 +25,7 @@ module.exports = Z.Layout.extend({
 
   reset: function() {
     this.getElement('currentCommentsType').text('Comments from collaborators');
-    this.togglePublicComments(App.Boards.current.isPublic());
+    this.togglePublicComments();
     this.getRegion('createComment').$el.show();
     this.getRegion('publicComments').$el.hide();
     this.getRegion('collaboratorComments').$el.show();
@@ -92,8 +92,15 @@ module.exports = Z.Layout.extend({
     }
   },
 
-  togglePublicComments: function(isPublicBoard) {
-    this.getElement('publicComments').toggle(isPublicBoard);
+  togglePublicComments: function(isPublicBoard, hasDisqusShortname) {
+    var show = false;
+
+    isPublicBoard = isPublicBoard || App.Boards.current.isPublic();
+    hasDisqusShortname = hasDisqusShortname || App.Accounts.current.get('disqus_shortname');
+    show = isPublicBoard && hasDisqusShortname ? true: false;
+
+    this.getElement('publicComments').toggle(show);
+    return this;
   },
 
   openAccountSettings: function() {
