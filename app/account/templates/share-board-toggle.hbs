@@ -10,7 +10,7 @@
     </div> {{! .form-group }}
     <span class="text-muted share-board-toggle-actions-text">Share link via:</span>
     <button type="button" class="btn btn-default share-board-toggle-actions-btn" data-action="shareFacebook" data-share="https://www.facebook.com/sharer.php?app_id=854149947934010&sdk=joey&u={{encodeURIComponent url}}&display=popup">Facebook</button>
-    <button type="button" class="btn btn-default share-board-toggle-actions-btn" data-action="shareTwitter" data-intent="https://twitter.com/intent/tweet?text=Check%20out%20{{encodeURIComponent name}}%20on%20Blimp%20Boards!">Twitter</button>
+    <button type="button" class="btn btn-default share-board-toggle-actions-btn" data-action="shareTwitter" data-intent="https://twitter.com/intent/tweet?text=Check%20out%20{{name}}%20on%20Blimp%20Boards%20-%20{{encodeURIComponent url}}!">Twitter</button>
     <a href="mailto:?subject={{name}} on Blimp Boards&body={{url}}" class="btn btn-default share-board-toggle-actions-btn" data-action="shareEmail">Email</a>
   </div> {{! .share-board-toggle-actions }}
 </div> {{! .share-board-toggle-option }}
