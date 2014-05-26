@@ -150,6 +150,10 @@ module.exports = Zeppelin.Controller.extend({
   onBoardRoute: function(slug) {
     var canEdit;
 
+    if (App.Cards.current) {
+      App.Cards.current.set('is_selected', false);
+    }
+
     if (this.options.board === slug) {
       canEdit = App.BoardCollaborators.current.canEdit();
       this.options.card = null;
@@ -157,7 +161,8 @@ module.exports = Zeppelin.Controller.extend({
       this.getLayout('content').showCards({
         board: App.Boards.current,
         canEdit: canEdit,
-        forceShow: false
+        forceShow: false,
+        triggerLayout: true
       }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
     } else {
       this.options.board = slug;
@@ -281,10 +286,17 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   onCardRoute: function(boardSlug, cardSlug) {
+    var card;
+
     if (this.options.board === boardSlug) {
-      this.options.card = cardSlug;
-      App.Cards.setCurrent(cardSlug);
-      App.Cards.current.select({navigate: false});
+      card = App.Cards.findWhere({slug: cardSlug});
+
+      if (!card) {
+        this.onBoardRoute(boardSlug);
+      } else {
+        this.options.card = cardSlug;
+        card.select();
+      }
     } else {
       this.options.card = cardSlug;
       this.options.board = boardSlug;
