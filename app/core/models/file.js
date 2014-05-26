@@ -1,6 +1,6 @@
 var Card = require('core/models/card'),
     COLORS = ['#fc9a1b', '#f30059', '#12799c', '#f75213', '#8ac5a8', '#1aab26', '#15a58f'],
-    PATTERNS = ['1', '2', '3', '4', '5', '6', '7', '8'],
+    PATTERNS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
     usedColors = [],
     usedPatterns = [];
 
