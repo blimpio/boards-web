@@ -62,7 +62,6 @@ module.exports = Zeppelin.CollectionView.extend({
 
   onUnplug: function() {
     clearTimeout(this.layoutTimer);
-    if (this.$list.data('masonry')) this.$list.masonry('destroy');
   }
 });
 
