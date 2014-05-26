@@ -15,8 +15,6 @@
   }
 
   &.has-loaded-preview {
-    background: #F9F9F9;
-
     .card-preview {
       display: block;
     }
@@ -24,11 +22,9 @@
 
   &.is-item {
     &.is-featured {
-      height: ($cardHeight * 2) + $cardGutter;
-      width: ($cardWidth * 2) + $cardGutter;
-
       .card-preview {
         background-size: 100% auto;
+        height: (($cardHeight * 2) + $cardGutter) - 38;
       }
 
       .card-preview-extension {
@@ -96,10 +92,10 @@
 
 .card-preview {
   background-repeat: no-repeat;
-  background-position: 50% 48%;
-  border-radius: 3px;
+  background-position: 50% 50%;
+  border-radius: 3px 3px 0 0;
   display: none;
-  height: 100%;
+  height: $cardHeight - 38;
   left: 0;
   position: absolute;
   top: 0;
@@ -153,6 +149,7 @@
   font-family: HelveticaNeue-UltraLight;
   font-size: 60px;
   text-align: center;
+  text-transform: lowercase;
   padding-top: 55px;
   position: relative;
   z-index: 10;

@@ -3,7 +3,7 @@ $cardHeight = 222px;
 $cardGutter = 15px;
 
 .card {
-  background-color: #F9F9F9;
+  background-color: #FFFFFF;
   border: 1px solid #E0E0E0;
   border-radius: 3px;
   cursor: pointer;
@@ -20,6 +20,11 @@ $cardGutter = 15px;
     }
   }
 
+  &.is-featured {
+    height: ($cardHeight * 2) + $cardGutter;
+    width: ($cardWidth * 2) + $cardGutter;
+  }
+
   &.is-detail {
     height: auto;
     margin: 0;
@@ -28,6 +33,10 @@ $cardGutter = 15px;
 
   &[data-type="note"] {
     background: #FFFFFF;
+
+    .card-name-wrapper {
+      border-top: 1px solid #E0E0E0;
+    }
   }
 }
 
@@ -37,7 +46,6 @@ $cardGutter = 15px;
 
 .card-name-wrapper {
   background #FFF;
-  border-top: 1px solid #E0E0E0;
   border-radius: 0 0 2px 2px;
   bottom: 0;
   left: 0;
