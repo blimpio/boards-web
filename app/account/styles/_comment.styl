@@ -1,4 +1,10 @@
 .comment {
+  &:hover {
+    .comments-actions {
+      display: inline-block;
+    }
+  }
+
   &.is-editing {
     .comment-content-wrapper {
       display: none;
@@ -32,4 +38,9 @@
 
 .comment-edit {
   display: none;
+}
+
+.comments-actions {
+  display: none;
+  margin-bottom: -2px;
 }
