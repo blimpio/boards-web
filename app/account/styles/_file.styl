@@ -24,8 +24,13 @@
 
   &.is-item {
     &.is-featured {
+      .card-name-wrapper {
+        height: 7%;
+        padding: 2% 10px;
+      }
+
       .card-preview {
-        height: (($cardHeight * 2) + $cardGutter) - 38;
+        height: 93%;
       }
 
       .card-preview-extension {
@@ -100,7 +105,7 @@
   background-position: 50% 50%;
   border-radius: 3px 3px 0 0;
   display: none;
-  height: $cardHeight - 38;
+  height: 85%;
   left: 0;
   position: absolute;
   top: 0;
