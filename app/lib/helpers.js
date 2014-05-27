@@ -208,7 +208,7 @@ Handlebars.registerHelper('icon-delete', function() {
 });
 
 Handlebars.registerHelper('icon-download', function() {
-  var icon = '<svg class="icon-download svg-icon-wrapper" width="16" height="14" viewBox="0 0 16 14" xmlns="http://www.w3.org/2000/svg"><g fill="#000" class="svg-icon-color" fill-rule="evenodd"><path d="M7.677 9.822c.179.234.468.238.646.004l2.587-3.326c.179-.236.082-.5-.215-.5h-1.695v-5.5c0-.275-.224-.5-.5-.5h-1c-.276 0-.5.225-.5.5v5.5h-1.695c-.297 0-.394.265-.215.5l2.587 3.322zM15.5 12h-15c-.276 0-.5.224-.5.5v1c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-1c0-.276-.224-.5-.5-.5z"/></g></svg>';
+  var icon = '<svg class="icon-download svg-icon-wrapper" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><g fill="#000" class="svg-icon-color" fill-rule="evenodd"><path d="M7.677 11.822c.179.234.468.238.646.004l2.587-3.326c.179-.236.082-.5-.215-.5h-1.695v-5.5c0-.275-.224-.5-.5-.5h-1c-.276 0-.5.225-.5.5v5.5h-1.695c-.297 0-.394.265-.215.5l2.587 3.322zM15.5 14h-15c-.276 0-.5.224-.5.5v1c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-1c0-.276-.224-.5-.5-.5z"/></g></svg>';
   return new Handlebars.SafeString(icon);
 });
 
@@ -218,7 +218,7 @@ Handlebars.registerHelper('icon-search', function() {
 });
 
 Handlebars.registerHelper('icon-share', function() {
-  var icon = '<svg class="icon-share svg-icon-wrapper" width="16" height="14" viewBox="0 0 16 14" xmlns="http://www.w3.org/2000/svg"><g fill="#000" class="svg-icon-color" fill-rule="evenodd"><path d="M5.2 9.522c.071.268.222.268.326.012.896-2.201 2.673-4.467 5.474-3.533v1.374c0 .621.375.812.826.422l4.006-3.446c.227-.194.225-.509-.002-.703l-4.006-3.448c-.449-.387-.824-.197-.824.424v1.377c-3.313 0-6 2.687-6 6 0 .526.071 1.036.2 1.521zM15.611 6.288l-1.223.987c-.214.174-.388.538-.388.815v3.911h-12v-7h2.091c.276 0 .583-.209.703-.458.191-.4.415-.782.669-1.144.158-.225.076-.398-.2-.398h-4.263c-.553 0-1 .447-1 1v9c0 .553.447 1 1 1h14c.553 0 1-.447 1-1v-6.527c0-.277-.174-.36-.389-.186z"/></g></svg>';
+  var icon = '<svg class="icon-share svg-icon-wrapper" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><g fill="#000" class="svg-icon-color" fill-rule="evenodd"><path d="M5.2 11.522c.071.268.222.268.326.012.896-2.201 2.673-4.467 5.474-3.533v1.374c0 .621.375.812.826.422l4.006-3.446c.227-.194.225-.509-.002-.703l-4.006-3.448c-.449-.387-.824-.197-.824.424v1.377c-3.313 0-6 2.687-6 6 0 .526.071 1.036.2 1.521zM15.611 8.288l-1.223.987c-.214.174-.388.538-.388.815v3.911h-12v-7h2.091c.276 0 .583-.209.703-.458.191-.4.415-.782.669-1.144.158-.225.076-.398-.2-.398h-4.263c-.553 0-1 .447-1 1v9c0 .553.447 1 1 1h14c.553 0 1-.447 1-1v-6.527c0-.277-.174-.36-.389-.186z"/></g></svg>';
   return new Handlebars.SafeString(icon);
 });
 
