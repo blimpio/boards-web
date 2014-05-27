@@ -2,6 +2,7 @@ module.exports = Zeppelin.Model.extend({
   defaults: function() {
     return {
       html_url: '',
+      download_html_url: '',
       featured: false,
       created_by: App.User.id,
       modified_by: App.User.id,
@@ -34,8 +35,18 @@ module.exports = Zeppelin.Model.extend({
     return this.isNew() ? url : url + this.id + '/';
   },
 
-  getUrl: function() {
-    return this.get('html_url').replace(window.location.origin, '');
+  getUrl: function(type) {
+    var url;
+
+    type = type || 'card';
+
+    if (type === 'card') {
+      url = this.get('html_url');
+    } else if (type === 'download') {
+      url = this.get('download_html_url');
+    }
+
+    return url.replace(window.location.origin, '');
   },
 
   select: function() {

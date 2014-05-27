@@ -37,7 +37,9 @@ module.exports = Zeppelin.ModelView.extend({
     }
   },
 
-  download: function() {
+  download: function(event) {
+    event.preventDefault();
+
     this.model.download().done(function(data) {
       window.location.replace(data.download_url);
     });

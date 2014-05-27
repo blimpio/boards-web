@@ -26,7 +26,7 @@ module.exports = (function() {
       ':account/activity/:board(/)': require('activity/routes/board'),
       ':account(/)': require('account/routes/main'),
       ':account/:board(/)': require('account/routes/board'),
-      ':account/:board/:card(/)': require('account/routes/card')
+      ':account/:board/:card(/)(?:action)': require('account/routes/card'),
     },
 
     subscriptions: {

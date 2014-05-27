@@ -218,7 +218,7 @@ module.exports = Zeppelin.Controller.extend({
 
     if (this.options.card) {
       App.Cards.setCurrent(this.options.card);
-      App.Cards.current.select({navigate: false});
+      this.onCardSelected(App.Cards.current);
     }
 
     this.options.forceCardsShow = false;
@@ -235,6 +235,12 @@ module.exports = Zeppelin.Controller.extend({
 
     this.getLayout('comments').toggleLoadingState();
     this.fetchComments(App.Cards.current.id);
+
+    if (this.options.action === 'download') {
+      App.Cards.current.download().done(function(data) {
+        window.location.replace(data.download_url);
+      });
+    }
   },
 
   onCardDetailClose: function() {
@@ -244,6 +250,7 @@ module.exports = Zeppelin.Controller.extend({
 
     canEdit = App.BoardCollaborators.current.canEdit();
     this.options.card = null;
+    this.options.action = null;
 
     this.setTitle(App.Boards.current.get('name') + ' - Blimp Boards');
 
