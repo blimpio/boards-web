@@ -1,5 +1,4 @@
 var User = require('core/models/user'),
-    Cache = require('core/models/app'),
     Cards = require('core/collections/cards'),
     Boards = require('core/collections/boards'),
     Socket = require('lib/socket'),
@@ -48,8 +47,6 @@ module.exports = (function() {
     initialize: function() {
       require('lib/config');
       require('lib/helpers');
-
-      this.Cache = new Cache();
 
       this.User = new User();
       this.Cards = new Cards();

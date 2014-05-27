@@ -49,7 +49,11 @@ module.exports = Zeppelin.Controller.extend({
       this.onAccountsFetch();
       this.onBoardsFetch();
     } else {
-      this.fetchAccounts();
+      if (App.Accounts.length) {
+        this.onAccountsFetch();
+      } else {
+        this.fetchAccounts();
+      }
     }
   },
 
@@ -79,8 +83,6 @@ module.exports = Zeppelin.Controller.extend({
         this.getLayout('main').toggleLoadingContentState();
         this.fetchBoards(App.Accounts.current.id);
       }
-
-      App.Cache.saveCurrent('account', App.Accounts.current.id);
     }
   },
 
@@ -102,12 +104,8 @@ module.exports = Zeppelin.Controller.extend({
     if (!App.Boards.isEmpty()) {
       if (this.options.board) {
         App.Boards.setCurrent(this.options.board);
-        App.Cache.saveCurrent('board', App.Boards.current.id);
-      } else if (App.Cache.has('board')) {
-        App.Boards.current = App.Boards.get(App.Cache.get('board'));
       } else {
         App.Boards.current = App.Boards.at(0);
-        App.Cache.saveCurrent('board', App.Boards.current.id);
       }
 
       this.setTitle(App.Boards.current.get('name') + ' - Blimp Boards');
@@ -167,7 +165,6 @@ module.exports = Zeppelin.Controller.extend({
     } else {
       this.options.board = slug;
       App.Boards.setCurrent(slug);
-      App.Cache.saveCurrent('board', App.Boards.current.id);
       App.Boards.current.select({navigate: false});
     }
   },
@@ -301,7 +298,6 @@ module.exports = Zeppelin.Controller.extend({
       this.options.card = cardSlug;
       this.options.board = boardSlug;
       App.Boards.setCurrent(boardSlug);
-      App.Cache.saveCurrent('board', App.Boards.current.id);
       App.Boards.current.select({navigate: false});
     }
   },

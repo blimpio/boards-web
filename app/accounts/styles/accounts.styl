@@ -1,11 +1,16 @@
 .accounts {
   padding: 30px;
   width: 600px;
-}
 
-.loader {
-  list-style: none;
-  text-align: center;
+  &.is-loading {
+    background: url('../images/loading.gif') no-repeat center center #FFFFFF;
+    background-size: 32px;
+    height: 400px;
+
+    .accounts-content {
+      display: none;
+    }
+  }
 }
 
 @import '_account'
