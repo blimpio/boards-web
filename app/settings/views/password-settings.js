@@ -84,7 +84,7 @@ module.exports = Zeppelin.FormView.extend({
 
     _.delay(function() {
       self.getElement('actions').hide();
-      this.getElement('saveBtn').text('Save');
+      self.getElement('saveBtn').text('Save');
     }, 200);
   },
 

@@ -21,12 +21,6 @@ module.exports = Zeppelin.FormView.extend({
     return App.User;
   },
 
-  bindings: {
-    model: {
-      'sync': 'onSync'
-    }
-  },
-
   context: function() {
     return _.extend({}, this.personalAccount.attributes, this.model.attributes);
   },
@@ -61,12 +55,13 @@ module.exports = Zeppelin.FormView.extend({
 
     _.delay(function() {
       self.getElement('actions').hide();
-      this.getElement('saveBtn').text('Save');
+      self.getElement('saveBtn').text('Save');
     }, 200);
   },
 
   onValidationSuccess: function() {
     this.getElement('saveBtn').text('Saving changes...');
+    this.listenToOnce(this.model, 'sync', this.onSync);
   },
 
   onSubmit: function() {

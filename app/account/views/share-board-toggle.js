@@ -24,12 +24,6 @@ module.exports = Zeppelin.FormView.extend({
     shareUrlInput: 'input.share-board-toggle-url-input'
   },
 
-  bindings: {
-    model: {
-      'sync': 'onSync'
-    }
-  },
-
   initialize: function() {
     _.bindAll(this, ['shareViaTwitter', 'shareViaFacebook']);
     this.twitterLoaded = false;
@@ -154,6 +148,7 @@ module.exports = Zeppelin.FormView.extend({
 
   onValidationSuccess: function() {
     this.getElement('saveBtn').text('Saving changes...');
+    this.listenToOnce(this.model, 'sync', this.onSync);
   },
 
   onSync: function() {
@@ -161,7 +156,7 @@ module.exports = Zeppelin.FormView.extend({
 
     _.delay(function() {
       self.getElement('actions').hide();
-      this.getElement('saveBtn').text('Save');
+      self.getElement('saveBtn').text('Save');
     }, 200);
   },
 
