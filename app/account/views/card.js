@@ -59,13 +59,15 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   onFeaturedChange: function(card, isFeatured) {
-    this.$el.data('width', '');
-    this.$el.data('height', '');
-    this.$el.removeAttr('style');
-    this.$el.removeAttr('data-width');
-    this.$el.removeAttr('data-height');
-    this.$el.toggleClass('is-featured', isFeatured);
-    this.broadcast('cardsList:layout');
+    if (card.previous('featured') !== undefined) {
+      this.$el.data('width', '');
+      this.$el.data('height', '');
+      this.$el.removeAttr('style');
+      this.$el.removeAttr('data-width');
+      this.$el.removeAttr('data-height');
+      this.$el.toggleClass('is-featured', isFeatured);
+      this.broadcast('cardsList:layout');
+    }
   },
 
   onNameChange: function(card, value) {

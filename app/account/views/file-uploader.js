@@ -96,8 +96,7 @@ module.exports = Zeppelin.View.extend({
   },
 
   onAdd: function(event, data) {
-    var file,
-        reader = new FileReader();
+    var file;
 
     _.preventNavigation('You are uploading files. Your progress will be lost.');
 
@@ -143,12 +142,7 @@ module.exports = Zeppelin.View.extend({
 
   onDone: function(event, data) {
     var file = this.getFileModel(data.files[0]);
-
-    if (file) {
-      file.save();
-      this.broadcast('file:uploaded', file.get('content'));
-    }
-
+    if (file) file.save();
     return this;
   },
 
