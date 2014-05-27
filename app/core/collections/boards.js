@@ -9,8 +9,7 @@ module.exports = Zeppelin.Collection.extend({
 
   subscriptions: {
     'board:created': 'onBoardCreated',
-    'boards:current': 'respondWithCurrentBoard',
-    'cards:new:preview': 'onPreviewAvailable'
+    'boards:current': 'respondWithCurrentBoard'
   },
 
   comparator: function(board) {
@@ -82,9 +81,5 @@ module.exports = Zeppelin.Collection.extend({
 
   respondWithCurrentBoard: function(channel) {
     this.broadcast(channel, this.current);
-  },
-
-  onPreviewAvailable: function(board, preview) {
-    this.get(board).save('thumbnail_xs_path', preview);
   }
 });
