@@ -23,14 +23,14 @@
 <div class="board-detail-action item-actions form-inline pull-right">
   <div class="btn-group">
     <button type="button" data-toggle="dropdown" class="btn btn-link dropdown-toggle item-action">
-      Add Card <span class="caret"></span>
+      {{icon-add}} Add Card <span class="caret"></span>
     </button> {{! [data-toggle="dropdown"] }}
     <ul class="dropdown-menu" role="menu">
       <li><a class="item-action" href="#" data-action="createFile">File</a></li>
       <li><a class="item-action" href="#" data-action="createNote" data-toggle="modal" data-target="#create-note-modal">Note</a></li>
     </ul> {{! .dropdown-menu }}
   </div> {{! .dropdown }}
-  <button type="button" class="btn btn-link item-action" data-action="share" data-toggle="modal" data-target="#share-board-modal">Share</button>
-  <button type="button" class="btn btn-link item-action" data-action="collaborate" data-toggle="modal" data-target="#board-collaborators-modal">Collaborate</button>
-  <button type="button" class="btn btn-link item-action" data-action="delete">Delete</button>
+  <button type="button" class="btn btn-link item-action" data-action="share" data-toggle="modal" data-target="#share-board-modal">{{icon-share}} Share</button>
+  <button type="button" class="btn btn-link item-action" data-action="collaborate" data-toggle="modal" data-target="#board-collaborators-modal">{{icon-collaborate}} Collaborate</button>
+  <button type="button" class="btn btn-link item-action" data-action="delete">{{icon-delete}} Delete</button>
 </div> {{! .board-detail-info }}
