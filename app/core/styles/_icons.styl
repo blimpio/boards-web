@@ -1,0 +1,21 @@
+$icon-color = #768289;
+$icon-color-hover = #59646B;
+
+// Position
+.svg-icon-wrapper {
+    margin: 0 2px 0 0;
+    position: relative;
+    top: 3px;
+}
+
+// Color stuff
+.svg-icon-color {
+    fill: $icon-color;
+}
+
+// Hover stuff
+a:hover, button:hover {
+    .svg-icon-wrapper > .svg-icon-color {
+        fill: $icon-color-hover;
+    }
+}
