@@ -10,6 +10,10 @@ module.exports = Zeppelin.ModelView.extend({
     return className;
   },
 
+  events: {
+    'click [data-action=view-original]': 'viewOriginal'
+  },
+
   elements: {
       preview: 'div.card-preview',
       previewLoader: 'img.card-preview-loader',
@@ -79,6 +83,14 @@ module.exports = Zeppelin.ModelView.extend({
 
   onUpdatePreview: function() {
     this.setPreview();
-  }
+  },
+
+  viewOriginal: function(event) {
+    event.preventDefault();
+
+    this.model.originalThumbnail().done(function(data) {
+      window.location.replace(data.original_thumbnail_url);
+    });
+  },
 });
 

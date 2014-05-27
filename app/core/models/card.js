@@ -3,6 +3,7 @@ module.exports = Zeppelin.Model.extend({
     return {
       html_url: '',
       download_html_url: '',
+      original_html_url: '',
       featured: false,
       created_by: App.User.id,
       modified_by: App.User.id,
@@ -67,5 +68,9 @@ module.exports = Zeppelin.Model.extend({
 
   download: function() {
     return $.getJSON(this.url() + 'download/');
+  },
+
+  originalThumbnail: function() {
+    return $.getJSON(this.url() + 'original_thumbnail/');
   }
 });
