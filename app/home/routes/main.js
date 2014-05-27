@@ -1,3 +1,7 @@
 module.exports = function() {
-  this.setController(require('home/controller'));
+  if (this.User.isSignedIn()) {
+    this.navigate('/accounts/', {trigger: true});
+  } else {
+    this.setController(require('home/controller'));
+  }
 };
