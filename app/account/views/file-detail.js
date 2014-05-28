@@ -66,6 +66,12 @@ module.exports = Zeppelin.ModelView.extend({
     }
   },
 
+  viewOriginal: function() {
+    this.model.originalThumbnail().done(function(data) {
+      window.location.replace(data.original_thumbnail_url);
+    });
+  },
+
   onRender: function() {
     this.preloadPreview();
   },
@@ -85,12 +91,9 @@ module.exports = Zeppelin.ModelView.extend({
     this.setPreview();
   },
 
-  viewOriginal: function(event) {
+  onViewOriginalClick: function(event) {
     event.preventDefault();
-
-    this.model.originalThumbnail().done(function(data) {
-      window.location.replace(data.original_thumbnail_url);
-    });
+    this.viewOriginal();
   },
 });
 

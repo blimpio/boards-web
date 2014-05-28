@@ -129,17 +129,14 @@ module.exports = Zeppelin.Controller.extend({
     this.getLayout('comments').toggleLoadingState();
     this.fetchComments(App.Cards.current.id);
 
-    switch(this.options.action) {
-      case 'download`':
-        App.Cards.current.download().done(function(data) {
-          window.location.replace(data.download_url);
-        });
-        break;
-      case 'original':
-        App.Cards.current.originalThumbnail().done(function(data) {
-          window.location.replace(data.original_thumbnail_url);
-        });
-        break;
+    if (this.options.action === 'download') {
+      App.Cards.current.download().done(function(data) {
+        window.location.replace(data.download_url);
+      });
+    } else if (this.options.action === 'original') {
+      App.Cards.current.originalThumbnail().done(function(data) {
+        window.location.replace(data.original_thumbnail_url);
+      });
     }
   },
 

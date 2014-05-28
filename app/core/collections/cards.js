@@ -4,12 +4,12 @@ module.exports = Zeppelin.Collection.extend({
   model: function(attrs, options) {
     var Model;
 
-    switch(attrs.type) {
-      case 'file':
-        Model = require('core/models/file');
-        break;
-      default:
-        Model = require('core/models/card');
+    if (attrs.type === 'file') {
+      Model = require('core/models/file');
+    } else if (attrs.type === 'note') {
+      Model = require('core/models/note');
+    } else {
+      Model = require('core/models/card');
     }
 
     return new Model(attrs, options);
