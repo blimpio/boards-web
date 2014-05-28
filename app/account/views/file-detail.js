@@ -11,7 +11,7 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   events: {
-    'click [data-action=view-original]': 'viewOriginal'
+    'click [data-action=view-original]': 'onViewOriginalClick'
   },
 
   elements: {
