@@ -1,17 +1,10 @@
-$cardWidth = 222px;
-$cardHeight = 222px;
-$cardGutter = 15px;
-
 .card {
   background-color: #FFFFFF;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  float: left;
-  height: $cardHeight;
-  margin: 0 $cardGutter $cardGutter 0;
+  height: 222px;
   position: relative;
   overflow: hidden;
-  width: $cardWidth;
+  width: 222px;
 
   &:hover {
     .card-actions {
@@ -20,8 +13,8 @@ $cardGutter = 15px;
   }
 
   &.is-featured {
-    height: ($cardHeight * 2) + $cardGutter;
-    width: ($cardWidth * 2) + $cardGutter;
+    height: 459px;
+    width: 459px;
   }
 
   &.is-detail {
@@ -29,35 +22,31 @@ $cardGutter = 15px;
     margin: 0;
     width: 100%;
   }
-
-  &[data-type="note"] {
-    background: #FFFFFF;
-  }
 }
 
-.card-content {
-  padding: 10px;
-}
-
-.card-name-wrapper {
-  background #FFF;
-  border-top: 1px solid #E0E0E0;
+.card-info {
   bottom: 0;
-  height: 15%;
   left: 0;
-  padding: 4% 10px;
   position: absolute;
   width: 100%
   z-index: 5;
 }
 
-.card-name {
-  color: #9B9A9B;
-  display: block;
-  font-size: 12px;
+.card-info-item {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.card-name {
+  color: #999999;
+  font-size: 12px;
+}
+
+.card-author,
+.card-comments {
+  color: #BBBBBB;
+  font-size: 11px;
 }
 
 .card-actions {

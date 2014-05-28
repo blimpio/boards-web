@@ -7,7 +7,6 @@
     "marked": "~0.3.1",
     "lodash": "~2",
     "jquery": "~2",
-    "fuse.js": "~1.1.0",
     "yepnope": "~1.5.4",
     "freewall": "git@github.com:kombai/freewall.git",
     "backbone": "~1",

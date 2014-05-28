@@ -60,13 +60,13 @@ module.exports = Zeppelin.ModelView.extend({
 
   onFeaturedChange: function(card, isFeatured) {
     if (card.previous('featured') !== undefined) {
-      this.$el.data('width', '');
-      this.$el.data('height', '');
-      this.$el.removeAttr('style');
-      this.$el.removeAttr('data-width');
-      this.$el.removeAttr('data-height');
       this.$el.toggleClass('is-featured', isFeatured);
-      this.broadcast('cardsList:layout');
+
+      this.broadcast('cardsList:updateBlock', {
+        block: this.$el,
+        width: isFeatured ? 461 : 223,
+        height: isFeatured ? 461 : 223
+      });
     }
   },
 

@@ -4,7 +4,8 @@ module.exports = Zeppelin.CollectionView.extend({
   className: 'cards-list list-unstyled clearfix',
 
   subscriptions: {
-    'cardsList:layout': 'triggerLayout'
+    'cardsList:layout': 'triggerLayout',
+    'cardsList:updateBlock': 'updateBlock'
   },
 
   addMethod: 'prepend',
@@ -26,12 +27,23 @@ module.exports = Zeppelin.CollectionView.extend({
   },
 
   triggerLayout: function() {
+    clearTimeout(this.layoutTimer);
     this.layoutTimer = _.delay(this.layout, 1);
   },
 
   layout: function() {
-    if (this.collection.isEmpty()) return this;
-    if (!this.wall) this.wall = new freewall(this.$list);
+    var self = this;
+
+    if (this.collection.isEmpty()) {
+      return this;
+    }
+
+    if (this.wall) {
+      this.wall.fitWidth();
+      return this;
+    }
+
+    this.wall = new freewall(this.$list);
 
     this.wall.reset({
       delay: 0,
@@ -42,14 +54,32 @@ module.exports = Zeppelin.CollectionView.extend({
       animate: false,
       fixSize: 0,
       selector: 'li.card',
-      onResize: _.bind(function() {
-        this.wall.fitWidth();
-      }, this)
+      onResize: _.debounce(function() {
+        self.wall.fitWidth();
+      }, 250),
+      onBlockFinish: function() {
+        var $b = $(this);
+
+        if ($b.attr('data-type') === 'file') {
+          $b.find('div.card-preview').height($b.height() - 50);
+        } else {
+          $b.find('div.card-content').height($b.height() - 72);
+        }
+      }
     });
 
     this.wall.fitWidth();
 
     return this;
+  },
+
+  updateBlock: function(options) {
+    if (this.wall) {
+      this.wall.fixSize(options);
+      this.wall.fitWidth();
+    } else {
+      this.layout();
+    }
   },
 
   onRenderItems: function() {
@@ -58,10 +88,6 @@ module.exports = Zeppelin.CollectionView.extend({
 
   onPrependItem: function() {
     if (!this.isFirstCollectionRender()) this.triggerLayout();
-  },
-
-  onUnplug: function() {
-    clearTimeout(this.layoutTimer);
   }
 });
 

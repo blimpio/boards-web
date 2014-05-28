@@ -5,10 +5,6 @@
   &.is-uploading {
     border: 4px dashed #E0E0E0;
 
-    .card-preview-extension {
-      display: none;
-    }
-
     .card-upload-progress {
       display: block;
     }
@@ -17,24 +13,16 @@
   &.has-loaded-preview {
     background: #FFFFFF;
 
-    .card-preview {
+    .card-preview,
+    .card-preview-extension {
       display: block;
     }
   }
 
   &.is-item {
     &.is-featured {
-      .card-name-wrapper {
-        height: 7%;
-        padding: 2% 10px;
-      }
-
       .card-preview {
-        height: 93%;
-      }
-
-      .card-preview-extension {
-        padding-top: 168px;
+        height: 412px;
       }
     }
   }
@@ -78,6 +66,10 @@
     .card-preview {
       background-size: auto auto !important;
     }
+
+    .card-preview-extension {
+      margin-top: 0;
+    }
   }
 }
 
@@ -108,7 +100,7 @@
   background-repeat: no-repeat;
   background-position: 50% 50%;
   display: none;
-  height: 85%;
+  height: 174px;
   left: 0;
   position: absolute;
   top: 0;
@@ -162,11 +154,17 @@
 
 .card-preview-extension {
   color: #FFFFFF;
-  font-family: HelveticaNeue-UltraLight;
+  display: none;
+  font-family: "Helvetica Neue", HelveticaNeue-UltraLight;
   font-size: 60px;
+  font-weight: 100;
+  left: 0;
+  margin-top: -30px;
+  line-height: 0;
   text-align: center;
   text-transform: lowercase;
-  padding-top: 55px;
-  position: relative;
+  top: 50%;
+  position: absolute;
   z-index: 10;
+  width: 100%;
 }
