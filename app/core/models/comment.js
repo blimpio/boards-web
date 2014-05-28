@@ -36,8 +36,8 @@ module.exports = Zeppelin.Model.extend({
 
   initialize: function() {
     if (!this.isNew()) {
-      this.request('boardCollaborators:collaborator', this.get('created_by'), function(author) {
-        this.set('author', author);
+      this.request('collaborator:info', this.get('created_by'), function(info) {
+        this.set('author', info);
       });
     }
   },

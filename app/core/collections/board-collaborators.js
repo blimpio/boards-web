@@ -5,7 +5,7 @@ module.exports = Collaborators.extend({
 
   subscriptions: {
     'boardCollaborators:current': 'respondWithCurrentUserData',
-    'boardCollaborators:collaborator': 'respondWithCurrentCollaboratorData'
+    'collaborator:info': 'respondWithCurrentCollaboratorData'
   },
 
   setUrl: function(id) {

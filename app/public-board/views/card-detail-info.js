@@ -11,8 +11,8 @@ module.exports = Zeppelin.ModelView.extend({
     var author,
         authorId = this.model.get('created_by');
 
-    this.request('boardCollaborators:collaborator', authorId, function(collaborator) {
-      author = collaborator;
+    this.request('collaborator:info', authorId, function(info) {
+      author = info;
     });
 
     return _.extend({}, this.model.attributes, {

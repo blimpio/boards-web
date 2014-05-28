@@ -5,8 +5,14 @@ module.exports = Zeppelin.Model.extend({
       download_html_url: '',
       original_html_url: '',
       featured: false,
-      created_by: App.User.id,
-      modified_by: App.User.id,
+      created_by: {
+        id: App.User.id,
+        username: App.User.get('username')
+      },
+      modified_by: {
+        id: App.User.id,
+        username: App.User.get('username')
+      },
       is_selected: false
     };
   },
