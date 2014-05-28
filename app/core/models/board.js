@@ -3,8 +3,14 @@ module.exports = Zeppelin.Model.extend({
     return {
       color: '#E5E5E5',
       html_url: '',
-      created_by: App.User.id,
-      modified_by: App.User.id,
+      created_by: {
+        id: App.User.id,
+        username: App.User.get('username')
+      },
+      modified_by: {
+        id: App.User.id,
+        username: App.User.get('username')
+      },
       is_selected: false,
       activity_html_url: null,
       thumbnail_lg_path: null,
@@ -14,7 +20,7 @@ module.exports = Zeppelin.Model.extend({
     };
   },
 
-  localAttributes: ['is_selected'],
+  localAttributes: ['is_selected', 'author'],
 
   url: function() {
     var url = App.API_URL + '/boards/';
@@ -31,6 +37,14 @@ module.exports = Zeppelin.Model.extend({
       isRequired: true,
       message: 'Every board must be tied to an account.'
     }
+  },
+
+  leave: function() {
+    var self = this;
+
+    return $.post(this.url() + 'leave/', function() {
+      self.trigger('destroy', self);
+    });
   },
 
   select: function(options) {
@@ -78,5 +92,9 @@ module.exports = Zeppelin.Model.extend({
 
   isPublic: function() {
     return this.get('is_shared') === true;
+  },
+
+  isMine: function() {
+    return this.get('created_by').id === App.User.id;
   }
 });

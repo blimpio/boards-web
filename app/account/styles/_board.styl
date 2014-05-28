@@ -2,6 +2,7 @@
   position: relative;
 
   &:hover {
+    [data-action="leave"],
     [data-action="delete"] {
       display: block;
     }
@@ -34,11 +35,13 @@
       background-color: #E5E5E5 !important;
     }
 
+    [data-action="leave"],
     [data-action="delete"] {
       display: none !important;
     }
   }
 
+  [data-action="leave"],
   [data-action="delete"] {
     display: none;
     position: absolute;
@@ -61,9 +64,20 @@
   }
 }
 
+.board-info {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .board-name,
 .board-thumbnail-partial {
   vertical-align: middle;
+}
+
+.board-author {
+  color: #CACACA !important;
+  display: block;
+  font-size: 10px;
 }
 
 .board-preview,

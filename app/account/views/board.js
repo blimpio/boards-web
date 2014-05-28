@@ -3,14 +3,15 @@ module.exports = Zeppelin.ModelView.extend({
 
   className: function() {
     var className = 'board';
-    if (this.model.isNew()) className += ' is-being-created'
+    if (this.model.isNew()) className += ' is-being-created';
     return className;
-},
+  },
 
   template: require('account/templates/board'),
 
   events: {
     'click a.board-link': 'onClick',
+    'click [data-action=leave]': 'onClickLeave',
     'click [data-action=delete]': 'onClickDelete'
   },
 
@@ -39,7 +40,8 @@ module.exports = Zeppelin.ModelView.extend({
 
   context: function() {
     return _.extend({}, this.model.attributes, {
-      url: this.model.getUrl()
+      url: this.model.getUrl(),
+      isMine: this.model.isMine()
     });
   },
 
@@ -53,11 +55,28 @@ module.exports = Zeppelin.ModelView.extend({
       color: this.model.get('color'),
       thumbnail_xs_path: thumbnail
     });
+
+    return this;
   },
 
   delete: function() {
     var msg = 'Are you sure you want to delete this board and it\'s cards?';
     if (window.confirm(msg)) this.model.destroy();
+    return this;
+  },
+
+  leave: function() {
+    var msg = 'Are you sure you want to stop collaborating on this board?',
+        self = this;
+
+    if (window.confirm(msg)) {
+      this.$el.addClass('is-being-created');
+      this.model.leave().done(function() {
+        self.$el.remove();
+      });
+    }
+
+    return this;
   },
 
   onSync: function() {
@@ -97,6 +116,12 @@ module.exports = Zeppelin.ModelView.extend({
     event.preventDefault();
     event.stopPropagation();
     this.delete();
+  },
+
+  onClickLeave: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.leave();
   }
 });
 

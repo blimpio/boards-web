@@ -1,8 +1,17 @@
-<a href="{{url}}" class="board-link" title="{{name}}">
+<a href="{{url}}" class="board-link" title="{{name}}{{#unless isMine}} via {{created_by.username}}{{/unless}}">
   <span class="board-thumbnail-partial">
     {{partial "account/templates/board-preview" this}}
   </span> {{! .board-thumbnail-partial }}
-  <span class="board-name">{{name}}</span>
+  <div class="board-info">
+    <span class="board-name">{{name}}</span>
+    {{#unless isMine}}
+      <span class="board-author">via {{created_by.username}}</span>
+    {{/unless}}
+  </div> {{! .board-info }}
 </a> {{! .board-link }}
 
-<button class="btn btn-danger btn-xs" type="button" data-action="delete">Delete</button>
+{{#if isMine}}
+  <button class="btn btn-danger btn-xs" type="button" data-action="delete">Delete</button>
+{{else}}
+  <button class="btn btn-danger btn-xs" type="button" data-action="leave">Leave</button>
+{{/if}}
