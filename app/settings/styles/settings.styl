@@ -9,11 +9,10 @@
   }
 
   .form-group {
-    border-bottom: 1px solid #E8E8E8;
-    padding-bottom: 15px;
+    padding-bottom: 5px;
 
-    &:last-child {
-      border-bottom: 0 none;
+    &:last-child,
+    &:nth-last-child(2) {
       margin-bottom: 0;
       padding-bottom: 0;
     }
@@ -26,6 +25,13 @@
   [data-error] {
     margin-bottom: 0;
   }
+}
+
+.settings-modal-actions,
+.advanced-settings-modal-actions {
+  border-top: 1px solid #efefef;
+  margin-top:5px;
+  padding-top: 20px;
 }
 
 .settings-modal-actions {

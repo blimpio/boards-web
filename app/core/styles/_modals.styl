@@ -1,11 +1,29 @@
 .modal-backdrop {
-  background-color: #FDFDFD;
+  background-color: rgba(255,255,255,1);
+  opacity: .9 !important;
+}
+
+.modal-header {
+  border:0;
+
+  .close {
+    position:relative;
+    top: -60px;
+    right: -55px;
+    padding: 10px;
+    font-size: 30px;
+  }
 }
 
 .modal-content {
-  border-color: #CCC;
-  box-shadow: none;
-  border-radius: 3px;
+  border: none;
+  box-shadow: 0 0 20px rgba(0,0,0,.1);
+  border-radius: 0;
+  padding:50px;
+}
+
+.modal-body {
+  padding-bottom:0;
 }
 
 .sharing-modal,
@@ -15,5 +33,11 @@
     right: 10px;
     top: 8px;
     z-index: 5;
+  }
+}
+
+.btn-group {
+  .btn.btn-default {
+    background-color: #f6f6f6;
   }
 }
