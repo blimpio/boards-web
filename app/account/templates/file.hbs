@@ -18,5 +18,5 @@
 <div class="card-info">
   <div class="card-info-item card-name">{{name}}</div>
   <div class="card-info-item card-author">Added by {{created_by.username}}</div>
-  <div class="card-info-item card-comments">{{comments_count}} comments</div>
+  <div class="card-info-item card-comments">{{inflect comments_count "comment" "comments" true}}</div>
 </div> {{! .card-info }}
