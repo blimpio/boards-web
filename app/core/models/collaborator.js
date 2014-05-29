@@ -19,7 +19,7 @@ module.exports = Person.extend({
       });
     }
 
-    if (board.get('created_by') === this.get('user')) return true;
+    if (board.get('created_by').id === this.get('user')) return true;
 
     return false;
   },

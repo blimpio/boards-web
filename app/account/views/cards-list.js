@@ -88,6 +88,10 @@ module.exports = Zeppelin.CollectionView.extend({
 
   onPrependItem: function() {
     if (!this.isFirstCollectionRender()) this.triggerLayout();
+  },
+
+  onUnplug: function() {
+    clearTimeout(this.layoutTimer);
   }
 });
 
