@@ -13,7 +13,8 @@ module.exports = Zeppelin.Model.extend({
         id: App.User.id,
         username: App.User.get('username')
       },
-      is_selected: false
+      is_selected: false,
+      comments_count: 0
     };
   },
 

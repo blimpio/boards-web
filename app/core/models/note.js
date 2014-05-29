@@ -4,6 +4,6 @@ module.exports = Card.extend({
   defaults: function() {
     return _.extend({
       type: 'note'
-    }, Card.prototype.defaults);
+    }, Card.prototype.defaults());
   }
 });

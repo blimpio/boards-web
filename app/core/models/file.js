@@ -13,7 +13,7 @@ module.exports = Card.extend({
       thumbnail_sm_path: null,
       thumbnail_md_path: null,
       thumbnail_lg_path: null
-    }, Card.prototype.defaults);
+    }, Card.prototype.defaults());
   },
 
   localAttributes: function() {

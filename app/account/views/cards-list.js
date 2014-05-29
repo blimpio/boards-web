@@ -54,9 +54,9 @@ module.exports = Zeppelin.CollectionView.extend({
       animate: false,
       fixSize: 0,
       selector: 'li.card',
-      onResize: _.debounce(function() {
+      onResize: function() {
         self.wall.fitWidth();
-      }, 250),
+      },
       onBlockFinish: function() {
         var $b = $(this);
 
