@@ -24,9 +24,19 @@ module.exports = Card.extend({
   bindings: function() {
     return _.merge({
       model: {
-        'change:is_uploading': 'onUploadingStateChange',
-        'change:upload_progress': 'onUploadProgress',
-        'change:thumbnail_sm_path': 'onUpdatePreview'
+        'change:is_uploading': function(file, isUploading) {
+          this.$el.toggleClass('is-uploading', isUploading);
+        },
+        'change:upload_progress': function(file, progress) {
+          if (this.isRendered) {
+            this.updateUploadProgress(progress);
+          }
+        },
+        'change:thumbnail_sm_path': function(file, thumbnail) {
+          if (file.previous('thumbnail_sm_path') === null) {
+            this.setPreview();
+          }
+        }
       }
     }, Card.prototype.bindings);
   },
@@ -104,14 +114,6 @@ module.exports = Card.extend({
     this.preloadPreview();
   },
 
-  onUploadingStateChange: function(file, isUploading) {
-    this.$el.toggleClass('is-uploading', isUploading);
-  },
-
-  onUploadProgress: function(file, progress) {
-    if (this.isRendered) this.updateUploadProgress(progress);
-  },
-
   onPreviewLoaded: function() {
     var $el = this.$el,
         $image = this.getElement('previewLoader');
@@ -121,9 +123,5 @@ module.exports = Card.extend({
         $el.addClass('has-loaded-preview');
       }
     }, 0);
-  },
-
-  onUpdatePreview: function() {
-    this.setPreview();
   }
 });

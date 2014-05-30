@@ -22,7 +22,11 @@ module.exports = Zeppelin.ModelView.extend({
 
   bindings: {
     model: {
-      'change:thumbnail_lg_path': 'onUpdatePreview'
+      'change:thumbnail_lg_path': function(file, thumbnail) {
+        if (file.previous('thumbnail_lg_path') === null) {
+          this.setPreview();
+        }
+      }
     }
   },
 
@@ -85,10 +89,6 @@ module.exports = Zeppelin.ModelView.extend({
         $el.addClass('has-loaded-preview');
       }
     }, 0);
-  },
-
-  onUpdatePreview: function() {
-    this.setPreview();
   },
 
   onViewOriginalClick: function(event) {
