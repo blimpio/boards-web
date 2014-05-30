@@ -25,7 +25,17 @@ module.exports = Card.extend({
     return _.merge({
       model: {
         'change:is_uploading': function(file, isUploading) {
+          var isFeatured = file.get('featured');
+
           this.$el.toggleClass('is-uploading', isUploading);
+
+          if (!isUploading) {
+            this.broadcast('cardsList:updateBlock', {
+              block: this.$el,
+              width: isFeatured ? 461 : 223,
+              height: isFeatured ? 461 : 223
+            });
+          }
         },
         'change:upload_progress': function(file, progress) {
           if (this.isRendered) {
