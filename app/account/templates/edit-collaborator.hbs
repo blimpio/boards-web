@@ -1,6 +1,6 @@
 <form class="edit-collaborator-form">
   {{#unless isOwner}}
-    <a href="#" class="collaborator-remove-icon pull-right" data-action="removeCollaborator">{{icon-delete}}</a>
+    <button type="button" class="close pull-right" data-action="removeCollaborator">{{icon-delete}}</button>
   {{/unless}}
 
   {{#if isOwner}}

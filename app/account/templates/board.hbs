@@ -11,7 +11,7 @@
 </a> {{! .board-link }}
 
 {{#if isMine}}
-  <a href="#" data-action="delete" title="Delete">{{icon-delete}}</a>
+  <button class="btn btn-link btn-xs" type="button" data-action="delete">{{icon-delete}}</button>
 {{else}}
-  <a href="#" data-action="leave" title="Leave">{{icon-delete}}</a>
+  <button class="btn btn-link btn-xs" type="button" data-action="leave">{{icon-delete}}</button>
 {{/if}}
