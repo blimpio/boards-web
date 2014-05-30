@@ -17,9 +17,9 @@
   .card {
     display: inline-block;
     float: none;
-    height: 100px;
+    height: 92px;
     margin: 15px 0 0;
-    width: 100px;
+    width: 92px;
 
     &:hover {
       .card-content {
@@ -36,6 +36,11 @@
       font-size: 11px;
     }
 
+    .card-author,
+    .card-comments {
+      display: none;
+    }
+
     .card-content,
     .card-name-wrapper {
       height: auto;
@@ -48,12 +53,14 @@
       font-size: 12px
     }
 
-    .card-preview {
+    .card-content,
+    .card-preview-wrapper {
       height: 72px !important;
     }
 
     .card-preview-extension {
       font-size: 24px;
+      margin-top: -34px;
       padding: 24px;
     }
   }
