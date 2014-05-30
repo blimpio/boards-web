@@ -8,6 +8,9 @@
   }
 
   &.has-loaded-preview {
+    .card-preview-wrapper {
+      background: #FAF9FC;
+    }
 
     .card-preview,
     .card-preview-extension {
@@ -24,13 +27,13 @@
   }
 
   &.is-detail {
-    background: url('../images/loading.gif') no-repeat center center #faf9fc;
+    background: url('../images/loading.gif') no-repeat center center #FAF9FC;
     background-size: 32px;
     min-height: 150px;
     text-align: center;
 
     &.has-loaded-preview {
-      background: #faf9fc;
+      background: #FAF9FC;
       height: 200px;
 
       &.has-preview {
@@ -64,13 +67,13 @@
     }
 
     .card-preview-extension {
-      margin-top: 0;
+      margin-top: -10px;
     }
   }
 }
 
 .card-upload-progress {
-  background: #faf9fc;
+  background-color: #FAF9FC;
   border: 4px solid transparent;
   border-radius: 50%;
   color: #9B9A9B;
@@ -92,11 +95,22 @@
   }
 }
 
+.card-preview-wrapper {
+  background: url('../images/loading.gif') no-repeat center 48% #FAF9FC;
+  background-size: 32px;
+  height: 174px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
 .card-preview {
-  background-color: #faf9fc;
+  background-color: #FAF9FC;
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  height: 174px;
+  display: none;
+  height: 100%;
   left: 0;
   position: absolute;
   top: 0;
@@ -156,7 +170,7 @@
   font-weight: 100;
   left: 0;
   margin-top: -30px;
-  line-height: 0;
+  line-height: 0.8;
   text-align: center;
   text-transform: lowercase;
   top: 50%;

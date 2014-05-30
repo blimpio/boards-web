@@ -61,9 +61,9 @@ module.exports = Zeppelin.CollectionView.extend({
         var $b = $(this);
 
         if ($b.attr('data-type') === 'file') {
-          $b.find('div.card-preview').height($b.height() - 54);
+          $b.find('div.card-preview-wrapper').height($b.height() - 54);
         } else {
-          $b.find('div.card-content').height($b.height() - 72);
+          $b.find('div.card-content').height($b.height() - 75);
         }
       }
     });
