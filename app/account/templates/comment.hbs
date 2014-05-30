@@ -1,4 +1,4 @@
-<img src="{{author.gravatar_url}}" alt="avatar" class="comment-creator-avatar ui-avatar">
+<img src="{{created_by.gravatar_url}}" alt="avatar" class="comment-creator-avatar ui-avatar">
 
 <form class="comment-edit">
   <div class="form-group">
@@ -11,7 +11,7 @@
 
 <div class="comment-content-wrapper">
   <div class="comment-info">
-    <span class="comment-creator">{{author.username}}</span>
+    <span class="comment-creator">{{created_by.username}}</span>
     <small class="comment-date text-muted">{{time}}</small>
     {{#if isMine}}
       <span class="comments-actions">

@@ -7,11 +7,13 @@ module.exports = Zeppelin.Model.extend({
       featured: false,
       created_by: {
         id: App.User.id,
-        username: App.User.get('username')
+        username: App.User.get('username'),
+        gravatar_url: App.User.get('gravatar_url')
       },
       modified_by: {
         id: App.User.id,
-        username: App.User.get('username')
+        username: App.User.get('username'),
+        gravatar_url: App.User.get('gravatar_url')
       },
       is_selected: false,
       comments_count: 0

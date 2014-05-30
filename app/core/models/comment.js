@@ -1,19 +1,16 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
-    var author;
-
-    this.request('boardCollaborators:current', function(collaborator) {
-      author = collaborator;
-    });
-
-    return author ? {
-      author: author,
-      created_by: author.id,
-      modified_by: author.id,
-      date_created: _.now()
-    } : {
-      created_by: App.User.id,
-      modified_by: App.User.id,
+    return {
+      created_by: {
+        id: App.User.id,
+        username: App.User.get('username'),
+        gravatar_url: App.User.get('gravatar_url')
+      },
+      modified_by: {
+        id: App.User.id,
+        username: App.User.get('username'),
+        gravatar_url: App.User.get('gravatar_url')
+      },
       date_created: _.now()
     };
   },
@@ -34,15 +31,7 @@ module.exports = Zeppelin.Model.extend({
     return this.isNew() ? newUrl : url;
   },
 
-  initialize: function() {
-    if (!this.isNew()) {
-      this.request('collaborator:info', this.get('created_by'), function(info) {
-        this.set('author', info);
-      });
-    }
-  },
-
   isMine: function() {
-    return this.get('created_by') === App.User.id;
+    return this.get('created_by').id === App.User.id;
   }
 });

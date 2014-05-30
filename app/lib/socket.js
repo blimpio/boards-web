@@ -54,7 +54,7 @@ _.extend(Socket.prototype, {
     message.data.account !== App.Accounts.current.id) return;
 
     if ((message.data.type === 'file' && message.method === 'update') ||
-    (message.data.modified_by && message.data.modified_by.id !== App.User.id)) {
+    message.data.modified_by.id !== App.User.id) {
       if (message.data_type === 'board') {
         collection = App.Boards;
       } else if (message.data_type === 'card') {

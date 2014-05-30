@@ -36,7 +36,7 @@ module.exports = Zeppelin.Collection.extend({
     var current = this.current;
 
     if (current.get('type') === 'personal' &&
-    current.get('created_by') !== App.User.id) {
+    current.get('created_by').id !== App.User.id) {
       current = this.getPersonalAccount();
     }
 
@@ -46,7 +46,7 @@ module.exports = Zeppelin.Collection.extend({
   getPersonalAccount: function() {
     return this.find(function(account) {
       return account.get('type') === 'personal' &&
-      account.get('created_by') === App.User.id;
+      account.get('created_by').id === App.User.id;
     });
   },
 

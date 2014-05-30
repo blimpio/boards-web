@@ -476,13 +476,6 @@ module.exports = Person.extend({
       : '';
   },
 
-  getAccounts: function() {
-    return _.filter(this.get('accounts'), function(account) {
-      if (account.type === 'personal' && account.created_by === this.id ||
-      account.type !== 'personal') return account;
-    }, this);
-  },
-
   resetSignup: function() {
     this.clear().destroyCache().set({
       signup_step: 'request-signup'
