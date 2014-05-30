@@ -21,13 +21,19 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   elements: {
-    'name': 'span.card-name'
+    'name': 'div.card-name',
+    'comments': 'div.card-comments'
   },
 
   bindings: {
     model: {
-      'change:name': 'onNameChange',
-      'change:featured': 'onFeaturedChange'
+      'change:name': function(card, name) {
+        this.updateName(name);
+      },
+      'change:featured': 'onFeaturedChange',
+      'change:comments_count': function(card, count) {
+        this.updateCommentsCount(count);
+      }
     }
   },
 
@@ -38,10 +44,17 @@ module.exports = Zeppelin.ModelView.extend({
       this.model.destroy();
       this.broadcast('cardsList:layout');
     }
+
+    return this;
   },
 
-  updateName: function(value) {
-    this.getElement('name').text(value);
+  updateName: function(name) {
+    this.getElement('name').text(name);
+    return this;
+  },
+
+  updateCommentsCount: function(count) {
+    this.getElement('comments').text(count + (count === 1 ? ' comment' : ' comments'));
     return this;
   },
 
@@ -66,10 +79,6 @@ module.exports = Zeppelin.ModelView.extend({
       width: isFeatured ? 461 : 223,
       height: isFeatured ? 461 : 223
     });
-  },
-
-  onNameChange: function(card, value) {
-    this.updateName(value);
   }
 });
 
