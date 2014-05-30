@@ -71,8 +71,12 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   viewOriginal: function() {
+    var url, self = this;
+
     this.model.originalThumbnail().done(function(data) {
-      window.location.replace(data.original_thumbnail_url);
+      url = data.original_thumbnail_url;
+      self.broadcast('router:navigate', url, { trigger: false });
+      window.location.replace(url);
     });
   },
 

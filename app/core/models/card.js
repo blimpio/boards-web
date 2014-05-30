@@ -59,12 +59,17 @@ module.exports = Zeppelin.Model.extend({
     return url.replace(window.location.origin, '');
   },
 
-  select: function() {
+  select: function(options) {
+    options = options || { navigate: true };
+
     this.set('is_selected', true).trigger('selected');
     this.broadcast('card:selected', this);
-    this.broadcast('router:navigate', this.getUrl(), {
-      trigger: false
-    });
+
+    if (options.navigate) {
+      this.broadcast('router:navigate', this.getUrl(), {
+        trigger: false
+      });
+    }
   },
 
   isNote: function() {

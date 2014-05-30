@@ -218,7 +218,7 @@ module.exports = Zeppelin.Controller.extend({
 
     if (this.options.card) {
       App.Cards.setCurrent(this.options.card);
-      this.onCardSelected(App.Cards.current);
+      App.Cards.current.select({navigate: false});
     }
 
     this.options.forceCardsShow = false;
