@@ -14,6 +14,10 @@ module.exports = Zeppelin.Controller.extend({
 
   firstLoad: true,
 
+  cardsInMemory: [],
+
+  collaboratorsInMemory: [],
+
   subscriptions: {
     'cardDetail:closed': 'onCardDetailClose'
   },
@@ -170,14 +174,28 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   fetchCollaborators: function(board) {
+    var $d = $.Deferred(),
+        self = this;
+
     board = board || App.Boards.current.id;
 
     App.BoardCollaborators.setUrl(board);
 
-    return App.BoardCollaborators.fetch({
-      reset: true,
-      success: this.onCollaboratorsFetch
-    });
+    if (_.indexOf(this.collaboratorsInMemory, board) > -1) {
+      this.onCollaboratorsFetch();
+      $d.resolve(App.BoardCollaborators.toJSON());
+    } else {
+      return App.BoardCollaborators.fetch({
+        remove: false,
+        success: function() {
+          self.onCollaboratorsFetch();
+          self.collaboratorsInMemory.push(board);
+          $d.resolve(App.BoardCollaborators.toJSON());
+        }
+      });
+    }
+
+    return $d.promise();
   },
 
   onCollaboratorsFetch: function() {
@@ -188,13 +206,27 @@ module.exports = Zeppelin.Controller.extend({
   },
 
   fetchCards: function(board) {
+    var $d = $.Deferred(),
+        self = this;
+
     board = board || App.Boards.current.id;
 
-    return App.Cards.fetch({
-      data: {board: board},
-      reset: true,
-      success: this.onCardsFetch
-    });
+    if (_.indexOf(this.cardsInMemory, board) > -1) {
+      this.onCardsFetch();
+      $d.resolve(App.Cards.toJSON());
+    } else {
+      App.Cards.fetch({
+        data: { board: board },
+        remove: false,
+        success: function() {
+          self.onCardsFetch();
+          self.cardsInMemory.push(board);
+          $d.resolve(App.Cards.toJSON());
+        }
+      });
+    }
+
+    return $d.promise();
   },
 
   onCardsFetch: function() {

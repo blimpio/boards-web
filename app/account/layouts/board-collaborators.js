@@ -60,7 +60,9 @@ module.exports = Z.Layout.extend({
       board: board.id
     });
 
-    if (!this.getRegion('collaborators').isShown()) {
+    if (this.getRegion('collaborators').isShown()) {
+      this.getRegion('collaborators').view.render();
+    } else {
       this.getRegion('collaborators').show();
     }
   },
