@@ -1,26 +1,22 @@
-var _ = require('lodash'),
-    Q = require('q'),
-    s3 = require('gulp-s3'),
+var Q = require('q'),
     git = require('git-rev'),
     gulp = require('gulp'),
     karma = require('gulp-karma'),
     gutil = require('gulp-util'),
-    gzip = require("gulp-gzip"),
     brunch = require('brunch'),
     imagemin = require('gulp-imagemin'),
     runSequence = require('run-sequence'),
+    gitRename = require('gulp-rename-git'),
+    s3 = require('gulp-s3'),
+    gzip = require('gulp-gzip'),
     environment = process.env.ENV || 'staging',
     aws = require('./aws-config')[environment];
 
-var s3Options = function(options) {
-  options = options || {};
-
-  return _.merge(options,{
-    gzippedOnly: true,
-    headers: {
-      'Cache-Control': 'max-age=315360000, no-transform, public'
-    }
-  });
+var s3Options = {
+  headers: {
+    'Cache-Control': 'max-age=315360000, no-transform, public',
+    'Content-Encoding': 'gzip'
+  }
 };
 
 gulp.task('build:dev', function() {
@@ -71,56 +67,44 @@ gulp.task('test:prod', ['build:prod'], function() {
 });
 
 gulp.task('deploy:js', function() {
-  var deferred = Q.defer();
-
-  git.short(function (hash) {
-    gulp.src([
+  return gulp.src([
       'public/js/*'
-    ], {read: false})
-    .pipe(gzip())
-    .pipe(s3(aws, s3Options({uploadPath: '/' + hash + '/js/'})))
-    .on('close', function() {
-      deferred.resolve();
-    });
-  });
+    ])
 
-  return deferred.promise;
+    .pipe(gitRename(function(path, gitHash) {
+      path.dirname = '/' + gitHash + '/js/';
+    }))
+
+    .pipe(gzip({append: false}))
+    .pipe(s3(aws, s3Options));
 });
 
-
 gulp.task('deploy:css', function() {
-  var deferred = Q.defer();
-
-  git.short(function (hash) {
-    gulp.src([
+  return gulp.src([
       'public/css/*'
-    ], {read: false})
-    .pipe(gzip())
-    .pipe(s3(aws, s3Options({uploadPath: '/' + hash + '/css/'})))
-    .on('close', function() {
-      deferred.resolve();
-    });
-  });
+    ])
 
-  return deferred.promise;
+    .pipe(gitRename(function(path, gitHash) {
+      path.dirname = '/' + gitHash + '/css/';
+    }))
+
+    .pipe(gzip({append: false}))
+    .pipe(s3(aws, s3Options));
 });
 
 gulp.task('deploy:images', function() {
-  var deferred = Q.defer();
-
-  git.short(function (hash) {
-    gulp.src([
+  return gulp.src([
       'public/images/**'
-    ], {read: false})
-    .pipe(imagemin())
-    .pipe(gzip())
-    .pipe(s3(aws, s3Options({uploadPath: '/' + hash + '/images/'})))
-    .on('close', function() {
-      deferred.resolve();
-    });
-  });
+    ])
 
-  return deferred.promise;
+    .pipe(imagemin())
+
+    .pipe(gitRename(function(path, gitHash) {
+      path.dirname = '/' + gitHash + '/images/';
+    }))
+
+    .pipe(gzip({append: false}))
+    .pipe(s3(aws, s3Options));
 });
 
 gulp.task('deploy:summary', function() {
