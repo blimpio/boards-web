@@ -1,4 +1,5 @@
-var Q = require('q'),
+var _ = require('lodash'),
+    Q = require('q'),
     s3 = require('gulp-s3'),
     git = require('git-rev'),
     gulp = require('gulp'),
@@ -10,6 +11,17 @@ var Q = require('q'),
     runSequence = require('run-sequence'),
     environment = process.env.ENV || 'staging',
     aws = require('./aws-config')[environment];
+
+var s3Options = function(options) {
+  options = options || {};
+
+  return _.merge(options,{
+    gzippedOnly: true,
+    headers: {
+      'Cache-Control': 'max-age=315360000, no-transform, public'
+    }
+  });
+};
 
 gulp.task('build:dev', function() {
   var deferred = Q.defer();
@@ -66,7 +78,7 @@ gulp.task('deploy:js', function() {
       'public/js/*'
     ], {read: false})
     .pipe(gzip())
-    .pipe(s3(aws, {uploadPath: '/' + hash + '/js/'}))
+    .pipe(s3(aws, s3Options({uploadPath: '/' + hash + '/js/'})))
     .on('close', function() {
       deferred.resolve();
     });
@@ -84,7 +96,7 @@ gulp.task('deploy:css', function() {
       'public/css/*'
     ], {read: false})
     .pipe(gzip())
-    .pipe(s3(aws, {uploadPath: '/' + hash + '/css/'}))
+    .pipe(s3(aws, s3Options({uploadPath: '/' + hash + '/css/'})))
     .on('close', function() {
       deferred.resolve();
     });
@@ -102,7 +114,7 @@ gulp.task('deploy:images', function() {
     ], {read: false})
     .pipe(imagemin())
     .pipe(gzip())
-    .pipe(s3(aws, {uploadPath: '/' + hash + '/images/'}))
+    .pipe(s3(aws, s3Options({uploadPath: '/' + hash + '/images/'})))
     .on('close', function() {
       deferred.resolve();
     });
