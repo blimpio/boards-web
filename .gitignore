@@ -50,3 +50,4 @@ test/tests.js
 
 # AWS Configration file.
 aws-config.coffee
+aws-config.js
