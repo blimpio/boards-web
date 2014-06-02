@@ -4,6 +4,7 @@ var Q = require('q'),
     gulp = require('gulp'),
     karma = require('gulp-karma'),
     gutil = require('gulp-util'),
+    gzip = require("gulp-gzip"),
     brunch = require('brunch'),
     imagemin = require('gulp-imagemin'),
     runSequence = require('run-sequence'),
@@ -64,6 +65,7 @@ gulp.task('deploy:js', function() {
     gulp.src([
       'public/js/*'
     ], {read: false})
+    .pipe(gzip())
     .pipe(s3(aws, {uploadPath: '/' + hash + '/js/'}))
     .on('close', function() {
       deferred.resolve();
@@ -81,6 +83,7 @@ gulp.task('deploy:css', function() {
     gulp.src([
       'public/css/*'
     ], {read: false})
+    .pipe(gzip())
     .pipe(s3(aws, {uploadPath: '/' + hash + '/css/'}))
     .on('close', function() {
       deferred.resolve();
@@ -98,6 +101,7 @@ gulp.task('deploy:images', function() {
       'public/images/**'
     ], {read: false})
     .pipe(imagemin())
+    .pipe(gzip())
     .pipe(s3(aws, {uploadPath: '/' + hash + '/images/'}))
     .on('close', function() {
       deferred.resolve();
