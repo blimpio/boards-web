@@ -72,7 +72,8 @@ gulp.task('deploy:js', function() {
     ])
 
     .pipe(gitRename(function(path, gitHash) {
-      path.dirname = '/' + gitHash + '/js/';
+      var dirname = (path.dirname === '.' ? '' : path.dirname);
+      path.dirname = '/' + gitHash + '/js/' + dirname;
     }))
 
     .pipe(gzip({append: false}))
@@ -85,7 +86,8 @@ gulp.task('deploy:css', function() {
     ])
 
     .pipe(gitRename(function(path, gitHash) {
-      path.dirname = '/' + gitHash + '/css/';
+      var dirname = (path.dirname === '.' ? '' : path.dirname);
+      path.dirname = '/' + gitHash + '/css/' + dirname;
     }))
 
     .pipe(gzip({append: false}))
@@ -100,7 +102,8 @@ gulp.task('deploy:images', function() {
     .pipe(imagemin())
 
     .pipe(gitRename(function(path, gitHash) {
-      path.dirname = '/' + gitHash + '/images/';
+      var dirname = (path.dirname === '.' ? '' : path.dirname);
+      path.dirname = '/' + gitHash + '/images/' + dirname;
     }))
 
     .pipe(gzip({append: false}))
