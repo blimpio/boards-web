@@ -181,12 +181,13 @@ module.exports = Zeppelin.Controller.extend({
 
     App.BoardCollaborators.setUrl(board);
 
-    if (_.indexOf(this.collaboratorsInMemory, board) > -1) {
+    if (_.indexOf(this.collaboratorsInMemory, board) > -1 && App.hasSocketConnection) {
       this.onCollaboratorsFetch();
       $d.resolve(App.BoardCollaborators.toJSON());
     } else {
       return App.BoardCollaborators.fetch({
-        remove: false,
+        reset: !App.hasSocketConnection ? true : void 0,
+        remove: App.hasSocketConnection ? false : void 0,
         success: function() {
           self.onCollaboratorsFetch();
           self.collaboratorsInMemory.push(board);
@@ -211,13 +212,14 @@ module.exports = Zeppelin.Controller.extend({
 
     board = board || App.Boards.current.id;
 
-    if (_.indexOf(this.cardsInMemory, board) > -1) {
+    if (_.indexOf(this.cardsInMemory, board) > -1 && App.hasSocketConnection) {
       this.onCardsFetch();
       $d.resolve(App.Cards.toJSON());
     } else {
       App.Cards.fetch({
         data: { board: board },
-        remove: false,
+        reset: !App.hasSocketConnection ? true : void 0,
+        remove: App.hasSocketConnection ? false : void 0,
         success: function() {
           self.onCardsFetch();
           self.cardsInMemory.push(board);

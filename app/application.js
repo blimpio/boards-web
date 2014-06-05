@@ -1,4 +1,5 @@
-var User = require('core/models/user'),
+var Alert = require('core/views/alert'),
+    User = require('core/models/user'),
     Cards = require('core/collections/cards'),
     Boards = require('core/collections/boards'),
     Socket = require('lib/socket'),
@@ -34,6 +35,8 @@ module.exports = (function() {
       'router:navigate': 'goTo'
     },
 
+    hasSocketConnection: false,
+
     socket: null,
 
     goTo: function(fragment, options) {
@@ -65,6 +68,13 @@ module.exports = (function() {
           this.navigate('signin', {trigger: true});
         }
       }, this));
+
+      this.alert = new Alert();
+      $('#application').after(this.alert.render().el);
+    },
+
+    displayAlert: function(msg) {
+      this.alert.open(msg);
     },
 
     connectToSocket: function() {
@@ -83,7 +93,7 @@ module.exports = (function() {
       try {
         this.socket.connect();
       } catch(error) {
-        console.log(error);
+        this.displayAlert('There are problems with realtime updates. Refresh to see realtime updates.');
       }
     },
 

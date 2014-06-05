@@ -16,13 +16,24 @@ _.extend(Socket.prototype, {
       query: this.query
     });
 
-    this.connection.on('error', function(response) {
+    this.connection.once('connect', function(response) {
+      App.hasSocketConnection = true;
+      self.joinRooms();
+      self.broadcast('socket:connection:success', response);
+    });
+
+    this.connection.once('error', function(response) {
+      io.sockets = {};
+      App.hasSocketConnection = false;
+      App.displayAlert('There are problems with realtime updates. Refresh to see realtime updates.');
       self.broadcast('socket:connection:error', response);
     });
 
-    this.connection.on('connect', function(response) {
-      self.joinRooms();
-      self.broadcast('socket:connection:success', response);
+    this.connection.once('disconnect', function(response) {
+      io.sockets = {};
+      App.hasSocketConnection = false;
+      App.displayAlert('There are problems with realtime updates. Refresh to see realtime updates.');
+      self.broadcast('socket:connection:error', response);
     });
 
     this.connection.on('roomAuth', function(response) {
