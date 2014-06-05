@@ -14,7 +14,6 @@ module.exports = Zeppelin.FormView.extend({
       'keyup [name=invitee]': _.debounce(this.onKeyup, 500),
       'keydown [name=invitee]': 'onInputKeydown',
       'click a[data-permission]': 'onChangePermission',
-      'click [data-action=cancel]': 'reset',
       'click a.collaborator-suggestion': 'onSuggestionClick',
       'keydown div.collaborator-suggestions': 'onSuggestionKeydown'
     };
