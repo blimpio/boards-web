@@ -90,6 +90,40 @@ _.mixin({'markdown': function(text) {
   return parser(text);
 }});
 
+_.mixin({'markdownNoLinks': function(text) {
+  var parser,
+      renderer = new marked.Renderer();
+
+  renderer.link = function(href, title, text) {
+    if (title) {
+      return '<span title="' + title + '" class="faux-link">' + text + '</span>';
+    } else {
+      return '<span class="faux-link">' + text + '</span>';
+    }
+  };
+
+  renderer.image = function(href, title, text) {
+    href = App.CAMO_URL + '?url=' + href;
+
+    if (title) {
+      return '<img src="' + href + '" title="' + title + '" alt="' + text + '">';
+    } else {
+      return '<img src="' + href + '" alt="' + text + '">';
+    }
+  };
+
+  var parser = marked.setOptions({
+    gfm: true,
+    tables: true,
+    breaks: true,
+    sanitize: true,
+    renderer: renderer,
+    smartypants: true
+  });
+
+  return parser(text);
+}});
+
 _.mixin({'isLetterKey': function(key) {
   var notAllowed = [8, 9, 13, 16, 17, 18, 19, 20, 27, 33, 34,
   35, 36, 37, 38, 39, 40, 45, 46];
@@ -139,6 +173,12 @@ Handlebars.registerHelper('markdown', function(str) {
   str = _.isFunction(str) ? str() : str;
   if (!str) return new Handlebars.SafeString('');
   return new Handlebars.SafeString(_.markdown(str));
+});
+
+Handlebars.registerHelper('markdown-no-links', function(str) {
+  str = _.isFunction(str) ? str() : str;
+  if (!str) return new Handlebars.SafeString('');
+  return new Handlebars.SafeString(_.markdownNoLinks(str));
 });
 
 Handlebars.registerHelper('account-avatar', function(name, color) {

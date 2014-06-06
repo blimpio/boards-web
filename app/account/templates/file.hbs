@@ -1,22 +1,24 @@
-<div class="card-actions">
-  <button type="button" class="btn btn-link btn-xs" data-action="highlight">{{icon-star}}</button>
-  <button type="button" class="btn btn-link btn-xs" data-action="delete">{{icon-delete}}</button>
-</div> {{! .card-actions }}
+<a href="{{html_url}}" class="card-link">
+  <div class="card-actions">
+    <button type="button" class="btn btn-link btn-xs" data-action="highlight">{{icon-star}}</button>
+    <button type="button" class="btn btn-link btn-xs" data-action="delete">{{icon-delete}}</button>
+  </div> {{! .card-actions }}
 
-<div class="card-upload-progress">
-  <svg width="56" height="56" viewbox="0 0 250 250">
-    <path class="file-loader-border" fill="#9F9F9F" transform="translate(125, 125)"/>
-    <path class="file-loader-fill" fill="#F9F9F9" transform="translate(125, 125) scale(.82)" d="M 0 0 v -125 A 125 125 1 1 1 -0.1 -125 z"></path>
-    <text class="file-loader-text" fill="#9B9A9B" x="80" y="145" font-family="Helvetica Neue', Helvetica, Arial, sans-serif" font-size="60px">0%</text>
-  </svg>
-</div> {{! card-upload-progress }}
+  <div class="card-upload-progress">
+    <svg width="56" height="56" viewbox="0 0 250 250">
+      <path class="file-loader-border" fill="#9F9F9F" transform="translate(125, 125)"/>
+      <path class="file-loader-fill" fill="#F9F9F9" transform="translate(125, 125) scale(.82)" d="M 0 0 v -125 A 125 125 1 1 1 -0.1 -125 z"></path>
+      <text class="file-loader-text" fill="#9B9A9B" x="80" y="145" font-family="Helvetica Neue', Helvetica, Arial, sans-serif" font-size="60px">0%</text>
+    </svg>
+  </div> {{! card-upload-progress }}
 
-<div class="card-preview-wrapper">
-  {{partial "account/templates/file-preview" this}}
-</div> {{! .card-preview-wrapper }}
+  <div class="card-preview-wrapper">
+    {{partial "account/templates/file-preview" this}}
+  </div> {{! .card-preview-wrapper }}
 
-<div class="card-info">
-  <div class="card-info-item card-name">{{name}}</div>
-  <div class="card-info-item card-author">Added by {{created_by.username}}</div>
-  <div class="card-info-item card-comments">{{inflect comments_count "comment" "comments" true}}</div>
-</div> {{! .card-info }}
+  <div class="card-info">
+    <div class="card-info-item card-name">{{name}}</div>
+    <div class="card-info-item card-author">Added by {{created_by.username}}</div>
+    <div class="card-info-item card-comments">{{inflect comments_count "comment" "comments" true}}</div>
+  </div> {{! .card-info }}
+</a> {{! .card-link }}

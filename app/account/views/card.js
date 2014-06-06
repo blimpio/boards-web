@@ -16,6 +16,7 @@ module.exports = Zeppelin.ModelView.extend({
 
   events: {
     'click': 'onClick',
+    'click a.card-link': 'onClickLink',
     'click [data-action=delete]': 'delete',
     'click [data-action=highlight]': 'toggleHighlight'
   },
@@ -68,6 +69,12 @@ module.exports = Zeppelin.ModelView.extend({
     if (!event.metaKey) {
       event.preventDefault();
       this.model.select();
+    }
+  },
+
+  onClickLink: function(event) {
+    if (!event.metaKey) {
+      event.preventDefault();
     }
   },
 
