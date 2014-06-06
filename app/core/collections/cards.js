@@ -29,6 +29,10 @@ module.exports = Zeppelin.Collection.extend({
     this.on('change:is_selected', this.onCardSelected, this);
   },
 
+  hasCardsFrom: function(board) {
+    return this.where({board: board}).length > 0;
+  },
+
   getNewest: function() {
     return this.find(function(card) {
       return card.get('position') === _.max(this.pluck('position'));

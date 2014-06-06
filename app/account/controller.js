@@ -165,7 +165,7 @@ module.exports = Zeppelin.Controller.extend({
         canEdit: canEdit,
         forceShow: false,
         triggerLayout: true
-      }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
+      }).toggleEmptyCardsState(!App.Cards.hasCardsFrom(App.Boards.current.id), canEdit);
     } else {
       this.options.board = slug;
       App.Boards.setCurrent(slug);
@@ -246,7 +246,7 @@ module.exports = Zeppelin.Controller.extend({
       board: App.Boards.current,
       canEdit: canEdit,
       forceShow: this.options.forceCardsShow
-    }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
+    }).toggleEmptyCardsState(!App.Cards.hasCardsFrom(App.Boards.current.id), canEdit);
 
     this.getLayout('comments').reset();
 
@@ -298,7 +298,7 @@ module.exports = Zeppelin.Controller.extend({
         board: App.Boards.current,
         canEdit: canEdit,
         triggerLayout: true
-      }).toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
+      }).toggleEmptyCardsState(!App.Cards.hasCardsFrom(App.Boards.current.id), canEdit);
 
       this.getLayout('comments').reset();
   },
@@ -324,7 +324,7 @@ module.exports = Zeppelin.Controller.extend({
       this.getLayout('comments').reset();
     }
 
-    this.getLayout('content').toggleEmptyCardsState(App.Cards.isEmpty(), canEdit);
+    this.getLayout('content').toggleEmptyCardsState(!App.Cards.hasCardsFrom(App.Boards.current.id), canEdit);
   },
 
   onCardRoute: function(boardSlug, cardSlug) {
