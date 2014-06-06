@@ -1,6 +1,6 @@
 .account-page-content-wrapper {
   &.is-empty {
-    background: url('../images/empty.svg') repeat center center;
+    background: url("../images/empty.svg") repeat 15px 79px;
 
     .boards-empty {
       display: block !important;
@@ -19,10 +19,18 @@
   }
 
   &.is-creating-first-board {
-    background: url('../images/empty.svg') repeat center center;
+    background: url("../images/empty.svg") repeat 250px 82px;
+
+    .account-page-header {
+      padding-bottom: 0;
+    }
   }
 
   &.is-full-width {
+    .account-page-content.is-empty {
+      background-position-x: 235px;
+    }
+
     .account-page-sidebar {
       display: none;
     }
@@ -66,7 +74,7 @@
   }
 
   &.is-empty {
-    background: url('../images/empty.svg') repeat center center;
+    background: url("../images/empty.svg") repeat 250px 140px;
 
     .empty-container {
       display: block !important;
