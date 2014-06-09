@@ -1,17 +1,18 @@
 {
-  "name": "blimp-web",
-  "description": "Blimp Front-End for the web client.",
+  "name": "blimp-boards-web",
+  "description": "Blimp Boards frontend for the web client.",
   "author": "Elving Rodriguez",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "repository": {
     "url": "git@github.com:GetBlimp/blimp-web.git",
     "type": "git"
   },
   "scripts": {
-    "test": "gulp test:dev",
+    "test": "gulp test:staging",
     "start": "brunch w -s"
   },
-  "dependencies": {
+  "devDependencies": {
+    "brunch": "^1.7.13",
     "css-brunch": ">= 1.0 < 1.8",
     "jshint-brunch": "^1.7.0",
     "stylus-brunch": "^1.8.0",
@@ -19,10 +20,7 @@
     "clean-css-brunch": ">= 1.0 < 1.8",
     "uglify-js-brunch": ">= 1.0 < 1.8",
     "javascript-brunch": ">= 1.0 < 1.8",
-    "auto-reload-brunch": ">= 1.0 < 1.8"
-  },
-  "devDependencies": {
-    "brunch": "^1.7.13",
+    "auto-reload-brunch": ">= 1.0 < 1.8",
     "chai": "^1.9.0",
     "coffee-script": "^1.7.1",
     "dotenv": "^0.2.8",

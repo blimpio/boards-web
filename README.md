@@ -1,9 +1,7 @@
 blimp-boards-web
 ================
 
-Blimp Boards Front-End for the web client.
-
-![wercker status](https://app.wercker.com/status/6618c352f999f43ba14a55b3ac2a36f5/s/ "wercker status")
+Blimp Boards frontend for the web client.
 
 Dependencies
 ------------
@@ -68,11 +66,19 @@ Deploying to s3
 
     $ gulp deploy
 
-*To deploy static files to s3 you need to have an aws-config.coffee file in your root*
+*To deploy static files to s3 you need to have an .env file in your root*
 
-    # aws-config.coffee example:
+    # .env example:
 
-    module.exports =
-        key: 'S3_KEY'
-        secret: 'S3_SECRET'
-        bucket: 'S3_BUCKET'
+    STAGING_AWS_S3_BUCKET_NAME=YOUR_S3_BUCKET_NAME
+    STAGING_AWS_S3_SECRET_ACCESS_KEY=YOUR_S3_SECRET_ACCESS_KEY
+    STAGING_AWS_S3_ACCESS_KEY_ID=YOUR_S3_ACCESS_KEY_ID
+    PRODUCTION_AWS_S3_BUCKET_NAME=YOUR_S3_BUCKET_NAME
+    PRODUCTION_AWS_S3_SECRET_ACCESS_KEY=YOUR_S3_SECRET_ACCESS_KEY
+    PRODUCTION_AWS_S3_ACCESS_KEY_ID=YOUR_S3_ACCESS_KEY_ID
+
+TODO
+----
+
+- Tests.
+- Documentation.
