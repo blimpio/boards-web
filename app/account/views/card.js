@@ -39,6 +39,7 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   delete: function(event) {
+    event.preventDefault();
     event.stopPropagation();
 
     if (window.confirm('Are you sure you want to delete this card?')) {
@@ -60,6 +61,7 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   toggleHighlight: function(event) {
+    event.preventDefault();
     event.stopPropagation();
     this.model.save({featured: !this.model.get('featured')});
     return this;
