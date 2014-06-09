@@ -39,6 +39,10 @@ if (environment === 'staging') {
   };
 }
 
+gulp.task('build', ['build:' + environment], function(cb) {
+  cb();
+});
+
 gulp.task('build:staging', function() {
   var deferred = Q.defer();
 
@@ -57,6 +61,10 @@ gulp.task('build:production', function() {
   });
 
   return deferred.promise;
+});
+
+gulp.task('test', ['test:' + environment], function(cb) {
+  cb();
 });
 
 gulp.task('test:staging', ['build:staging'], function() {
@@ -136,6 +144,5 @@ gulp.task('deploy:summary', function() {
 });
 
 gulp.task('deploy', function(cb) {
-  var build = 'build:' + environment;
-  runSequence('deploy:summary', build, 'deploy:js', 'deploy:css', 'deploy:images', cb);
+  runSequence('deploy:summary', 'build', 'deploy:js', 'deploy:css', 'deploy:images', cb);
 });
