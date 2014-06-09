@@ -4,7 +4,7 @@ module.exports = Zeppelin.ModelView.extend({
   },
 
   className: function() {
-    var className = 'card is-detail';
+    var className = 'card is-detail has-loaded-preview';
     if (this.model.hasPreview()) className += ' has-preview';
     if (this.model.get('featured')) className += ' is-featured';
     return className;
@@ -39,10 +39,6 @@ module.exports = Zeppelin.ModelView.extend({
     });
   },
 
-  initialize: function() {
-    _.bindAll(this, ['onPreviewLoaded']);
-  },
-
   setPreview: function() {
     var context = {
           preview: this.model.getPreview(true) ,
@@ -58,16 +54,6 @@ module.exports = Zeppelin.ModelView.extend({
       preview: 'div.card-preview',
       previewLoader: 'img.card-preview-loader'
     });
-
-    this.preloadPreview();
-  },
-
-  preloadPreview: function() {
-    if (this.getElement('previewLoader')[0].complete) {
-      this.onPreviewLoaded();
-    } else {
-      this.getElement('previewLoader').one('load', this.onPreviewLoaded);
-    }
   },
 
   viewOriginal: function() {
@@ -78,21 +64,6 @@ module.exports = Zeppelin.ModelView.extend({
       self.broadcast('router:navigate', url, { trigger: false });
       window.location.replace(url);
     });
-  },
-
-  onRender: function() {
-    this.preloadPreview();
-  },
-
-  onPreviewLoaded: function() {
-    var $el = this.$el,
-        $image = this.getElement('previewLoader');
-
-    setTimeout(function() {
-      if ($image[0].complete && $image.attr('src')) {
-        $el.addClass('has-loaded-preview');
-      }
-    }, 0);
   },
 
   onViewOriginalClick: function(event) {
