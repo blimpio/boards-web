@@ -1,25 +1,45 @@
 var Q = require('q'),
     git = require('git-rev'),
+    dotenv = require('dotenv'),
+    brunch = require('brunch'),
+    runSequence = require('run-sequence'),
+
+    s3 = require('gulp-s3'),
+    gzip = require('gulp-gzip'),
     gulp = require('gulp'),
     karma = require('gulp-karma'),
     gutil = require('gulp-util'),
-    brunch = require('brunch'),
     imagemin = require('gulp-imagemin'),
-    runSequence = require('run-sequence'),
     gitRename = require('gulp-rename-git'),
-    s3 = require('gulp-s3'),
-    gzip = require('gulp-gzip'),
-    environment = process.env.ENV || 'staging',
-    aws = require('./aws-config')[environment];
 
-var s3Options = {
-  headers: {
-    'Cache-Control': 'max-age=315360000, no-transform, public',
-    'Content-Encoding': 'gzip'
-  }
-};
+    aws = {};
 
-gulp.task('build:dev', function() {
+    s3Options = {
+      headers: {
+        'Cache-Control': 'max-age=315360000, no-transform, public',
+        'Content-Encoding': 'gzip'
+      }
+    },
+
+    environment = process.env.ENV || 'staging';
+
+dotenv.load();
+
+if (environment === 'staging') {
+  aws = {
+    key: process.env.STAGING_AWS_S3_ACCESS_KEY_ID,
+    secret: process.env.STAGING_AWS_S3_SECRET_ACCESS_KEY,
+    bucket: process.env.STAGING_AWS_S3_BUCKET_NAME
+  };
+} else if (environment === 'production') {
+  aws = {
+    key: process.env.PRDUCTION_AWS_S3_ACCESS_KEY_ID,
+    secret: process.env.PRDUCTION_AWS_S3_SECRET_ACCESS_KEY,
+    bucket: process.env.PRDUCTION_AWS_S3_BUCKET_NAME
+  };
+}
+
+gulp.task('build:staging', function() {
   var deferred = Q.defer();
 
   brunch.build({}, function() {
@@ -29,7 +49,7 @@ gulp.task('build:dev', function() {
   return deferred.promise;
 });
 
-gulp.task('build:prod', function() {
+gulp.task('build:production', function() {
   var deferred = Q.defer();
 
   brunch.build({production: true}, function() {
@@ -39,12 +59,8 @@ gulp.task('build:prod', function() {
   return deferred.promise;
 });
 
-gulp.task('test:dev', ['build:dev'], function() {
+gulp.task('test:staging', ['build:staging'], function() {
   return gulp.src([
-    'public/css/app.css',
-    'public/js/app.js',
-    'bower_components/handlebars/handlebars.js',
-    'test/enviroment.js',
     'test/**/*-test.js'
   ]).pipe(karma({
     action: 'run',
@@ -52,12 +68,8 @@ gulp.task('test:dev', ['build:dev'], function() {
   }));
 });
 
-gulp.task('test:prod', ['build:prod'], function() {
+gulp.task('test:production', ['build:production'], function() {
   return gulp.src([
-    'public/css/app.css',
-    'public/js/app.js',
-    'bower_components/handlebars/handlebars.js',
-    'test/enviroment.js',
     'test/**/*-test.js'
   ]).pipe(karma({
     action: 'run',
@@ -124,5 +136,6 @@ gulp.task('deploy:summary', function() {
 });
 
 gulp.task('deploy', function(cb) {
-  runSequence('deploy:summary', 'build:prod', 'deploy:js', 'deploy:css', 'deploy:images', cb);
+  var build = 'build:' + environment;
+  runSequence('deploy:summary', build, 'deploy:js', 'deploy:css', 'deploy:images', cb);
 });
