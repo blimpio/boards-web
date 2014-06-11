@@ -12,15 +12,6 @@ module.exports = Zeppelin.FormView.extend({
     'click [data-action=createBoard]': 'toggleCreateMode'
   },
 
-  setAccount: function() {
-    this.request('accounts:current', function(account) {
-      if (account) {
-        this.options.accountId = account.id;
-        this.model.set('account', this.options.accountId);
-      }
-    });
-  },
-
   toggleCreateMode: function() {
     this.$el.toggleClass('is-creating')
     this.focus();
@@ -28,7 +19,8 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onRender: function() {
-    this.setAccount();
+    this.account = App.Accounts.getPersonalAccount().id;
+    this.model.set('account', this.account);
   },
 
   onValidationSuccess: function() {
@@ -37,7 +29,7 @@ module.exports = Zeppelin.FormView.extend({
 
   onSubmit: function() {
     this.setModel(require('core/models/board'));
-    this.model.set('account', this.options.accountId);
+    this.model.set('account', this.account);
     this.reset();
     this.toggleCreateMode();
   }

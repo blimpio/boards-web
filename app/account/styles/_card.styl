@@ -18,12 +18,22 @@
   &.is-featured {
     height: 459px;
     width: 459px;
+
+    .icon-star > path {
+      fill: #FEAF13 !important;
+    }
   }
 
   &.is-detail {
     height: auto;
     margin: 0;
     width: 100%;
+  }
+}
+
+.card-link {
+  &, &:hover, &:focus, &:active, &:visited {
+    color: #555555;
   }
 }
 
