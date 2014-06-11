@@ -41,7 +41,7 @@ module.exports = Zeppelin.FormView.extend({
     this.$el.toggleClass('is-editing');
 
     if (this.$el.is('.is-editing')) {
-      this.focus();
+      this.getElement('nameInput')[0].select();
     } else {
       this.reset();
     }
