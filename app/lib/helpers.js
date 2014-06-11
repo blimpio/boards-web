@@ -252,6 +252,11 @@ Handlebars.registerHelper('icon-download', function() {
   return new Handlebars.SafeString(icon);
 });
 
+Handlebars.registerHelper('icon-edit', function() {
+  var icon = '<svg class="svg-icon-wrapper" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M11.293.293l-11.293 11.293v4h4l11.293-11.293c.391-.391.391-1.023 0-1.414l-2.586-2.586c-.391-.391-1.023-.391-1.414 0zm-8.122 13.293h-1.171v-1.172l8.707-8.707 1.172 1.172-8.708 8.707z" fill="#000" class="svg-icon-color" fill-rule="evenodd"/></svg>';
+  return new Handlebars.SafeString(icon);
+});
+
 Handlebars.registerHelper('icon-search', function() {
   var icon = '<svg class="icon-search svg-icon-wrapper" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M15.707 14.293l-3.112-3.092-.006-.004c.882-1.172 1.411-2.622 1.411-4.197 0-3.859-3.141-7-7-7s-7 3.141-7 7 3.141 7 7 7c1.575 0 3.025-.529 4.196-1.41l.004.006 3.093 3.111c.195.195.451.293.707.293.256 0 .512-.098.707-.293.391-.391.391-1.023 0-1.414zm-8.707-2.293c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" fill="#000" class="svg-icon-color" fill-rule="evenodd"/></svg>';
   return new Handlebars.SafeString(icon);
