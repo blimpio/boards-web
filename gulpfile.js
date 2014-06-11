@@ -33,9 +33,9 @@ if (environment === 'staging') {
   };
 } else if (environment === 'production') {
   aws = {
-    key: process.env.PRDUCTION_AWS_S3_ACCESS_KEY_ID,
-    secret: process.env.PRDUCTION_AWS_S3_SECRET_ACCESS_KEY,
-    bucket: process.env.PRDUCTION_AWS_S3_BUCKET_NAME
+    key: process.env.PRODUCTION_AWS_S3_ACCESS_KEY_ID,
+    secret: process.env.PRODUCTION_AWS_S3_SECRET_ACCESS_KEY,
+    bucket: process.env.PRODUCTION_AWS_S3_BUCKET_NAME
   };
 }
 
