@@ -45,6 +45,7 @@ module.exports = (function() {
       };
 
       this.navigate(fragment, options);
+      ga('send', 'pageview');
     },
 
     initialize: function() {
