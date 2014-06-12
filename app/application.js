@@ -71,6 +71,8 @@ module.exports = (function() {
 
       this.alert = new Alert();
       $('#application').after(this.alert.render().el);
+
+      this.on('route', this.onRoute, this);
     },
 
     displayAlert: function(msg) {
@@ -99,6 +101,10 @@ module.exports = (function() {
 
     onAppLoaded: function() {
       this.connectToSocket();
+    },
+
+    onRoute: function() {
+      ga('send', 'pageview');
     }
   });
 
