@@ -34,7 +34,6 @@ module.exports = Zeppelin.Controller.extend({
     }
 
     this.getLayout('main').render();
-    if (!this.options.board) this.getLayout('main').selectAllActivity();
     this.getLayout('header').setElement('div.header-container');
 
     if (!this.options.comesFromAccountPage) {
@@ -85,7 +84,7 @@ module.exports = Zeppelin.Controller.extend({
   fetchNotifications: function(account, board) {
     if (account) {
       App.Notifications.url = App.API_URL + '/accounts/' + account + '/activity/';
-    } else if (!App.Notifications.url) {
+    } else {
       App.Notifications.url = App.API_URL + '/accounts/' + App.Accounts.current.id + '/activity/';
     }
 
@@ -109,12 +108,15 @@ module.exports = Zeppelin.Controller.extend({
   onAllActivityClicked: function() {
     var myAccount = App.Accounts.getPersonalAccount();
 
+    if (!this.firstLoad) {
+      this.getLayout('content').toggleLoadingContentState();
+    }
+
     if (App.Boards.current) App.Boards.current.deselect();
     this.options.board = null;
     App.Boards.current = null;
 
     this.setTitle('Blimp Boards | All Activity');
-    this.getLayout('content').toggleLoadingContentState();
     this.fetchNotifications(myAccount.id);
     this.broadcast('router:navigate', myAccount.get('slug') + '/activity/', {
       navigate: false
@@ -142,8 +144,8 @@ module.exports = Zeppelin.Controller.extend({
         App.Boards.current.select({navigate: false});
         this.fetchNotifications(App.Accounts.current.id, App.Boards.current.id);
       } else {
-        this.fetchNotifications();
-        this.options.board = null;
+        this.getLayout('main').selectAllActivity();
+        this.onAllActivityClicked();
       }
     }
 
@@ -154,7 +156,7 @@ module.exports = Zeppelin.Controller.extend({
           board: this.options.board && App.Boards.current
             ? App.Boards.current
             : this.allActivityModel
-        });
+        }).toggleEmptyNotificationsState(false);
 
       if (this.options.board) this.onBoardSelected(App.Boards.current);
       this.broadcast('app:loaded');

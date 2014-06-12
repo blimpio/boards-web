@@ -16,7 +16,8 @@ module.exports = Zeppelin.Collection.extend({
   },
 
   subscriptions: {
-    'card:created': 'onCardCreated'
+    'card:created': 'onCardCreated',
+    'update:commentCount': 'updateCardCommentCount'
   },
 
   previewTimer: null,
@@ -64,6 +65,17 @@ module.exports = Zeppelin.Collection.extend({
     position = positions.length ? _.max(positions) + 1 : position;
     card.set('position', position);
     return this;
+  },
+
+  updateCardCommentCount: function(card, update) {
+    card = this.get(card);
+    update = update || 'add';
+
+    if (update === 'add') {
+      card.set('comments_count', card.get('comments_count') + 1);
+    } else if (update === 'subtract') {
+      card.set('comments_count', card.get('comments_count') - 1);
+    }
   },
 
   onCardCreated: function(card) {

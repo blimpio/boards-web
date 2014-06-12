@@ -42,6 +42,8 @@ module.exports = Z.Layout.extend({
         .html(this.renderTemplate(require('activity/templates/all-activity-btn')))
 
       this.addElement('allActivityBtnWrapper', 'div.all-activity-btn');
+
+      this.$el.find('div.account-page').addClass('activity-page');
     } else {
       Z.Layout.prototype.render.apply(this, arguments);
     }
