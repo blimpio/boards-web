@@ -29,9 +29,10 @@ module.exports = Z.Layout.extend({
 
   render: function() {
     if (this.options.comesFromAccountPage) {
-      this.getElement('content')
-        .addClass('is-loading')
+      this.getElement('content').addClass('is-loading')
         .html(this.renderTemplate(this.template));
+
+      this.$el.find('div.account-page').removeClass('activity-page');
     } else {
       Z.Layout.prototype.render.apply(this, arguments);
     }

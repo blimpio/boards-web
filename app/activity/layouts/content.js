@@ -15,8 +15,8 @@ module.exports = Z.Layout.extend({
   },
 
   toggleEmptyNotificationsState: function(hasNoNotifications) {
-    this.$el.removeClass('is-loading');
     this.$el.toggleClass('is-empty', hasNoNotifications);
+    this.$el.removeClass('is-loading');
     return this;
   },
 
@@ -25,11 +25,11 @@ module.exports = Z.Layout.extend({
       model: options.board
     });
 
-    this.getRegion('notifications').$el.show();
-
     if (!this.getRegion('notifications').isShown()) {
       this.getRegion('notifications').show();
     }
+
+    this.getRegion('notifications').$el.show();
 
     return this;
   }
