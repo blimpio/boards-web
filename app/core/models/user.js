@@ -344,6 +344,13 @@ module.exports = Person.extend({
   onSigninSuccess: function(response) {
     this.unset('password').set(response).saveCache();
     this.broadcast('user:signin:success', response);
+
+    Raven.setUser({
+      id: this.id,
+      email: this.get('email'),
+      username: this.get('username')
+    });
+
     return this;
   },
 
