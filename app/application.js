@@ -99,8 +99,12 @@ module.exports = (function() {
       try {
         this.socket.connect();
       } catch(error) {
-        Raven.captureMessage('Socket error.');
-        Raven.captureException(error);
+
+        if (!this.DEBUG) {
+          Raven.captureMessage('Socket error.');
+          Raven.captureException(error);
+        }
+
         this.displayAlert('There are problems with realtime updates. Refresh to see realtime updates.');
       }
     },
