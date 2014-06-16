@@ -11,7 +11,8 @@ module.exports = Zeppelin.Model.extend({
         username: App.User.get('username'),
         gravatar_url: App.User.get('gravatar_url')
       },
-      date_created: _.now()
+      date_created: _.now(),
+      date_modified: _.now()
     };
   },
 

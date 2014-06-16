@@ -1,6 +1,8 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
     return {
+      date_created: _.now(),
+      date_modified: _.now(),
       color: '#E5E5E5',
       html_url: '',
       created_by: {
