@@ -5,5 +5,19 @@ module.exports = Card.extend({
     return _.extend({
       type: 'note'
     }, Card.prototype.defaults());
+  },
+
+  updateTask: function(task) {
+    var self = this,
+        content = this.get('content'),
+        originalTask = task;
+
+    if (/^\s*\[ \]\s*/.test(task)) {
+      task = task.replace('[ ]', '[x]');
+    } else {
+      task = task.replace('[x]', '[ ]');
+    }
+
+    this.save('content',  content.replace(originalTask, task));
   }
 });

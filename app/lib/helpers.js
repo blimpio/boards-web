@@ -78,6 +78,20 @@ _.mixin({'markdown': function(text) {
     }
   };
 
+  renderer.listitem = function(text) {
+    var originalText = text;
+
+    if (/^\s*\[[x ]\]\s*/.test(text)) {
+      text = text
+        .replace(/^\s*\[ \]\s*/, '<input type="checkbox" class="markdown-task" data-original-text="' + originalText + '">')
+        .replace(/^\s*\[x\]\s*/, '<input type="checkbox" class="markdown-task" data-original-text="' + originalText + '" checked>')
+
+      return '<li class="has-task">' + text + '</li>';
+    } else {
+      return '<li>' + text + '</li>';
+    }
+  };
+
   var parser = marked.setOptions({
     gfm: true,
     tables: true,
@@ -109,6 +123,20 @@ _.mixin({'markdownNoLinks': function(text) {
       return '<img src="' + href + '" title="' + title + '" alt="' + text + '">';
     } else {
       return '<img src="' + href + '" alt="' + text + '">';
+    }
+  };
+
+  renderer.listitem = function(text) {
+    var originalText = text;
+
+    if (/^\s*\[[x ]\]\s*/.test(text)) {
+      text = text
+        .replace(/^\s*\[ \]\s*/, '<input type="checkbox" class="markdown-task" data-original-text="' + originalText + '">')
+        .replace(/^\s*\[x\]\s*/, '<input type="checkbox" class="markdown-task" data-original-text="' + originalText + '" checked>')
+
+      return '<li class="has-task">' + text + '</li>';
+    } else {
+      return '<li>' + text + '</li>';
     }
   };
 

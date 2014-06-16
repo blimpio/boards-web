@@ -16,7 +16,8 @@ module.exports = Zeppelin.FormView.extend({
     'click [data-action=cancel]': 'toggleEditMode',
     'click [data-action=submit]': 'submit',
     'click [data-action=modify]': 'closePreview',
-    'click [data-action=preview]': 'onClickPreview'
+    'click [data-action=preview]': 'onClickPreview',
+    'change div.markdown input[type=checkbox]': 'onNoteTaskChange'
   },
 
   elements: {
@@ -99,6 +100,10 @@ module.exports = Zeppelin.FormView.extend({
 
   onContentChange: function(note, content) {
     this.updateContent(content);
+  },
+
+  onNoteTaskChange: function(event) {
+    this.model.updateTask($(event.currentTarget).data('originalText'));
   }
 });
 
