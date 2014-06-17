@@ -14,7 +14,7 @@ Backbone.sync = function(method, model, options) {
     model._lastXHR = {};
   }
 
-  model._lastXHR[method] = originalSync.apply(this, arguments);
+  return model._lastXHR[method] = originalSync.apply(this, arguments);
 };
 
 
