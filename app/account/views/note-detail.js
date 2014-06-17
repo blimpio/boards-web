@@ -68,10 +68,10 @@ module.exports = Zeppelin.FormView.extend({
     }
 
     if (!this.changeFromNote) {
-      this.changeFromNote = false;
       this.getElement('content').html(_.markdown(content));
     }
 
+    this.changeFromNote = false;
     return this;
   },
 
