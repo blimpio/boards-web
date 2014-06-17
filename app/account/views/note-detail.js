@@ -17,7 +17,7 @@ module.exports = Zeppelin.FormView.extend({
     'click [data-action=submit]': 'submit',
     'click [data-action=modify]': 'closePreview',
     'click [data-action=preview]': 'onClickPreview',
-    'change div.markdown input[type=checkbox]': 'onNoteTaskChange'
+    'click div.markdown input[type=checkbox]': 'onNoteTaskChange'
   },
 
   elements: {
@@ -38,6 +38,8 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   template: require('account/templates/note-detail'),
+
+  changeFromNote: false,
 
   toggleEditMode: function() {
     this.$el.toggleClass('is-editing');
@@ -65,7 +67,11 @@ module.exports = Zeppelin.FormView.extend({
       $input.val(content);
     }
 
-    this.getElement('content').html(_.markdown(content));
+    if (!this.changeFromNote) {
+      this.changeFromNote = false;
+      this.getElement('content').html(_.markdown(content));
+    }
+
     return this;
   },
 
@@ -103,7 +109,13 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onNoteTaskChange: function(event) {
-    this.model.updateTask($(event.currentTarget).data('originalText'));
+    var $task = $(event.currentTarget),
+        taskUpdatedText = '',
+        taskOriginalText = $task.attr('data-original-text');
+
+    this.changeFromNote = true;
+    taskUpdatedText = this.model.updateTask(taskOriginalText);
+    $task.attr('data-original-text', taskUpdatedText);
   }
 });
 

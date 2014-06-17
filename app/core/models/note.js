@@ -18,6 +18,7 @@ module.exports = Card.extend({
       task = task.replace('[x]', '[ ]');
     }
 
-    this.save('content',  content.replace(originalTask, task));
+    this.save({ content: content.replace(originalTask, task) });
+    return task;
   }
 });
