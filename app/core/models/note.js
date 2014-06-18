@@ -7,18 +7,30 @@ module.exports = Card.extend({
     }, Card.prototype.defaults());
   },
 
-  updateTask: function(task) {
+  updateTask: function(index, checked) {
     var self = this,
-        content = this.get('content'),
-        originalTask = task;
+        note = this.get('content'),
+        tasks = note.match(/(\s*\[[x ]\]\s*).+/gm),
+        changingTask = tasks[index],
+        tasksCounter = 0,
+        originalTask = changingTask;
 
-    if (/^\s*\[ \]\s*/.test(task)) {
-      task = task.replace('[ ]', '[x]');
+    if (checked) {
+      changingTask = changingTask.replace('[ ]', '[x]');
     } else {
-      task = task.replace('[x]', '[ ]');
+      changingTask = changingTask.replace('[x]', '[ ]');
     }
 
-    this.save({ content: content.replace(originalTask, task) });
-    return task;
+    this.save({
+      content: note.replace(/(\s*\[[x ]\]\s*).+/gm, function(match) {
+        if (tasksCounter === index) {
+          tasksCounter += 1;
+          return changingTask;
+        } else {
+          tasksCounter += 1;
+          return match;
+        }
+      })
+    });
   }
 });

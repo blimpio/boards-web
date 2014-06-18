@@ -109,13 +109,9 @@ module.exports = Zeppelin.FormView.extend({
   },
 
   onNoteTaskChange: function(event) {
-    var $task = $(event.currentTarget),
-        taskUpdatedText = '',
-        taskOriginalText = $task.attr('data-original-text');
-
+    var $task = $(event.currentTarget);
     this.changeFromNote = true;
-    taskUpdatedText = this.model.updateTask(taskOriginalText);
-    $task.attr('data-original-text', taskUpdatedText);
+    this.model.updateTask(_.parseInt($task.attr('data-index')), $task.prop('checked'));
   }
 });
 

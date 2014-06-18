@@ -58,7 +58,8 @@ _.mixin({'decodeJWT': function(token) {
 
 _.mixin({'markdown': function(text) {
   var parser,
-      renderer = new marked.Renderer();
+      renderer = new marked.Renderer(),
+      noteTaskIndex = 0;
 
   renderer.link = function(href, title, text) {
     if (title) {
@@ -83,9 +84,10 @@ _.mixin({'markdown': function(text) {
 
     if (/^\s*\[[x ]\]\s*/.test(text)) {
       text = text
-        .replace(/^\s*\[ \]\s*/, '<input type="checkbox" class="markdown-task" data-original-text="' + originalText + '">')
-        .replace(/^\s*\[x\]\s*/, '<input type="checkbox" class="markdown-task" data-original-text="' + originalText + '" checked>')
+        .replace(/^\s*\[ \]\s*/, '<input type="checkbox" data-index="' + noteTaskIndex + '" class="markdown-task">')
+        .replace(/^\s*\[x\]\s*/, '<input type="checkbox" data-index="' + noteTaskIndex + '" class="markdown-task" checked>')
 
+      noteTaskIndex += 1;
       return '<li class="has-task">' + text + '</li>';
     } else {
       return '<li>' + text + '</li>';
