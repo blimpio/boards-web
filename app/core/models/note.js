@@ -10,7 +10,7 @@ module.exports = Card.extend({
   updateTask: function(index, checked) {
     var self = this,
         note = this.get('content'),
-        tasks = note.match(/(\s*\[[x ]\]\s*).+/gm),
+        tasks = note.match(/(^\-\s*\[[x ]\]\s*).+/gm),
         changingTask = tasks[index],
         tasksCounter = 0,
         originalTask = changingTask;
@@ -22,7 +22,7 @@ module.exports = Card.extend({
     }
 
     this.save({
-      content: note.replace(/(\s*\[[x ]\]\s*).+/gm, function(match) {
+      content: note.replace(/(^\-\s*\[[x ]\]\s*).+/gm, function(match) {
         if (tasksCounter === index) {
           tasksCounter += 1;
           return changingTask;
