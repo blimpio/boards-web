@@ -14,6 +14,17 @@
     }
   }
 
+  ol, ul {
+    margin-left: 15px;
+    padding: 0 0 0 15px;
+  }
+
+  p, h1, h2, h3, h4,
+  h5, h6, ol, ul, blockquote{
+    margin-bottom: 15px;
+    margin-top: 15px;
+  }
+
   blockquote {
     border-left: 2px solid #E0E0E0;
   }
@@ -29,10 +40,40 @@
 
     & > li > ul {
       list-style-type: circle;
+      margin-bottom: 0;
     }
   }
 
   .faux-link {
     color: #50BEF7;
+  }
+
+  .has-task {
+    margin-left: -15px;
+    list-style: none;
+
+    input[type="checkbox"] {
+      cursor: pointer;
+      margin-right: 10px;
+      vertical-align: baseline;
+    }
+  }
+}
+
+.is-item .markdown {
+  h1 {
+    font-size: 28px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  h3 {
+    font-size: 20px;
+  }
+
+  .has-task input[type="checkbox"] {
+    pointer-events: none;
   }
 }

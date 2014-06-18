@@ -1,3 +1,23 @@
+var originalSync = Backbone.sync;
+
+Backbone.sync = function(method, model, options) {
+  var lastXHR;
+
+  lastXHR = model._lastXHR && model._lastXHR[method];
+
+  if ((lastXHR && lastXHR.readyState !== 4) &&
+  (options && options.safe !== false)) {
+    lastXHR.abort('stale');
+  }
+
+  if (!model._lastXHR) {
+    model._lastXHR = {};
+  }
+
+  return model._lastXHR[method] = originalSync.apply(this, arguments);
+};
+
+
 Swag.registerHelpers();
 
 $.ajaxSetup({

@@ -1,6 +1,8 @@
 module.exports = Zeppelin.Model.extend({
   defaults: function() {
     return {
+      date_created: _.now(),
+      date_modified: _.now(),
       html_url: '',
       download_html_url: '',
       original_html_url: '',
