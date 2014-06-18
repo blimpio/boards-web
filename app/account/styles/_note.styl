@@ -1,8 +1,22 @@
 .card[data-type="note"] {
+  &:hover {
+    .card-modified-notification {
+      display: none;
+    }
+  }
+
   .card-content {
     border: 1px solid #EFEFEF;
     height: 174px;
     padding: 10px;
     overflow: hidden;
+  }
+
+  .card-modified-notification {
+    //background: #F6F6F6;
+    border-radius: 4px;
+    color: #9B9B9B;
+    font-size: 11px;
+    padding: 10px;
   }
 }
