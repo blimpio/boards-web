@@ -24,17 +24,26 @@ module.exports = Zeppelin.FormView.extend({
     content: 'div.card-content',
     preview: 'div.note-editor-preview',
     nameInput: 'input[name=name]',
-    contentInput: 'textarea[name=content]'
+    contentInput: 'textarea[name=content]',
+    modifiedNotificationTime: 'span.card-modified-notification-time',
+    modifiedNotificationModifier: 'strong.card-modified-notification-modifier'
   },
 
   bindings: {
     model: {
-      'change:content': 'onContentChange'
+      'change:content': 'onContentChange',
+      'change:date_modified': 'onModified'
     }
   },
 
   subscriptions: {
     'note:edit': 'toggleEditMode'
+  },
+
+  context: function() {
+    return _.extend({}, this.model.attributes, {
+      time_modified: $.timeago(this.model.get('date_modified'))
+    });
   },
 
   template: require('account/templates/note-detail'),
@@ -75,6 +84,15 @@ module.exports = Zeppelin.FormView.extend({
     return this;
   },
 
+  updateModifiedNotification: function(modifier, date) {
+    date = $.timeago(date || this.model.get('date_modified'));
+    modifier = modifier || this.model.get('modified_by').username;
+
+    this.getElement('modifiedNotificationModifier').text(modifier);
+    this.getElement('modifiedNotificationTime').text(date);
+    return this;
+  },
+
   preview: function() {
     this.$el.addClass('is-previewing');
     this.getElement('preview').html(_.markdown(this.getAttributeValue('content')));
@@ -112,6 +130,10 @@ module.exports = Zeppelin.FormView.extend({
     var $task = $(event.currentTarget);
     this.changeFromNote = true;
     this.model.updateTask(_.parseInt($task.attr('data-index')), $task.prop('checked'));
+  },
+
+  onModified: function(note, date_modified) {
+    this.updateModifiedNotification(this.model.get('modified_by').username, date_modified);
   }
 });
 
