@@ -9,6 +9,7 @@ module.exports = Z.Layout.extend({
     detail: require('account/regions/card-detail'),
     detailInfo: require('account/regions/card-detail-info'),
     createNote: require('account/regions/create-note'),
+    createLink: require('account/regions/create-link'),
     fileUploader: require('account/regions/file-uploader')
   },
 
@@ -43,6 +44,10 @@ module.exports = Z.Layout.extend({
       });
 
       this.showCreateNoteModal({
+        board: options.board.attributes
+      });
+
+      this.showCreateLinkModal({
         board: options.board.attributes
       });
 
@@ -117,6 +122,11 @@ module.exports = Z.Layout.extend({
 
   showCreateNoteModal: function(options) {
     this.getRegion('createNote').showModal(options);
+    return this;
+  },
+
+  showCreateLinkModal: function(options) {
+    this.getRegion('createLink').showModal(options);
     return this;
   },
 
