@@ -58,8 +58,8 @@ _.extend(Socket.prototype, {
   onMessage: function(message) {
     var collection;
 
-    if ((message.data.type === 'file' && message.method === 'update') ||
-    message.data.modified_by.id !== App.User.id) {
+    if (((message.data.type === 'file' || message.data.type === 'link') &&
+    message.method === 'update') || message.data.modified_by.id !== App.User.id) {
       if (message.data_type === 'board') {
         collection = App.Boards;
       } else if (message.data_type === 'card') {
