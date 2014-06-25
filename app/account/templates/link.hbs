@@ -1,4 +1,9 @@
 <a href="{{html_url}}" class="card-link">
+  <div class="card-actions">
+    <button type="button" class="btn btn-link btn-xs" data-action="highlight">{{icon-star}}</button>
+    <button type="button" class="btn btn-link btn-xs" data-action="delete">{{icon-delete}}</button>
+  </div> {{! .card-actions }}
+
   <div class="card-preview-wrapper">
     {{partial "account/templates/file-preview" this}}
   </div> {{! .card-preview-wrapper }}

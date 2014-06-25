@@ -67,7 +67,7 @@ module.exports = Card.extend({
 
   setPreview: function() {
     var context = {
-          preview: this.model.getPreview() ,
+          preview: this.model.getPreview(),
           hasPreview: this.model.hasPreview()
         },
         template = require('account/templates/file-preview');

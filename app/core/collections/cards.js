@@ -2,13 +2,9 @@ module.exports = Zeppelin.Collection.extend({
   url: App.API_URL + '/cards/',
 
   model: function(attrs, options) {
-    var Model;
+    var Model = require('core/models/' + attrs.type);
 
-    if (attrs.type === 'file') {
-      Model = require('core/models/file');
-    } else if (attrs.type === 'note') {
-      Model = require('core/models/note');
-    } else {
+    if (!Model) {
       Model = require('core/models/card');
     }
 

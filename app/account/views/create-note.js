@@ -5,7 +5,7 @@ module.exports = Zeppelin.FormView.extend({
 
   template: require('account/templates/note-editor'),
 
-  model: require('core/models/card'),
+  model: require('core/models/note'),
 
   events: {
     'keydown [name=content]': 'onKeydown',

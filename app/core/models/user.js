@@ -353,6 +353,12 @@ module.exports = Person.extend({
       });
     }
 
+    if (typeof olark !== 'undefined') {
+      olark('api.chat.updateVisitorNickname', {
+          snippet: this.get('email') + ' #' + this.id
+      });
+    }
+
     return this;
   },
 

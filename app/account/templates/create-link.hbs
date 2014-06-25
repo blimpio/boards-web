@@ -1,0 +1,16 @@
+<form class="create-link-form">
+  <div class="create-link-form-title form-group">
+    <input name="name" type="text" class="form-control" placeholder="Title" autofocus>
+    <div data-error="name" class="help-block"></div>
+  </div> {{! .create-link-form-title }}
+
+  <div class="create-link-form-content form-group">
+    <input name="content" type="text" class="form-control" placeholder="http://">
+    <div data-error="content" class="help-block"></div>
+  </div> {{! .create-link-form-content }}
+
+  <div class="create-link-form-actions">
+    <button class="btn btn-default" data-action="submit">Done</button>
+    <button type="button" class="btn btn-link btn-cancel" data-action="cancel">Cancel</button>
+  </div> {{! .create-link-form-actions }}
+</form> {{! .create-link-form }}

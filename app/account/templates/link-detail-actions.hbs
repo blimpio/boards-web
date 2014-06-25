@@ -1,0 +1,20 @@
+<button type="button" class="navbar-toggle pull-left" data-action="toggleSidebar">
+  {{icon-sidebar-close}} {{! TODO: toggle this icon with icon-sidebar-open }}
+</button> {{! [data-action="toggleSidebar"] }}
+
+<div class="pull-left">
+  <a href="{{boardUrl}}" class="card-detail-actions-back" data-action="back">
+    <span class="board-thumbnail-partial card-detail-actions-back-avatar">
+      {{partial "account/templates/board-preview" boardPreview}}
+    </span> {{! .board-thumbnail-partial }}
+    <div class="card-detail-actions-back-text">
+      <small class="text-muted">BACK TO</small>
+      <strong class="card-detail-actions-board">{{boardName}}</strong>
+    </div> {{! .card-detail-actions-back-text }}
+  </a> {{! .card-detail-actions-back }}
+</div> {{! .pull-left }}
+
+<div class="pull-right">
+  <a href="{{content}}" class="btn btn-link item-action" target="_blank">{{icon-visit}} Visit</a>
+  <button type="button" class="btn btn-link item-action" data-action="delete">{{icon-delete}} Delete</button>
+</div> {{! .pull-right }}
