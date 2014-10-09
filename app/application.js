@@ -84,6 +84,8 @@ module.exports = (function() {
     },
 
     connectToSocket: function() {
+      if (!this.SOCKETS_URL) return;
+
       var rooms = ['u' + this.User.id];
 
       _.forEach(_.unique(this.Boards.pluck('account')), function(id) {

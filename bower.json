@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "public/js/app.js",
   "dependencies": {
-    "swag": "~0.5.1",
+    "swag": "~0.7.0",
     "marked": "~0.3.1",
     "lodash": "~2",
     "jquery": "~2",
@@ -79,5 +79,8 @@
         "js/jquery.fileupload-ui.js"
       ]
     }
+  },
+  "resolutions": {
+    "swag": "~0.7.0"
   }
 }
